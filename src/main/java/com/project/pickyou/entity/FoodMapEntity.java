@@ -1,0 +1,62 @@
+package com.project.pickyou.entity;
+
+import com.project.pickyou.dto.FoodMapDTO;
+import jakarta.persistence.Entity;
+import jakarta.persistence.*;
+import jakarta.persistence.Table;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Date;
+
+@Data
+@NoArgsConstructor
+@Entity
+@Table(name = "food_map")
+public class FoodMapEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "member_id")
+    private String memberId;
+    private String title;
+    private String content;
+    @Column(name = "image_registration_id")
+    private Long imageRegistrationId;
+    private String map;
+    private int ref;
+    private int reply;
+    @Column(name = "read_count")
+    private int readCount;
+    private Date reg;
+
+    @Builder
+    public FoodMapEntity(Long id, String memberId, String title, String content, Long imageRegistrationId, String map, int ref, int reply, int readCount, Date reg) {
+        this.id = id;
+        this.memberId = memberId;
+        this.title = title;
+        this.content = content;
+        this.imageRegistrationId = imageRegistrationId;
+        this.map = map;
+        this.ref = ref;
+        this.reply = reply;
+        this.readCount = readCount;
+        this.reg = reg;
+    }
+
+    public FoodMapDTO toFood_MapDTO() {
+        return FoodMapDTO.builder()
+                .id(this.id)
+                .memberId(this.memberId)
+                .title(this.title)
+                .content(this.content)
+                .imageRegistrationId(this.imageRegistrationId)
+                .map(this.map)
+                .ref(this.ref)
+                .reply(this.reply)
+                .readCount(this.readCount)
+                .reg(this.reg)
+                .build();
+    }
+}
