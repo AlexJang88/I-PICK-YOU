@@ -13,4 +13,10 @@ public interface QaService {
 
     // qa 상세정보 가져오기
     public void qaInformation(Model model, int ref);
+
+    // qa 댓글 인서트
+    public void qaReplyInsert(QaDTO dto, int ref);
+
+    // qa 댓글 유무
+    public void qaReplyCount(int ref, Model model);
 }

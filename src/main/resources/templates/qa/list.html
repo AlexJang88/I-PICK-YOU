@@ -219,7 +219,7 @@
                                         <strong th:text="${qa.id}"></strong>
                                     </td>
                                     <td>
-                                        <a th:href="@{/qa/test/{ref}(ref=${qa.ref})}" th:text="${qa.title}"></a>
+                                        <a th:href="@{/qa/info/{ref}(ref=${qa.ref})}" th:text="${qa.title}"></a>
                                     </td>
                                     <td th:text="${#dates.format(qa.reg, 'yyyy-MM-dd')}"></td>
                                 </tr>

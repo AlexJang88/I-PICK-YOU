@@ -37,21 +37,28 @@ public class QaController {
     }
 
     // qa 상세정보 가져오기
-    @GetMapping("information")
-    public String qaInformation() {
-        return "/qa/information";
-    }
-
-    @GetMapping("test/{ref}")
-    public String test(Model model, @PathVariable int ref) {
+    @GetMapping("info/{ref}")
+    public String qaInfoRef(Model model, @PathVariable int ref) {
+        // qa 댓글 유무
+        qaService.qaReplyCount(ref, model);
+        // qa 상세정보 가져오기
         qaService.qaInformation(model, ref);
-        return "qa/test";
+        return "/qa/info";
     }
 
+    // qa 댓글쓰기
+    @GetMapping("reply/{ref}")
+    public String qaReply(Model model, @PathVariable int ref) {
+        // qa 상세정보 가져오기
+        qaService.qaInformation(model, ref);
+        return "/qa/reply";
+    }
 
-
-    @GetMapping("test")
-    public String test2() {
-        return "qa/test";
+    // qa 댓글쓰기 pro
+    @PostMapping("reply/{ref}")
+    public String qaReplyPro(QaDTO dto, Model model, @PathVariable int ref) {
+        // qa 댓글 인서트
+        qaService.qaReplyInsert(dto, ref);
+        return "redirect:/qa/posts";
     }
 }
