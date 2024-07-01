@@ -1,10 +1,7 @@
 package com.project.pickyou.entity;
 
 import com.project.pickyou.dto.TeamResumeDTO;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +14,10 @@ import java.util.Date;
 @Table(name = "team_resume")
 public class TeamResumeEntity {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "member_id")
+    private String memberId;
     @Column(name = "team_name")
     private String teamName;
     private String address;
@@ -30,8 +30,9 @@ public class TeamResumeEntity {
     private Date reg;
 
     @Builder
-    public TeamResumeEntity(String id, String teamName, String address, int number, String phone, String introduction, String advantage, String profile, int status, Date reg) {
+    public TeamResumeEntity(Long id, String memberId,String teamName, String address, int number, String phone, String introduction, String advantage, String profile, int status, Date reg) {
         this.id = id;
+        this.memberId = memberId;
         this.teamName = teamName;
         this.address = address;
         this.number = number;
@@ -46,6 +47,7 @@ public class TeamResumeEntity {
     public TeamResumeDTO toTeam_ResumeDTO() {
         return TeamResumeDTO.builder()
                 .id(this.id)
+                .memberId(this.memberId)
                 .teamName(this.teamName)
                 .address(this.address)
                 .number(this.number)

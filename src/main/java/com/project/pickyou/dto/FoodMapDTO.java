@@ -14,7 +14,6 @@ public class FoodMapDTO {
     private String memberId;
     private String title;
     private String content;
-    private Long imageRegistrationId;
     private String map;
     private int ref;
     private int reply;
@@ -22,12 +21,11 @@ public class FoodMapDTO {
     private Date reg;
 
     @Builder
-    public FoodMapDTO(Long id, String memberId, String title, String content, Long imageRegistrationId, String map, int ref, int reply, int readCount, Date reg) {
+    public FoodMapDTO(Long id, String memberId, String title, String content,  String map, int ref, int reply, int readCount, Date reg) {
         this.id = id;
         this.memberId = memberId;
         this.title = title;
         this.content = content;
-        this.imageRegistrationId = imageRegistrationId;
         this.map = map;
         this.ref = ref;
         this.reply = reply;
@@ -41,7 +39,6 @@ public class FoodMapDTO {
                 .memberId(this.memberId)
                 .title(this.title)
                 .content(this.content)
-                .imageRegistrationId(this.imageRegistrationId)
                 .map(this.map)
                 .ref(this.ref)
                 .reply(this.reply)

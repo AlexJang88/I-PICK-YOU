@@ -11,7 +11,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Fluid - Layouts | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>훈련소 상세보기</title>
 
     <meta name="description" content="" />
 
@@ -152,12 +152,84 @@
             <!-- Content wrapper -->
             <div class="content-wrapper">
                 <!-- Content -->
-                <div class="container-fluid flex-grow-1 container-p-y">
-                    <!-- Layout Demo -->
 
-                    <!--/ Layout Demo -->
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="container-xxl flex-grow-1 container-p-y text-center">
+                            <h2 class="fw-bold py-3 mb-4">
+                                <span th:text="${DetailsList.get().title}"></span>
+                            </h2>
+                            <h5 class="fw-bold py-3 mb-4">
+                                <span class="text-muted fw-light">학원이름 : </span>
+                                <span th:text="${DetailsList.get().name}"></span>
+                                //
+                                <span class="text-muted fw-light">전화번호 : </span>
+                                <span th:text="${DetailsList.get().contact}"></span>
+                            </h5>
+
+                            <h5 class="fw-bold py-3 mb-4">
+                                <span class="text-muted fw-light">모집분야 : </span>
+                                <span th:text="${DetailsList.get().position}"></span>
+                                //
+                                <span class="text-muted fw-light">모집인원 : </span>
+                                <span th:text="${DetailsList.get().trainner}"></span>
+                            </h5>
+
+                            <h5 class="fw-bold py-3 mb-4">
+                                <span class="text-muted fw-light">기타사항 : </span>
+                                <span th:text="${DetailsList.get().etc}"></span>
+                                //
+                                <span class="text-muted fw-light">주소 : </span>
+                                <span th:text="${DetailsList.get().address}"></span>
+                            </h5>
+
+                            <h5 class="fw-bold py-3 mb-4">
+                                <span class="text-muted fw-light">등록날짜 : </span>
+                                <!-- Use Thymeleaf date formatting to display only the date -->
+                                <span th:text="${#dates.format(DetailsList.get().reg, 'yyyy-MM-dd')}"></span>
+                                //
+                                <span class="text-muted fw-light">조회수 : </span>
+                                <span th:text="${DetailsList.get().readCount}"></span>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+
+                        <br>
+                        <div class="row">
+                            <!-- Basic -->
+                            <div class="col-md-12 mb-4">
+                                <div class="card">
+                                    <h5 class="card-header">상세내용</h5>
+                                    <div class="card-body">
+                                        <div class="divider">
+                                            <span th:text="${DetailsList.get().content}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- /Basic -->
+
+                            <!-- Text Alignment -->
+
+                            <!--사진넣기 진행중-->
+                            <div class="col-md-12 mb-4">
+                                <div class="card">
+                                    <h5 class="card-header">사진 보기</h5>
+                                    <div class="card-body" th:each="image : ${images}">
+                                        <!-- 이미지 삽입 -->
+                                        <img th:src="@{/images/{fileName}(fileName=${image.name})}" class="img-fluid" alt="사진" />
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /Text Alignment -->
+
                 </div>
                 <!-- / Content -->
+
+
+
 
                 <!-- Footer -->
                 <div th:include="~{design/footer :: footer}"></div>

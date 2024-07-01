@@ -11,7 +11,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Fluid - Layouts | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>훈련소 등록</title>
 
     <meta name="description" content="" />
 
@@ -34,6 +34,9 @@
 
     <!-- Vendors CSS -->
     <link th:href="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css}" rel="stylesheet" />
+
+    <!--지도-->
+    <script th:src="@{'//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js'}"></script>
 
     <!-- Helpers -->
     <script th:src="@{/assets/vendor/js/helpers.js}"></script>
@@ -152,8 +155,147 @@
             <!-- Content wrapper -->
             <div class="content-wrapper">
                 <!-- Content -->
-                <div class="container-fluid flex-grow-1 container-p-y">
-                    <!-- Layout Demo -->
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <h4 class="fw-bold py-3 mb-4">훈련소 상세내용 작성</h4>
+
+                    <!-- Basic Layout & Basic with Icons -->
+                    <div class="row">
+                        <!-- Basic Layout -->
+                        <div class="col-xxl">
+                            <div class="card mb-4">
+                                <div class="card-header d-flex align-items-center justify-content-between">
+                                    <h5 class="mb-0">상세내용 입력</h5>
+                                    <small class="text-muted float-end">Default label</small>
+                                </div>
+                                <div class="card-body">
+                                    <form action="/trainning/trainninginputPro" method="post" enctype="multipart/form-data">
+
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="title">모집 제목</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="title" name="title" placeholder="제목을 적어주세요" />
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" >모집분야</label>
+                                            <div class="col-sm-10">
+                                                <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        id="position"
+                                                        placeholder="ex) 목공, 용접, 기계, 타일, 도배..."
+                                                        name="position"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" >학원이름</label>
+                                            <div class="col-sm-10">
+                                                <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        id="name"
+                                                        name="name"
+                                                        placeholder="ex) 목공, 용접, 기계, 타일, 도배..."
+                                                />
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="trainner">모집인원</label>
+                                            <div class="col-sm-10">
+                                                <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        id="trainner"
+                                                        name="trainner"
+                                                        placeholder="ex) 10명 / 5~10명"
+                                                />
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="contact">문의번호</label>
+                                            <div class="col-sm-10">
+                                                <input
+                                                        type="text"
+                                                        id="contact"
+                                                        class="form-control phone-mask"
+                                                        placeholder="02-1111-1111"
+                                                        name="contact"
+                                                />
+                                            </div>
+                                        </div>
+
+
+
+
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="etc">기타사항</label>
+                                            <div class="col-sm-10">
+                                                <textarea
+                                                        id="etc"
+                                                        class="form-control"
+                                                        placeholder="기타사항을 적어주세요"
+                                                        name="etc"
+                                                ></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="address">주소 넣어야 함</label>
+                                            <div class="col-sm-10">
+                                                <input
+                                                        type="text"
+                                                        id="address"
+                                                        class="form-control phone-mask"
+                                                        placeholder="주소를 입력하세요"
+                                                        name="address"
+                                                />
+                                                <button type="button" id="addressButton">주소 검색</button>
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="content">모집내용</label>
+                                            <div class="col-sm-10">
+                                                <textarea
+                                                        id="content"
+                                                        class="form-control"
+                                                        placeholder="기타사항을 적어주세요"
+                                                        name="content"
+                                                ></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="file">사진 업로드</label>
+                                            <div class="col-sm-10">
+                                                <input type="file" id="file" name="files" class="form-control" multiple/>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row justify-content-end">
+                                            <div class="col-sm-10">
+                                                <button type="submit" class="btn btn-primary">Send</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
 
                     <!--/ Layout Demo -->
                 </div>
@@ -198,6 +340,21 @@
 <script th:src="@{/assets/js/main.js}"></script>
 
 <!-- Page JS -->
+
+    <!--주소-->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('addressButton').addEventListener('click', function () {
+                new daum.Postcode({
+                    oncomplete: function (data) {
+                        // 사용자가 주소를 선택했을 때 실행되는 함수
+                        var fullAddress = data.address; // 전체 주소
+                        document.getElementById('address').value = fullAddress; // 주소 입력 필드에 값 설정
+                    }
+                }).open();
+            });
+        });
+    </script>
 
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>

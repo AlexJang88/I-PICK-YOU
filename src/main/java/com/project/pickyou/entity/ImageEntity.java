@@ -33,7 +33,6 @@ public class ImageEntity {
 
 
 
-    // Convert DTO to Entity
     public ImageDTO toImageDTO() {
         return ImageDTO.builder()
 
