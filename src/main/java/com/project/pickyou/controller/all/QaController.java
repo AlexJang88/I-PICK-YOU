@@ -2,6 +2,7 @@ package com.project.pickyou.controller.all;
 
 import com.project.pickyou.dto.QaDTO;
 import com.project.pickyou.service.QaService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +17,11 @@ public class QaController {
 
     // qa 게시판
     @GetMapping("posts")
-    public String qaList(Model model) {
+    public String qaList(Model model, HttpSession session) {
+        // 임시 관리자
+        session.setAttribute("sessionId", "admin");
+        // 임시 관리자
+
         // qa 리스트 가져오기
         qaService.qaList(model);
         return "qa/list";
@@ -38,7 +43,19 @@ public class QaController {
 
     // qa 상세정보 가져오기
     @GetMapping("info/{ref}")
-    public String qaInfoRef(Model model, @PathVariable int ref) {
+    public String qaInfoRef(Model model, @PathVariable int ref, HttpSession session) {
+
+        // 임시 관리자
+        String sessionId = (String) session.getAttribute("sessionId");
+        model.addAttribute("sessionId", sessionId);
+        // 임시 관리자
+
+        // 임시 아이디 ~
+        String id = "five";
+        model.addAttribute("id", id);
+        // ~ 임시 아이디
+
+
         // qa 댓글 유무
         qaService.qaReplyCount(ref, model);
         // qa 상세정보 가져오기
