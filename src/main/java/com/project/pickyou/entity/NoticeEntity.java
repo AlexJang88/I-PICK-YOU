@@ -21,19 +21,16 @@ public class NoticeEntity {
     private String content;
     @Column(name = "member_id")
     private String memberId;
-    @Column(name = "image_registration_id")
-    private Long imageRegistrationId;
     @Column(name = "read_count")
     private int readCount;
     private Date reg;
 
     @Builder
-    public NoticeEntity(Long id, String title, String content, String memberId, Long imageRegistrationId, int readCount, Date reg) {
+    public NoticeEntity(Long id, String title, String content, String memberId,  int readCount, Date reg) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.memberId = memberId;
-        this.imageRegistrationId = imageRegistrationId;
         this.readCount = readCount;
         this.reg = reg;
     }
@@ -44,7 +41,6 @@ public class NoticeEntity {
                 .title(this.title)
                 .content(this.content)
                 .memberId(this.memberId)
-                .imageRegistrationId(this.imageRegistrationId)
                 .readCount(this.readCount)
                 .reg(this.reg)
                 .build();

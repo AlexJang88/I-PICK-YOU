@@ -2,7 +2,6 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-
 </head>
 <body>
 <div th:fragment="footer">
@@ -12,7 +11,7 @@
 
                 <div class="col-md-3">
                     <div class="footer-menu">
-                        <img src="../../../../../../waGGy-1.0.0%203/images/logo.png" alt="logo">
+                        <img th:src="@{/waGGy-1.0.0%203/images/logo.png}" alt="logo">
                         <p class="blog-paragraph fs-6 mt-3">Subscribe to our newsletter to get updates about our grand offers.</p>
                         <div class="social-links">
                             <ul class="d-flex list-unstyled gap-2">
@@ -41,7 +40,6 @@
                                         <iconify-icon class="social-icon" icon="ri:youtube-fill"></iconify-icon>
                                     </a>
                                 </li>
-
                             </ul>
                         </div>
                     </div>
@@ -63,31 +61,31 @@
                                 <a href="#" class="nav-link">Services</a>
                             </li>
                             <li class="menu-item">
-                                <a href="#" class="nav-link">Conatct Us</a>
+                                <a href="#" class="nav-link">Contact Us</a>
                             </li>
                         </ul>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="footer-menu">
-                        <h3>Help Center</h5>
-                            <ul class="menu-list list-unstyled">
-                                <li class="menu-item">
-                                    <a href="#" class="nav-link">FAQs</a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="#" class="nav-link">Payment</a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="#" class="nav-link">Returns & Refunds</a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="#" class="nav-link">Checkout</a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="#" class="nav-link">Delivery Information</a>
-                                </li>
-                            </ul>
+                        <h3>Help Center</h3>
+                        <ul class="menu-list list-unstyled">
+                            <li class="menu-item">
+                                <a href="#" class="nav-link">FAQs</a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="#" class="nav-link">Payment</a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="#" class="nav-link">Returns & Refunds</a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="#" class="nav-link">Checkout</a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="#" class="nav-link">Delivery Information</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
                 <div class="col-md-3">
