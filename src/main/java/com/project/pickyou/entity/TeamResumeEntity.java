@@ -18,6 +18,7 @@ public class TeamResumeEntity {
     private Long id;
     @Column(name = "member_id")
     private String memberId;
+    private String job;
     @Column(name = "team_name")
     private String teamName;
     private String address;
@@ -30,9 +31,10 @@ public class TeamResumeEntity {
     private Date reg;
 
     @Builder
-    public TeamResumeEntity(Long id, String memberId, String teamName, String address, int number, String phone, String introduction, String advantage, String profile, int status, Date reg) {
+    public TeamResumeEntity(Long id, String memberId, String job, String teamName, String address, int number, String phone, String introduction, String advantage, String profile, int status, Date reg) {
         this.id = id;
         this.memberId = memberId;
+        this.job = job;
         this.teamName = teamName;
         this.address = address;
         this.number = number;
@@ -48,6 +50,7 @@ public class TeamResumeEntity {
         return TeamResumeDTO.builder()
                 .id(this.id)
                 .memberId(this.memberId)
+                .job(this.job)
                 .teamName(this.teamName)
                 .address(this.address)
                 .number(this.number)
