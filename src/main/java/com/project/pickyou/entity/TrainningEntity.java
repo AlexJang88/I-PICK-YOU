@@ -35,7 +35,7 @@ public class TrainningEntity {
     private Date reg;
 
     @Builder
-    public TrainningEntity(Long id, String companyId, String title, String position, String trainner, String etc, String name, String address, String contact, int readCount, Long imageRegistrationId, String content, Date reg) {
+    public TrainningEntity(Long id, String companyId, String title, String position, String trainner, String etc, String name, String address, String contact, int readCount , String content, Date reg) {
         this.id = id;
         this.companyId = companyId;
         this.title = title;
@@ -46,7 +46,6 @@ public class TrainningEntity {
         this.address = address;
         this.contact = contact;
         this.readCount = readCount;
-        this.imageRegistrationId = imageRegistrationId;
         this.content = content;
         this.reg = reg;
     }
@@ -63,7 +62,6 @@ public class TrainningEntity {
                 .address(this.address)
                 .contact(this.contact)
                 .readCount(this.readCount)
-                .imageRegistrationId(this.imageRegistrationId)
                 .content(this.content)
                 .reg(this.reg)
                 .build();
