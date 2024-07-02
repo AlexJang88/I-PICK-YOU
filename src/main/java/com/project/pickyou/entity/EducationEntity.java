@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 
@@ -31,6 +32,7 @@ public class EducationEntity {
     private String content;
     @Column(name = "read_count")
     private int readCount;
+    @UpdateTimestamp
     private Date reg;
 
 

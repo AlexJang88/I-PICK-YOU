@@ -79,6 +79,7 @@ public class EducationServiceImpl implements EducationService {
             cidto = post.get().getMember().getCompanyInfo().toCompanyInfoDTO();
             mdto = post.get().getMember().toMemberDTO();
             PickID key = new PickID(sid, mdto.getId());
+            edto.setContent(edto.getContent().replace("<br>","\r\n"));
             Optional<PickEntity> pickcheck = pickJPA.findById(key);
             if (pickcheck.isPresent()) {
                 favoritecheck = 1;
@@ -106,11 +107,7 @@ public class EducationServiceImpl implements EducationService {
     @Transactional
     public void writePost(List<MultipartFile> files, EducationDTO dto) {
         UUID uid = UUID.randomUUID();
-
-
         Long eduNum = educationJPA.getAutoIncrementValue("pickyou", "education");
-
-
         educationJPA.save(dto.toEducationEntity());
         if (!files.isEmpty()) {
             for (MultipartFile mf : files) {
@@ -166,46 +163,53 @@ public class EducationServiceImpl implements EducationService {
     @Override
     public void update(List<MultipartFile> files, EducationDTO dto) {
         Optional<EducationEntity> education = educationJPA.findById(dto.getId());
-        if (!files.isEmpty()) {
+            int check=0;
+
             if (education.isPresent()) {
-                File folder = new File(imgUploadPath + File.separator + 2 + File.separator + dto.getId());
-                try {
-                    if (folder.exists()) {
-                        FileUtils.cleanDirectory(folder);
-                    }
-                    if (folder.isDirectory()) {
-                        folder.delete();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                for (MultipartFile mf : files) {
+                   if(!mf.isEmpty()) {
+                       if(check==0) {
+                           File folder = new File(imgUploadPath + File.separator + 2 + File.separator + dto.getId());
+                           try {
+                               if (folder.exists()) {
+                                   FileUtils.cleanDirectory(folder);
+                               }
+                               if (folder.isDirectory()) {
+                                   folder.delete();
+                               }
+                           } catch (IOException e) {
+                               e.printStackTrace();
+                           }
+                           imageJPA.deleteAllByBoardTypeAndBoardNum(2, dto.getId());
+                           check++;
+                       }
+
+                       if (mf.getContentType().startsWith("image")) {
+                           String originalName = mf.getOriginalFilename();
+                           String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
+                           System.out.println("================folderBoardnum" + dto.getId());
+                           String folderPath = makeFolder(imgUploadPath, 2, dto.getId());
+                           String uuid = UUID.randomUUID().toString();
+                           String ext = originalName.substring(originalName.lastIndexOf("."));
+                           String saveName = folderPath + File.separator + uuid + ext;
+                           ImageDTO idto = new ImageDTO();
+                           idto.setBoardNum(dto.getId());
+                           idto.setBoardType(2);
+                           idto.setName(uuid + ext);
+                           System.out.println("================= iamge before");
+                           imageJPA.save(idto.toImageEntity());
+                           System.out.println("================= iamge after");
+                           Path savePath = Paths.get(imgUploadPath, saveName);
+                           try {
+                               mf.transferTo(savePath);
+                           } catch (IOException e) {
+                               e.printStackTrace();
+                           }
+                       }
+
+                   }
                 }
-                imageJPA.deleteAllByBoardTypeAndBoardNum(2, dto.getId());
             }
-            for (MultipartFile mf : files) {
-                if (mf.getContentType().startsWith("image")) {
-                    String originalName = mf.getOriginalFilename();
-                    String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
-                    System.out.println("================folderBoardnum" + dto.getId());
-                    String folderPath = makeFolder(imgUploadPath, 2, dto.getId());
-                    String uuid = UUID.randomUUID().toString();
-                    String ext = originalName.substring(originalName.lastIndexOf("."));
-                    String saveName = folderPath + File.separator + uuid + ext;
-                    ImageDTO idto = new ImageDTO();
-                    idto.setBoardNum(dto.getId());
-                    idto.setBoardType(2);
-                    idto.setName(uuid + ext);
-                    System.out.println("================= iamge before");
-                    imageJPA.save(idto.toImageEntity());
-                    System.out.println("================= iamge after");
-                    Path savePath = Paths.get(imgUploadPath, saveName);
-                    try {
-                        mf.transferTo(savePath);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
         educationJPA.save(dto.toEducationEntity());
     }
 

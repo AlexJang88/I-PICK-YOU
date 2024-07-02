@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -49,7 +50,7 @@ public class EducationController {
    //수정
    @PutMapping("/posts")
     public String update(@RequestParam(name = "id")Long id,ArrayList<MultipartFile> files, EducationDTO dto){
-
+                service.update(files,dto);
         String url = "redirect:/educations/posts/"+id;
 
         return url;
