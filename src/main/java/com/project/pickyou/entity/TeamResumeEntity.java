@@ -1,13 +1,14 @@
 package com.project.pickyou.entity;
 
 import com.project.pickyou.dto.TeamResumeDTO;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 
@@ -15,9 +16,16 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @Table(name = "team_resume")
+@DynamicUpdate
+@DynamicInsert
 public class TeamResumeEntity {
+
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name="member_id")
+    private String memberId;
+    private String job;
     @Column(name = "team_name")
     private String teamName;
     private String address;
@@ -27,11 +35,19 @@ public class TeamResumeEntity {
     private String advantage;
     private String profile;
     private int status;
+    @UpdateTimestamp
     private Date reg;
 
+    @OneToOne
+    @JoinColumn(name = "member_id",referencedColumnName = "id",insertable = false,updatable = false)
+    private MemberEntity member;
+
+
     @Builder
-    public TeamResumeEntity(String id, String teamName, String address, int number, String phone, String introduction, String advantage, String profile, int status, Date reg) {
-        this.id = id;
+    public TeamResumeEntity(Long id,String memberId,String job, String teamName, String address, int number, String phone, String introduction, String advantage, String profile, int status, Date reg) {
+        this.id=id;
+        this.memberId = memberId;
+        this.job=job;
         this.teamName = teamName;
         this.address = address;
         this.number = number;
@@ -46,6 +62,8 @@ public class TeamResumeEntity {
     public TeamResumeDTO toTeam_ResumeDTO() {
         return TeamResumeDTO.builder()
                 .id(this.id)
+                .memberId(this.memberId)
+                .job(this.job)
                 .teamName(this.teamName)
                 .address(this.address)
                 .number(this.number)
