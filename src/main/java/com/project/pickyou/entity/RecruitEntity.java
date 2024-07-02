@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.lang.reflect.Member;
 import java.util.Date;
 
 @Data
@@ -28,8 +29,18 @@ public class RecruitEntity {
     @Column(name="end_date")
     private Date endDate;
 
+    @OneToOne
+    @JoinColumn(name = "member_id",referencedColumnName = "id",insertable = false,updatable = false)
+    private MemberEntity member;
+
+
+    @OneToOne
+    @JoinColumn(name = "id",referencedColumnName = "recruitId",insertable = false,updatable = false)
+    private RecruitDetailEntity recruitDetail;
+
+
     @Builder
-    public RecruitEntity(Long id, String title, String content, int status, int readCount,String memberId, Date reg,
+    public RecruitEntity(Long id, String title ,String content, int status, int readCount,String memberId, Date reg,
                       Date startDate, Date endDate) {
         super();
         this.id = id;
