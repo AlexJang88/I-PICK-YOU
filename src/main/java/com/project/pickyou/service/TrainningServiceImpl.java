@@ -7,10 +7,14 @@ import com.project.pickyou.entity.TrainningEntity;
 
 import com.project.pickyou.repository.ImageJPARepository;
 import com.project.pickyou.repository.TrainningJPARepository;
+import jakarta.transaction.Transactional;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,7 +25,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+
 public class TrainningServiceImpl implements TrainningService{
+
+    @Value("${simg.upload.path}")
+    private String imgUploadPath;  // 프로퍼티스에서 정한경로를, 웹 컨피그에서 해당 경로 지정 해서 클래스 안에 설정
+
 
     private final TrainningJPARepository trainningJPARepository;
     private final ImageJPARepository imageJPARepository;
@@ -32,33 +41,46 @@ public class TrainningServiceImpl implements TrainningService{
     }
 
 
+
+
+
+    // 훈련소 리스트 가져오기
     @Override
-    public void trainningCompany(Model model) {  // 훈련소 리스트 가져오기
+    public void trainningCompany(Model model) {
 
         List<TrainningEntity> trainninglist = trainningJPARepository.findAll();
 
         model.addAttribute("trainninglist", trainninglist);
     }
+    // 훈련소 리스트 가져오기
 
+
+
+    //훈련내용 상세보기
     @Override
     public void Details(Model model, Long trainnignum) {  //훈련소내용 상세보기
 
         Optional<TrainningEntity> DetailsList = trainningJPARepository.findById(trainnignum);// 훈련내용가져오기
         List<ImageEntity> images = imageJPARepository.findByBoardNumAndBoardType(trainnignum, 3); // 훈련 이미지 가져오기
-        
+
         model.addAttribute("images", images);
         model.addAttribute("DetailsList",DetailsList);
     }
+    //훈련내용 상세보기
 
+
+    //훈련정보 저장하기
     @Override
     public TrainningEntity savetrainning(TrainningDTO trainningDTO) {  //훈련정보넣기
         TrainningEntity trainningEntity = trainningJPARepository.save(trainningDTO.toTrainningEntity());
 
         return trainningEntity;
     }
+    //훈련정보 저장하기
 
 
-    /*이미지 넣기*/
+
+    /*아래는 이미지 넣기*/
     @Override
     public void saveImage(ImageDTO imageDTO, MultipartFile[] files) {
 
@@ -69,11 +91,13 @@ public class TrainningServiceImpl implements TrainningService{
 
                 try {
                     // 파일 저장할 기본 경로
-                    String baseDir = "C:\\Users\\trainning";
-
+                    String baseDir = imgUploadPath;
+                    // 훈련소 ID 설정 과 타입 설정예정
+                    int numtype = 3;  //훈련소는 3임
+                    String num = "3";
                     // 훈련소 ID를 기반으로 서브 폴더 생성
-                    String subFolder = "trainning_" + imageDTO.getBoardNum();  //파일 이름 설정하는것_번호
-                    Path directory = Paths.get(baseDir, subFolder);   //경로추가
+                    String subFolder = num + File.separator+ imageDTO.getBoardNum();  //파일 이름 설정하는것_번호 //num = 타입 3번이고 File.separator는 안에 파일+ 파일번호
+                    Path directory = Paths.get(baseDir, subFolder);   //프로퍼티스 경로와 + 파일생성된 경로 합치기
 
                     // 서브 폴더가 존재하지 않으면 생성
                     if (!Files.exists(directory)) {  //해당 폴더를 확인하고 없으면 생성 확인
@@ -81,20 +105,18 @@ public class TrainningServiceImpl implements TrainningService{
                     }
 
                     // 파일 경로 설정
-                    Path filePath = directory.resolve(fileName);
+                    Path filePath = directory.resolve(fileName);    //경로속 uu아이디 이름 넣기
                     Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
+
+                    /*아래5개는 사진 파일 db에 저장하는것*/
                     // 파일 정보를 DB에 저장하거나 필요한 작업 수행
-                    ImageEntity imageEntity = new ImageEntity();
-                    imageEntity.setName(fileName);
-
-                    // 훈련소 ID 설정 과 타입 설정예정
-                    int numtype = 3;  //훈련소는 3임
-
+                    ImageEntity imageEntity = new ImageEntity();  //new객체생성
+                    imageEntity.setName(fileName);                   //이름설정
                     imageEntity.setBoardNum(imageDTO.getBoardNum()); // 이미지 DTO에서 boardNum을 가져와 설정
-                    imageEntity.setBoardType(numtype);
-
+                    imageEntity.setBoardType(numtype);           //db타입설정
                     imageJPARepository.save(imageEntity); // 이미지 엔티티 저장
+
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -113,6 +135,125 @@ public class TrainningServiceImpl implements TrainningService{
     private String getFileExtension(String fileName) {   //확장자 추출
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
-    /*이미지 넣기*/
+    /*위에는 이미지 넣기*/
+
+
+
+
+
+
+    //훈련소 내용 지우기
+    @Override
+    @Transactional
+    public void deleteDetails(Long trainnignum) {
+
+        trainningJPARepository.deleteById(trainnignum); //훈련소 정보 날리는 방법
+
+    }
+
+    /*훈련소 내용속 이미지 지우기*/
+    @Override
+    @Transactional
+    public void deleteDetailsImg(Long trainnignum) {
+
+        Optional<TrainningEntity> trainning = trainningJPARepository.findById(trainnignum);
+        if (trainning.isPresent()) {
+            File folder = new File(imgUploadPath + File.separator + 3 + File.separator + trainnignum);
+            try {
+                if (folder.exists()) {
+                    FileUtils.cleanDirectory(folder);
+                }
+                if (folder.isDirectory()) {
+                    folder.delete();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        imageJPARepository.deleteByBoardNumAndBoardType(trainnignum, 3);
+
+    }
+    /*훈련소 내용속 이미지 지우기*/
+
+
+
+
+
+
+    //수정하기 아래부터  /아래코드는 수정된 이미지가 들어갈 경로를 정리
+    public String makeFolder(String uploadPath, int boardType, Long boardNum) {
+        String folderPath = boardType + File.separator + boardNum;
+        File uploadPathFoler = new File(uploadPath, folderPath);
+
+        if (!uploadPathFoler.exists()) {
+            uploadPathFoler.mkdirs();
+        }
+        return folderPath;
+    }
+
+
+    @Override
+    @Transactional
+    public void trainningUpdate(Long trainnignum, TrainningDTO trainningDTO, MultipartFile[] files) {  //사진 및 내용 업데이트
+        Optional<TrainningEntity> trainningUpdate =  trainningJPARepository.findById(trainnignum);
+            int check = 0;
+
+
+            //기존이미지가 남아있다면
+        if (trainningUpdate.isPresent()) {  //해당 번호의 값이 있다면 (위에서 댕겨옴)
+            for (MultipartFile mf : files) {    //mf으로 해서 반복문을 돌림
+                if(!mf.isEmpty()) {   //파일이 비어있지 않다면  삭제하기 위해
+                    if(check==0) {
+                        File folder = new File(imgUploadPath + File.separator + 3 + File.separator + trainnignum);  //해당 경로의 파일을삭제하기위해
+                        try {
+                            if (folder.exists()) {
+                                FileUtils.cleanDirectory(folder);    //실제폴더내용삭제
+                            }
+                            if (folder.isDirectory()) {
+                                folder.delete();                    //실제폴더삭제
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        imageJPARepository.deleteByBoardNumAndBoardType(trainnignum, 3); //데이터베이스 속 이미지 테이블 내용삭제
+                        check++;
+                    }
+
+
+                    //새로운 이미지 설정하기
+                    if (mf.getContentType().startsWith("image")) {
+                        String originalName = mf.getOriginalFilename();
+                        //String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);  //원래이름
+
+                        System.out.println("================folderBoardnum" + trainnignum);
+                        String folderPath = makeFolder(imgUploadPath, 3, trainnignum);  //폴더경로
+
+
+                        String uuid = UUID.randomUUID().toString();                              //이름값 설정
+                        String ext = originalName.substring(originalName.lastIndexOf("."));  //확장자 가져오기
+                        String saveName = folderPath + File.separator + uuid + ext;            //파일 이름 만들기
+
+
+                        ImageDTO imageDTO = new ImageDTO();
+                        imageDTO.setBoardNum(trainnignum);
+                        imageDTO.setBoardType(3);
+                        imageDTO.setName(uuid + ext);
+                        imageJPARepository.save(imageDTO.toImageEntity());  //데이터베이스에 정보 저장
+                        Path savePath = Paths.get(imgUploadPath, saveName);
+
+                        try {
+                            mf.transferTo(savePath);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+        trainningJPARepository.save(trainningDTO.toTrainningEntity());  // 이건 내용새로 업데이트
+    }
+
 
 }

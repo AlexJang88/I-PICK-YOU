@@ -153,47 +153,47 @@
             <div class="content-wrapper">
                 <!-- Content -->
 
-                <div class="col-md-12 mb-4">
-                    <div class="card">
-                        <div class="container-xxl flex-grow-1 container-p-y text-center">
-                            <h2 class="fw-bold py-3 mb-4">
-                                <span th:text="${DetailsList.get().title}"></span>
-                            </h2>
-                            <h5 class="fw-bold py-3 mb-4">
-                                <span class="text-muted fw-light">학원이름 : </span>
-                                <span th:text="${DetailsList.get().name}"></span>
-                                //
-                                <span class="text-muted fw-light">전화번호 : </span>
-                                <span th:text="${DetailsList.get().contact}"></span>
-                            </h5>
+                    <div class="col-md-12 mb-4">
+                        <div class="card">
+                            <div class="container-xxl flex-grow-1 container-p-y text-center">
+                                <h2 class="fw-bold py-3 mb-4">
+                                    <span th:text="${DetailsList.get().title}"></span>
+                                </h2>
+                                <h5 class="fw-bold py-3 mb-4">
+                                    <span class="text-muted fw-light">학원이름 : </span>
+                                    <span th:text="${DetailsList.get().name}"></span>
+                                    //
+                                    <span class="text-muted fw-light">전화번호 : </span>
+                                    <span th:text="${DetailsList.get().contact}"></span>
+                                </h5>
 
-                            <h5 class="fw-bold py-3 mb-4">
-                                <span class="text-muted fw-light">모집분야 : </span>
-                                <span th:text="${DetailsList.get().position}"></span>
-                                //
-                                <span class="text-muted fw-light">모집인원 : </span>
-                                <span th:text="${DetailsList.get().trainner}"></span>
-                            </h5>
+                                <h5 class="fw-bold py-3 mb-4">
+                                    <span class="text-muted fw-light">모집분야 : </span>
+                                    <span th:text="${DetailsList.get().position}"></span>
+                                    //
+                                    <span class="text-muted fw-light">모집인원 : </span>
+                                    <span th:text="${DetailsList.get().trainner}"></span>
+                                </h5>
 
-                            <h5 class="fw-bold py-3 mb-4">
-                                <span class="text-muted fw-light">기타사항 : </span>
-                                <span th:text="${DetailsList.get().etc}"></span>
-                                //
-                                <span class="text-muted fw-light">주소 : </span>
-                                <span th:text="${DetailsList.get().address}"></span>
-                            </h5>
+                                <h5 class="fw-bold py-3 mb-4">
+                                    <span class="text-muted fw-light">기타사항 : </span>
+                                    <span th:text="${DetailsList.get().etc}"></span>
+                                    //
+                                    <span class="text-muted fw-light">주소 : </span>
+                                    <span th:text="${DetailsList.get().address}"></span>
+                                </h5>
 
-                            <h5 class="fw-bold py-3 mb-4">
-                                <span class="text-muted fw-light">등록날짜 : </span>
-                                <!-- Use Thymeleaf date formatting to display only the date -->
-                                <span th:text="${#dates.format(DetailsList.get().reg, 'yyyy-MM-dd')}"></span>
-                                //
-                                <span class="text-muted fw-light">조회수 : </span>
-                                <span th:text="${DetailsList.get().readCount}"></span>
-                            </h5>
+                                <h5 class="fw-bold py-3 mb-4">
+                                    <span class="text-muted fw-light">등록날짜 : </span>
+                                    <!-- Use Thymeleaf date formatting to display only the date -->
+                                    <span th:text="${#dates.format(DetailsList.get().reg, 'yyyy-MM-dd')}"></span>
+                                    //
+                                    <span class="text-muted fw-light">조회수 : </span>
+                                    <span th:text="${DetailsList.get().readCount}"></span>
+                                </h5>
+                            </div>
                         </div>
                     </div>
-                </div>
 
                         <br>
                         <div class="row">
@@ -214,18 +214,37 @@
                             <!-- Text Alignment -->
 
                             <!--사진넣기 진행중-->
-                            <div class="col-md-12 mb-4">
-                                <div class="card">
-                                    <h5 class="card-header">사진 보기</h5>
-                                    <div class="card-body" th:each="image : ${images}">
+                        <div class="col-md-12 mb-4">
+                            <div class="card">
+                                <h5 class="card-header">사진 보기</h5>
+                                <div class="card-body">
+                                    <div th:each="image : ${images}" class="mb-3">
                                         <!-- 이미지 삽입 -->
-                                        <img th:src="@{/images/{fileName}(fileName=${image.name})}" class="img-fluid" alt="사진" />
+                                        <img th:src="@{'/upload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}" class="img-fluid" alt="사진" />
                                     </div>
                                 </div>
                             </div>
-                            <!-- /Text Alignment -->
+                        </div>
 
-                </div>
+                            <div class="row">
+                                <div class="col-md-6 text-center"> <!-- 수정하기 버튼 -->
+                                    <a class="btn btn-danger btn-block" th:href="@{/trainning/trainningUpdate/{trainnignum}(trainnignum=${DetailsList.get().id})}" >
+                                     수정하기
+                                    </a>
+                                </div>
+
+
+                                <div class="col-md-6 text-center"> <!-- 삭제하기 버튼 -->
+                                    <form th:action="@{/trainning/trainningdelete/{trainnignum}(trainnignum=${DetailsList.get().id})}" th:method="delete">
+                                        <button type="submit" class="btn btn-danger btn-block">삭제하기</button>
+                                    </form>
+                                </div>
+                            </div>
+
+
+
+                            <!-- /Text Alignment -->
+                    </div>
                 <!-- / Content -->
 
 
@@ -273,5 +292,9 @@
 
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
 </body>
 </html>

@@ -12,6 +12,7 @@ import java.util.Date;
 public class TeamResumeDTO {
     private Long id;
     private String memberId;
+    private String job;
     private String teamName;
     private String address;
     private int number;
@@ -23,9 +24,10 @@ public class TeamResumeDTO {
     private Date reg;
 
     @Builder
-    public TeamResumeDTO(Long id, String memberId, String teamName, String address, int number, String phone, String introduction, String advantage, String profile, int status, Date reg) {
+    public TeamResumeDTO(Long id, String memberId, String job, String teamName, String address, int number, String phone, String introduction, String advantage, String profile, int status, Date reg) {
         this.id = id;
         this.memberId = memberId;
+        this.job = job;
         this.teamName = teamName;
         this.address = address;
         this.number = number;
@@ -41,6 +43,7 @@ public class TeamResumeDTO {
         return TeamResumeEntity.builder()
                 .id(this.id)
                 .memberId(this.memberId)
+                .job(this.job)
                 .teamName(this.teamName)
                 .address(this.address)
                 .number(this.number)

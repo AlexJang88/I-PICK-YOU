@@ -8,5 +8,6 @@ import java.util.List;
 public interface ImageJPARepository extends JpaRepository<ImageEntity,Long> {
 
     List<ImageEntity> findByBoardNumAndBoardType(Long boardNum, int boardType); // 사진가져오기
-    
+
+    void deleteByBoardNumAndBoardType(Long boardNum, int boardType);
 }

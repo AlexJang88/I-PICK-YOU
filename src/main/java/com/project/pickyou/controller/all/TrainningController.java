@@ -31,7 +31,7 @@ public class TrainningController {
         return "/trainning/trainningmain";
     }
 
-
+    //훈련소 내용상세보기
         @GetMapping ("/trainningDetails/{trainnignum}")
         public String trainningDetails(Model model,@PathVariable Long trainnignum){ //훈련소 상세내용
 
@@ -41,12 +41,53 @@ public class TrainningController {
         }
 
 
+
+
+     /* 아래는 훈련소 내용 삭제 및 수정 */
+
+    //훈련소 내용 삭제하기
+    @DeleteMapping("/trainningdelete/{trainnignum}")
+    public String trainningdelete(@PathVariable Long trainnignum) {
+
+
+        trainningService.deleteDetailsImg(trainnignum); //이미지 지우기
+
+        trainningService.deleteDetails(trainnignum); //우선 내용먼저지우기
+        // 삭제 후에는 다시 상세 페이지로 리다이렉트
+        return "redirect:/trainning/trainningmain";
+    }
+
+    //훈련소 내용 수정하기
+
+    @GetMapping("/trainningUpdate/{trainnignum}")
+    public String trainninginUpdate(Model model,@PathVariable Long trainnignum){
+            //작성된 기록 가져오기
+
+        trainningService.Details(model, trainnignum);
+
+        return "/trainning/trainningUpdate";
+    }
+
+    @PatchMapping("/trainningUpdatePro/{trainnignum}")
+    public String trainningUpdatePro(@PathVariable Long trainnignum,TrainningDTO trainningDTO, @RequestParam("files") MultipartFile[] files){ //사진, dto, 글번호 가져오기
+
+
+        trainningService.trainningUpdate(trainnignum, trainningDTO, files);
+        return "redirect:/trainning/trainningDetails/"+trainnignum;
+    }
+
+
+
+
+
+
+
+        /*아래는 훈련소 추가하기 페이지  / 사진넣기페이지*/
         @GetMapping("/trainninginput")
-        public String trainninginput(){   //훈련소 추가하기
+        public String trainninginput(){
 
         return "/trainning/trainninginput";
         }
-
 
         @PostMapping("trainninginputPro")
         public String trainninginputPro(TrainningDTO trainningDTO, ImageDTO imageDTO, @RequestParam("files") MultipartFile[] files){
@@ -65,6 +106,8 @@ public class TrainningController {
 
         return "redirect:/trainning/trainningmain";
         }
+
+
 
 
 }
