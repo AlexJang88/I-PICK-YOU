@@ -69,16 +69,16 @@ public class TeamServiceImpl implements TeamService{
     }
 
     @Override
-    public void post(Model model,Long num,String sid) {
+    public void post(Model model,Long num,String sid,int boardType) {
         Optional<TeamResumeEntity> post = teamJPA.findById(num);
-        TeamResumeDTO edto = new TeamResumeDTO();
+        TeamResumeDTO tdto = new TeamResumeDTO();
         MemberDTO mdto = new MemberDTO();
         List<ImageEntity> imageList = Collections.emptyList();
         int favoritecheck = 0;
 
         if (post.isPresent()) {
-            imageList = imageJPA.findByBoardTypeAndBoardNum(5, num);
-            edto = post.get().toTeam_ResumeDTO();
+            imageList = imageJPA.findByBoardTypeAndBoardNum(boardType, num);
+            tdto = post.get().toTeam_ResumeDTO();
             mdto = post.get().getMember().toMemberDTO();
             PickID key = new PickID(sid, mdto.getId());
             Optional<PickEntity> pickcheck = pickJPA.findById(key);
@@ -87,7 +87,7 @@ public class TeamServiceImpl implements TeamService{
             }
             model.addAttribute("favoritecheck", favoritecheck);
             model.addAttribute("member", mdto);
-            model.addAttribute("post", edto);
+            model.addAttribute("post", tdto);
             model.addAttribute("imgList", imageList);
         }
 
@@ -167,22 +167,30 @@ public class TeamServiceImpl implements TeamService{
 
 
     @Override
-    public void update(MultipartFile profile,List<MultipartFile> files, TeamResumeDTO dto) {
+    public void update(MultipartFile profile,List<MultipartFile> files, TeamResumeDTO dto,int boardType) {
         Optional<TeamResumeEntity> team = teamJPA.findById(dto.getId());
-        if (!files.isEmpty()) {
+            int check=0;
             if (team.isPresent()) {
-                File folder = new File(imgUploadPath + File.separator + 5 + File.separator + dto.getId());
-                try {
-                    if (folder.exists()) {
-                        FileUtils.cleanDirectory(folder);
+                for(MultipartFile mf : files){
+                    if(!mf.isEmpty()){
+                        if(check==0){
+                            File folder = new File(imgUploadPath + File.separator + boardType + File.separator + dto.getId());
+                            try {
+                                if (folder.exists()) {
+                                    FileUtils.cleanDirectory(folder);
+                                }
+                                if (folder.isDirectory()) {
+                                    folder.delete();
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            imageJPA.deleteAllByBoardTypeAndBoardNum(boardType, dto.getId());
+                            check++;
+                        }
+                        filesUpload(files,boardType,dto.getId(),imgUploadPath);
                     }
-                    if (folder.isDirectory()) {
-                        folder.delete();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
-                imageJPA.deleteAllByBoardTypeAndBoardNum(5, dto.getId());
             }
             if(!profile.isEmpty()) {
                 File file = new File(profileUploadPath+File.separator+dto.getProfile());
@@ -197,7 +205,7 @@ public class TeamServiceImpl implements TeamService{
                 dto.setProfile(profileName);
             }
 
-        }
+
         teamJPA.save(dto.toTeam_ResumeEntity());
     }
 

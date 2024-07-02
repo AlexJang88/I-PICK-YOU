@@ -178,7 +178,8 @@
                                         <a th:href="@{/teams/posts/{id}(id=${post.id})}">
                                             <p class="card-text">
                                                 <span th:text="${post.teamName}"></span>
-                                                <span th:text="${post.introduction}"></span><br/>
+                                                인원 : <span th:text="${post.number}"></span> 명<br/>
+                                                지역 : <span th:text="${post.address}"></span>
                                             </p>
                                         </a>
                                     </div>

@@ -21,7 +21,6 @@ public class TeamController {
     @GetMapping("/posts")
     public String list(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum){
         model.addAttribute("memberId","eight");
-
         service.AllPosts(model,pageNum);
         return "team/list";
     }
@@ -29,7 +28,7 @@ public class TeamController {
     public String teamsContent(Model model,@PathVariable Long boardNum){
         String sid = "one";
         //principal.getName();
-        service.post(model,boardNum,sid);
+        service.post(model,boardNum,sid,5);
         return "team/content";
     }
     //수정페이지 이동
@@ -37,16 +36,14 @@ public class TeamController {
     public String edit(Model model,@PathVariable Long boardNum){
         String sid = "one";
         //principal.getName();
-        service.post(model,boardNum,sid);
+        service.post(model,boardNum,sid,5);
         return "team/update";
     }
-
     //수정
     @PutMapping("/posts")
     public String update(@RequestParam(name = "id")Long id, MultipartFile profileimg,ArrayList<MultipartFile> files, TeamResumeDTO dto){
-        service.update(profileimg,files,dto);
+        service.update(profileimg,files,dto,5);
         String url = "redirect:/teams/posts/"+id;
-
         return url;
     }
     //삭제
