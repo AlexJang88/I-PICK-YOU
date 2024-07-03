@@ -674,3 +674,25 @@ Single Product section style start
   color: var(--light-color);
   background-color: var(--accent-color);
 }
+
+
+/*메인페이지사진정렬*/
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* 전체 화면 높이를 차지하도록 설정 */
+    margin: 0; /* body의 기본 margin 제거 */
+}
+
+.image-container {
+    display: flex; /* 내부 요소를 가로로 나열 */
+    justify-content: center; /* 내부 요소를 가운데 정렬 */
+    align-items: center; /* 세로 방향 가운데 정렬 */
+}
+
+.custom-image {
+    max-width: 100%; /* 이미지의 최대 너비를 설정 */
+    max-height: 100%; /* 이미지의 최대 높이를 설정 */
+    margin: 10px; /* 이미지 사이의 간격 설정 (원하는 만큼) */
+}
