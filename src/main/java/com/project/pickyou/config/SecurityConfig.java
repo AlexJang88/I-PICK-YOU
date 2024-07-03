@@ -33,6 +33,7 @@ public class SecurityConfig {
                         .requestMatchers("/login","/join").permitAll()
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/my/**").hasAnyRole("USER","ADMIN")
+                        .requestMatchers("/sample/**").hasRole("USER")
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().permitAll()
                 );

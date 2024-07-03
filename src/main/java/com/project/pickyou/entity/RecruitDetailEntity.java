@@ -8,18 +8,21 @@ import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Data
 @NoArgsConstructor
 @Entity
 @Table(name = "recruit_detail")
+@DynamicInsert
+@DynamicUpdate
 public class RecruitDetailEntity {
 
     @Id
     @Column(name = "recruit_id")
     private Long recruitId;
     private int wage;
-    private String content;
     private int age;
     private int gender;
     private int worker;
@@ -29,12 +32,11 @@ public class RecruitDetailEntity {
     private String detail;
 
     @Builder
-    public RecruitDetailEntity(Long recruitId, int wage, String content, int age, int gender, int worker,
+    public RecruitDetailEntity(Long recruitId, int wage , int age, int gender, int worker,
                             String manager,String contact, String qualification, String detail) {
         super();
         this.recruitId = recruitId;
         this.wage = wage;
-        this.content = content;
         this.age = age;
         this.gender = gender;
         this.worker = worker;
@@ -49,7 +51,6 @@ public class RecruitDetailEntity {
         return RecruitDetailDTO.builder()
                 .recruitId(this.recruitId)
                 .wage(this.wage)
-                .content(this.content)
                 .age(this.age)
                 .gender(this.gender)
                 .worker(this.worker)

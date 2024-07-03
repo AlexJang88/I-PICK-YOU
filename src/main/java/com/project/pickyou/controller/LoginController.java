@@ -10,5 +10,8 @@ public class LoginController {
         return "login";
     }
 
+    @GetMapping("/loginProc")
+    public String lod(){return "/sample/index1";}
+
 
 }

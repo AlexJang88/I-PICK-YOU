@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.lang.reflect.Member;
 import java.util.Date;
@@ -13,6 +16,8 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @Table(name = "recruit")
+@DynamicInsert
+@DynamicUpdate
 public class RecruitEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +40,7 @@ public class RecruitEntity {
 
 
     @OneToOne
-    @JoinColumn(name = "id",referencedColumnName = "recruitId",insertable = false,updatable = false)
+    @JoinColumn(name = "id",referencedColumnName = "recruit_id",insertable = false,updatable = false)
     private RecruitDetailEntity recruitDetail;
 
 

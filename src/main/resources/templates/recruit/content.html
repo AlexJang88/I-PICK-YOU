@@ -1,15 +1,8 @@
 <!DOCTYPE html>
-<html lang="en"
-      class="light-style layout-menu-fixed"
-      dir="ltr"
-      data-theme="theme-default"
-      data-assets-path="../assets/"
-      data-template="vertical-menu-template-free"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8"/>
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
 
     <title>Fluid - Layouts | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
 
@@ -21,8 +14,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-    <link th:href="@{https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap}"
-          rel="stylesheet"/>
+    <link th:href="@{https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap}" rel="stylesheet"/>
 
     <!-- Icons. Uncomment required icon fonts -->
     <link th:href="@{/assets/vendor/fonts/boxicons.css}" rel="stylesheet"/>
@@ -41,6 +33,58 @@
     <!-- Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!-- Config: Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file. -->
     <script th:src="@{/assets/js/config.js}"></script>
+
+    <style>
+        body {
+            font-size: 1rem;
+        }
+
+        .card {
+            padding: 20px;
+            margin: 20px;
+        }
+
+        .card h2 {
+            font-size: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .badge {
+            font-size: 1rem;
+        }
+
+        .page-link img {
+            width: 20px;
+        }
+
+        .card h4 {
+            font-size: 1.5rem;
+        }
+
+        .card div {
+            font-size: 1rem;
+        }
+
+        .card hr {
+            margin: 20px 0;
+        }
+
+        .d-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            margin: 0 5px;
+        }
+
+        .container-fluid {
+            padding: 20px;
+        }
+    </style>
 </head>
 
 <body>
@@ -54,8 +98,7 @@
         <!-- Layout container -->
         <div class="layout-page">
             <!-- Navbar -->
-            <nav class="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
-                 id="layout-navbar">
+            <nav class="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
                 <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
                     <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
                         <i class="bx bx-menu bx-sm"></i>
@@ -67,8 +110,7 @@
                     <div class="navbar-nav align-items-center">
                         <div class="nav-item d-flex align-items-center">
                             <i class="bx bx-search fs-4 lh-0"></i>
-                            <input type="text" class="form-control border-0 shadow-none"
-                                   placeholder="Search..." aria-label="Search..."/>
+                            <input type="text" class="form-control border-0 shadow-none" placeholder="Search..." aria-label="Search..."/>
                         </div>
                     </div>
                     <!-- /Search -->
@@ -76,19 +118,14 @@
                     <ul class="navbar-nav flex-row align-items-center ms-auto">
                         <!-- Place this tag where you want the button to render. -->
                         <li class="nav-item lh-1 me-3">
-                            <a class="github-button"
-                               th:href="@{https://github.com/themeselection/sneat-html-admin-template-free}"
-                               data-icon="octicon-star" data-size="large" data-show-count="true"
-                               aria-label="Star themeselection/sneat-html-admin-template-free on GitHub">Star</a>
+                            <a class="github-button" th:href="@{https://github.com/themeselection/sneat-html-admin-template-free}" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star themeselection/sneat-html-admin-template-free on GitHub">Star</a>
                         </li>
 
                         <!-- User -->
                         <li class="nav-item navbar-dropdown dropdown-user dropdown">
-                            <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);"
-                               data-bs-toggle="dropdown">
+                            <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                                 <div class="avatar avatar-online">
-                                    <img th:src="@{/assets/img/avatars/1.png}" alt=""
-                                         class="w-px-40 h-auto rounded-circle"/>
+                                    <img th:src="@{/assets/img/avatars/1.png}" alt="" class="w-px-40 h-auto rounded-circle"/>
                                 </div>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
@@ -97,8 +134,7 @@
                                         <div class="d-flex">
                                             <div class="flex-shrink-0 me-3">
                                                 <div class="avatar avatar-online">
-                                                    <img th:src="@{/assets/img/avatars/1.png}" alt=""
-                                                         class="w-px-40 h-auto rounded-circle"/>
+                                                    <img th:src="@{/assets/img/avatars/1.png}" alt="" class="w-px-40 h-auto rounded-circle"/>
                                                 </div>
                                             </div>
                                             <div class="flex-grow-1">
@@ -154,41 +190,53 @@
                 <div class="container-fluid flex-grow-1 container-p-y">
                     <!-- Layout Demo -->
                     <div class="card mb-4">
-                        <div class="d-flex align-items-start">
-                            <img th:src="@{'/upload/profile/'+${member.profile}}" width="300px" height="100px" class="mr-4" style="margin-right: 50px;">
-                            <div>
-                                <div class="d-flex align-items-center mb-2">
-                                    <span th:text="${company.job}" style="font-size: 1.5em; margin-right: 10px;">사업자업종</span>
-                                    <a class="page-link" th:href="@{/educations/favorits/{boardNum}/{target}(boardNum=${post.id},target=${member.id})}" >
-                                        <img th:if="${favoritecheck==0}" th:src="@{/img/favoritenoncheck.png}" width="30px">
-                                        <img th:if="${favoritecheck==1}" th:src="@{/img/favoritecheck.png}" width="30px">
-                                    </a>
-                                </div>
-                                <h2 th:text="${company.companyName}" style="font-size: 3em;">회사 이름</h2>
-                            </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <span th:text="${type}" class="badge bg-label-primary me-1" style="font-size: 1em; margin-right: 10px;"></span>
+                            <a class="page-link" th:href="@{/recruit/favorits/{boardNum}/{target}(boardNum=${post.id},target=${member.id})}">
+                                <img th:if="${favoritecheck==0}" th:src="@{/img/favoritenoncheck.png}" width="30px">
+                                <img th:if="${favoritecheck==1}" th:src="@{/img/favoritecheck.png}" width="30px">
+                            </a>
                         </div>
+                        <h2 th:text="${post.title}" style="font-size: 3em;">제목
+
+                        </h2>
+                        <hr/>
+                        <h4 th:text="${post.member.address}">주소</h4>
                         <hr/>
                         <div>
-                            교육비: <span th:text="${post.money}"></span><br/>
-                            연락처: <span th:text="${post.contact}"></span><br/>
-                            준비물: <span th:text="${post.preparation}"></span><br/>
-                            위치: <span th:text="${post.address}"></span>
-                            <hr/>
+                            직종: <span th:text="${post.member.companyInfo.job}"></span><br/>
+                            급여: <span th:text="${post.recruitDetail.wage}+' 원'"></span><br/>
+                            연령/성별: <span th:text="${post.recruitDetail.age}+'대 / '+${gender}"></span><br/>
+                            모집 인원 : <span th:text="${post.recruitDetail.worker}"></span><br/>
+                            담당자 :<span th:text="${post.recruitDetail.manager}"></span><br/>
+                            연락처 :<span th:text="${post.recruitDetail.contact}"></span><br/>
                         </div>
-                        상세내용: <span th:utext="${post.content}"></span><br/>
+                        <h2>근무조건</h2>
+                        <br/>
+                        <br/>
+                        <span th:text="${post.recruitDetail.qualification}"></span><br/>
+                        <h2>상세 모집 요강</h2>
+                        <br/>
+                        <span th:utext="${post.recruitDetail.detail}"></span>
                         <div th:each="img : ${imgList}">
                             <img th:src="@{'/upload/image/'+${img.boardType}+'/'+${img.boardNum}+'/'+${img.name}}" style="max-width: 100%;">
                         </div>
-                        <br/>
+                        <hr/>
+                         이력서를 작성하면 간편지원이 가능합니다!
+                        <hr/>
+                        <form th:action="@{/recruit/apply/{boardNum}(boardNum=${post.id})}" th:method="post">
+
+                            <button type="submit" class="btn btn-primary"> 간편 지원하기 </button>
+                        </form>
                     </div>
                     <!--/ Layout Demo -->
                 </div>
                 <!-- / Content -->
                 <div class="d-flex justify-content-end mb-3">
-                    <form th:action="@{/educations/posts/edit/{boardNum}(boardNum=${post.id})}" th:method="get">
+                    <form th:action="@{/recruit/posts/edit/{boardNum}(boardNum=${post.id})}" th:method="get">
                         <button class="btn btn-primary" type="submit">수정하기</button>
                     </form>
-                    <form th:action="@{/educations/posts}" th:method="delete">
+                    <form th:action="@{/recruit/posts}" th:method="delete">
                         <input type="hidden" name="id" th:value="${post.id}">
                         <button class="btn btn-primary" type="submit">삭제하기</button>
                     </form>
@@ -199,17 +247,16 @@
                 <div class="content-backdrop fade"></div>
             </div>
             <!-- Content wrapper -->
-
+        </div>
+        <!--content wrapper-->
+    </div>
             <!-- Overlay -->
             <div class="layout-overlay layout-menu-toggle"></div>
         </div>
-        <!-- / Layout wrapper -->
+
 
         <div class="buy-now">
-            <a th:href="@{https://themeselection.com/products/sneat-bootstrap-html-admin-template/}"
-               target="_blank"
-               class="btn btn-danger btn-buy-now"
-            >Upgrade to Pro</a>
+            <a th:href="@{https://themeselection.com/products/sneat-bootstrap-html-admin-template/}" target="_blank" class="btn btn-danger btn-buy-now">Upgrade to Pro</a>
         </div>
         <!-- Core JS -->
         <!-- build:js assets/vendor/js/core.js -->
@@ -217,17 +264,12 @@
         <script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
         <script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
         <script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
-
         <script th:src="@{/assets/vendor/js/menu.js}"></script>
         <!-- endbuild -->
-
         <!-- Vendors JS -->
-
         <!-- Main JS -->
         <script th:src="@{/assets/js/main.js}"></script>
-
         <!-- Page JS -->
-
         <!-- Place this tag in your head or just before your close body tag. -->
         <script async defer th:src="@{https://buttons.github.io/buttons.js}"></script>
 </body>

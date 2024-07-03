@@ -143,59 +143,114 @@
                         <div class="col-xxl">
                             <div class="card mb-4">
                                 <div class="card-body">
-                                    <form id="educationForm" th:method="put" th:action="@{/educations/posts}" enctype="multipart/form-data" novalidate onsubmit="return validateForm()">
+                                    <form id="recruitForm" th:method="post" th:action="@{/recruit/posts}" enctype="multipart/form-data" novalidate onsubmit="return validateForm()">
                                         <div class="row mb-3">
-                                            <label class="col-sm-2 col-form-label" for="title">제목</label>
+                                            <label class="col-sm-2 col-form-label" for="status">공고 종류</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control" id="title" name="title" th:value="${post.title}" required/>
+                                                <input type="hidden" name="id" th:value="${post.id}">
+                                                <input type="hidden" name="recruitId" th:value="${post.id}">
+                                                <input type="hidden" name="status" id="status"th:value="${post.status}">
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <label class="col-sm-2 col-form-label" for="money">교육비</label>
+                                            <label class="col-sm-2 col-form-label" for="title">제목</label>
                                             <div class="col-sm-10">
-                                                <input type="number" class="form-control" id="money" name="money" th:value="${post.money}" required/>
+                                                <input type="text" th:value="${post.title}" class="form-control" id="title" name="title" placeholder="제목을 작성해주세요" required/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="wage">급여</label>
+                                            <div class="col-sm-10">
+                                                <input type="number" th:value="${post.recruitDetail.wage}" class="form-control" id="wage" name="wage" placeholder="숫자만 작성해주세요" required/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="age">연령</label>
+                                            <div class="col-sm-10">
+                                                <input type="number" th:value="${post.recruitDetail.age}" class="form-control" id="age" name="age" placeholder="나이대를 숫자로 작성해주세요 ex) 30 : 30대" required/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label">모집 성별</label>
+                                            <div class="col-sm-10">
+                                                <input type="hidden" id="gender" th:value="${post.recruitDetail.gender}">
+                                                <div class="form-check form-check-inline">
+                                                    <input type="radio" id="all" name="gender"class="form-check-input" value="1"/>
+                                                    <label class="form-check-label" for="all" >남여무관</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input type="radio" id="male" name="gender"class="form-check-input" value="2"/>
+                                                    <label class="form-check-label" for="male">남</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input type="radio" id="female" name="gender"class="form-check-input" value="3"/>
+                                                    <label class="form-check-label" for="female">여</label>
+                                                </div>
+
+                                            </div>
+
+
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="worker">모집인원 수</label>
+                                            <div class="col-sm-10">
+                                                <input type="number" th:value="${post.recruitDetail.worker}" id="worker" name="worker" class="form-control" placeholder="모집인원 수를 적어주세요" required/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="manager">담당자</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" th:value="${post.recruitDetail.manager}" id="manager" name="manager" class="form-control" placeholder="담당자를 적어주세요" required/>
                                             </div>
                                         </div>
                                         <div class="row mb-3">
                                             <label class="col-sm-2 col-form-label" for="contact">연락처</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control" id="contact" name="contact" th:value="${post.contact}" required/>
+                                                <input type="text" th:value="${post.recruitDetail.contact}" id="contact" name="contact" class="form-control" placeholder="담당자 연락처 적어주세요" required/>
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <label class="col-sm-2 col-form-label" for="preparation">준비물</label>
+                                            <label class="col-sm-2 col-form-label" for="qualification">자격조건</label>
                                             <div class="col-sm-10">
-                                                <div class="input-group input-group-merge">
-                                                    <input type="text" id="preparation" name="preparation" class="form-control" th:value="${post.preparation}" required/>
-                                                </div>
+                                                <input type="text" th:value="${post.recruitDetail.qualification}" id="qualification" name="qualification" class="form-control" placeholder="자격조건을 적어주세요" required/>
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <label class="col-sm-2 col-form-label" for="address">주소</label>
+                                            <label class="col-sm-2 col-form-label" for="detail">근무조건</label>
                                             <div class="col-sm-10">
-                                                <input type="text" id="address" name="address" class="form-control" th:value="${post.address}" required/>
+                                                <input type="text" th:value="${post.recruitDetail.detail}" id="detail" name="detail" class="form-control" placeholder="근무조건을 적어주세요" required/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="content">본문 내용</label>
+                                            <div class="col-sm-10">
+                                                <textarea id="content" th:utext="${post.recruitDetail.wage}" name="content" class="form-control" placeholder="내용을 작성해주세요" required></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="startDateParam">모집시작일</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" th:value="${#dates.format(post.startDate,'yyyy-MM-dd')}" id="startDateParam" name="startDateParam" class="form-control"  readonly/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="endDateParam">모집마감일</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" th:value="${#dates.format(post.endDate,'yyyy-MM-dd')}" id="endDateParam" name="endDateParam" class="form-control"  readonly/>
                                             </div>
                                         </div>
                                         <div class="row mb-3">
                                             <label class="col-sm-2 col-form-label" for="files">사진등록</label>
                                             <div class="col-sm-10">
                                                 <div class="input-group input-group-merge">
-                                                    <input type="file" id="files" name="files" class="form-control" multiple="multiple" accept="image/*" required onclick="uploadwarn()"/>
+                                                    <input type="file" id="files" name="files" class="form-control"  multiple="multiple" accept="image/*" required/>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row mb-3">
-                                            <label class="col-sm-2 col-form-label" for="content">상세 내용</label>
-                                            <div class="col-sm-10">
-                                                <textarea id="content" class="form-control" name="content" th:utext="${post.content}" required></textarea>
-                                            </div>
-                                        </div>
+
                                         <div class="row justify-content-end">
                                             <div class="col-sm-10">
-                                                <input type="hidden" name="id" th:value="${post.id}">
-                                                <input type="hidden" name="companyId" th:value="${post.companyId}">
-                                                <input type="hidden" name="readCount" th:value="${post.readCount}">
-                                                <button type="submit" class="btn btn-primary">수정하기</button>
+                                                <button type="submit" class="btn btn-primary">Send</button>
                                             </div>
                                         </div>
                                     </form>
@@ -247,34 +302,43 @@
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 
 <script>
-    function uploadwarn(){
-    alert("사진을 선택하면 기존사진은 사라집니다");
-    }
-    function validateForm() {
-        const form = document.getElementById('educationForm');
-        const money = form.money.value.trim();
-        const contact = form.contact.value.trim();
-        const preparation = form.preparation.value.trim();
-        const address = form.address.value.trim();
-        const files = form.files.files;
-        const content = form.content.value.trim();
-        const title = form.title.value.trim();
-
-        if (!money || !contact || !preparation || !address || !content || !title) {
-            alert('모두 입력해주세요');
-            return false;
-        }
-
-
-        for (let i = 0; i < files.length; i++) {
-            if (!files[i].type.startsWith('image/')) {
-                alert('이미지 파일만 등록할 수 있습니다.');
-                return false;
-            }
-        }
-
-        return true;
-    }
+    window.onload= function() {
+     var postStatus =  document.getElementById('gender');
+     var radios = document.getElementsByName('gender');
+     radios.forEach(function(radio) {
+         if (parseInt(radio.value) === postStatus) {
+             radio.checked = true;
+         }
+     });
+ };
+ function validateForm() {
+     const form = document.getElementById('recruitForm');
+     const status = form.status.value.trim();
+     const wage = form.wage.value.trim();
+     const age = form.age.value.trim();
+     const gender = form.gender.value.trim();
+     const contact = form.contact.value.trim();
+     const worker = form.worker.value.trim();
+     const manager = form.manager.value.trim();
+     const qualification = form.qualification.value.trim();
+     const detail = form.detail.value.trim();
+     const content = form.content.value.trim();
+     const title = form.title.value.trim();
+     const startDate = form.startDate.value.trim();
+     const endDate = form.endDate.value.trim();
+     const files = form.files.files;
+     if (!status || !wage || !age || !gender || !contact || !worker || !manager || !qualification|| !detail || !content || !title ||!startDate ||!endDate) {
+         alert('모두 입력해주세요');
+         return false;
+     }
+     for (let i = 0; i < files.length; i++) {
+         if (!files[i].type.startsWith('image/')) {
+             alert('이미지 파일만 등록할 수 있습니다.');
+             return false;
+         }
+     }
+     return true;
+ }
 </script>
 
 </body>

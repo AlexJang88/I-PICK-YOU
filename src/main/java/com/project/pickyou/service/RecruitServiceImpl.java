@@ -1,13 +1,8 @@
 package com.project.pickyou.service;
 
 import com.project.pickyou.dto.*;
-import com.project.pickyou.entity.ImageEntity;
-import com.project.pickyou.entity.PickEntity;
-import com.project.pickyou.entity.PickID;
-import com.project.pickyou.entity.RecruitEntity;
-import com.project.pickyou.repository.ImageJPARepository;
-import com.project.pickyou.repository.PickJPARepository;
-import com.project.pickyou.repository.RecruitJPARepository;
+import com.project.pickyou.entity.*;
+import com.project.pickyou.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -30,14 +26,17 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class RecruitServiceImpl implements RecruitService{
+public class RecruitServiceImpl implements RecruitService {
     @Value("${img.upload.path}")
     private String imgUploadPath;
 
 
     private final RecruitJPARepository recruitJPA;
+    private final RecruitStateJPARepository recruitStateJPA;
     private final ImageJPARepository imageJPA;
     private final PickJPARepository pickJPA;
+    private final ResumeJPARepository resumeJPA;
+    private final RecruitDetailJPARepository recruitDetailJPA;
 
     @Override
     public void AllPosts(Model model, int pageNum) {
@@ -69,12 +68,14 @@ public class RecruitServiceImpl implements RecruitService{
     }
 
     @Override
-    public void post(Model model, Long num,String sid) {
+    public void post(Model model, Long num, String sid) {
         Optional<RecruitEntity> post = recruitJPA.findById(num);
         RecruitDTO edto = new RecruitDTO();
         CompanyInfoDTO cidto = new CompanyInfoDTO();
         MemberDTO mdto = new MemberDTO();
         List<ImageEntity> imageList = Collections.emptyList();
+        String gender = "성별 무관";
+        String type = "일반";
         int favoritecheck = 0;
 
         if (post.isPresent()) {
@@ -83,15 +84,25 @@ public class RecruitServiceImpl implements RecruitService{
             cidto = post.get().getMember().getCompanyInfo().toCompanyInfoDTO();
             mdto = post.get().getMember().toMemberDTO();
             PickID key = new PickID(sid, mdto.getId());
-            edto.setContent(edto.getContent().replace("<br>","\r\n"));
+            edto.setContent(edto.getContent().replace("<br>", "\r\n"));
             Optional<PickEntity> pickcheck = pickJPA.findById(key);
             if (pickcheck.isPresent()) {
                 favoritecheck = 1;
             }
+            if (post.get().getRecruitDetail().getGender() == 1) {
+                gender = "남성";
+            } else if (post.get().getRecruitDetail().getGender() == 2) {
+                gender = "여성";
+            }
+            if (post.get().getStatus() == 2) {
+                type = "긴급";
+            }
+            model.addAttribute("type", type);
+            model.addAttribute("gender", gender);
             model.addAttribute("favoritecheck", favoritecheck);
             model.addAttribute("member", mdto);
             model.addAttribute("company", cidto);
-            model.addAttribute("post", edto);
+            model.addAttribute("post", post.get());
             model.addAttribute("imgList", imageList);
         }
 
@@ -109,27 +120,54 @@ public class RecruitServiceImpl implements RecruitService{
 
     @Override
     @Transactional
-    public void writePost(List<MultipartFile> files, RecruitDTO dto) {
-        UUID uid = UUID.randomUUID();
-        Long eduNum = recruitJPA.getAutoIncrementValue("pickyou", "education");
-        recruitJPA.save(dto.toRecruitEntity());
+    public void writePost(List<MultipartFile> files, RecruitDTO rdto, RecruitDetailDTO rddto, int BoardType) {
+
+        Long recruitNum = recruitJPA.getAutoIncrementValue("pickyou", "recruit");
+        rddto.setRecruitId(recruitNum);
+
+        recruitJPA.save(rdto.toRecruitEntity());
+        recruitDetailJPA.save(rddto.toRecruitDetailEntity());
+
+        if (!CollectionUtils.isEmpty(files)) {
+            filesUpload(files, BoardType, recruitNum, imgUploadPath);
+        }
+
+    }
+
+    public String profileUpload(MultipartFile file, Long BoardNum, String uploadPath) {
+        String profileName = "default.jpeg";
+        if (file.getContentType().startsWith("image")) {
+            String originalName = file.getOriginalFilename();
+            String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
+            String uuid = UUID.randomUUID().toString();
+            String ext = originalName.substring(originalName.lastIndexOf("."));
+            profileName = uuid + ext;
+            String saveName = uploadPath + File.separator + uuid + ext;
+            Path savePath = Paths.get(saveName);
+            try {
+                file.transferTo(savePath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return profileName;
+    }
+
+    public void filesUpload(List<MultipartFile> files, int boardType, Long BoardNum, String uploadPath) {
         if (!files.isEmpty()) {
             for (MultipartFile mf : files) {
                 if (mf.getContentType().startsWith("image")) {
                     String originalName = mf.getOriginalFilename();
                     String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
-                    System.out.println("================folderBoardnum" + eduNum);
-                    String folderPath = makeFolder(imgUploadPath, 2, eduNum);
+                    String folderPath = makeFolder(imgUploadPath, boardType, BoardNum);
                     String uuid = UUID.randomUUID().toString();
                     String ext = originalName.substring(originalName.lastIndexOf("."));
                     String saveName = folderPath + File.separator + uuid + ext;
                     ImageDTO idto = new ImageDTO();
-                    idto.setBoardNum(eduNum);
-                    idto.setBoardType(2);
+                    idto.setBoardNum(BoardNum);
+                    idto.setBoardType(boardType);
                     idto.setName(uuid + ext);
-                    System.out.println("================= iamge before");
                     imageJPA.save(idto.toImageEntity());
-                    System.out.println("================= iamge after");
                     Path savePath = Paths.get(imgUploadPath, saveName);
                     try {
                         mf.transferTo(savePath);
@@ -144,7 +182,6 @@ public class RecruitServiceImpl implements RecruitService{
     @Override
     @Transactional
     public void deletePost(Long boardNum) {
-        System.out.println("=========deletenum1" + boardNum);
         Optional<RecruitEntity> education = recruitJPA.findById(boardNum);
         if (education.isPresent()) {
             File folder = new File(imgUploadPath + File.separator + 2 + File.separator + boardNum);
@@ -165,52 +202,24 @@ public class RecruitServiceImpl implements RecruitService{
     }
 
     @Override
-    public void update(List<MultipartFile> files, RecruitDTO dto) {
+    public void update(List<MultipartFile> files, RecruitDTO dto,int boardType) {
         Optional<RecruitEntity> education = recruitJPA.findById(dto.getId());
-        int check=0;
-
         if (education.isPresent()) {
-            for (MultipartFile mf : files) {
-                if(!mf.isEmpty()) {
-                    if(check==0) {
-                        File folder = new File(imgUploadPath + File.separator + 2 + File.separator + dto.getId());
-                        try {
-                            if (folder.exists()) {
-                                FileUtils.cleanDirectory(folder);
-                            }
-                            if (folder.isDirectory()) {
-                                folder.delete();
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
+            if (!CollectionUtils.isEmpty(files)) {
+                for (MultipartFile mf : files) {
+                    File folder = new File(imgUploadPath + File.separator + 2 + File.separator + dto.getId());
+                    try {
+                        if (folder.exists()) {
+                            FileUtils.cleanDirectory(folder);
                         }
-                        imageJPA.deleteAllByBoardTypeAndBoardNum(2, dto.getId());
-                        check++;
-                    }
-
-                    if (mf.getContentType().startsWith("image")) {
-                        String originalName = mf.getOriginalFilename();
-                        String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
-                        System.out.println("================folderBoardnum" + dto.getId());
-                        String folderPath = makeFolder(imgUploadPath, 2, dto.getId());
-                        String uuid = UUID.randomUUID().toString();
-                        String ext = originalName.substring(originalName.lastIndexOf("."));
-                        String saveName = folderPath + File.separator + uuid + ext;
-                        ImageDTO idto = new ImageDTO();
-                        idto.setBoardNum(dto.getId());
-                        idto.setBoardType(2);
-                        idto.setName(uuid + ext);
-                        System.out.println("================= iamge before");
-                        imageJPA.save(idto.toImageEntity());
-                        System.out.println("================= iamge after");
-                        Path savePath = Paths.get(imgUploadPath, saveName);
-                        try {
-                            mf.transferTo(savePath);
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        if (folder.isDirectory()) {
+                            folder.delete();
                         }
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-
+                    imageJPA.deleteAllByBoardTypeAndBoardNum(2, dto.getId());
+                   filesUpload(files,boardType,dto.getId(),imgUploadPath);
                 }
             }
         }
@@ -219,7 +228,7 @@ public class RecruitServiceImpl implements RecruitService{
 
     @Override
     public int favoriteCheck(PickDTO dto) {
-        int favoritecheck =0;
+        int favoritecheck = 0;
         PickID key = new PickID();
         key.setPicker(dto.getPicker());
         key.setTarget(dto.getTarget());
@@ -228,8 +237,26 @@ public class RecruitServiceImpl implements RecruitService{
             pickJPA.deleteById(key);
         } else {
             pickJPA.save(dto.toPickEntity());
-            favoritecheck=1;
+            favoritecheck = 1;
         }
         return favoritecheck;
+    }
+
+    @Override
+    public int recruit(Long boardNum, String id) {
+        int result = 0;
+        Optional<ResumeEntity> resume = resumeJPA.findByMemberIdAndRegType(id, 1);
+        if (resume.isPresent()) {
+            Optional<RecruitStateEntity> state = recruitStateJPA.findByRecruitIdAndMemberId(boardNum, id);
+            if (state.isEmpty()) {
+                RecruitStateDTO rsdto = new RecruitStateDTO();
+                rsdto.setMemberId(id);
+                rsdto.setRecruitId(boardNum);
+                recruitStateJPA.save(rsdto.toRecruitStateEntity());
+                result = 1;
+            }
+        }
+
+        return result;
     }
 }
