@@ -10,6 +10,9 @@ import com.project.pickyou.repository.TrainningJPARepository;
 import jakarta.transaction.Transactional;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,13 +49,61 @@ public class TrainningServiceImpl implements TrainningService{
 
     // 훈련소 리스트 가져오기
     @Override
-    public void trainningCompany(Model model) {
+    public void trainningCompany(Model model, int pageNum) {
 
-        List<TrainningEntity> trainninglist = trainningJPARepository.findAll();
+        int pageSize = 9;
+        Long longCount = trainningJPARepository.count();
+        int count = longCount.intValue();
+
+        Sort sort = Sort.by(Sort.Order.desc("reg"));  //내림차순
+        //아래 페이지 출력시 0페이지부터 진행
+        Page<TrainningEntity> page = trainningJPARepository.findAll(PageRequest.of(pageNum - 1, pageSize, sort));
+
+        List<TrainningEntity> trainninglist = page.getContent();
 
         model.addAttribute("trainninglist", trainninglist);
+        model.addAttribute("count", count);
+        model.addAttribute("pageNum", pageNum);
+        model.addAttribute("pageSize", pageSize);
+
+        int pageCount = count / pageSize + (count % pageSize == 0 ? 0 : 1);
+        int startPage = (pageNum - 1) / 10 * 10 + 1;
+        int pageBlock = 10;  // 페이징(이전/다음)을 몇 개 단위로 끊을지
+        int endPage = startPage + pageBlock - 1;
+        if (endPage > pageCount) {
+            endPage = pageCount;
+        }
+
+        model.addAttribute("pageCount", pageCount);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("pageBlock", pageBlock);
+        model.addAttribute("endPage", endPage);
+
+
+        /*List<TrainningEntity> trainninglist = trainningJPARepository.findAll();
+
+        model.addAttribute("trainninglist", trainninglist);*/
     }
     // 훈련소 리스트 가져오기
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -192,13 +243,12 @@ public class TrainningServiceImpl implements TrainningService{
         return folderPath;
     }
 
-
+    /*수정하기여기서부터*/
     @Override
     @Transactional
     public void trainningUpdate(Long trainnignum, TrainningDTO trainningDTO, MultipartFile[] files) {  //사진 및 내용 업데이트
         Optional<TrainningEntity> trainningUpdate =  trainningJPARepository.findById(trainnignum);
             int check = 0;
-
 
             //기존이미지가 남아있다면
         if (trainningUpdate.isPresent()) {  //해당 번호의 값이 있다면 (위에서 댕겨옴)
@@ -254,6 +304,10 @@ public class TrainningServiceImpl implements TrainningService{
         }
         trainningJPARepository.save(trainningDTO.toTrainningEntity());  // 이건 내용새로 업데이트
     }
+    /*수정하기여기까지*/
+
+
+
 
 
 }

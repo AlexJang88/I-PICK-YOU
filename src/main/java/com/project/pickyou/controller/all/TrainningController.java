@@ -23,10 +23,10 @@ public class TrainningController {
     }
 
     @GetMapping("/trainningmain")
-    public String trainningmain(Model model){  //훈련소 정보 보는곳
+    public String trainningmain(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum){  //훈련소 정보 보는곳
 
 
-        trainningService.trainningCompany(model);
+        trainningService.trainningCompany(model, pageNum);
 
         return "/trainning/trainningmain";
     }
@@ -106,6 +106,7 @@ public class TrainningController {
 
         return "redirect:/trainning/trainningmain";
         }
+
 
 
 
