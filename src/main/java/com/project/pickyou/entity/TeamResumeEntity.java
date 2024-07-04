@@ -5,6 +5,10 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 
@@ -12,10 +16,14 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @Table(name = "team_resume")
+@DynamicUpdate
+@DynamicInsert
 public class TeamResumeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "member_id")
     private String memberId;
     private String job;
@@ -28,9 +36,15 @@ public class TeamResumeEntity {
     private String advantage;
     private String profile;
     private int status;
+    @UpdateTimestamp
     private Date reg;
 
-    @Builder
+
+    @OneToOne
+    @JoinColumn(name = "member_id",referencedColumnName = "id",insertable = false,updatable = false)
+    private MemberEntity member;
+
+ @Builder
     public TeamResumeEntity(Long id, String memberId, String job, String teamName, String address, int number, String phone, String introduction, String advantage, String profile, int status, Date reg) {
         this.id = id;
         this.memberId = memberId;

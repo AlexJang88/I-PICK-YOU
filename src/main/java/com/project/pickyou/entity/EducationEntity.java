@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 
@@ -13,6 +16,8 @@ import java.util.Date;
 @Entity
 @NoArgsConstructor
 @Table(name = "education")
+@DynamicInsert
+@DynamicUpdate
 public class EducationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +32,15 @@ public class EducationEntity {
     private String content;
     @Column(name = "read_count")
     private int readCount;
+    @UpdateTimestamp
     private Date reg;
+
+
+    @OneToOne
+    @JoinColumn(name = "company_id",referencedColumnName = "id",insertable = false,updatable = false)
+    private MemberEntity member;
+
+
 
     @Builder
     public EducationEntity(Long id, String title, String companyId, int money, String contact, String preparation, String address, String content, int readCount, Date reg) {

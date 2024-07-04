@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+
+    <title>Fluid - Layouts | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+
+    <meta name="description" content=""/>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon/favicon.ico}"/>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet"/>
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link th:href="@{/assets/vendor/fonts/boxicons.css}" rel="stylesheet"/>
+
+    <!-- Core CSS -->
+    <link th:href="@{/assets/vendor/css/core.css}" rel="stylesheet" class="template-customizer-core-css"/>
+    <link th:href="@{/assets/vendor/css/theme-default.css}" rel="stylesheet" class="template-customizer-theme-css"/>
+    <link th:href="@{/assets/css/demo.css}" rel="stylesheet"/>
+
+    <!-- Vendors CSS -->
+    <link th:href="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css}" rel="stylesheet"/>
+
+    <!-- Helpers -->
+    <script th:src="@{/assets/vendor/js/helpers.js}"></script>
+
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script th:src="@{/assets/js/config.js}"></script>
+</head>
+
+<body>
+<!-- Layout wrapper -->
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+        <!-- Menu -->
+        <div th:include="~{design/side-bar :: side}"></div>
+        <!-- / Menu -->
+
+        <!-- Layout container -->
+        <div class="layout-page">
+            <!-- Navbar -->
+            <nav class="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
+                <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+                    <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+                        <i class="bx bx-menu bx-sm"></i>
+                    </a>
+                </div>
+
+                <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+                    <!-- Search -->
+                    <div class="navbar-nav align-items-center">
+                        <div class="nav-item d-flex align-items-center">
+                            <i class="bx bx-search fs-4 lh-0"></i>
+                            <input type="text" class="form-control border-0 shadow-none" placeholder="Search..." aria-label="Search..."/>
+                        </div>
+                    </div>
+                    <!-- /Search -->
+
+                    <ul class="navbar-nav flex-row align-items-center ms-auto">
+                        <!-- Place this tag where you want the button to render. -->
+                        <li class="nav-item lh-1 me-3">
+                            <a class="github-button" th:href="@{https://github.com/themeselection/sneat-html-admin-template-free}" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star themeselection/sneat-html-admin-template-free on GitHub">Star</a>
+                        </li>
+
+                        <!-- User -->
+                        <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                            <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+                                <div class="avatar avatar-online">
+                                    <img th:src="@{/assets/img/avatars/1.png}" alt="" class="w-px-40 h-auto rounded-circle"/>
+                                </div>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <div class="d-flex">
+                                            <div class="flex-shrink-0 me-3">
+                                                <div class="avatar avatar-online">
+                                                    <img th:src="@{/assets/img/avatars/1.png}" alt="" class="w-px-40 h-auto rounded-circle"/>
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <span class="fw-semibold d-block">John Doe</span>
+                                                <small class="text-muted">Admin</small>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <div class="dropdown-divider"></div>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="bx bx-user me-2"></i>
+                                        <span class="align-middle">My Profile</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="bx bx-cog me-2"></i>
+                                        <span class="align-middle">Settings</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <span class="d-flex align-items-center align-middle">
+                                            <i class="flex-shrink-0 bx bx-credit-card me-2"></i>
+                                            <span class="flex-grow-1 align-middle">Billing</span>
+                                            <span class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <div class="dropdown-divider"></div>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="auth-login-basic.html">
+                                        <i class="bx bx-power-off me-2"></i>
+                                        <span class="align-middle">Log Out</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!--/ User -->
+                    </ul>
+                </div>
+            </nav>
+            <!-- / Navbar -->
+
+            <!-- Content wrapper -->
+            <div class="content-wrapper">
+                <!-- Content -->
+                <div class="container-fluid flex-grow-1 container-p-y">
+                    <!-- Layout Demo -->
+                    <div class="row">
+                        <!-- Basic Layout -->
+                        <div class="col-xxl">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <form id="recruitForm" th:method="put" th:action="@{/recruit/posts}" enctype="multipart/form-data" novalidate onsubmit="return validateForm()">
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="status">공고 종류</label>
+                                            <div class="col-sm-10">
+                                                <input type="hidden" name="id" th:value="${post.id}">
+                                                <input type="hidden" name="recruitId" th:value="${post.id}">
+                                                <input type="hidden" name="status" id="status"th:value="${post.status}">
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="title">제목</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" th:value="${post.title}" class="form-control" id="title" name="title" placeholder="제목을 작성해주세요" required/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="wage">급여</label>
+                                            <div class="col-sm-10">
+                                                <input type="number" th:value="${post.recruitDetail.wage}" class="form-control" id="wage" name="wage" placeholder="숫자만 작성해주세요" required/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="age">연령</label>
+                                            <div class="col-sm-10">
+                                                <input type="number" th:value="${post.recruitDetail.age}" class="form-control" id="age" name="age" placeholder="나이대를 숫자로 작성해주세요 ex) 30 : 30대" required/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label">모집 성별</label>
+                                            <div class="col-sm-10">
+                                                <input type="hidden" id="gender" th:value="${post.recruitDetail.gender}">
+                                                <div class="form-check form-check-inline">
+                                                    <input type="radio" id="all" name="gender"class="form-check-input" value="1"/>
+                                                    <label class="form-check-label" for="all" >남여무관</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input type="radio" id="male" name="gender"class="form-check-input" value="2"/>
+                                                    <label class="form-check-label" for="male">남</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input type="radio" id="female" name="gender"class="form-check-input" value="3"/>
+                                                    <label class="form-check-label" for="female">여</label>
+                                                </div>
+
+                                            </div>
+
+
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="worker">모집인원 수</label>
+                                            <div class="col-sm-10">
+                                                <input type="number" th:value="${post.recruitDetail.worker}" id="worker" name="worker" class="form-control" placeholder="모집인원 수를 적어주세요" required/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="manager">담당자</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" th:value="${post.recruitDetail.manager}" id="manager" name="manager" class="form-control" placeholder="담당자를 적어주세요" required/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="contact">연락처</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" th:value="${post.recruitDetail.contact}" id="contact" name="contact" class="form-control" placeholder="담당자 연락처 적어주세요" required/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="qualification">자격조건</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" th:value="${post.recruitDetail.qualification}" id="qualification" name="qualification" class="form-control" placeholder="자격조건을 적어주세요" required/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="detail">근무조건</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" th:value="${post.recruitDetail.detail}" id="detail" name="detail" class="form-control" placeholder="근무조건을 적어주세요" required/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="content">본문 내용</label>
+                                            <div class="col-sm-10">
+                                                <textarea id="content" th:utext="${post.content}" name="content" class="form-control" placeholder="내용을 작성해주세요" required></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="startDateParam">모집시작일</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" th:value="${#dates.format(post.startDate,'yyyy-MM-dd')}" id="startDateParam" name="startDateParam" class="form-control"  readonly/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="endDateParam">모집마감일</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" th:value="${#dates.format(post.endDate,'yyyy-MM-dd')}" id="endDateParam" name="endDateParam" class="form-control"  readonly/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="files">사진등록</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group input-group-merge">
+                                                    <input type="file" id="files" name="files" class="form-control"  multiple="multiple" accept="image/*" required/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row justify-content-end">
+                                            <div class="col-sm-10">
+                                                <input type="hidden" name="memberId" th:value="${post.memberId}">
+                                                <button type="submit" class="btn btn-primary">Send</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!--/ Layout Demo -->
+                    </div>
+                    <!-- / Content -->
+
+                    <!-- Footer -->
+                    <div th:include="~{design/footer :: footer}"></div>
+                    <!-- / Footer -->
+
+                    <div class="content-backdrop fade"></div>
+                </div>
+                <!-- Content wrapper -->
+            </div>
+            <!-- / Layout page -->
+        </div>
+
+        <!-- Overlay -->
+        <div class="layout-overlay layout-menu-toggle"></div>
+    </div>
+    <!-- / Layout wrapper -->
+
+    <div class="buy-now">
+        Upgrade to Pro
+    </div>
+</div>
+<!-- Core JS -->
+<!-- build:js assets/vendor/js/core.js -->
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<!-- endbuild -->
+
+<!-- Vendors JS -->
+
+<!-- Main JS -->
+<script th:src="@{/assets/js/main.js}"></script>
+
+<!-- Page JS -->
+
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+<script>
+    window.onload= function() {
+     var postStatus =  document.getElementById('gender');
+     var radios = document.getElementsByName('gender');
+     radios.forEach(function(radio) {
+         if (parseInt(radio.value) === postStatus) {
+             radio.checked = true;
+         }
+     });
+ };
+ function validateForm() {
+     const form = document.getElementById('recruitForm');
+     const status = form.status.value.trim();
+     const wage = form.wage.value.trim();
+     const age = form.age.value.trim();
+     const gender = form.gender.value.trim();
+     const contact = form.contact.value.trim();
+     const worker = form.worker.value.trim();
+     const manager = form.manager.value.trim();
+     const qualification = form.qualification.value.trim();
+     const detail = form.detail.value.trim();
+     const content = form.content.value.trim();
+     const title = form.title.value.trim();
+     const startDate = form.startDate.value.trim();
+     const endDate = form.endDate.value.trim();
+     const files = form.files.files;
+     if (!status || !wage || !age || !gender || !contact || !worker || !manager || !qualification|| !detail || !content || !title ||!startDate ||!endDate) {
+         alert('모두 입력해주세요');
+         return false;
+     }
+     for (let i = 0; i < files.length; i++) {
+         if (!files[i].type.startsWith('image/')) {
+             alert('이미지 파일만 등록할 수 있습니다.');
+             return false;
+         }
+     }
+     return true;
+ }
+</script>
+
+</body>
+</html>

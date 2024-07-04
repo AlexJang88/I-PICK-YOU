@@ -1,9 +1,11 @@
 package com.project.pickyou.dto;
 
+
 import com.project.pickyou.entity.TrainningEntity;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -21,6 +23,7 @@ public class TrainningDTO {
     private String contact;
     private int readCount;
     private String content;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private Date reg;
 
     @Builder

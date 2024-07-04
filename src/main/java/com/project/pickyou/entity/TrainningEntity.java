@@ -1,12 +1,18 @@
 package com.project.pickyou.entity;
 
+
+
+
 import com.project.pickyou.dto.TrainningDTO;
-import jakarta.persistence.Entity;
 import jakarta.persistence.*;
-import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -14,6 +20,8 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "trainning")
+@DynamicInsert   //인서트시에 사용
+@DynamicUpdate    // 업데이트시에 사용
 public class TrainningEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +38,8 @@ public class TrainningEntity {
     @Column(name = "read_count")
     private int readCount;
     private String content;
+    //@CreationTimestamp  <- 만약 디폴트값이 없다면 사용하는것
+    @UpdateTimestamp   //업데이트시 필요 <- 디폴트 값으로 들어가있기때문에
     private Date reg;
 
     @Builder
@@ -48,7 +58,7 @@ public class TrainningEntity {
         this.reg = reg;
     }
 
-    public TrainningDTO toTrainingDTO() {
+    public TrainningDTO toTrainningDTO() {
         return TrainningDTO.builder()
                 .id(this.id)
                 .companyId(this.companyId)

@@ -204,4 +204,9 @@ public class SampleController {
         return "sample2/index";
     }
 
+    @RequestMapping("/designContent")
+    public String index3(){
+        return "design/content";
+    }
+
 }
