@@ -35,6 +35,7 @@ public class TeamController {
     @GetMapping("posts/edit/{boardNum}")
     public String edit(Model model,@PathVariable Long boardNum){
         String sid = "one";
+
         //principal.getName();
         service.post(model,boardNum,sid,5);
         return "team/update";
@@ -42,14 +43,18 @@ public class TeamController {
     //수정
     @PutMapping("/posts")
     public String update(@RequestParam(name = "id")Long id, MultipartFile profileimg,ArrayList<MultipartFile> files, TeamResumeDTO dto){
-        service.update(profileimg,files,dto,5);
+        for(MultipartFile mf:files){
+            if(mf.getOriginalFilename().isEmpty()){
+                files = new ArrayList<>();
+            }
+        }
+         service.update(profileimg,files,dto,5);
         String url = "redirect:/teams/posts/"+id;
         return url;
     }
     //삭제
     @PatchMapping("/posts")
     public String exposure(TeamResumeDTO dto){
-        System.out.println("=========deletemapping"+dto.getStatus());
         service.exposure(dto);
         String url = "redirect:/teams/posts/"+dto.getId();
         return url;
@@ -68,7 +73,7 @@ public class TeamController {
         String content = dto.getIntroduction();
         content = content.replace("\r\n","<br>");
         dto.setIntroduction(content);
-        service.writePost(profileimg,files,dto);
+        service.writePost(profileimg,files,dto,5);
         return "redirect:/teams/posts";
     }
     @GetMapping("/favorits/{boardNum}/{target}")

@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -104,25 +105,25 @@ public class TeamServiceImpl implements TeamService{
 
     @Override
     @Transactional
-    public void writePost(MultipartFile profile,List<MultipartFile> files, TeamResumeDTO dto) {
+    public void writePost(MultipartFile profile,List<MultipartFile> files, TeamResumeDTO dto,int boardType) {
 
         Long teamNum = teamJPA.getAutoIncrementValue("pickyou", "team_resume");
 
         if(!profile.isEmpty()) {
-           String profileName= profileUpload(profile, teamNum, profileUploadPath);
+           String profileName= profileUpload(profile, profileUploadPath);
            dto.setProfile(profileName);
         }
         teamJPA.save(dto.toTeam_ResumeEntity());
         if(!files.isEmpty()) {
-            filesUpload(files, 5, teamNum, imgUploadPath);
+            filesUpload(files, boardType, teamNum, imgUploadPath);
         }
 
     }
-    public String profileUpload(MultipartFile file,Long BoardNum,String uploadPath){
+    public String profileUpload(MultipartFile file,String uploadPath){
         String profileName="default.jpeg";
+
         if (file.getContentType().startsWith("image")) {
             String originalName = file.getOriginalFilename();
-            String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
             String uuid = UUID.randomUUID().toString();
             String ext = originalName.substring(originalName.lastIndexOf("."));
             profileName=uuid+ext;
@@ -137,13 +138,11 @@ public class TeamServiceImpl implements TeamService{
         return profileName;
     }
     public void filesUpload(List<MultipartFile> files,int boardType,Long BoardNum,String uploadPath){
-        if (!files.isEmpty()) {
+        if (!CollectionUtils.isEmpty(files)) {
             for (MultipartFile mf : files) {
                 if (mf.getContentType().startsWith("image")) {
                     String originalName = mf.getOriginalFilename();
-                    String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
-                    System.out.println("================folderBoardnum" + BoardNum);
-                    String folderPath = makeFolder(imgUploadPath, boardType, BoardNum);
+                    String folderPath = makeFolder(uploadPath, boardType, BoardNum);
                     String uuid = UUID.randomUUID().toString();
                     String ext = originalName.substring(originalName.lastIndexOf("."));
                     String saveName = folderPath + File.separator + uuid + ext;
@@ -151,9 +150,7 @@ public class TeamServiceImpl implements TeamService{
                     idto.setBoardNum(BoardNum);
                     idto.setBoardType(boardType);
                     idto.setName(uuid + ext);
-                    System.out.println("================= iamge before");
                     imageJPA.save(idto.toImageEntity());
-                    System.out.println("================= iamge after");
                     Path savePath = Paths.get(imgUploadPath, saveName);
                     try {
                         mf.transferTo(savePath);
@@ -169,11 +166,8 @@ public class TeamServiceImpl implements TeamService{
     @Override
     public void update(MultipartFile profile,List<MultipartFile> files, TeamResumeDTO dto,int boardType) {
         Optional<TeamResumeEntity> team = teamJPA.findById(dto.getId());
-            int check=0;
             if (team.isPresent()) {
-                for(MultipartFile mf : files){
-                    if(!mf.isEmpty()){
-                        if(check==0){
+                    if(!CollectionUtils.isEmpty(files)){
                             File folder = new File(imgUploadPath + File.separator + boardType + File.separator + dto.getId());
                             try {
                                 if (folder.exists()) {
@@ -186,11 +180,8 @@ public class TeamServiceImpl implements TeamService{
                                 e.printStackTrace();
                             }
                             imageJPA.deleteAllByBoardTypeAndBoardNum(boardType, dto.getId());
-                            check++;
-                        }
                         filesUpload(files,boardType,dto.getId(),imgUploadPath);
                     }
-                }
             }
             if(!profile.isEmpty()) {
                 File file = new File(profileUploadPath+File.separator+dto.getProfile());
@@ -201,11 +192,9 @@ public class TeamServiceImpl implements TeamService{
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-                String profileName=profileUpload(profile,  dto.getId(), profileUploadPath);
+                String profileName=profileUpload(profile, profileUploadPath);
                 dto.setProfile(profileName);
             }
-
-
         teamJPA.save(dto.toTeam_ResumeEntity());
     }
 
