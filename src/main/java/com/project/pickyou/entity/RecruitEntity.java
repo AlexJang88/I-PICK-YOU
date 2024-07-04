@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.lang.reflect.Member;
@@ -28,6 +29,7 @@ public class RecruitEntity {
     private int readCount;
     @Column(name="member_id")
     private String memberId;
+    @UpdateTimestamp
     private Date reg;
     @Column(name="start_date")
     private Date startDate;

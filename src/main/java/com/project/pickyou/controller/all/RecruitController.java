@@ -43,15 +43,22 @@ public class RecruitController {
     }
     //수정
     @PutMapping("/posts")
-    public String update(@RequestParam(name = "id")Long id, ArrayList<MultipartFile> files, RecruitDTO dto){
-        service.update(files,dto,6);
+    public String update(@RequestParam(name = "id")Long id, ArrayList<MultipartFile> files, RecruitDTO rdto,RecruitDetailDTO rddto
+                        ,@RequestParam("startDateParam") @DateTimeFormat(pattern = "yyyy-MM-dd")Date startDateParam,
+                         @RequestParam("endDateParam") @DateTimeFormat(pattern = "yyyy-MM-dd")Date endDateParam
+                         ){
+        rdto.setStartDate(startDateParam);
+        rdto.setEndDate(endDateParam);
+        System.out.println("============"+rdto);
+        System.out.println("============"+rddto);
+        service.update(files,rdto,rddto,6);
         String url = "redirect:/recruit/posts/"+id;
         return url;
     }
     //삭제
     @DeleteMapping("/posts")
     public String delete(@RequestParam(name = "id")Long id){
-        service.deletePost(id);
+        service.deletePost(id,6);
         return "redirect:/recruit/posts";
     }
     //작성페이지이동

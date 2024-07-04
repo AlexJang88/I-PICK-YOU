@@ -29,8 +29,6 @@ import java.util.UUID;
 public class RecruitServiceImpl implements RecruitService {
     @Value("${img.upload.path}")
     private String imgUploadPath;
-
-
     private final RecruitJPARepository recruitJPA;
     private final RecruitStateJPARepository recruitStateJPA;
     private final ImageJPARepository imageJPA;
@@ -89,9 +87,9 @@ public class RecruitServiceImpl implements RecruitService {
             if (pickcheck.isPresent()) {
                 favoritecheck = 1;
             }
-            if (post.get().getRecruitDetail().getGender() == 1) {
+            if (post.get().getRecruitDetail().getGender() == 2) {
                 gender = "남성";
-            } else if (post.get().getRecruitDetail().getGender() == 2) {
+            } else if (post.get().getRecruitDetail().getGender() == 3) {
                 gender = "여성";
             }
             if (post.get().getStatus() == 2) {
@@ -108,15 +106,6 @@ public class RecruitServiceImpl implements RecruitService {
 
     }
 
-    public String makeFolder(String uploadPath, int boardType, Long boardNum) {
-        String folderPath = boardType + File.separator + boardNum;
-        File uploadPathFoler = new File(uploadPath, folderPath);
-
-        if (!uploadPathFoler.exists()) {
-            uploadPathFoler.mkdirs();
-        }
-        return folderPath;
-    }
 
     @Override
     @Transactional
@@ -134,54 +123,9 @@ public class RecruitServiceImpl implements RecruitService {
 
     }
 
-    public String profileUpload(MultipartFile file, Long BoardNum, String uploadPath) {
-        String profileName = "default.jpeg";
-        if (file.getContentType().startsWith("image")) {
-            String originalName = file.getOriginalFilename();
-            String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
-            String uuid = UUID.randomUUID().toString();
-            String ext = originalName.substring(originalName.lastIndexOf("."));
-            profileName = uuid + ext;
-            String saveName = uploadPath + File.separator + uuid + ext;
-            Path savePath = Paths.get(saveName);
-            try {
-                file.transferTo(savePath);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return profileName;
-    }
-
-    public void filesUpload(List<MultipartFile> files, int boardType, Long BoardNum, String uploadPath) {
-        if (!files.isEmpty()) {
-            for (MultipartFile mf : files) {
-                if (mf.getContentType().startsWith("image")) {
-                    String originalName = mf.getOriginalFilename();
-                    String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
-                    String folderPath = makeFolder(imgUploadPath, boardType, BoardNum);
-                    String uuid = UUID.randomUUID().toString();
-                    String ext = originalName.substring(originalName.lastIndexOf("."));
-                    String saveName = folderPath + File.separator + uuid + ext;
-                    ImageDTO idto = new ImageDTO();
-                    idto.setBoardNum(BoardNum);
-                    idto.setBoardType(boardType);
-                    idto.setName(uuid + ext);
-                    imageJPA.save(idto.toImageEntity());
-                    Path savePath = Paths.get(imgUploadPath, saveName);
-                    try {
-                        mf.transferTo(savePath);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
-
     @Override
     @Transactional
-    public void deletePost(Long boardNum) {
+    public void deletePost(Long boardNum,int boardType) {
         Optional<RecruitEntity> education = recruitJPA.findById(boardNum);
         if (education.isPresent()) {
             File folder = new File(imgUploadPath + File.separator + 2 + File.separator + boardNum);
@@ -195,19 +139,19 @@ public class RecruitServiceImpl implements RecruitService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            imageJPA.deleteAllByBoardTypeAndBoardNum(2, boardNum);
+            imageJPA.deleteAllByBoardTypeAndBoardNum(boardType, boardNum);
             recruitJPA.deleteById(boardNum);
 
         }
     }
 
     @Override
-    public void update(List<MultipartFile> files, RecruitDTO dto,int boardType) {
-        Optional<RecruitEntity> education = recruitJPA.findById(dto.getId());
-        if (education.isPresent()) {
+    public void update(List<MultipartFile> files, RecruitDTO rdto,RecruitDetailDTO rddto,int boardType) {
+        Optional<RecruitEntity> recruit = recruitJPA.findById(rdto.getId());
+        if (recruit.isPresent()) {
             if (!CollectionUtils.isEmpty(files)) {
                 for (MultipartFile mf : files) {
-                    File folder = new File(imgUploadPath + File.separator + 2 + File.separator + dto.getId());
+                    File folder = new File(imgUploadPath + File.separator + 2 + File.separator + rdto.getId());
                     try {
                         if (folder.exists()) {
                             FileUtils.cleanDirectory(folder);
@@ -218,12 +162,13 @@ public class RecruitServiceImpl implements RecruitService {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    imageJPA.deleteAllByBoardTypeAndBoardNum(2, dto.getId());
-                   filesUpload(files,boardType,dto.getId(),imgUploadPath);
+                    imageJPA.deleteAllByBoardTypeAndBoardNum(boardType, rdto.getId());
+                   filesUpload(files,boardType,rdto.getId(),imgUploadPath);
                 }
             }
         }
-        recruitJPA.save(dto.toRecruitEntity());
+        recruitJPA.save(rdto.toRecruitEntity());
+        recruitDetailJPA.save(rddto.toRecruitDetailEntity());
     }
 
     @Override
@@ -259,4 +204,39 @@ public class RecruitServiceImpl implements RecruitService {
 
         return result;
     }
+    public String makeFolder(String uploadPath, int boardType, Long boardNum) {
+        String folderPath = boardType + File.separator + boardNum;
+        File uploadPathFoler = new File(uploadPath, folderPath);
+
+        if (!uploadPathFoler.exists()) {
+            uploadPathFoler.mkdirs();
+        }
+        return folderPath;
+    }
+    public void filesUpload(List<MultipartFile> files, int boardType, Long BoardNum, String uploadPath) {
+        if (!CollectionUtils.isEmpty(files)) {
+            for (MultipartFile mf : files) {
+                if (mf.getContentType().startsWith("image")) {
+                    String originalName = mf.getOriginalFilename();
+                    String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
+                    String folderPath = makeFolder(imgUploadPath, boardType, BoardNum);
+                    String uuid = UUID.randomUUID().toString();
+                    String ext = originalName.substring(originalName.lastIndexOf("."));
+                    String saveName = folderPath + File.separator + uuid + ext;
+                    ImageDTO idto = new ImageDTO();
+                    idto.setBoardNum(BoardNum);
+                    idto.setBoardType(boardType);
+                    idto.setName(uuid + ext);
+                    imageJPA.save(idto.toImageEntity());
+                    Path savePath = Paths.get(imgUploadPath, saveName);
+                    try {
+                        mf.transferTo(savePath);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
 }

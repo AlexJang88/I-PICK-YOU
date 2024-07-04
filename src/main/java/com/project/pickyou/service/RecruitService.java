@@ -13,8 +13,8 @@ public interface RecruitService {
     public void AllPosts(Model model, int pageNum);
     public void post(Model model,Long num,String sid);
     public void writePost(List<MultipartFile> files, RecruitDTO rdto, RecruitDetailDTO rddto, int boardType);
-    public void deletePost(Long boardNum);
-    public void update(List<MultipartFile> files,RecruitDTO dto,int boardType);
+    public void deletePost(Long boardNum,int boardType);
+    public void update(List<MultipartFile> files,RecruitDTO dto,RecruitDetailDTO rddto,int boardType);
     public int favoriteCheck(PickDTO dto);
     public int recruit(Long boardNum,String id);
 }
