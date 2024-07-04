@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.ArrayList;
 
 @Controller
@@ -25,16 +26,15 @@ public class TeamController {
         return "team/list";
     }
     @GetMapping("/posts/{boardNum}")
-    public String teamsContent(Model model,@PathVariable Long boardNum){
-        String sid = "one";
-        //principal.getName();
+    public String teamsContent(Model model, @PathVariable Long boardNum, Principal principal){
+        String sid = principal.getName();
         service.post(model,boardNum,sid,5);
         return "team/content";
     }
     //수정페이지 이동
     @GetMapping("posts/edit/{boardNum}")
-    public String edit(Model model,@PathVariable Long boardNum){
-        String sid = "one";
+    public String edit(Model model,@PathVariable Long boardNum,Principal principal){
+        String sid = principal.getName();
 
         //principal.getName();
         service.post(model,boardNum,sid,5);
@@ -67,9 +67,9 @@ public class TeamController {
     }
     //작성
     @PostMapping("/posts")
-    public String insertpost(ArrayList<MultipartFile> files, TeamResumeDTO dto,MultipartFile profileimg){
+    public String insertpost(ArrayList<MultipartFile> files, TeamResumeDTO dto,MultipartFile profileimg,Principal principal){
         //사업자 아이디 = 로그인 구현후 session 받아와서 다시 처리
-        dto.setMemberId("seven");
+        dto.setMemberId(principal.getName());
         String content = dto.getIntroduction();
         content = content.replace("\r\n","<br>");
         dto.setIntroduction(content);
@@ -77,8 +77,8 @@ public class TeamController {
         return "redirect:/teams/posts";
     }
     @GetMapping("/favorits/{boardNum}/{target}")
-    public String checkFavoritecheck(@PathVariable Long boardNum,@PathVariable String target){
-        String sid = "one";
+    public String checkFavoritecheck(@PathVariable Long boardNum,@PathVariable String target,Principal principal){
+        String sid = principal.getName();
         //principal.getName(); 로그인 적용후 번경
         PickDTO dto = new PickDTO();
         dto.setPicker(sid);
