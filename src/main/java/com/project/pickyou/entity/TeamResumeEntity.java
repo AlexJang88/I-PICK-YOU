@@ -23,7 +23,7 @@ public class TeamResumeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "member_id")
+    @Column(name="member_id")
     private String memberId;
     private String job;
     @Column(name = "team_name")
@@ -42,7 +42,7 @@ public class TeamResumeEntity {
     @JoinColumn(name = "member_id",referencedColumnName = "id",insertable = false,updatable = false)
     private MemberEntity member;
 
-    @Builder
+ @Builder
     public TeamResumeEntity(Long id, String memberId, String job, String teamName, String address, int number, String phone, String introduction, String advantage, String profile, int status, Date reg) {
         this.id = id;
         this.memberId = memberId;

@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Configuration
-
 public class WebMvcConfig implements WebMvcConfigurer {
     @Value("${img.upload.path}")
     private String imgUploadPath;
@@ -22,4 +21,3 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addResourceLocations("file:///Users/jang-uiseog/Documents/upload/");
     }
 }
-
