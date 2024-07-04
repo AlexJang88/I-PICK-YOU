@@ -24,10 +24,10 @@ public class TeamResumeDTO {
     private Date reg;
 
     @Builder
-    public TeamResumeDTO(Long id,String memberId,String job, String teamName, String address, int number, String phone, String introduction, String advantage, String profile, int status, Date reg) {
+    public TeamResumeDTO(Long id, String memberId, String job, String teamName, String address, int number, String phone, String introduction, String advantage, String profile, int status, Date reg) {
         this.id = id;
-        this.memberId=memberId;
-        this.job=job;
+        this.memberId = memberId;
+        this.job = job;
         this.teamName = teamName;
         this.address = address;
         this.number = number;

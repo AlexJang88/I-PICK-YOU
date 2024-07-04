@@ -19,8 +19,7 @@ public class RecruitDetailDTO {
     private String qualification;
     private String detail;
 
-    @Builder
-    public RecruitDetailDTO(Long recruitId, int wage,  int age, int gender, int worker,
+    public RecruitDetailDTO(Long recruitId, int wage, int age, int gender, int worker,
                             String manager,String contact, String qualification, String detail) {
         super();
         this.recruitId = recruitId;
@@ -33,7 +32,6 @@ public class RecruitDetailDTO {
         this.qualification = qualification;
         this.detail = detail;
     }
-
 
     public RecruitDetailEntity toRecruitDetailEntity(){
         return RecruitDetailEntity.builder()

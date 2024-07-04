@@ -28,7 +28,7 @@ public class RecruitDetailEntity {
     private String detail;
 
     @Builder
-    public RecruitDetailEntity(Long recruitId, int wage,  int age, int gender, int worker,
+    public RecruitDetailEntity(Long recruitId, int wage, int age, int gender, int worker,
                             String manager,String contact, String qualification, String detail) {
         super();
         this.recruitId = recruitId;
