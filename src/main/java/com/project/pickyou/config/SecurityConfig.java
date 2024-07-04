@@ -1,5 +1,7 @@
 package com.project.pickyou.config;
 
+import com.project.pickyou.handler.SecurityHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
@@ -20,21 +22,31 @@ public class SecurityConfig {
         hierarchy.setHierarchy("ROLE_ADMIN>ROLE_BUSINESS");
         return hierarchy;
     }
+
+
+    //에러처리를 위해 필요한 코드
+    private final SecurityHandler securityHandler;
+    @Autowired
+    public SecurityConfig(SecurityHandler securityHandler) {
+        this.securityHandler = securityHandler;
+    }
+
+
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
 
-        return new BCryptPasswordEncoder();
+          return new BCryptPasswordEncoder();
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http
                 .authorizeHttpRequests((auth)->auth
-                        .requestMatchers("/login","/join").permitAll()
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/my/**").hasAnyRole("USER","ADMIN")
+                        .requestMatchers("/","/login","/join","/joinProc","/assets/**", "/img/**","/register","/css/**", "/js/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
-                        .anyRequest().permitAll()
+                        .requestMatchers("/my/**").hasAnyRole("USER","ADMIN")
+                        .anyRequest().authenticated()
+                        /*.anyRequest().permitAll()*/
                 );
 
         http
@@ -45,12 +57,28 @@ public class SecurityConfig {
         http
                 .csrf((auth)->auth.disable());
 
+
+        //세션 보호 목적
         http.sessionManagement((auth) -> auth
                 .sessionFixation().changeSessionId());
 
         //Logout
         http.logout((auth) -> auth.logoutUrl("/logout")
                 .logoutSuccessUrl("/"));
+
+
+        //error
+        http.exceptionHandling((auth) -> auth
+                .accessDeniedHandler(securityHandler)
+                .authenticationEntryPoint((request, response, authException) ->
+                        response.sendRedirect("/login?error=true"))
+        );
+
+
+
         return http.build();
     }
+
+
+
 }
