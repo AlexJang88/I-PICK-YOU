@@ -16,8 +16,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public RoleHierarchy roleHierarchy(){
-        RoleHierarchyImpl hierarchy=new RoleHierarchyImpl();
+    public RoleHierarchy roleHierarchy() {
+        RoleHierarchyImpl hierarchy = new RoleHierarchyImpl();
         hierarchy.setHierarchy("ROLE_ADMIN>ROLE_USER");
         hierarchy.setHierarchy("ROLE_ADMIN>ROLE_BUSINESS");
         return hierarchy;
@@ -26,6 +26,7 @@ public class SecurityConfig {
 
     //에러처리를 위해 필요한 코드
     private final SecurityHandler securityHandler;
+
     @Autowired
     public SecurityConfig(SecurityHandler securityHandler) {
         this.securityHandler = securityHandler;
@@ -33,33 +34,33 @@ public class SecurityConfig {
 
 
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder(){
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
 
-          return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests((auth)->auth
+                .authorizeHttpRequests((auth) -> auth
 
-                        .requestMatchers("/","/login","/join","/joinProc","/assets/**", "/img/**","/register","/css/**", "/js/**").permitAll()
-
-                        .requestMatchers("/login","/join").permitAll()
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/admin").hasRole("ADMIN")
-                        .requestMatchers("/my/**").hasAnyRole("USER","ADMIN")
-                        .anyRequest().authenticated()
+                                .requestMatchers("/", "/login", "/join", "/joinProc", "/assets/**", "/img/**", "/register", "/css/**", "/js/**").permitAll()
+                                .requestMatchers("/login", "/join").permitAll()
+                                .requestMatchers("/admin").hasRole("ADMIN")
+                                .requestMatchers("/my/**").hasAnyRole("USER", "ADMIN")
+                                .requestMatchers("/educations/**").permitAll()
+                                .requestMatchers("/educations/posts/write/**", "/educations/posts/edit/**").hasRole("COMPANY")
+                                .anyRequest().authenticated()
                         /*.anyRequest().permitAll()*/
                 );
 
         http
-                .formLogin(auth->auth.loginPage("/login")
+                .formLogin(auth -> auth.loginPage("/login")
                         .loginProcessingUrl("/loginProc")
                         .permitAll()
                 );
         http
-                .csrf((auth)->auth.disable());
+                .csrf((auth) -> auth.disable());
 
 
         //세션 보호 목적
@@ -79,10 +80,8 @@ public class SecurityConfig {
         );
 
 
-
         return http.build();
     }
-
 
 
 }

@@ -19,23 +19,23 @@ public class EducationController {
     private final EducationService service;
 
     @GetMapping("/posts")
-    public String list(Model model,@RequestParam(value = "pageNum",defaultValue = "1") int pageNum){
-            model.addAttribute("memberId","eight");
+    public String list(Model model,@RequestParam(value = "pageNum",defaultValue = "1") int pageNum,Principal principal){
+            model.addAttribute("memberId",principal.getName());
 
             service.AllPosts(model,pageNum);
         return "education/list";
     }
    @GetMapping("/posts/{boardNum}")
-   public String educationsContent(Model model,@PathVariable Long boardNum){
-       String sid = "one";
+   public String educationsContent(Model model,@PathVariable Long boardNum,Principal principal){
+       String sid = principal.getName();
        //principal.getName();
         service.post(model,boardNum,sid,2);
         return "education/content";
    }
    //수정페이지 이동
    @GetMapping("posts/edit/{boardNum}")
-   public String edit(Model model,@PathVariable Long boardNum){
-       String sid = "one";
+   public String edit(Model model,@PathVariable Long boardNum,Principal principal){
+       String sid = principal.getName();
        //principal.getName();
        service.post(model,boardNum,sid,2);
         return "education/update";
@@ -57,7 +57,6 @@ public class EducationController {
    //삭제
    @DeleteMapping("/posts")
    public String delete(@RequestParam(name = "id")Long id){
-        System.out.println("=========deletemapping"+id);
         service.deletePost(id,2);
         return "redirect:/educations/posts";
    }
@@ -69,9 +68,9 @@ public class EducationController {
     }
     //작성
     @PostMapping("/posts")
-    public String insertpost(ArrayList<MultipartFile> files, EducationDTO dto){
+    public String insertpost(ArrayList<MultipartFile> files, EducationDTO dto,Principal principal){
         //사업자 아이디 = 로그인 구현후 session 받아와서 다시 처리
-        dto.setCompanyId("nine");
+        dto.setCompanyId(principal.getName());
         String content = dto.getContent();
         content = content.replace("\r\n","<br>");
         dto.setContent(content);
@@ -79,8 +78,8 @@ public class EducationController {
         return "redirect:/educations/posts";
     }
     @GetMapping("/favorits/{boardNum}/{target}")
-    public String checkFavoritecheck(@PathVariable Long boardNum,@PathVariable String target){
-            String sid = "one";
+    public String checkFavoritecheck(@PathVariable Long boardNum,@PathVariable String target,Principal principal){
+            String sid = principal.getName();
         //principal.getName(); 로그인 적용후 번경
         PickDTO dto = new PickDTO();
             dto.setPicker(sid);
