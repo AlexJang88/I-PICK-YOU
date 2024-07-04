@@ -36,9 +36,6 @@ public class MemberEntity {
     @JoinColumn(name = "id", referencedColumnName = "id",insertable = false,updatable = false)
     private MemberInfoEntity memberInfo;
 
-    @OneToOne
-    @JoinColumn(name="id",referencedColumnName = "id",insertable = false,updatable = false)
-    private CompanyInfoEntity companyInfo;
 
     @Builder
     public MemberEntity(String id, String pw, String address, String phone, String email, String profile, String auth, Date reg){

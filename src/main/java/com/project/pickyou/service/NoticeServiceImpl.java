@@ -139,7 +139,7 @@ public class NoticeServiceImpl implements NoticeService {
     // 공지사항 이미지 가져오기
     public void noticeImage(Long boardNum, int boardType, Model model) {
         // 공지사항 글번호의 이미지 가져오기
-        List<ImageEntity> images = imageJPA.findByBoardNumAndBoardType(boardNum, boardType);
+        List<ImageEntity> images = imageJPA.findByBoardTypeAndBoardNum(boardType,boardNum);
         model.addAttribute("images", images);
     }
 
@@ -208,7 +208,7 @@ public class NoticeServiceImpl implements NoticeService {
         List<ImageEntity> imageList = Collections.emptyList();
 
         if (post.isPresent()) {
-            imageList = imageJPA.findByBoardNumAndBoardType(num, 1);
+            imageList = imageJPA.findByBoardTypeAndBoardNum(1,num);
             Ndto = post.get().toNoticeDTO();
             Ndto.setContent(Ndto.getContent().replace("<br>","\r\n"));
 

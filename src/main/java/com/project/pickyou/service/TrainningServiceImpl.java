@@ -112,7 +112,7 @@ public class TrainningServiceImpl implements TrainningService{
     public void Details(Model model, Long trainnignum) {  //훈련소내용 상세보기
 
         Optional<TrainningEntity> DetailsList = trainningJPARepository.findById(trainnignum);// 훈련내용가져오기
-        List<ImageEntity> images = imageJPARepository.findByBoardNumAndBoardType(trainnignum, 3); // 훈련 이미지 가져오기
+        List<ImageEntity> images = imageJPARepository.findByBoardTypeAndBoardNum( 3,trainnignum); // 훈련 이미지 가져오기
 
         model.addAttribute("images", images);
         model.addAttribute("DetailsList",DetailsList);
@@ -222,7 +222,7 @@ public class TrainningServiceImpl implements TrainningService{
             }
         }
 
-        imageJPARepository.deleteByBoardNumAndBoardType(trainnignum, 3);
+        imageJPARepository.deleteAllByBoardTypeAndBoardNum( 3,trainnignum);
 
     }
     /*훈련소 내용속 이미지 지우기*/
@@ -267,7 +267,7 @@ public class TrainningServiceImpl implements TrainningService{
                             e.printStackTrace();
                         }
 
-                        imageJPARepository.deleteByBoardNumAndBoardType(trainnignum, 3); //데이터베이스 속 이미지 테이블 내용삭제
+                        imageJPARepository.deleteAllByBoardTypeAndBoardNum( 3,trainnignum); //데이터베이스 속 이미지 테이블 내용삭제
                         check++;
                     }
 
