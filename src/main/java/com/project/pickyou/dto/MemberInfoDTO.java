@@ -1,5 +1,6 @@
 package com.project.pickyou.dto;
 
+import com.project.pickyou.entity.MemberInfoEntity;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,17 @@ public class MemberInfoDTO {
         this.gender=gender;
     }
 
+    public MemberInfoEntity toMemberInfoEntity(){
+        return MemberInfoEntity.builder()
+                .id(this.id)
+                .name(this.name)
+                .birth(this.birth)
+                .height(this.height)
+                .weight(this.weight)
+                .health(this.health)
+                .gender(this.gender)
+                .build();
 
+    }
 
 }
