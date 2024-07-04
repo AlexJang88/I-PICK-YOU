@@ -35,7 +35,7 @@ public class EducationController {
    public String educationsContent(Model model,@PathVariable Long boardNum){
        String sid = "one";
        //principal.getName();
-        service.post(model,boardNum,sid);
+        service.post(model,boardNum,sid,2);
         return "education/content";
    }
    //수정페이지 이동
@@ -43,14 +43,14 @@ public class EducationController {
    public String edit(Model model,@PathVariable Long boardNum){
        String sid = "one";
        //principal.getName();
-       service.post(model,boardNum,sid);
+       service.post(model,boardNum,sid,2);
         return "education/update";
    }
 
    //수정
    @PutMapping("/posts")
     public String update(@RequestParam(name = "id")Long id,ArrayList<MultipartFile> files, EducationDTO dto){
-                service.update(files,dto);
+                service.update(files,dto,2);
         String url = "redirect:/educations/posts/"+id;
 
         return url;
@@ -59,7 +59,7 @@ public class EducationController {
    @DeleteMapping("/posts")
    public String delete(@RequestParam(name = "id")Long id){
         System.out.println("=========deletemapping"+id);
-        service.deletePost(id);
+        service.deletePost(id,2);
         return "redirect:/educations/posts";
    }
    //작성페이지이동
@@ -76,7 +76,7 @@ public class EducationController {
         String content = dto.getContent();
         content = content.replace("\r\n","<br>");
         dto.setContent(content);
-        service.writePost(files,dto);
+        service.writePost(files,dto,2);
         return "redirect:/educations/posts";
     }
     @GetMapping("/favorits/{boardNum}/{target}")

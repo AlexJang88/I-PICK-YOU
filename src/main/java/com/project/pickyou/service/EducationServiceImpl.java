@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -65,7 +66,7 @@ public class EducationServiceImpl implements EducationService {
     }
 
     @Override
-    public void post(Model model, Long num,String sid) {
+    public void post(Model model, Long num, String sid,int boardType) {
         Optional<EducationEntity> post = educationJPA.findById(num);
         EducationDTO edto = new EducationDTO();
         CompanyInfoDTO cidto = new CompanyInfoDTO();
@@ -74,12 +75,12 @@ public class EducationServiceImpl implements EducationService {
         int favoritecheck = 0;
 
         if (post.isPresent()) {
-            imageList = imageJPA.findByBoardTypeAndBoardNum(2, num);
+            imageList = imageJPA.findByBoardTypeAndBoardNum(boardType, num);
             edto = post.get().toEducationDTO();
             cidto = post.get().getMember().getCompanyInfo().toCompanyInfoDTO();
             mdto = post.get().getMember().toMemberDTO();
             PickID key = new PickID(sid, mdto.getId());
-            edto.setContent(edto.getContent().replace("<br>","\r\n"));
+            edto.setContent(edto.getContent().replace("<br>", "\r\n"));
             Optional<PickEntity> pickcheck = pickJPA.findById(key);
             if (pickcheck.isPresent()) {
                 favoritecheck = 1;
@@ -93,57 +94,23 @@ public class EducationServiceImpl implements EducationService {
 
     }
 
-    public String makeFolder(String uploadPath, int boardType, Long boardNum) {
-        String folderPath = boardType + File.separator + boardNum;
-        File uploadPathFoler = new File(uploadPath, folderPath);
-
-        if (!uploadPathFoler.exists()) {
-            uploadPathFoler.mkdirs();
-        }
-        return folderPath;
-    }
 
     @Override
     @Transactional
-    public void writePost(List<MultipartFile> files, EducationDTO dto) {
-        UUID uid = UUID.randomUUID();
+    public void writePost(List<MultipartFile> files, EducationDTO dto, int boardType) {
         Long eduNum = educationJPA.getAutoIncrementValue("pickyou", "education");
         educationJPA.save(dto.toEducationEntity());
-        if (!files.isEmpty()) {
-            for (MultipartFile mf : files) {
-                if (mf.getContentType().startsWith("image")) {
-                    String originalName = mf.getOriginalFilename();
-                    String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
-                    System.out.println("================folderBoardnum" + eduNum);
-                    String folderPath = makeFolder(imgUploadPath, 2, eduNum);
-                    String uuid = UUID.randomUUID().toString();
-                    String ext = originalName.substring(originalName.lastIndexOf("."));
-                    String saveName = folderPath + File.separator + uuid + ext;
-                    ImageDTO idto = new ImageDTO();
-                    idto.setBoardNum(eduNum);
-                    idto.setBoardType(2);
-                    idto.setName(uuid + ext);
-                    System.out.println("================= iamge before");
-                    imageJPA.save(idto.toImageEntity());
-                    System.out.println("================= iamge after");
-                    Path savePath = Paths.get(imgUploadPath, saveName);
-                    try {
-                        mf.transferTo(savePath);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
+        filesUpload(files, boardType, eduNum, imgUploadPath);
+
     }
 
     @Override
     @Transactional
-    public void deletePost(Long boardNum) {
+    public void deletePost(Long boardNum, int boardType) {
         System.out.println("=========deletenum1" + boardNum);
         Optional<EducationEntity> education = educationJPA.findById(boardNum);
         if (education.isPresent()) {
-            File folder = new File(imgUploadPath + File.separator + 2 + File.separator + boardNum);
+            File folder = new File(imgUploadPath + File.separator + boardType + File.separator + boardNum);
             try {
                 if (folder.exists()) {
                     FileUtils.cleanDirectory(folder);
@@ -154,78 +121,92 @@ public class EducationServiceImpl implements EducationService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            imageJPA.deleteAllByBoardTypeAndBoardNum(2, boardNum);
+            imageJPA.deleteAllByBoardTypeAndBoardNum(boardType, boardNum);
             educationJPA.deleteById(boardNum);
 
         }
     }
 
     @Override
-    public void update(List<MultipartFile> files, EducationDTO dto) {
+    public void update(List<MultipartFile> files, EducationDTO dto, int boardType) {
         Optional<EducationEntity> education = educationJPA.findById(dto.getId());
-            int check=0;
+        if (education.isPresent()) {
+            if (!CollectionUtils.isEmpty(files)) {
+                File folder = new File(imgUploadPath + File.separator + boardType + File.separator + dto.getId());
+                try {
+                    if (folder.exists()) {
+                        FileUtils.cleanDirectory(folder);
+                    }
+                    if (folder.isDirectory()) {
+                        folder.delete();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                imageJPA.deleteAllByBoardTypeAndBoardNum(boardType, dto.getId());
+                filesUpload(files, boardType, dto.getId(), imgUploadPath);
+            }
 
-            if (education.isPresent()) {
-                for (MultipartFile mf : files) {
-                   if(!mf.isEmpty()) {
-                       if(check==0) {
-                           File folder = new File(imgUploadPath + File.separator + 2 + File.separator + dto.getId());
-                           try {
-                               if (folder.exists()) {
-                                   FileUtils.cleanDirectory(folder);
-                               }
-                               if (folder.isDirectory()) {
-                                   folder.delete();
-                               }
-                           } catch (IOException e) {
-                               e.printStackTrace();
-                           }
-                           imageJPA.deleteAllByBoardTypeAndBoardNum(2, dto.getId());
-                           check++;
-                       }
+            educationJPA.save(dto.toEducationEntity());
 
-                       if (mf.getContentType().startsWith("image")) {
-                           String originalName = mf.getOriginalFilename();
-                           String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
-                           System.out.println("================folderBoardnum" + dto.getId());
-                           String folderPath = makeFolder(imgUploadPath, 2, dto.getId());
-                           String uuid = UUID.randomUUID().toString();
-                           String ext = originalName.substring(originalName.lastIndexOf("."));
-                           String saveName = folderPath + File.separator + uuid + ext;
-                           ImageDTO idto = new ImageDTO();
-                           idto.setBoardNum(dto.getId());
-                           idto.setBoardType(2);
-                           idto.setName(uuid + ext);
-                           System.out.println("================= iamge before");
-                           imageJPA.save(idto.toImageEntity());
-                           System.out.println("================= iamge after");
-                           Path savePath = Paths.get(imgUploadPath, saveName);
-                           try {
-                               mf.transferTo(savePath);
-                           } catch (IOException e) {
-                               e.printStackTrace();
-                           }
-                       }
+        }
+    }
 
-                   }
+
+
+
+@Override
+public int favoriteCheck(PickDTO dto) {
+    int favoritecheck = 0;
+    PickID key = new PickID();
+    key.setPicker(dto.getPicker());
+    key.setTarget(dto.getTarget());
+    Optional<PickEntity> pickcheck = pickJPA.findById(key);
+    if (pickcheck.isPresent()) {
+        pickJPA.deleteById(key);
+    } else {
+        pickJPA.save(dto.toPickEntity());
+        favoritecheck = 1;
+    }
+    return favoritecheck;
+}
+
+public String makeFolder(String uploadPath, int boardType, Long boardNum) {
+    String folderPath = boardType + File.separator + boardNum;
+    File uploadPathFoler = new File(uploadPath, folderPath);
+
+    if (!uploadPathFoler.exists()) {
+        uploadPathFoler.mkdirs();
+    }
+    return folderPath;
+}
+
+public void filesUpload(List<MultipartFile> files, int boardType, Long BoardNum, String uploadPath) {
+    if (!CollectionUtils.isEmpty(files)) {
+        for (MultipartFile mf : files) {
+            if (mf.getContentType().startsWith("image")) {
+                String originalName = mf.getOriginalFilename();
+                String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
+                System.out.println("================folderBoardnum" + BoardNum);
+                String folderPath = makeFolder(imgUploadPath, boardType, BoardNum);
+                String uuid = UUID.randomUUID().toString();
+                String ext = originalName.substring(originalName.lastIndexOf("."));
+                String saveName = folderPath + File.separator + uuid + ext;
+                ImageDTO idto = new ImageDTO();
+                idto.setBoardNum(BoardNum);
+                idto.setBoardType(boardType);
+                idto.setName(uuid + ext);
+                System.out.println("================= iamge before");
+                imageJPA.save(idto.toImageEntity());
+                System.out.println("================= iamge after");
+                Path savePath = Paths.get(imgUploadPath, saveName);
+                try {
+                    mf.transferTo(savePath);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
-        educationJPA.save(dto.toEducationEntity());
-    }
-
-    @Override
-    public int favoriteCheck(PickDTO dto) {
-        int favoritecheck =0;
-        PickID key = new PickID();
-        key.setPicker(dto.getPicker());
-        key.setTarget(dto.getTarget());
-        Optional<PickEntity> pickcheck = pickJPA.findById(key);
-        if (pickcheck.isPresent()) {
-            pickJPA.deleteById(key);
-        } else {
-            pickJPA.save(dto.toPickEntity());
-           favoritecheck=1;
         }
-        return favoritecheck;
     }
+}
 }
