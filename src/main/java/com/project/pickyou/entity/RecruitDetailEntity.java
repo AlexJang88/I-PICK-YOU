@@ -8,11 +8,15 @@ import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Data
 @NoArgsConstructor
 @Entity
 @Table(name = "recruit_detail")
+@DynamicInsert
+@DynamicUpdate
 public class RecruitDetailEntity {
 
     @Id
@@ -28,7 +32,7 @@ public class RecruitDetailEntity {
     private String detail;
 
     @Builder
-    public RecruitDetailEntity(Long recruitId, int wage, int age, int gender, int worker,
+ public RecruitDetailEntity(Long recruitId, int wage, int age, int gender, int worker,
                             String manager,String contact, String qualification, String detail) {
         super();
         this.recruitId = recruitId;

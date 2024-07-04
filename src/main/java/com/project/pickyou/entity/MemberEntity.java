@@ -30,7 +30,7 @@ public class MemberEntity {
     private Date reg;
 
     @OneToOne
-    @JoinColumn(name = "id", referencedColumnName = "id",insertable = false,updatable = false)
+   @JoinColumn(name = "id", referencedColumnName = "id",insertable = false,updatable = false)
     private MemberInfoEntity memberInfo;
 
     @OneToOne

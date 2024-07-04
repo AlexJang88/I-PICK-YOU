@@ -20,6 +20,8 @@ public class RecruitDTO {
     private Date startDate;
     private Date endDate;
 
+
+
     @Builder
     public RecruitDTO(Long id, String title, String content, int status, int readCount,String memberId, Date reg,
                       Date startDate, Date endDate ) {
