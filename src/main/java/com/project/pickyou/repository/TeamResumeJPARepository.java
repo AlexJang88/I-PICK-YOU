@@ -8,13 +8,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 
+
 import java.util.List;
 import java.util.Optional;
 
 public interface TeamResumeJPARepository extends JpaRepository<TeamResumeEntity,Long> {
     public Optional<TeamResumeEntity> findFirstByOrderByIdDesc();
-
     @Query(value = "SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = :schema AND TABLE_NAME = :table", nativeQuery = true)
     Long getAutoIncrementValue(@Param("schema") String schema, @Param("table") String table);
     public Page<TeamResumeEntity> findAllByStatus(int status, Pageable pageable);
+
 }

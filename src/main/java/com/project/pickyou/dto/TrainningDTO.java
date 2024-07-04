@@ -27,7 +27,7 @@ public class TrainningDTO {
     private Date reg;
 
     @Builder
- public TrainningDTO(Long id, String companyId, String title, String position, String trainner, String etc, String name, String address, String contact, int readCount, String content, Date reg) {
+    public TrainningDTO(Long id, String companyId, String title, String position, String trainner, String etc, String name, String address, String contact, int readCount, String content, Date reg) {
         this.id = id;
         this.companyId = companyId;
         this.title = title;

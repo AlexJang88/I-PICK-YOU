@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html
+        lang="en" xmlns:th="http://www.thymeleaf.org"
+        class="light-style layout-menu-fixed"
+        dir="ltr"
+        th:data-theme="theme-default"
+        th:data-assets-path="@{/assets/}"
+        th:data-template="vertical-menu-template-free"
+>
+<head>
+    <meta charset="utf-8" />
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+
+    <title>Fluid - Layouts | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+
+    <meta name="description" content="" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon/favicon.ico}" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+            rel="stylesheet"
+    />
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" th:href="@{/assets/vendor/fonts/boxicons.css}" />
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" th:href="@{/assets/vendor/css/core.css}" class="template-customizer-core-css" />
+    <link rel="stylesheet" th:href="@{/assets/vendor/css/theme-default.css}" class="template-customizer-theme-css" />
+    <link rel="stylesheet" th:href="@{/assets/css/demo.css}" />
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" th:href="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css}" />
+
+    <!-- Page CSS -->
+
+    <!-- Helpers -->
+    <script th:src="@{/assets/vendor/js/helpers.js}"></script>
+
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script th:src="@{/assets/js/config.js}"></script>
+</head>
+
+<body>
+<!-- Layout wrapper -->
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+        <!-- Menu -->
+
+        <div th:include="~{design/side-bar :: side}"></div>
+        <!-- / Menu -->
+
+        <!-- Layout container -->
+        <div class="layout-page">
+            <!-- Navbar -->
+
+            <nav
+                    class="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+                    id="layout-navbar"
+            >
+                <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+                    <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+                        <i class="bx bx-menu bx-sm"></i>
+                    </a>
+                </div>
+
+                <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+                    <!-- Search -->
+                    <div class="navbar-nav align-items-center">
+                        <div class="nav-item d-flex align-items-center">
+                            <i class="bx bx-search fs-4 lh-0"></i>
+                            <input
+                                    type="text"
+                                    class="form-control border-0 shadow-none"
+                                    placeholder="Search..."
+                                    aria-label="Search..."
+                            />
+                        </div>
+                    </div>
+                    <!-- /Search -->
+
+                    <ul class="navbar-nav flex-row align-items-center ms-auto">
+                        <!-- Place this tag where you want the button to render. -->
+                        <li class="nav-item lh-1 me-3">
+                            <a
+                                    class="github-button"
+                                    href="https://github.com/themeselection/sneat-html-admin-template-free"
+                                    data-icon="octicon-star"
+                                    data-size="large"
+                                    data-show-count="true"
+                                    aria-label="Star themeselection/sneat-html-admin-template-free on GitHub"
+                            >Star</a>
+                        </li>
+
+                        <!-- User -->
+                        <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                            <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+                                <div class="avatar avatar-online">
+                                    <img th:src="@{/assets/img/avatars/1.png}" alt class="w-px-40 h-auto rounded-circle" />
+                                </div>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <div class="d-flex">
+                                            <div class="flex-shrink-0 me-3">
+                                                <div class="avatar avatar-online">
+                                                    <img th:src="@{/assets/img/avatars/1.png}" alt class="w-px-40 h-auto rounded-circle" />
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <span class="fw-semibold d-block">John Doe</span>
+                                                <small class="text-muted">Admin</small>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <div class="dropdown-divider"></div>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="bx bx-user me-2"></i>
+                                        <span class="align-middle">My Profile</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="bx bx-cog me-2"></i>
+                                        <span class="align-middle">Settings</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <span class="d-flex align-items-center align-middle">
+                                            <i class="flex-shrink-0 bx bx-credit-card me-2"></i>
+                                            <span class="flex-grow-1 align-middle">Billing</span>
+                                            <span class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <div class="dropdown-divider"></div>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" th:href="@{/auth-login-basic.html}">
+                                        <i class="bx bx-power-off me-2"></i>
+                                        <span class="align-middle">Log Out</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!--/ User -->
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- / Navbar -->
+
+            <!-- Content wrapper -->
+            <div class="content-wrapper">
+                <!-- Content -->
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <h2 class="fw-bold py-3 mb-4">
+                        <span class="text-muted fw-light">QnA</span>
+                    </h2>
+
+                    <!-- 세션 아이디가 admin이고 사용자가 글의 작성자일 때 -->
+                    <div th:if="${id eq qaInformation.get(0).memberId and sessionId eq 'admin'}">
+                        <div class="row">
+                            <!-- Basic -->
+                            <div class="col-md-12 mb-4">
+                                <div class="card">
+                                    <h3 class="card-header" style="text-align: center;" th:text="${qaInformation.get(0).title}"></h3>
+                                    <div class="card-body">
+                                        <span th:text="${qaInformation.get(0).content}"></span>
+                                        <div class="divider text-end">
+                                            <div class="divider-text" th:text="${#dates.format(qaInformation.get(0).reg, 'yyyy-MM-dd')}">End</div>
+                                        </div>
+                                        <!-- 세션 아이디가 admin이고 count가 1일 때 수정 버튼을 표시 -->
+                                        <div th:if="${sessionId eq 'admin' and count == 1}">
+                                            <div class="divider text-end">
+                                                <form id="replyForm" th:action="@{/qa/reply/{ref}(ref=${ref})}" method="get" target="popup" onsubmit="openPopup(); return false;">
+                                                    <button type="submit" class="btn btn-primary">답글</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /Basic -->
+
+                            <!-- count가 1일 때 답글 없음 메시지 보여줌 -->
+                            <div th:if="${count == 1}">
+                                <div class="col-md-12 mb-4">
+                                    <div class="card">
+                                        <h1 class="card-header" style="text-align: center;">아직 답글이 없습니다 😅</h1>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /count가 1일 때 답글 없음 메시지 -->
+
+                            <!-- count가 2일 때 답글 보여줌 -->
+                            <div th:if="${count == 2}">
+                                <div class="col-md-12 mb-4">
+                                    <div class="card">
+                                        <h3 class="card-header" style="text-align: center;">답글</h3>
+                                        <div class="card-body">
+                                            <span th:text="${qaInformation.get(1).content}"></span>
+                                            <div class="divider text-end">
+                                                <div class="divider-text" th:text="${#dates.format(qaInformation.get(1).reg, 'yyyy-MM-dd')}"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /count가 2일 때 답글 -->
+
+                        </div>
+                    </div>
+                    <!-- 세션 아이디가 admin이고 사용자가 글의 작성자일 때 -->
+
+                    <!-- 사용자가 글의 작성자가 아닐 때 -->
+                    <div th:unless="${id eq qaInformation.get(0).memberId}">
+                        <div class="row">
+                            <!-- Basic -->
+                            <div class="col-md-12 mb-4">
+                                <div class="card">
+                                    <h3 class="card-header" style="text-align: center;">비공개 처리된 글입니다 😉</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /사용자가 글의 작성자가 아닐 때 -->
+
+                </div>
+                <!-- /Content -->
+
+                <!-- Footer -->
+                <div th:include="~{design/footer :: footer}"></div>
+                <!-- / Footer -->
+
+                <div class="content-backdrop fade"></div>
+            </div>
+            <!-- Content wrapper -->
+        </div>
+        <!-- / Layout page -->
+    </div>
+
+    <!-- Overlay -->
+    <div class="layout-overlay layout-menu-toggle"></div>
+</div>
+<!-- / Layout wrapper -->
+
+<div class="buy-now">
+    <a
+            th:href="@{https://themeselection.com/products/sneat-bootstrap-html-admin-template/}"
+            target="_blank"
+            class="btn btn-danger btn-buy-now"
+    >Upgrade to Pro</a>
+</div>
+
+<!-- Core JS -->
+<!-- build:js assets/vendor/js/core.js -->
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<!-- endbuild -->
+
+<!-- Vendors JS -->
+
+<!-- Main JS -->
+<script th:src="@{/assets/js/main.js}"></script>
+
+<!-- Page JS -->
+
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+<script th:inline="javascript">
+    function openPopup() {
+        var width = 600;
+        var height = 400;
+        var left = (window.innerWidth - width) / 2;
+        var top = (window.innerHeight - height) / 2;
+        var options = 'width=' + width + ',height=' + height + ',top=' + top + ',left=' + left;
+        window.open('', 'popup', options);
+        document.getElementById('replyForm').submit();
+    }
+</script>
+</body>
+</html>

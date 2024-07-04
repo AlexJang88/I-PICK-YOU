@@ -23,7 +23,8 @@ public class TeamResumeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name="member_id")
+
+    @Column(name = "member_id")
     private String memberId;
     private String job;
     @Column(name = "team_name")
@@ -37,6 +38,7 @@ public class TeamResumeEntity {
     private int status;
     @UpdateTimestamp
     private Date reg;
+
 
     @OneToOne
     @JoinColumn(name = "member_id",referencedColumnName = "id",insertable = false,updatable = false)

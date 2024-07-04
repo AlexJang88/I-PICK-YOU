@@ -22,7 +22,6 @@ public class FoodMapEntity {
     private String memberId;
     private String title;
     private String content;
-
     private String map;
     private int ref;
     private int reply;

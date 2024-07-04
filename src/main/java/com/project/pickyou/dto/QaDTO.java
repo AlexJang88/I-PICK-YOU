@@ -4,6 +4,7 @@ import com.project.pickyou.entity.QaEntity;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -15,6 +16,7 @@ public class QaDTO {
     private String content;
     private String memberId;
     private int ref;
+    @DateTimeFormat(pattern = "yy-MM-dd")
     private Date reg;
 
     @Builder
