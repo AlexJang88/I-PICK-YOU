@@ -25,7 +25,6 @@ public class ImageDTO {
 
 
 
-    // Convert DTO to Entity
     public ImageEntity toImageEntity() {
         return ImageEntity.builder()
                 .id(this.id)

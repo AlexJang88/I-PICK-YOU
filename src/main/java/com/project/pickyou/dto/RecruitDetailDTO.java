@@ -19,6 +19,9 @@ public class RecruitDetailDTO {
     private String qualification;
     private String detail;
 
+
+    @Builder
+
     public RecruitDetailDTO(Long recruitId, int wage, int age, int gender, int worker,
                             String manager,String contact, String qualification, String detail) {
         super();
