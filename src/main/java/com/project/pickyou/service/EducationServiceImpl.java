@@ -132,6 +132,7 @@ public class EducationServiceImpl implements EducationService {
         Optional<EducationEntity> education = educationJPA.findById(dto.getId());
         if (education.isPresent()) {
             if (!CollectionUtils.isEmpty(files)) {
+                System.out.println("==========empty cehck");
                 File folder = new File(imgUploadPath + File.separator + boardType + File.separator + dto.getId());
                 try {
                     if (folder.exists()) {
@@ -188,7 +189,7 @@ public void filesUpload(List<MultipartFile> files, int boardType, Long BoardNum,
                 String originalName = mf.getOriginalFilename();
                 String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
                 System.out.println("================folderBoardnum" + BoardNum);
-                String folderPath = makeFolder(imgUploadPath, boardType, BoardNum);
+                String folderPath = makeFolder(uploadPath, boardType, BoardNum);
                 String uuid = UUID.randomUUID().toString();
                 String ext = originalName.substring(originalName.lastIndexOf("."));
                 String saveName = folderPath + File.separator + uuid + ext;

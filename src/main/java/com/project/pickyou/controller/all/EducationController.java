@@ -3,10 +3,7 @@ package com.project.pickyou.controller.all;
 import com.project.pickyou.dto.EducationDTO;
 import com.project.pickyou.dto.PickDTO;
 import com.project.pickyou.service.EducationService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 @Controller
 @RequestMapping("/educations/*")
@@ -49,8 +43,13 @@ public class EducationController {
 
    //수정
    @PutMapping("/posts")
-    public String update(@RequestParam(name = "id")Long id,ArrayList<MultipartFile> files, EducationDTO dto){
-                service.update(files,dto,2);
+    public String update(@RequestParam(name = "id")Long id,@RequestParam(name = "files",required = false) ArrayList<MultipartFile> files, EducationDTO dto){
+        for(MultipartFile mf:files){
+            if(mf.getOriginalFilename().isEmpty()){
+                files = new ArrayList<>();
+            }
+        }
+       service.update(files,dto,2);
         String url = "redirect:/educations/posts/"+id;
 
         return url;
