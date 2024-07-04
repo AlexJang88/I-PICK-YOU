@@ -30,7 +30,7 @@ public class NoticeEntity {
     private Date reg;
 
     @Builder
-    public NoticeEntity(Long id, String title, String content, String memberId, int readCount, Date reg) {
+ public NoticeEntity(Long id, String title, String content, String memberId, int readCount, Date reg) {
         this.id = id;
         this.title = title;
         this.content = content;

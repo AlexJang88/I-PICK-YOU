@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 
 import static com.fasterxml.jackson.databind.util.ClassUtil.name;
 
@@ -12,6 +13,7 @@ import static com.fasterxml.jackson.databind.util.ClassUtil.name;
 @NoArgsConstructor
 @Entity
 @Table(name = "image")
+@DynamicInsert
 public class ImageEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

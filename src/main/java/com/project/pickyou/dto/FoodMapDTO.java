@@ -22,7 +22,7 @@ public class FoodMapDTO {
 
 
     @Builder
-    public FoodMapDTO(Long id, String memberId, String title, String content,  String map, int ref, int reply, int readCount, Date reg) {
+  public FoodMapDTO(Long id, String memberId, String title, String content,  String map, int ref, int reply, int readCount, Date reg) {
         this.id = id;
         this.memberId = memberId;
         this.title = title;

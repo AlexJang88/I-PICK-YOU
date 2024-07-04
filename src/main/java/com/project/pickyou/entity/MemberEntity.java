@@ -1,9 +1,7 @@
 package com.project.pickyou.entity;
 
 import com.project.pickyou.dto.MemberDTO;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +29,13 @@ public class MemberEntity {
     @CreationTimestamp
     private Date reg;
 
+    @OneToOne
+    @JoinColumn(name = "id", referencedColumnName = "id",insertable = false,updatable = false)
+    private MemberInfoEntity memberInfo;
+
+    @OneToOne
+    @JoinColumn(name="id",referencedColumnName = "id",insertable = false,updatable = false)
+    private CompanyInfoEntity companyInfo;
 
     @Builder
     public MemberEntity(String id, String pw, String address, String phone, String email, String profile, String auth, Date reg){
