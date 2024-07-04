@@ -57,7 +57,6 @@ public class EducationController {
    //삭제
    @DeleteMapping("/posts")
    public String delete(@RequestParam(name = "id")Long id){
-        System.out.println("=========deletemapping"+id);
         service.deletePost(id,2);
         return "redirect:/educations/posts";
    }

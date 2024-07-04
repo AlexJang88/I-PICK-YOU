@@ -107,7 +107,6 @@ public class EducationServiceImpl implements EducationService {
     @Override
     @Transactional
     public void deletePost(Long boardNum, int boardType) {
-        System.out.println("=========deletenum1" + boardNum);
         Optional<EducationEntity> education = educationJPA.findById(boardNum);
         if (education.isPresent()) {
             File folder = new File(imgUploadPath + File.separator + boardType + File.separator + boardNum);
@@ -132,7 +131,6 @@ public class EducationServiceImpl implements EducationService {
         Optional<EducationEntity> education = educationJPA.findById(dto.getId());
         if (education.isPresent()) {
             if (!CollectionUtils.isEmpty(files)) {
-                System.out.println("==========empty cehck");
                 File folder = new File(imgUploadPath + File.separator + boardType + File.separator + dto.getId());
                 try {
                     if (folder.exists()) {
@@ -188,7 +186,6 @@ public void filesUpload(List<MultipartFile> files, int boardType, Long BoardNum,
             if (mf.getContentType().startsWith("image")) {
                 String originalName = mf.getOriginalFilename();
                 String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
-                System.out.println("================folderBoardnum" + BoardNum);
                 String folderPath = makeFolder(uploadPath, boardType, BoardNum);
                 String uuid = UUID.randomUUID().toString();
                 String ext = originalName.substring(originalName.lastIndexOf("."));
@@ -197,9 +194,7 @@ public void filesUpload(List<MultipartFile> files, int boardType, Long BoardNum,
                 idto.setBoardNum(BoardNum);
                 idto.setBoardType(boardType);
                 idto.setName(uuid + ext);
-                System.out.println("================= iamge before");
                 imageJPA.save(idto.toImageEntity());
-                System.out.println("================= iamge after");
                 Path savePath = Paths.get(imgUploadPath, saveName);
                 try {
                     mf.transferTo(savePath);
