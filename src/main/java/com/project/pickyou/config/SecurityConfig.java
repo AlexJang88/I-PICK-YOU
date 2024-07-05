@@ -43,8 +43,8 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth)->auth
 
-                        .requestMatchers("/","/login","/join","/joinProc","/assets/**", "/img/**","/register","/css/**", "/js/**").permitAll()
-                        .requestMatchers("/login","/join").permitAll()
+                        .requestMatchers("/","/login","/joinCompany","/trainning/**","/join","/joinProc","/assets/**", "/img/**","/register","/css/**", "/js/**").permitAll()
+                        .requestMatchers("/login","/ajax/**").permitAll()
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/my/**").hasAnyRole("USER","ADMIN")
@@ -57,6 +57,15 @@ public class SecurityConfig {
                         .loginProcessingUrl("/loginProc")
                         .permitAll()
                 );
+
+        http
+                .formLogin(auth -> auth
+                        .loginPage("/login")
+                        .loginProcessingUrl("/joinCompanyPro") // 추가한 부분
+                        .permitAll()
+                );
+
+
         http
                 .csrf((auth)->auth.disable());
 
