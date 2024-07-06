@@ -73,10 +73,16 @@ public class LoginController {
 
     // 일반회원가입 테이터 처리
     @PostMapping("/joinProc")
-    public String joinProcess(MemberDTO memberDTO, MemberInfoDTO memberInfoDTO, @RequestParam("file") MultipartFile file) {
+    public String joinProcess(MemberDTO memberDTO,
+                              MemberInfoDTO memberInfoDTO,
+                              CompanyInfoDTO companyInfoDTO,
+                              @RequestParam("file") MultipartFile file) {
 
-        loginService.joinProcess(memberDTO, memberInfoDTO, file);
-
+        if (companyInfoDTO.getCorpno()==null) {
+            loginService.joinProcess(memberDTO, memberInfoDTO, file);
+        }else {
+            loginService.joinCompanyProcess(memberDTO, companyInfoDTO, file);
+        }
         return "redirect:/login";
     }
     /*위에는 일반 회원가입 경로 및 화면*/
@@ -104,13 +110,6 @@ public class LoginController {
         System.out.println("=====><>><><><><>"+companyInfoDTO.getCompanyName());
         System.out.println("=====><>><><><><>"+companyInfoDTO.getCorpno());
         System.out.println("=====><>><><><><>"+companyInfoDTO.getJob());
-
-
-
-
-
-
-
         loginService.joinCompanyProcess(memberDTO, companyInfoDTO, file);
 
         return "redirect:/login";
