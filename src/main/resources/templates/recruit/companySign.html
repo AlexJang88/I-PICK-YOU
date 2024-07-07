@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .wrapper {
+            position: relative;
+            width: 400px;
+            height: 200px;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            display: none; /* 처음에는 숨김 */
+        }
+
+        .signature-pad {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 400px;
+            height: 200px;
+            background-color: white;
+        }
+
+        .text {
+            font-size: 30px;
+            margin-top: 70px;
+            vertical-align: middle;
+            display: block; /* 처음에는 보이게 */
+        }
+
+        .text img {
+            position: absolute;
+            text-align: center;
+            top: 30px;
+            left: 50px;
+            width: 200px;
+            display: none; /* 처음에는 숨김 */
+        }
+    </style>
+</head>
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+<script>
+    $(function () {
+        var canvas = document.getElementById('signature-pad');
+        var signaturePad = new SignaturePad(canvas, {
+            backgroundColor: 'rgb(255, 255, 255, 0)',
+            penColor: "rgb(1, 2, 3)"
+        });
+
+        document.getElementById('draw').addEventListener('click', function () {
+            $('.wrapper').show();
+            $('#draw').hide();
+            $('#img01').hide();
+            $('#save-png').show();
+            $('#clear').show();
+        });
+
+        document.getElementById('save-png').addEventListener('click', function () {
+            if (signaturePad.isEmpty()) {
+                return alert("Please provide a signature first.");
+            }
+            var nickname = document.getElementById('nickname').value;
+            var dataURL = signaturePad.toDataURL('image/png');
+            var blob = dataURLToBlob(dataURL);
+            var formData = new FormData();
+            formData.append("signature", blob, nickname+"_signature.png");
+
+            $.ajax({
+                url: '/saveSignature',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    $("#img01").attr('src', response);
+                    $('.wrapper').hide();
+                    $('#img01').show();
+                    $('#save-png').hide();
+                    $('#clear').hide();
+                    $('#draw').show();
+                },
+                error: function (error) {
+                    console.error("Error saving signature: ", error);
+                }
+            });
+        });
+
+        document.getElementById('clear').addEventListener('click', function () {
+            signaturePad.clear();
+        });
+
+        function dataURLToBlob(dataURL) {
+            var binary = atob(dataURL.split(',')[1]);
+            var array = [];
+            for (var i = 0; i < binary.length; i++) {
+                array.push(binary.charCodeAt(i));
+            }
+            return new Blob([new Uint8Array(array)], { type: 'image/png' });
+        }
+    });
+</script>
+<body>
+<input type="hidden" id="nickname" value="nick">
+<div class="text"> 성함 서명란
+    <img src="/upload/contract/signature.png" id="img01" width=150 height="75" style="border: 1px solid red" />
+</div>
+<div class="wrapper">
+    <canvas id="signature-pad" class="signature-pad" width=400 height=200 style="border: 1px solid red"></canvas>
+</div>
+
+<button id="draw">서명하기</button>
+<button id="save-png" style="display: none;">저장</button>
+<button id="clear" style="display: none;">다시쓰기</button>
+</body>
+</html>

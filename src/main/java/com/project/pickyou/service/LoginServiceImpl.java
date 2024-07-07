@@ -50,10 +50,10 @@ public class LoginServiceImpl implements LoginService, UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
 
-        MemberEntity userdata = memberJPARepository.findByid(id);
-        if(userdata != null){
+        Optional<MemberEntity> userdata = memberJPARepository.findById(id);
+        if(userdata.isPresent()){
 
-            return new JoinUserDTO(userdata);
+            return new JoinUserDTO(userdata.get());
         }
 
         return null;

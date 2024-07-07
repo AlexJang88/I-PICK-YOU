@@ -2,7 +2,9 @@ package com.project.pickyou.service;
 
 import com.project.pickyou.dto.*;
 import com.project.pickyou.entity.*;
+import com.project.pickyou.handler.ItextPdfUtil;
 import com.project.pickyou.repository.*;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +17,12 @@ import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.util.Objects;
+import java.util.Random;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,6 +36,9 @@ import java.util.UUID;
 public class RecruitServiceImpl implements RecruitService {
     @Value("${img.upload.path}")
     private String imgUploadPath;
+
+    private final MemberJPARepository memberJPA;
+    private final ItextPdfUtil itextPdfUtil;
     private final RecruitJPARepository recruitJPA;
     private final RecruitStateJPARepository recruitStateJPA;
     private final ImageJPARepository imageJPA;
@@ -204,6 +214,87 @@ public class RecruitServiceImpl implements RecruitService {
 
         return result;
     }
+
+    @Override
+    public void contract(HttpServletResponse response) {
+        // 미리 준비한 DTO 선언
+        ItextPdfDto itextPdfDto = new ItextPdfDto();
+        // pdf 파일이 저장될 경로 ( Mac 기준 )
+        itextPdfDto.setPdfFilePath("/Users/jeon/Documents/JavaProject/Blog/pdf/");
+
+        // pdf 파일이 저장될 경로 ( Windows 기준 )
+        // itextPdfDto.setPdfFilePath("C:\\Users\\hyeok\\Desktop\\pdf");
+
+        // pdf 파일명 ( 테스트를 위해 랜덤으로 생성 )
+        itextPdfDto.setPdfFileName(new Random().nextInt() + ".pdf");
+        // itextPdfDto.setPdfFileName("test.pdf");
+
+        // getHtml 에서 호출될 코드명
+        itextPdfDto.setPdfCode("hyeok");
+
+        // ======================= PDF 존재 유무 체크 =======================
+        // 없다면 PDF 파일 만들기
+        File file = itextPdfUtil.checkPDF(itextPdfDto);
+        int fileSize = (int) file.length();
+        // ===============================================================
+
+
+        // ===============================================================
+        // 파일 다운로드를 위한 header 설정
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename="+itextPdfDto.getPdfFileName()+";");
+        response.setContentLengthLong(fileSize);
+        response.setStatus(HttpServletResponse.SC_OK);
+        // ===============================================================
+
+        // 파일 다운로드
+        BufferedInputStream in = null;
+        BufferedOutputStream out = null;
+
+        // PDF 파일을 버퍼에 담은 후 다운로드
+        try{
+            in = new BufferedInputStream(new FileInputStream(file));
+            out = new BufferedOutputStream(response.getOutputStream());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            byte[] buffer = new byte[4096];
+            int read = 0;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                in.close();
+                Objects.requireNonNull(out).flush();
+                out.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void userInfo(Model model, String memberId, String companyId) {
+
+        Optional<MemberEntity> mem = memberJPA.findById(memberId);
+        Optional<MemberEntity> com = memberJPA.findById(companyId);
+        if(mem.isPresent()){
+            model.addAttribute("mem",mem.get());
+        }
+        if(com.isPresent()){
+            model.addAttribute("com",com.get());
+        }
+
+
+
+    }
+
+
     public String makeFolder(String uploadPath, int boardType, Long boardNum) {
         String folderPath = boardType + File.separator + boardNum;
         File uploadPathFoler = new File(uploadPath, folderPath);
@@ -240,3 +331,4 @@ public class RecruitServiceImpl implements RecruitService {
     }
 
 }
+

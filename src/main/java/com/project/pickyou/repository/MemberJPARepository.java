@@ -8,8 +8,7 @@ import java.util.Optional;
 public interface MemberJPARepository extends JpaRepository<MemberEntity,String> {
 
     boolean existsById(String id);
-
-    MemberEntity findByid(String id);   //회원인지 아닌지 확인절차
+    Optional<MemberEntity> findById(String id);//회원인지 아닌지 확인절차
 
 
 

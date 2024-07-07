@@ -1,24 +1,34 @@
 package com.project.pickyou.controller.all;
 
+import com.project.pickyou.dto.ContractDTO;
 import com.project.pickyou.dto.PickDTO;
 import com.project.pickyou.dto.RecruitDTO;
 import com.project.pickyou.dto.RecruitDetailDTO;
 import com.project.pickyou.service.RecruitService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping ("/recruit/*")
 @RequiredArgsConstructor
 public class RecruitController {
+    @Value("${contract.upload.path}")
+    private String contactUploadPath;
+
     private final RecruitService service;
 
     @GetMapping("/posts")
@@ -117,5 +127,40 @@ public class RecruitController {
             url="redirect:/recruit/posts";
         }
         return url;
+    }
+    @GetMapping("/contract/{memberId}")
+    public String contract(Model model,Principal principal,@PathVariable String memberId){
+            String name = "two";
+        service.userInfo(model,memberId,
+                //principal.getName()
+                name
+        );
+        return"recruit/contractForm";
+    }
+    @PostMapping("/signature/company")
+    public @ResponseBody String signature(){
+            System.out.println("=======================");
+
+        return"recruit/companySign";
+    }
+    @PostMapping("/signature/member")
+    public String member(){
+
+        return"recruit/contractWithMemberSign";
+    }
+    @PostMapping("/contract")
+    public String insertContract(){
+        return "recruit/companyContract";
+    }
+    @PostMapping("/saveSignature")
+    public ResponseEntity<Map<String,String>> saveSignature(@RequestParam("signature") MultipartFile signature ) throws IOException{
+        Map<String,String> sign = new HashMap<>();
+        String filePath = contactUploadPath+ File.separator+signature.getOriginalFilename();
+        System.out.println("=============== sign"+filePath);
+        File file = new File(filePath);
+        signature.transferTo(file);
+        String signName="/upload"+File.separator+"contract"+File.separator+signature.getOriginalFilename();
+        sign.put("signName",signName);
+        return ResponseEntity.ok(sign);
     }
 }

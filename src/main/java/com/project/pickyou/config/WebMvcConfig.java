@@ -11,8 +11,7 @@ import java.nio.file.Paths;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
-    @Value("${img.upload.path}")
-    private String imgUploadPath;
+    
 
 
     @Override

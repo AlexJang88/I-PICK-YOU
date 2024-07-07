@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en"
+      class="light-style layout-menu-fixed"
+      dir="ltr"
+      data-theme="theme-default"
+      data-assets-path="../assets/"
+      data-template="vertical-menu-template-free"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+
+    <title>Fluid - Layouts | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+
+    <meta name="description" content=""/>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon/favicon.ico}"/>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link th:href="@{https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap}"
+          rel="stylesheet"/>
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link th:href="@{/assets/vendor/fonts/boxicons.css}" rel="stylesheet"/>
+
+    <!-- Core CSS -->
+    <link th:href="@{/assets/vendor/css/core.css}" rel="stylesheet" class="template-customizer-core-css"/>
+    <link th:href="@{/assets/vendor/css/theme-default.css}" rel="stylesheet" class="template-customizer-theme-css"/>
+    <link th:href="@{/assets/css/demo.css}" rel="stylesheet"/>
+
+    <!-- Vendors CSS -->
+    <link th:href="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css}" rel="stylesheet"/>
+
+    <!-- Helpers -->
+    <script th:src="@{/assets/vendor/js/helpers.js}"></script>
+
+    <!-- Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!-- Config: Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file. -->
+    <script th:src="@{/assets/js/config.js}"></script>
+</head>
+
+<body>
+<!-- Layout wrapper -->
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+        <!-- Menu -->
+        <div th:include="~{design/side-bar :: side}"></div>
+        <!-- / Menu -->
+
+        <!-- Layout container -->
+        <div class="layout-page">
+            <!-- Navbar -->
+            <div th:include="~{design/navi-bar :: navi}"></div>
+            <!-- / Navbar -->
+            <!-- Content wrapper -->
+            <div class="content-wrapper">
+                <!-- Content -->
+                <div class="container-fluid flex-grow-1 container-p-y">
+                    <!-- Layout Demo -->
+                    <div class="row">
+                        <!-- Basic Layout -->
+                        <div class="col-xxl">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <form id="recruitForm" th:method="post" th:action="@{/recruit/signature/company}"  novalidate onsubmit="return validateForm()">
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="startdate">근로개시일</label>
+                                            <div class="col-sm-10">
+                                                <input type="date" class="form-control" id="startdate" name="startdate"  required/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                        <label class="col-sm-2 col-form-label" for="enddate">근로마감일(계약기간을 정하지 않는 경우에는 "근로계시일"만 기재)</label>
+                                        <div class="col-sm-10">
+                                            <input type="date" class="form-control" id="enddate" name="enddate"  />
+                                        </div>
+                                    </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="location">근무장소</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="location" name="location" placeholder="근무장소를 작성해주세요"  required/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                        <label class="col-sm-2 col-form-label" for="job">업무의 내용(직종)</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="job" name="job" placeholder="업무의 내용을 작성해주세요"  required/>
+                                        </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-sm-12">
+                                                <div class="input-group">
+                                                    <label class="col-sm-2 col-form-label" >근무시간</label>
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">시작시간</span>
+                                                    </div>
+                                                    <input type="number" class="form-control" id="workStartHour" name="workStartHour" min="0" max="23" required/>
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">분</span>
+                                                    </div>
+                                                    <input type="number" class="form-control" name="workStartMinute" min="0" max="59" required/>
+                                                    <span class="input-group-text">종료시간</span>
+                                                    <input type="number" class="form-control" name="workEndHour" min="0" max="23" required/>
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">분</span>
+                                                    </div>
+                                                    <input type="number" class="form-control" name="workEndMinute" min="0" max="59" required/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="worksShedule">주당 근무일수</label>
+                                            <div class="col-sm-10">
+                                                <input type="number" class="form-control" id="worksShedule" name="worksShedule" min="0"  required/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label">임금</label>
+                                            <div class="col-sm-10 d-flex justify-content-between">
+                                                <div class="form-check form-check-inline">
+                                                    <label class="form-check-label" for="day">일급</label>
+                                                    <input type="radio" id="day" class="form-check-input" name="wageType" value="일급" checked/>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <label class="form-check-label" for="week">주급</label>
+                                                    <input type="radio" id="week" class="form-check-input" name="wageType" value="주급"/>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <label class="form-check-label" for="hour">시급</label>
+                                                    <input type="radio" id="hour" class="form-check-input" name="wageType" value="시급"/>
+                                                </div>
+                                                <div class="form-inline">
+                                                    <label class="form-control-label mr-2" for="money">금액</label>
+                                                    <input type="number" id="money" class="form-control" name="wage" min="0" placeholder="금액을 작성해주세요" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="etc">기타 제수당</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="etc" placeholder="시간외 근로수당 : 15000원(시간당)"  required/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="etc">임금 지급일</label>
+                                            <div class="col-sm-10 d-flex justify-content-between">
+                                                <div class="form-check form-check-inline">
+                                                    <input type="radio" class="form-check-input" id="payDateType1" name="payDate" value="매일" checked />
+                                                    <label class="form-check-label" for="payDateType1">매일</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input type="radio" class="form-check-input" id="payDateType2" name="payDate" value="매주" required />
+                                                    <label class="form-check-label" for="payDateType2">매주</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input type="radio" class="form-check-input" id="payDateType3" name="payDate" value="매월" required />
+                                                    <label class="form-check-label" for="payDateType3">매월</label>
+                                                </div>
+                                                <div class="form-inline">
+                                                    <label class="form-control-label mr-2" >일 (매월 선택 시 무시)</label>
+                                                    <input type="number" class="form-control" name="customPayDate" min="0" max="31"  required />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" >지급 방법</label>
+                                            <div class="col-sm-10 d-flex justify-content-between">
+                                                <div class="form-check form-check-inline">
+                                                    <input type="radio" class="form-check-input" id="wageInto1" name="wageInto" value="근로자에게 직접지급" checked/>
+                                                    <label class="form-check-label" for="wageInto1">근로자에게 직접지급</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input type="radio" class="form-check-input" id="wageInto2" name="wageInto" value="근로자 명의 예금통장에 입금" required/>
+                                                    <label class="form-check-label" for="wageInto2">근로자 명의 예금통장에 입금</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" >사회보험 적용여부</label>
+                                            <div class="col-sm-10 d-flex flex-wrap">
+                                                <div class="form-check form-check-inline">
+                                                    <input type="checkbox" class="form-check-input" id="insurance1" name="insurance" value="고용보험" />
+                                                    <label class="form-check-label" for="insurance1">고용보험</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input type="checkbox" class="form-check-input" id="insurance2" name="insurance" value="산재보험" />
+                                                    <label class="form-check-label" for="insurance2">산재보험</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input type="checkbox" class="form-check-input" id="insurance3" name="insurance" value="국민연금" />
+                                                    <label class="form-check-label" for="insurance3">국민연금</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input type="checkbox" class="form-check-input" id="insurance4" name="insurance" value="건강보험" />
+                                                    <label class="form-check-label" for="insurance4">건강보험</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="contractDate">계약서 작성일</label>
+                                            <div class="col-sm-10">
+                                                <input type="date" class="form-control" id="contractDate" name="contractDate"/>
+                                            </div>
+                                        </div>
+                                        <div class="row justify-content-end">
+                                            <div class="col-sm-10">
+                                                <input type="hidden" name="companyCEO" th:value="${com.companyInfo.name}">
+                                                <input type="hidden" name="companyAddress" th:value="${com.address}">
+                                                <input type="hidden" name="companyName" th:value="${com.companyInfo.companyName}">
+                                                <input type="hidden" name="companyContact" th:value="${com.phone}">
+                                                <input type="hidden" name="memberAddress" th:value="${mem.address}">
+                                                <input type="hidden" name="memberContact" th:value="${mem.phone}">
+                                                <input type="hidden" name="memberName" th:value="${mem.memberInfo.name}">
+                                                <button type="submit" class="btn btn-primary">Send</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    <!--/ Layout Demo -->
+                </div>
+                <!-- / Content -->
+                <div class="d-flex justify-content-end mb-3">
+
+                </div>
+                <!-- Footer -->
+                <div th:include="~{design/footer :: footer}"></div>
+                <!-- / Footer -->
+                <div class="content-backdrop fade"></div>
+            </div>
+            <!-- Content wrapper -->
+
+            <!-- Overlay -->
+            <div class="layout-overlay layout-menu-toggle"></div>
+        </div>
+        <!-- / Layout wrapper -->
+
+        <div class="buy-now">
+            <a th:href="@{https://themeselection.com/products/sneat-bootstrap-html-admin-template/}"
+               target="_blank"
+               class="btn btn-danger btn-buy-now"
+            >Upgrade to Pro</a>
+        </div>
+        <!-- Core JS -->
+        <!-- build:js assets/vendor/js/core.js -->
+        <script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+        <script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+        <script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+        <script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+
+        <script th:src="@{/assets/vendor/js/menu.js}"></script>
+        <!-- endbuild -->
+
+        <!-- Vendors JS -->
+
+        <!-- Main JS -->
+        <script th:src="@{/assets/js/main.js}"></script>
+
+        <!-- Page JS -->
+
+        <!-- Place this tag in your head or just before your close body tag. -->
+        <script async defer th:src="@{https://buttons.github.io/buttons.js}"></script>
+</body>
+</html>

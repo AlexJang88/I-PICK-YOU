@@ -44,13 +44,14 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
 
-                                .requestMatchers("/", "/login", "/join", "/joinProc", "/assets/**", "/img/**", "/register", "/css/**", "/js/**").permitAll()
+                                .requestMatchers("/", "/error","/login", "/join", "/joinProc", "/assets/**", "/img/**", "/register", "/css/**", "/js/**").permitAll()
                                 .requestMatchers("/login", "/join").permitAll()
-                                .requestMatchers("/admin").hasRole("ADMIN")
-                                .requestMatchers("/my/**").hasAnyRole("USER", "ADMIN")
+                                .requestMatchers("/recruit/**").permitAll()
+                               // .requestMatchers("/admin").hasRole("ADMIN")
+                              //  .requestMatchers("/my/**").hasAnyRole("USER", "ADMIN")
                                 .requestMatchers("/educations/**").permitAll()
-                                .requestMatchers("/educations/posts/write/**", "/educations/posts/edit/**").hasRole("COMPANY")
-                                .anyRequest().authenticated()
+                               // .requestMatchers("/educations/posts/write/**", "/educations/posts/edit/**").hasRole("COMPANY")
+                                .anyRequest().permitAll()
                         /*.anyRequest().permitAll()*/
                 );
 
