@@ -149,6 +149,7 @@ public class RecruitController {
 
         return"recruit/contractWithMemberSign";
     }
+
     @PostMapping("/contract")
     public String insertContract(){
         return "recruit/companyContract";
@@ -164,5 +165,9 @@ public class RecruitController {
         String signName="/upload"+File.separator+"contract"+File.separator+signature.getOriginalFilename();
         sign.put("signName",signName);
         return ResponseEntity.ok(sign);
+    }
+    @GetMapping("/stest")
+    public String stest(){
+        return"recruit/companySign";
     }
 }
