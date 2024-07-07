@@ -138,8 +138,12 @@ public class RecruitController {
         return"recruit/contractForm";
     }
     @PostMapping("/signature/company")
-    public @ResponseBody String signature(){
-            System.out.println("=======================");
+    public @ResponseBody String signature(
+                                        @ModelAttribute ContractDTO dto
+    ){
+
+            System.out.println("======================="+dto);
+        System.out.println("=======================");
 
         return"recruit/companySign";
     }
@@ -152,6 +156,7 @@ public class RecruitController {
     public String insertContract(){
         return "recruit/companyContract";
     }
+
     @PostMapping("/saveSignature")
     public ResponseEntity<Map<String,String>> saveSignature(@RequestParam("signature") MultipartFile signature ) throws IOException{
         Map<String,String> sign = new HashMap<>();
