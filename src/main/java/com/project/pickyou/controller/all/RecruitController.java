@@ -138,13 +138,10 @@ public class RecruitController {
         return"recruit/contractForm";
     }
     @PostMapping("/signature/company")
-    public @ResponseBody String signature(
-                                        @ModelAttribute ContractDTO dto
-    ){
+    public String signature(@ModelAttribute ContractDTO dto,Model model){
 
-            System.out.println("======================="+dto);
-        System.out.println("=======================");
-
+        System.out.println("======================="+dto);
+        model.addAttribute("contract",dto);
         return"recruit/companySign";
     }
     @PostMapping("/signature/member")

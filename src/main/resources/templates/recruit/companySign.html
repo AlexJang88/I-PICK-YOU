@@ -1,11 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+      class="light-style layout-menu-fixed"
+      dir="ltr"
+      data-theme="theme-default"
+      data-assets-path="../assets/"
+      data-template="vertical-menu-template-free"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+    <title>건설일용근로자 표준근로계약서</title>
+
+    <meta name="description" content="" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon/favicon.ico}" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+          rel="stylesheet" />
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link th:href="@{/assets/vendor/fonts/boxicons.css}" rel="stylesheet" />
+
+    <!-- Core CSS -->
+    <link th:href="@{/assets/vendor/css/core.css}" rel="stylesheet" class="template-customizer-core-css" />
+    <link th:href="@{/assets/vendor/css/theme-default.css}" rel="stylesheet" class="template-customizer-theme-css" />
+    <link th:href="@{/assets/css/demo.css}" rel="stylesheet" />
+
+    <!-- Vendors CSS -->
+    <link th:href="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css}" rel="stylesheet" />
+
+    <!-- Helpers -->
+    <script th:src="@{/assets/vendor/js/helpers.js}"></script>
+
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script th:src="@{/assets/js/config.js}"></script>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 70%;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid black;
+        }
+        .title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .content {
+            font-size: 14px;
+        }
+        .content table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .content td, .content th {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        .content th {
+            background-color: #f2f2f2;
+        }
+        .content input[type="text"], .content input[type="date"] {
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid black;
+            padding: 5px;
+            outline: none;
+        }
+        .inline-input {
+            border: none;
+            border-bottom: 1px solid black;
+            padding: 5px;
+            outline: none;
+            display: inline-block;
+            width: auto;
+            min-width: 100px;
+        }
+        h3 {
+            text-align: center;
+        }
+        h4 {
+            text-align: center;
+        }
         .wrapper {
             position: relative;
             width: 400px;
@@ -33,89 +121,171 @@
             display: block; /* 처음에는 보이게 */
         }
 
-        .text img {
-            position: absolute;
+        #img01 {
             text-align: center;
             top: 30px;
             left: 50px;
             width: 200px;
-            display: none; /* 처음에는 숨김 */
         }
     </style>
 </head>
-<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
-<script>
-    $(function () {
-        var canvas = document.getElementById('signature-pad');
-        var signaturePad = new SignaturePad(canvas, {
-            backgroundColor: 'rgb(255, 255, 255, 0)',
-            penColor: "rgb(1, 2, 3)"
-        });
 
-        document.getElementById('draw').addEventListener('click', function () {
-            $('.wrapper').show();
-            $('#draw').hide();
-            $('#img01').hide();
-            $('#save-png').show();
-            $('#clear').show();
-        });
-
-        document.getElementById('save-png').addEventListener('click', function () {
-            if (signaturePad.isEmpty()) {
-                return alert("Please provide a signature first.");
-            }
-            var nickname = document.getElementById('nickname').value;
-            var dataURL = signaturePad.toDataURL('image/png');
-            var blob = dataURLToBlob(dataURL);
-            var formData = new FormData();
-            formData.append("signature", blob, nickname+"_signature.png");
-
-            $.ajax({
-                url: '/saveSignature',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    $("#img01").attr('src', response);
-                    $('.wrapper').hide();
-                    $('#img01').show();
-                    $('#save-png').hide();
-                    $('#clear').hide();
-                    $('#draw').show();
-                },
-                error: function (error) {
-                    console.error("Error saving signature: ", error);
-                }
-            });
-        });
-
-        document.getElementById('clear').addEventListener('click', function () {
-            signaturePad.clear();
-        });
-
-        function dataURLToBlob(dataURL) {
-            var binary = atob(dataURL.split(',')[1]);
-            var array = [];
-            for (var i = 0; i < binary.length; i++) {
-                array.push(binary.charCodeAt(i));
-            }
-            return new Blob([new Uint8Array(array)], { type: 'image/png' });
-        }
-    });
-</script>
 <body>
-<input type="hidden" id="nickname" value="nick">
-<div class="text"> 성함 서명란
-    <img src="/upload/contract/signature.png" id="img01" width=150 height="75" style="border: 1px solid red" />
-</div>
-<div class="wrapper">
-    <canvas id="signature-pad" class="signature-pad" width=400 height=200 style="border: 1px solid red"></canvas>
-</div>
+<!-- Layout wrapper -->
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+        <!-- Menu -->
+        <div th:include="~{design/side-bar :: side}"></div>
+        <!-- / Menu -->
 
-<button id="draw">서명하기</button>
-<button id="save-png" style="display: none;">저장</button>
-<button id="clear" style="display: none;">다시쓰기</button>
+        <!-- Layout container -->
+        <div class="layout-page">
+            <!-- Navbar -->
+            <div th:include="~{design/navi-bar :: navi}"></div>
+            <!-- / Navbar -->
+
+            <!-- Content wrapper -->
+            <div class="content-wrapper">
+                <!-- Content -->
+                <div class="container-fluid flex-grow-1 container-p-y">
+                    <!-- Layout Demo -->
+                    <div class="content">
+                        <p>김길동 사장 (이하 "사업주"라 함)과(와) 이화백 일꾼 (이하 "근로자"라 함)는 다음과 같이 근로계약을 체결한다.</p>
+                        <table>
+                            <tr>
+                                <th>1. 근로계약기간</th>
+                                <td>년 월 일부터 년 월 일까지 <br> ※ 근로계약기간을 정하지 않는 경우에는 "근로계시일"만 기재</td>
+                            </tr>
+                            <tr>
+                                <th>2. 근 무 장 소</th>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th>3. 업무의 내용(직종)</th>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th>4. 소정근로시간</th>
+                                <td>시 분부터 시 분까지 (휴게시간: 시 분 시 분)</td>
+                            </tr>
+                            <tr>
+                                <th>5. 근무일/휴일</th>
+                                <td>매주 일(또는 매일단위)근무, 주휴일 매주 요일(해당자에 한함) <br> ※ 주휴일은 1주간 소정근로일을 모두 근로한 경우에 주당 1일을 유급으로 부여</td>
+                            </tr>
+                            <tr>
+                                <th>6. 임 금</th>
+                                <td>
+                                    <p>- 월(일, 시간)금: 원(해당사항에 ○표)</p>
+                                    <p>- 상여금: 있음 ( ) 원, 없음 ( )</p>
+                                    <p>- 기타 제수당(시간외근로수당, 야간·휴일근로수당 등):</p>
+                                    <p>. 시간외 근로수당: 원 ( 시간분)</p>
+                                    <p>. 야간 근로수당: 원 ( 시간분)</p>
+                                    <p>. 휴일 근로수당: 원 ( 시간분)</p>
+                                    <p>- 임금지급일: 매월(매주 또는 매일) 일(휴일의 경우는 전일 지급)</p>
+                                    <p>- 지급방법: 근로자에게 직접지급( ), 근로자 명의 예금통장에 입금( )</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>7. 연차유급휴가</th>
+                                <td>연차유급휴가는 근로기준법에서 정하는 바에 따라 부여함</td>
+                            </tr>
+                            <tr>
+                                <th>8. 사회보험 적용여부</th>
+                                <td>
+                                    <p>□ 고용보험 □ 산재보험 □ 국민연금 □ 건강보험</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>9. 근로계약서 교부</th>
+                                <td>사업주는 근로계약을 체결함과 동시에 본 계약서를 사본하여 "근로자"의 교부요구와 관계없이 "근로자"에게 교부함(근로기준법 제17조 이행)</td>
+                            </tr>
+                            <tr>
+                                <th>10. 근로계약, 취업규칙 등의 성실한 이행의무</th>
+                                <td>사업주와 근로자는 각각 근로계약, 취업규칙, 단체협약을 지키고 성실하게 이행하여야 함</td>
+                            </tr>
+                            <tr>
+                                <th>11. 기 타</th>
+                                <td>이 계약에 정함이 없는 사항은 근로기준법령에 의함</td>
+                            </tr>
+                        </table>
+                        <br>
+                        <h3>년 월 일</h3>
+                        <h4>사업주: 김길동 (서명)</h4>
+                        <h4>근로자: 이화백 (서명)</h4>
+                        <div class="wrapper">
+                            <canvas id="signature-pad" class="signature-pad"></canvas>
+                        </div>
+                        <button id="clear" class="button clear" type="button" data-action="clear">Clear</button>
+                        <button id="save" class="button save" type="button" data-action="save-png">Save as PNG</button>
+                    </div>
+                    <!--/ Layout Demo -->
+                </div>
+                <!-- / Content -->
+
+                <!-- Footer -->
+                <footer th:include="~{design/footer :: footer}"></footer>
+                <!-- / Footer -->
+
+                <div class="content-backdrop fade"></div>
+            </div>
+            <!--/ Content wrapper -->
+        </div>
+        <!-- / Layout page -->
+    </div>
+
+    <!-- Overlay -->
+    <div class="layout-overlay layout-menu-toggle"></div>
+</div>
+<!-- / Layout wrapper -->
+
+<!-- Core JS -->
+<!-- build:js assets/vendor/js/core.js -->
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<!-- endbuild -->
+
+<!-- Vendors JS -->
+
+<!-- Main JS -->
+<script th:src="@{/assets/js/main.js}"></script>
+
+<!-- Page JS -->
+
+<script>
+    var wrapper = document.querySelector('.wrapper');
+    var clearButton = wrapper.querySelector('[data-action=clear]');
+    var saveButton = wrapper.querySelector('[data-action=save-png]');
+    var canvas = wrapper.querySelector('canvas');
+    var signaturePad = new SignaturePad(canvas);
+
+    clearButton.addEventListener('click', function (event) {
+        signaturePad.clear();
+    });
+
+    saveButton.addEventListener('click', function (event) {
+        if (signaturePad.isEmpty()) {
+            return alert("Please provide a signature first.");
+        }
+
+        var data = signaturePad.toDataURL('image/png');
+        console.log(data);
+        window.open(data);
+    });
+
+    function resizeCanvas() {
+        var ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+        signaturePad.clear();
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+</script>
 </body>
 </html>
