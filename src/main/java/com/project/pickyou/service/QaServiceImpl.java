@@ -4,9 +4,13 @@ import com.project.pickyou.dto.QaDTO;
 import com.project.pickyou.entity.QaEntity;
 import com.project.pickyou.repository.QaJPARepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import java.awt.print.Pageable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,9 +24,42 @@ public class QaServiceImpl implements QaService {
         this.qaJPA = qaJPA;
     }
 
-    // qa 리스트 가져오기
+    // qa 리스트 가져오기, 페이징 처리
     @Override
-    public void qaList(Model model) {
+    public void AllPosts(Model model, int pageNum) {
+        int pageSize = 10;
+        Long longCount = qaJPA.qaCount();
+        int count = longCount.intValue();
+
+        Sort sort = Sort.by(Sort.Order.desc("reg"));
+
+       // Page<QaEntity> page = qaJPA.findByIdEqualsRef(PageRequest.of(pageNum - 1, pageSize, sort));
+        Page<QaEntity> page = qaJPA.qaList(PageRequest.of(pageNum - 1, pageSize, sort));
+       // List<QaEntity> posts = qaJPA.findByIdEqualsRef();
+        List<QaEntity> posts = page.getContent();
+
+        // 이 부분
+        // List<QaEntity> qaList = qaJPA.findAllGroupByRef();
+
+        //model.addAttribute("qaList", qaList);
+        model.addAttribute("posts", posts);
+        model.addAttribute("count", count);
+        model.addAttribute("pageNum", pageNum);
+        model.addAttribute("pageSize", pageSize);
+
+        int pageCount = count / pageSize + (count % pageSize == 0 ? 0 : 1);
+        int startPage = (pageNum / 10) * 10 + 1;
+        int pageBlock = 10;   //페이징(이전/다음)을 몇개단위로 끊을지
+        int endPage = startPage + pageBlock - 1;
+        if (endPage > pageCount) {
+            endPage = pageCount;
+        }
+        model.addAttribute("pageCount", pageCount);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("pageBlock", pageBlock);
+        model.addAttribute("endPage", endPage);
+
+        /*
         // qa 리스트 가져오기
         List<QaEntity> qaList = qaJPA.findAll();
         // qa 리스트 ref 중복값 제거
@@ -35,6 +72,9 @@ public class QaServiceImpl implements QaService {
                         collected -> new ArrayList<>(collected)
                 ));
         model.addAttribute("qaList", uniqueQaList);
+        */
+
+
     }
 
     // qa insert
@@ -57,6 +97,8 @@ public class QaServiceImpl implements QaService {
         // qa 상세정보 보기
         List<QaEntity> qaInformation = qaJPA.findByRef(ref);
         model.addAttribute("qaInformation", qaInformation);
+
+        System.out.println(qaInformation.get(0).getMemberId()+"-------------------------------------------------------------");
     }
 
     // qa 댓글 인서트

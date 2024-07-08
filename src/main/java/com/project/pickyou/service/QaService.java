@@ -5,8 +5,8 @@ import org.springframework.ui.Model;
 
 public interface QaService {
 
-    // qa 리스트 가져오기
-    public void qaList(Model model);
+    // qa 리스트 가져오기, 페이징 처리
+    public void AllPosts(Model model, int pageNum);
 
     // qa insert
     public void qaInsert(QaDTO dto);
