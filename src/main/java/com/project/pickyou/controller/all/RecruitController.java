@@ -34,7 +34,6 @@ public class RecruitController {
     @GetMapping("/posts")
     public String list(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, Principal principal){
         model.addAttribute("memberId",principal.getName());
-
         service.AllPosts(model,pageNum);
         return "recruit/list";
     }
@@ -92,8 +91,6 @@ public class RecruitController {
         }
         //사업자 아이디 = 로그인 구현후 session 받아와서 다시 처리
         rdto.setMemberId(principal.getName());
-
-
         check = rdto.getStatus();
         rdto.setStartDate(startDateParam);
         rdto.setEndDate(endDateParam);
@@ -137,17 +134,18 @@ public class RecruitController {
         );
         return"recruit/contractForm";
     }
-    @PostMapping("/signature/company")
+    @PostMapping("/contract/company")
     public String signature(@ModelAttribute ContractDTO dto,Model model){
 
+        Long id=service.contract(dto);
         System.out.println("======================="+dto);
-        model.addAttribute("contract",dto);
+        service.getContract(model,id);
         return"recruit/companySign";
     }
-    @PostMapping("/signature/member")
-    public String member(){
-
-        return"recruit/contractWithMemberSign";
+    @GetMapping("/contract/sign/{contractId}")
+    public String signatureMem(@PathVariable Long contractId,Model model){
+        service.getContract(model,contractId);
+        return"recruit/companySign";
     }
 
     @PostMapping("/contract")
@@ -156,9 +154,11 @@ public class RecruitController {
     }
 
     @PostMapping("/saveSignature")
-    public ResponseEntity<Map<String,String>> saveSignature(@RequestParam("signature") MultipartFile signature ) throws IOException{
+    public ResponseEntity<Map<String,String>> saveSignature(@RequestParam("signature") MultipartFile signature,@RequestParam("contractId") Long contractId) throws IOException{
         Map<String,String> sign = new HashMap<>();
-        String filePath = contactUploadPath+ File.separator+signature.getOriginalFilename();
+        //시큐리티 세션으로 처리해야함
+        String sid = "two";
+        String filePath = contactUploadPath+ File.separator+contractId+File.separator+"sid"+signature.getOriginalFilename();
         System.out.println("=============== sign"+filePath);
         File file = new File(filePath);
         signature.transferTo(file);

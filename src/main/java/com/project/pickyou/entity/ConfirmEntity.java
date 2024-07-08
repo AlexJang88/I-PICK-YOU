@@ -10,6 +10,8 @@ import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -18,14 +20,16 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @Table(name = "confirm")
+@DynamicInsert
+@DynamicUpdate
 public class ConfirmEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(name = "member_id")
     private String memberId;
-    private String contract;
+    @Column(name="contract_id")
+    private Long contractId;
     @Column(name = "company_id")
     private String companyId;
     private int apply;
@@ -33,11 +37,11 @@ public class ConfirmEntity {
     private Date end;
 
     @Builder
-    public ConfirmEntity(Long id, String memberId, String contract, String companyId, Integer apply, Date start, Date end) {
+    public ConfirmEntity(Long id, String memberId, Long contractId, String companyId, Integer apply, Date start, Date end) {
         super();
         this.id = id;
         this.memberId = memberId;
-        this.contract = contract;
+        this.contractId = contractId;
         this.companyId = companyId;
         this.apply = apply;
         this.start = start;
@@ -48,7 +52,7 @@ public class ConfirmEntity {
         return ConfirmDTO.builder()
                 .id(this.id)
                 .memberId(this.memberId)
-                .contract(this.contract)
+                .contractId(this.contractId)
                 .companyId(this.companyId)
                 .apply(this.apply)
                 .start(this.start)

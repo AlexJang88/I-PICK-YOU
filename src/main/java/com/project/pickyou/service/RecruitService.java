@@ -1,9 +1,6 @@
 package com.project.pickyou.service;
 
-import com.project.pickyou.dto.PickDTO;
-import com.project.pickyou.dto.RecruitDTO;
-import com.project.pickyou.dto.RecruitDetailDTO;
-import com.project.pickyou.dto.TeamResumeDTO;
+import com.project.pickyou.dto.*;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,4 +17,6 @@ public interface RecruitService {
     public int recruit(Long boardNum,String id);
     public void contract(HttpServletResponse response);
     public void userInfo(Model model,String memberId,String companyId);
+    public Long contract(ContractDTO dto );
+    public void getContract(Model model,Long id);
 }

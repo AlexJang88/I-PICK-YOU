@@ -66,17 +66,17 @@
                         <div class="col-xxl">
                             <div class="card mb-4">
                                 <div class="card-body">
-                                    <form id="recruitForm" th:method="post" th:action="@{/recruit/signature/company}" novalidate onsubmit="return validateForm()">
+                                    <form id="recruitForm" th:method="post" th:action="@{/recruit/contract/company}" novalidate onsubmit="return validateForm()">
                                         <div class="row mb-3">
-                                            <label class="col-12 col-form-label" for="startdate">근로개시일</label>
+                                            <label class="col-12 col-form-label" for="startDate">근로개시일</label>
                                             <div class="col-12">
-                                                <input type="date" class="form-control" id="startdate" name="startdate" required/>
+                                                <input type="date" class="form-control" id="startDate" name="startDate" required/>
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <label class="col-12 col-form-label" for="enddate">근로마감일</label>
+                                            <label class="col-12 col-form-label" for="endDate">근로마감일</label>
                                             <div class="col-12">
-                                                <input type="date" class="form-control" id="enddate" name="enddate" required/>
+                                                <input type="date" class="form-control" id="endDate" name="endDate" required/>
                                             </div>
                                         </div>
                                         <div class="row mb-3">
@@ -107,9 +107,9 @@
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <label class="col-12 col-form-label" for="worksShedule">주당 근무일수</label>
+                                            <label class="col-12 col-form-label" for="worksSchedule">주당 근무일수</label>
                                             <div class="col-12">
-                                                <input type="number" class="form-control" id="worksShedule" name="worksShedule" min="0" required/>
+                                                <input type="number" class="form-control" id="worksSchedule" name="worksSchedule" min="0" required/>
                                             </div>
                                         </div>
                                         <div class="row mb-3">
@@ -136,7 +136,7 @@
                                         <div class="row mb-3">
                                             <label class="col-12 col-form-label" for="etc">기타 제수당</label>
                                             <div class="col-12">
-                                                <input type="text" class="form-control" id="etc" placeholder="예)시간외 근로수당 : 15000원(시간당)" />
+                                                <input type="text" class="form-control" id="etc" name="etc" placeholder="예)시간외 근로수당 : 15000원(시간당)" />
                                             </div>
                                         </div>
                                         <div class="row mb-3">
@@ -155,7 +155,7 @@
                                                     <label class="form-check-label" for="payDateType3">매월</label>
                                                 </div>
                                                 <div class="form-inline">
-                                                    <label class="form-control-label mr-2">일 (매월 선택 시 무시)</label>
+                                                    <label class="form-control-label mr-2">지급 일 (매월 선택 시 무시)</label>
                                                     <input type="number" id="customPayDate" class="form-control" name="customPayDate" min="0" max="31" />
                                                 </div>
                                             </div>
@@ -177,24 +177,20 @@
                                             <label class="col-12 col-form-label">사회보험 적용여부</label>
                                             <div class="col-12">
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" class="form-check-input" id="insurance1" name="insurance" value="고용보험"/>
+                                                    <input type="checkbox" class="form-check-input" id="insurance1" name="insurance1" value="고용보험"/>
                                                     <label class="form-check-label" for="insurance1">고용보험</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" class="form-check-input" id="insurance2" name="insurance" value="산재보험"/>
+                                                    <input type="checkbox" class="form-check-input" id="insurance2" name="insurance2" value="산재보험"/>
                                                     <label class="form-check-label" for="insurance2">산재보험</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" class="form-check-input" id="insurance3" name="insurance" value="국민연금"/>
+                                                    <input type="checkbox" class="form-check-input" id="insurance3" name="insurance3" value="국민연금"/>
                                                     <label class="form-check-label" for="insurance3">국민연금</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" class="form-check-input" id="insurance4" name="insurance" value="건강보험"/>
+                                                    <input type="checkbox" class="form-check-input" id="insurance4" name="insurance4" value="건강보험"/>
                                                     <label class="form-check-label" for="insurance4">건강보험</label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <input type="checkbox" class="form-check-input" id="insurance5" name="insurance" value="해당없음"/>
-                                                    <label class="form-check-label" for="insurance4" >해당 없음</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -206,13 +202,9 @@
                                         </div>
                                         <div class="row justify-content-end">
                                             <div class="col-12">
-                                                <input type="hidden" name="companyCEO" th:value="${com.companyInfo.name}">
-                                                <input type="hidden" name="companyAddress" th:value="${com.address}">
-                                                <input type="hidden" name="companyName" th:value="${com.companyInfo.companyName}">
-                                                <input type="hidden" name="companyContact" th:value="${com.phone}">
-                                                <input type="hidden" name="memberAddress" th:value="${mem.address}">
-                                                <input type="hidden" name="memberContact" th:value="${mem.phone}">
-                                                <input type="hidden" name="memberName" th:value="${mem.memberInfo.name}">
+                                                <input type="hidden" name="id" th:value="${0}">
+                                                <input type="hidden" name="companyId" th:value="${com.id}">
+                                                <input type="hidden" name="memberId" th:value="${mem.id}">
                                                 <button type="submit" class="btn btn-primary">Send</button>
                                             </div>
                                         </div>
@@ -226,23 +218,23 @@
                 <div class="d-flex justify-content-end mb-3">
 
                 </div>
-                   <script>
-                       function validateForm() {
+                    <script>
+                        function validateForm() {
      var isValid = true;
 
      // Validate '근로개시일'
-     var startdate = document.getElementById('startdate').value.trim();
+     var startdate = document.getElementById('startDate').value.trim();
      if (startdate === '') {
          alert('근로개시일이 비었습니다.');
-         document.getElementById('startdate').focus();
+         document.getElementById('startDate').focus();
          return false;
      }
 
      // Validate '근로마감일'
-     var enddate = document.getElementById('enddate').value.trim();
+     var enddate = document.getElementById('endDate').value.trim();
      if (enddate === '') {
          alert('근로마감일이 비었습니다.');
-         document.getElementById('enddate').focus();
+         document.getElementById('endDate').focus();
          return false;
      }
 
@@ -278,10 +270,10 @@
      }
 
      // Validate '주당 근무일수'
-     var worksShedule = document.getElementById('worksShedule').value.trim();
-     if (worksShedule === '') {
+     var worksSchedule = document.getElementById('worksSchedule').value.trim();
+     if (worksSchedule === '') {
          alert('주당 근무일수가 비었습니다.');
-         document.getElementById('worksShedule').focus();
+         document.getElementById('worksSchedule').focus();
          return false;
      }
 
@@ -293,10 +285,22 @@
          return false;
      }
 
-     // Validate '임금 지급일' if '매주' or '매월' is selected
+     // Set default value for '기타 제수당' if empty
+     var etc = document.getElementById('etc');
+     if (etc.value.trim() === '') {
+         etc.value = '없음';
+     }
+
+     var customPayDate = document.getElementById('customPayDate').value.trim();
+     var payDateType1 = document.getElementById('payDateType1').checked;
      var payDateType2 = document.getElementById('payDateType2').checked;
      var payDateType3 = document.getElementById('payDateType3').checked;
-     var customPayDate = document.getElementById('customPayDate').value.trim();
+
+     // Validate '임금 지급일' if '매주' or '매월' is selected
+     if (payDateType1 && customPayDate === '') {
+         document.getElementById('customPayDate').value = '0';
+         customPayDate = '0';
+     }
 
      if ((payDateType2 || payDateType3) && customPayDate === '') {
          alert('매주나 매월을 선택했을 경우 일자를 입력해야 합니다.');
@@ -304,10 +308,30 @@
          return false;
      }
 
-     // If '매일' is selected for '임금 지급일', set customPayDate to '0' if empty
-     var payDateType1 = document.getElementById('payDateType1').checked;
-     if (payDateType1 && customPayDate === '') {
-         document.getElementById('customPayDate').value = '0';
+     // Handle '사회보험 적용여부' checkboxes
+     var insurance1 = document.getElementById('insurance1');
+     var insurance2 = document.getElementById('insurance2');
+     var insurance3 = document.getElementById('insurance3');
+     var insurance4 = document.getElementById('insurance4');
+
+     if (!insurance1.checked) {
+         insurance1.checked = true;
+         insurance1.value = '없음';
+     }
+
+     if (!insurance2.checked) {
+         insurance2.checked = true;
+         insurance2.value = '없음';
+     }
+
+     if (!insurance3.checked) {
+         insurance3.checked = true;
+         insurance3.value = '없음';
+     }
+
+     if (!insurance4.checked) {
+         insurance4.checked = true;
+         insurance4.value = '없음';
      }
 
      // Validate '계약서 작성일'
@@ -318,31 +342,12 @@
          return false;
      }
 
-     // Validate '보험 선택'
-     var insuranceCheckboxes = document.getElementsByName('insurance');
-     var isChecked = false;
-     for (var i = 0; i < insuranceCheckboxes.length; i++) {
-         if (insuranceCheckboxes[i].checked) {
-             isChecked = true;
-             break;
-         }
-     }
-     if (!isChecked) {
-         alert('하나 이상의 보험 항목을 선택해야 합니다.');
-         return false;
-     }
-
-     // Set default value for '기타 제수당' if empty
-     var etc = document.getElementById('etc');
-     if (etc.value === '') {
-         etc.value = '없음';
-     }
-
      return isValid;
  }
 
-                   </script>
-                <!-- Footer -->
+                    </script>
+
+                    <!-- Footer -->
                 <div th:include="~{design/footer :: footer}"></div>
                 <!-- / Footer -->
                 <div class="content-backdrop fade"></div>

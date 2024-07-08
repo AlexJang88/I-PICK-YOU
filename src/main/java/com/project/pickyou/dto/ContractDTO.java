@@ -1,41 +1,109 @@
 package com.project.pickyou.dto;
 
-import lombok.AllArgsConstructor;
+import com.project.pickyou.entity.ContractEntity;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class ContractDTO {
-    private LocalDate startdate;
-    private LocalDate enddate ; // 기본값: 오늘 날짜로부터 1년 후
+    private Long id;
+    private String companyId;
+    private String memberId;
+    private LocalDate startDate;
+    private LocalDate endDate ;
     private String location;
     private String job;
     private String workStartTime;
     private String workEndTime;
-    private int worksShedule;
-    private String wageType ; // 기본값: 일급
+    private int worksSchedule;
+    private String wageType ;
     private int wage;
-    private String etc ; // 기본값: 없음
-    private String payDate ; // 기본값: 매월
-    private int customPayDate ; // 기본값: 0 (무시)
-    private String wageInto ; // 기본값: 근로자에게 직접지급
-    private String[] insurance ; // 기본값: 빈 배열
-    private LocalDate contractDate;// 기본값: 오늘 날짜
-    private String companyCEO;
-    private String companyAddress;
-    private String companyName;
-    private String companyContact;
-    private String memberAddress;
-    private String memberContact;
-    private String memberName;
+    private String etc ;
+    private String payDate ;
+    private int customPayDate ;
+    private String wageInto ;
+    private String insurance1;
+    private String insurance2;
+    private String insurance3;
+    private String insurance4;
+    private LocalDate contractDate;
+
+
+    @Builder
+    public ContractDTO( Long id,
+            String companyId,
+            String memberId,
+            LocalDate startDate,
+             LocalDate endDate,
+             String location,
+             String job,
+             String workStartTime,
+             String workEndTime,
+             int worksSchedule,
+             String wageType,
+             int wage,
+             String etc,
+             String payDate,
+             int customPayDate,
+             String wageInto,
+             String insurance1,
+             String insurance2,
+             String insurance3,
+             String insurance4,
+             LocalDate contractDate)
+             {
+        this.id=id;
+        this.companyId=companyId;
+        this.memberId=memberId;
+        this.startDate=startDate;
+        this.endDate=endDate;
+        this.location=location;
+        this.job=job;
+        this.workStartTime=workStartTime;
+        this.workEndTime=workEndTime;
+        this.worksSchedule=worksSchedule;
+        this.wageType=wageType;
+        this.wage=wage;
+        this.etc=etc;
+        this.payDate=payDate;
+        this.customPayDate=customPayDate;
+        this.wageInto=wageInto;
+        this.insurance1=insurance1;
+        this.insurance2=insurance2;
+        this.insurance3=insurance3;
+        this.insurance4=insurance4;
+        this.contractDate=contractDate;
+    }
+    public ContractEntity toContractEntity() {
+        return ContractEntity.builder()
+                .id(this.id)
+                .companyId(this.companyId)
+                .memberId(this.memberId)
+                .startDate(this.startDate)
+                .endDate(this.endDate)
+                .location(this.location)
+                .job(this.job)
+                .workStartTime(this.workStartTime)
+                .workEndTime(this.workEndTime)
+                .worksSchedule(this.worksSchedule)
+                .wageType(this.wageType)
+                .wage(this.wage)
+                .etc(this.etc)
+                .payDate(this.payDate)
+                .customPayDate(this.customPayDate)
+                .wageInto(this.wageInto)
+                .insurance1(this.insurance1)
+                .insurance2(this.insurance2)
+                .insurance3(this.insurance3)
+                .insurance4(this.insurance4)
+                .contractDate(this.contractDate)
+                .build();
+    }
 
 
 

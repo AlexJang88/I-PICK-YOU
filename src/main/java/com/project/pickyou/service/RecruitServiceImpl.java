@@ -21,15 +21,15 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Objects;
-import java.util.Random;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +45,8 @@ public class RecruitServiceImpl implements RecruitService {
     private final PickJPARepository pickJPA;
     private final ResumeJPARepository resumeJPA;
     private final RecruitDetailJPARepository recruitDetailJPA;
+    private final ContractJPARepository contractJPA;
+    private final ConfirmJPARepository confirmJPA;
 
     @Override
     public void AllPosts(Model model, int pageNum) {
@@ -292,6 +294,48 @@ public class RecruitServiceImpl implements RecruitService {
 
 
 
+    }
+
+    @Override
+    public Long contract(ContractDTO dto ) {
+        if(dto.getId()==0){
+            dto.setId(null);
+        }
+        Long maxnum=contractJPA.getAutoIncrementValue("pickyou","contract");
+        System.out.println("========================maxnum"+maxnum);
+        ConfirmDTO cdto = new ConfirmDTO();
+        cdto.setMemberId(dto.getMemberId());
+        cdto.setCompanyId(dto.getCompanyId());
+        cdto.setApply(1);
+        cdto.setStart(Date.valueOf(dto.getStartDate()));
+        cdto.setEnd(Date.valueOf(dto.getEndDate()));
+        cdto.setContractId(maxnum);
+        System.out.println("========================cdto"+dto);
+        contractJPA.save(dto.toContractEntity());
+        System.out.println("========================confirmsave"+maxnum);
+        confirmJPA.save(cdto.toConfirmEntity());
+        System.out.println("========================contractsave"+maxnum);
+
+        return maxnum;
+    }
+
+    @Override
+    public void getContract(Model model, Long id) {
+        Optional<ContractEntity>  con = contractJPA.findById(id);
+
+        if(con.isPresent()){
+            ContractEntity ce = con.get();
+            System.out.println("========================ce"+ce);
+            model.addAttribute("contract",ce);
+            Optional<MemberEntity> member = memberJPA.findById(ce.getMemberId());
+            Optional<MemberEntity> company = memberJPA.findById(ce.getCompanyId());
+            if(member.isPresent()){
+                model.addAttribute("member",member.get());
+            }if(company.isPresent()){
+                model.addAttribute("company",company.get());
+            }
+
+        }
     }
 
 

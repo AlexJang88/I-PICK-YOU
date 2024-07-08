@@ -33,7 +33,7 @@ public class EducationController {
         return "education/content";
    }
    //수정페이지 이동
-   @GetMapping("posts/edit/{boardNum}")
+   @GetMapping("posts/{boardNum}/edit")
    public String edit(Model model,@PathVariable Long boardNum,Principal principal){
        String sid = principal.getName();
        //principal.getName();
@@ -42,8 +42,8 @@ public class EducationController {
    }
 
    //수정
-   @PutMapping("/posts")
-    public String update(@RequestParam(name = "id")Long id,@RequestParam(name = "files",required = false) ArrayList<MultipartFile> files, EducationDTO dto){
+   @PutMapping("/posts/{id}")
+    public String update(@PathVariable(name = "id")Long id,@RequestParam(name = "files",required = false) ArrayList<MultipartFile> files, EducationDTO dto){
         for(MultipartFile mf:files){
             if(mf.getOriginalFilename().isEmpty()){
                 files = new ArrayList<>();
@@ -55,15 +55,15 @@ public class EducationController {
         return url;
    }
    //삭제
-   @DeleteMapping("/posts")
-   public String delete(@RequestParam(name = "id")Long id){
+   @DeleteMapping("/posts/{id}")
+   public String delete(@PathVariable(name = "id")Long id){
         service.deletePost(id,2);
         return "redirect:/educations/posts";
    }
    //작성페이지이동
-    @GetMapping("/posts/write/{memberId}")
-    public String write(Model model,@PathVariable String memberId){
-        model.addAttribute("memberId",memberId);
+    @GetMapping("/posts/new")
+    public String write(Model model,@PathVariable Principal principal){
+        model.addAttribute("memberId",principal.getName());
         return "education/write";
     }
     //작성

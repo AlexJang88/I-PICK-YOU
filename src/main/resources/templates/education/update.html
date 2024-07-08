@@ -59,7 +59,7 @@
                         <div class="col-xxl">
                             <div class="card mb-4">
                                 <div class="card-body">
-                                    <form id="educationForm" th:method="put" th:action="@{/educations/posts}" enctype="multipart/form-data" novalidate onsubmit="return validateForm()">
+                                    <form id="educationForm" th:method="put" th:action="@{/educations/posts/{id}(id=${post.id})}" enctype="multipart/form-data" novalidate onsubmit="return validateForm()">
                                         <div class="row mb-3">
                                             <label class="col-sm-2 col-form-label" for="title">제목</label>
                                             <div class="col-sm-10">
@@ -108,7 +108,6 @@
                                         </div>
                                         <div class="row justify-content-end">
                                             <div class="col-sm-10">
-                                                <input type="hidden" name="id" th:value="${post.id}">
                                                 <input type="hidden" name="companyId" th:value="${post.companyId}">
                                                 <input type="hidden" name="readCount" th:value="${post.readCount}">
                                                 <button type="submit" class="btn btn-primary">수정하기</button>
