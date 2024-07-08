@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Send Mail</title>
+</head>
+<body>
+<h1>메일 보내기</h1>
+
+<form th:action="@{/mail/send}" method="post">
+    <table>
+        <tr>
+            <td>메일 주소</td>
+            <td>
+                <input type="text" name="email" placeholder="이메일 주소를 입력하세요">
+            </td>
+            <td>
+                <button type="button" onclick="sendAuthCode()">이메일 인증</button>
+            </td>
+        </tr>
+        <tr>
+            <td>인증 코드</td>
+            <td>
+                <input type="text" name="authCode" placeholder="인증 코드를 입력하세요">
+            </td>
+            <td>
+                <button type="button" onclick="verifyAuthCode()">인증 확인</button>
+            </td>
+        </tr>
+    </table>
+    <button type="submit">발송</button>
+</form>
+
+<script>
+    function sendAuthCode() {
+        const email = document.querySelector('input[name="email"]').value;
+        fetch('/mail/sendAuthCode', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: email }),
+        }).then(response => response.json())
+        .then(data => alert(data.message))
+        .catch(error => console.error('Error:', error));
+    }
+
+    function verifyAuthCode() {
+        const email = document.querySelector('input[name="email"]').value;
+        const authCode = document.querySelector('input[name="authCode"]').value;
+        fetch('/mail/verifyAuthCode', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: email, authCode: authCode }),
+        }).then(response => response.json())
+        .then(data => alert(data.message))
+        .catch(error => console.error('Error:', error));
+    }
+</script>
+
+</body>
+</html>

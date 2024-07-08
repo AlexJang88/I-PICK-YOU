@@ -43,7 +43,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth)->auth
 
-                        .requestMatchers("/","/login","/joinCompany","/trainning/**","/join","/joinProc","/joinCompanyPro","/assets/**", "/img/**","/register","/css/**", "/js/**").permitAll()
+                        .requestMatchers("/","/login","/joinCompany","/mail/**","/trainning/**","/posts/**","/join","/joinProc","/assets/**", "/img/**","/register","/css/**", "/js/**").permitAll()
                         .requestMatchers("/login","/ajax/**").permitAll()
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
@@ -58,12 +58,6 @@ public class SecurityConfig {
                         .permitAll()
                 );
 
-        http
-                .formLogin(auth -> auth
-                        .loginPage("/login")
-                        .loginProcessingUrl("/joinCompanyPro") // 추가한 부분
-                        .permitAll()
-                );
 
 
         http

@@ -136,14 +136,14 @@
 
                             <div class="row">
                                 <div class="col-md-6 text-center"> <!-- 수정하기 버튼 -->
-                                    <a class="btn btn-danger btn-block" th:href="@{/trainning/trainningUpdate/{trainnignum}(trainnignum=${DetailsList.get().id})}" >
+                                    <a class="btn btn-danger btn-block"  th:href="@{/trainning/posts/{trainnignum}/edit(trainnignum=${DetailsList.get().id})}" >
                                      수정하기
                                     </a>
                                 </div>
 
 
                                 <div class="col-md-6 text-center"> <!-- 삭제하기 버튼 -->
-                                    <form th:action="@{/trainning/trainningdelete/{trainnignum}(trainnignum=${DetailsList.get().id})}" th:method="delete">
+                                    <form th:action="@{/trainning/posts/{trainnignum}(trainnignum=${DetailsList.get().id})}" th:method="delete">
                                         <button type="submit" class="btn btn-danger btn-block">삭제하기</button>
                                     </form>
                                 </div>

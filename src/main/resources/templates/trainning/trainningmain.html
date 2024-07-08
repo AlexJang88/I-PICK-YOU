@@ -91,7 +91,7 @@
                     <!-- Grid Card -->
                     <h6 class="pb-1 mb-4 text-muted">훈련소 확인하기</h6>
                     <button type="button" class="btn btn-primary">
-                        <a href="/trainning/trainninginput" style="color: inherit; text-decoration: none;">
+                        <a href="/trainning/posts/new" style="color: inherit; text-decoration: none;">
                             훈련소 등록하기
                         </a>
                     </button>
@@ -104,7 +104,7 @@
                     <table>
                         <tbody>
                         <th:block th:each="list : ${trainninglist}">
-                            <a th:href="@{/trainning/trainningDetails/{trainnignum}(trainnignum=${list.id})}">
+                            <a th:href="@{/trainning/posts/{trainnignum}(trainnignum=${list.id})}">
                             <div class="col">
                                 <div class="card h-100">
 
@@ -142,19 +142,19 @@
                         <ul th:if="${count>0}" class="pagination pagination-lg justify-content-center">
                             <!-- Previous Button -->
                             <li th:if="${startPage>10}" class="page-item" >
-                                <a class="page-link" th:href="@{'/trainning/trainningmain?pageNum=' + (${startPage} - 10)}" aria-label="Previous">
+                                <a class="page-link" th:href="@{'/trainning/posts?pageNum=' + (${startPage} - 10)}" aria-label="Previous">
                                     <i class="tf-icon bx bx-chevrons-left"></i>
                                 </a>
                             </li>
 
                             <!-- Page Numbers -->
                             <li class="page-item" th:each="i : ${#numbers.sequence(startPage, endPage)}" >
-                                <a class="page-link" th:href="@{'/trainning/trainningmain?pageNum=' + ${i}}" th:text="${i}"></a>
+                                <a class="page-link" th:href="@{'/trainning/posts?pageNum=' + ${i}}" th:text="${i}"></a>
                             </li>
 
                             <!-- Next Button -->
                             <li class="page-item" th:if="${endPage<pageCount}">
-                                <a class="page-link" th:href="@{'/trainning/trainningmain?pageNum=' + (${startPage} + 10)}" aria-label="Next">
+                                <a class="page-link" th:href="@{'/trainning/posts?pageNum=' + (${startPage} + 10)}" aria-label="Next">
                                     <i class="tf-icon bx bx-chevrons-right"></i>
                                 </a>
                             </li>

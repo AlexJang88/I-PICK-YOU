@@ -36,6 +36,8 @@
     <!-- Vendors CSS -->
     <link th:href="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css}" rel="stylesheet" />
 
+    <!--제이쿼리-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!--주소-->
     <script th:src="@{'//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js'}"></script>
@@ -228,7 +230,7 @@
                                                         <input
                                                                 type="text"
                                                                 class="form-control"
-                                                                id="corpno"
+                                                                id="corp_reg"
                                                                 name="corpno"
                                                                 placeholder="사업자 번호를 입력하세요"
                                                                 required
@@ -237,7 +239,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-2">
-                                                    <button type="button" class="btn btn-secondary">사업자 번호확인</button>
+                                                    <button type="button"  name="corp_button" id="corp_button"  class="btn btn-secondary" onclick="corp_chk()";>사업자 번호확인</button>
                                                 </div>
                                             </div>
                                             <br>
@@ -462,6 +464,7 @@
             document.getElementById("passwordMatchMessage").innerHTML = "비밀번호가 동일합니다";
             document.getElementById("passwordMatchMessage").classList.remove("text-danger");
             document.getElementById("passwordMatchMessage").classList.add("text-success");
+             $("#submitButton").prop("disabled", false);
         } else {
             document.getElementById("passwordMatchMessage").innerHTML = "비밀번호를 확인해주세요";
             document.getElementById("passwordMatchMessage").classList.remove("text-success");
@@ -490,6 +493,57 @@
         input.value = phoneNumber;
     }
 </script>
+
+
+
+<!--사업자조회-->
+<script th:inline="javascript">
+    function corp_chk() {
+    /*<![CDATA[*/
+        $("#corp_reg").val($("#corp_reg").val().replace(/[^0-9]/g, ""));
+        var reg_num = $("#corp_reg").val();
+
+        if (!reg_num) {
+            alert("사업자등록번호를 입력해주세요.");
+            return false;
+        }
+
+        var data = {
+            "b_no": [reg_num]
+        };
+
+        $.ajax({
+            url: "https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=V%2FSm2tGOI6LMsGw47LlhAlHC6Pbjx083Le3uMGgYPiNZEruSxeoLsX7Q9ZCJlquE3RTBMjXsCqXCw6dxMXgZjA%3D%3D",  // serviceKey 값을 xxxxxx에 입력
+            type: "POST",
+            data: JSON.stringify(data), // json 을 string으로 변환하여 전송
+            dataType: "JSON",
+            traditional: true,
+            contentType: "application/json; charset=UTF-8",
+            accept: "application/json",
+            success: function(result) {
+                console.log(result);
+                if(result.match_cnt == "1") {
+                    //성공
+                     console.log("success");
+                    alert("사업자 번호 확인 성공!");
+                    // 제출 버튼 활성화
+                    $("#submitButton").prop("disabled", false);
+                } else {
+                    //실패
+                    console.log("fail");
+                    alert(result.data[0]["tax_type"]);
+                }
+            },
+            error: function(result) {
+                console.log("error");
+                console.log(result.responseText); //responseText의 에러메세지 확인
+            }
+        });
+    /*]]>*/
+    }
+</script>
+
+
 
 
 </body>
