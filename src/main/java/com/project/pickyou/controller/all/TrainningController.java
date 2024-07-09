@@ -11,6 +11,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
+
 @Controller
 @RequestMapping("/trainning/*")
 public class TrainningController {
@@ -33,8 +35,12 @@ public class TrainningController {
 
     //훈련소 내용상세보기
         @GetMapping ("/posts/{trainnignum}")
-        public String trainningDetails(Model model,@PathVariable Long trainnignum){ //훈련소 상세내용
+        public String trainningDetails(Model model,@PathVariable Long trainnignum, Principal principal){ //훈련소 상세내용
+            if(principal != null){
 
+                String pid = principal.getName();
+                model.addAttribute("pid", pid);
+            }
         trainningService.Details(model, trainnignum);//훈련소 내용상세보기
 
         return  "/trainning/trainningDetails";
@@ -90,10 +96,10 @@ public class TrainningController {
         }
 
         @PostMapping("/posts")
-        public String trainninginputPro(TrainningDTO trainningDTO, ImageDTO imageDTO, @RequestParam("files") MultipartFile[] files){
+        public String trainninginputPro(TrainningDTO trainningDTO, ImageDTO imageDTO, @RequestParam("files") MultipartFile[] files, Principal principal){
 
-        String companyId = "nine";  //임시값
-        trainningDTO.setCompanyId(companyId);
+            String companyId = principal.getName();
+            trainningDTO.setCompanyId(companyId);
 
             // 훈련소 정보 저장
             TrainningEntity savedTrainning = trainningService.savetrainning(trainningDTO);

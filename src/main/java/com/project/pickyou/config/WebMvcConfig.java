@@ -11,14 +11,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
 
 
-    @Value("${lprofile.upload.path}")
-    private String profileImgUploadPath;
-
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry){
-        registry.addResourceHandler("/upload/**")
+        registry.addResourceHandler("/kjwupload/**")
                 .addResourceLocations("file:///C:/Users/upload/");
     }
+
 
 
 

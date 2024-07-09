@@ -128,13 +128,13 @@
                                 <div class="card-body">
                                     <div th:each="image : ${images}" class="mb-3">
                                         <!-- 이미지 삽입 -->
-                                        <img th:src="@{'/upload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}" class="img-fluid" alt="사진" />
+                                        <img th:src="@{'/kjwupload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}" class="img-fluid" alt="사진" />
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                            <div class="row">
+                            <div class="row" th:if="${DetailsList.get().companyId == pid}">
                                 <div class="col-md-6 text-center"> <!-- 수정하기 버튼 -->
                                     <a class="btn btn-danger btn-block"  th:href="@{/trainning/posts/{trainnignum}/edit(trainnignum=${DetailsList.get().id})}" >
                                      수정하기
