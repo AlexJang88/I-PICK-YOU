@@ -34,91 +34,125 @@
     <!-- Template customizer & Theme config files -->
     <script th:src="@{/assets/js/config.js}"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            width: 70%;
-            margin: 0 auto;
-            padding: 20px;
-            border: 1px solid black;
-        }
-        .title {
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        .content {
-            font-size: 14px;
-        }
-        .content table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .content td, .content th {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: left;
-        }
-        .content th {
-            background-color: #f2f2f2;
-        }
-        .content input[type="text"], .content input[type="date"] {
-            width: 100%;
-            border: none;
-            border-bottom: 1px solid black;
-            padding: 5px;
-            outline: none;
-        }
-        .inline-input {
-            border: none;
-            border-bottom: 1px solid black;
-            padding: 5px;
-            outline: none;
-            display: inline-block;
-            width: auto;
-            min-width: 100px;
-        }
-        h3{
-            text-align : center;
-        }
-        h4{
-            text-align:center;
-        }
-        .wrapper {
-            position: relative;
-            width: 400px;
-            height: 200px;
-            -moz-user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            display: none; /* Initially hidden */
-        }
+    body {
+    font-family: Arial, sans-serif;
+    }
+    .container {
+    width: 70%;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid black;
+    }
+    .title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    }
+    .content {
+    font-size: 14px;
+    }
+    .content table {
+    width: 100%;
+    border-collapse: collapse;
+    }
+    .content td, .content th {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+    }
+    .content th {
+    background-color: #f2f2f2;
+    }
+    .content input[type="text"], .content input[type="date"] {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid black;
+    padding: 5px;
+    outline: none;
+    }
+    .inline-input {
+    border: none;
+    border-bottom: 1px solid black;
+    padding: 5px;
+    outline: none;
+    display: inline-block;
+    width: auto;
+    min-width: 100px;
+    }
+    h3{
+    text-align : center;
+    }
+    h4{
+    text-align:center;
+    }
+    .wrapper {
+    position: relative;
+    width: 400px;
+    height: 200px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    display: none; /* Initially hidden */
+    }
 
-        .signature-pad {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 400px;
-            height: 200px;
-            background-color: white;
-        }
+    .signature-pad {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 400px;
+    height: 200px;
+    background-color: white;
+    }
 
-        .text {
-            font-size: 30px;
-            margin-top: 70px;
-            vertical-align: middle;
-            display: block; /* Initially visible */
-        }
+    .text {
+    font-size: 30px;
+    margin-top: 70px;
+    vertical-align: middle;
+    display: block; /* Initially visible */
+    }
 
-        #img01 {
-            text-align: center;
-            top: 30px;
-            left: 50px;
-            width: 200px;
-        }
+    #img01, #img02 {
+    text-align: center;
+    width: 150px;
+    height: 75px;
+    display: none;
+    }
+    .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+    justify-content: center;
+    align-items: center;
+    }
+    .modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+    box-shadow: 0 3px 7px rgba(0,0,0,.3);
+    }
+    .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+    }
     </style>
 </head>
 
@@ -148,7 +182,16 @@
                             <table>
                                 <tr>
                                     <th>1. 근로계약기간</th>
-                                    <td><span th:text="${#temporals.format(contract.startDate, 'yyyy-MM-dd')}"></span>부터 <span th:text="${#temporals.format(contract.endDate, 'yyyy-MM-dd')}"></span>까지 <br> ※ 근로계약기간을 정하지 않는 경우에는 "근로개시일"만 기재</td>
+                                    <td>
+                                        <span th:text="${#temporals.format(contract.startDate, 'yyyy')}"></span>년
+                                        <span th:text="${#temporals.format(contract.startDate, 'MM')}"></span>월
+                                        <span th:text="${#temporals.format(contract.startDate, 'dd')}"></span>일
+                                        부터
+                                        <span th:text="${#temporals.format(contract.endDate, 'yyyy')}"></span>년
+                                        <span th:text="${#temporals.format(contract.endDate, 'MM')}"></span>월
+                                        <span th:text="${#temporals.format(contract.endDate, 'dd')}"></span>일 까지
+                                        <br> ※ 근로계약기간을 정하지 않는 경우에는 "근로개시일"만 기재
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>2. 근 무 장 소</th>
@@ -160,7 +203,7 @@
                                 </tr>
                                 <tr>
                                     <th>4. 소정근로시간</th>
-                                    <td><span th:text="${contract.workStartTime}"></span>부터 <span th:text="${contract.workEndTime}"></span>까지 </td>
+                                    <td><span th:text="${#strings.substring(contract.workStartTime,0,5)}"></span>부터 <span th:text="${#strings.substring(contract.workStartTime,0,5)}"></span>까지 </td>
                                 </tr>
                                 <tr>
                                     <th>5. 근무일/휴일</th>
@@ -202,15 +245,20 @@
                                 </tr>
                             </table>
                             <br>
-                            <h3><span th:text="${#temporals.format(contract.contractDate, 'yyyy-MM-dd')}"></span></h3>
+                            <h3><span th:text="${#temporals.format(contract.contractDate, 'yyyy')}"></span>년
+                                <span th:text="${#temporals.format(contract.contractDate, 'MM')}"></span>월
+                                <span th:text="${#temporals.format(contract.contractDate, 'dd')}"></span>일</h3>
                             <h4>사업주 </h4>
                             <h4>사업체 명 : <span th:text="${company.companyInfo.companyName}"> </span> (전화: <span th:text="${company.phone}"> </span>)</h4>
                             <h4>주소: <span th:text="${company.address}"> </span></h4>
-                            <h4>대표자: <span th:text="${company.companyInfo.name}"> </span><img src="/upload/contract/signature.png" id="img01" width=150 height="75"/></h4>
+                            <h4>대표자: <span th:text="${company.companyInfo.name}"> </span><img src="" id="img01"/></h4>
                             <h4>근로자 </h4>
                             <h4>연락처 : <span th:text="${member.phone}"> </span></h4>
                             <h4>주소: <span th:text="${member.address}"> </span></h4>
-                            <h4>성 함: <span th:text="${member.memberInfo.name}"> </span></h4>
+                            <h4>성 함: <span th:text="${member.memberInfo.name}"> </span><img src="" id="img02"/></h4>
+                            <input type="hidden" id="signCheck" th:value=${signCheck}>
+                            <input type="hidden" id="comSign" th:value="${comSign}">
+                            <input type="hidden" id="memSign" th:value="${memSign}">
                             <br>
                             <input type="hidden" name="contractId" id="contractId" th:value="${contract.id}">
                             <p style="text-align: center;">
@@ -251,10 +299,50 @@
            penColor: "rgb(1, 2, 3)"
        });
 
+        var signCheck = $('#signCheck').val();
+        var comSign = $('#comSign').val();
+        var memSign = $('#memSign').val();
+        console.log(signCheck);
+        console.log(comSign);
+        console.log(memSign);
+
+       if (signCheck == '11') {
+        $("#img01").attr('src', $('#comSign').val()).show();
+        $('#signButton').hide();
+        $('#save-png').hide();
+        $('#clear').hide();
+        }else if (signCheck == '12') {
+        $("#img02").attr('src', $('#memSign').val()).show();
+        $('#signButton').show();
+        $('#save-png').hide();
+        $('#clear').hide();
+    }else if (signCheck == '21') {
+        $("#img02").attr('src', $('#memSign').val()).show();
+        $('#signButton').hide();
+        $('#save-png').hide();
+        $('#clear').hide();
+    }else if (signCheck == '22') {
+        $("#img01").attr('src', $('#comSign').val()).show();
+        $('#signButton').show();
+        $('#save-png').hide();
+        $('#clear').hide();
+    }else if (signCheck == '100') {
+        $("#img01").attr('src', $('#comSign').val()).show();
+        $("#img02").attr('src', $('#memSign').val()).show();
+        $('#signButton').hide();
+        $('#save-png').hide();
+        $('#clear').hide();
+    }
+
+
+
+
+
+
+
        document.getElementById('signButton').addEventListener('click', function () {
            $('.wrapper').show();
            $('#signButton').hide();
-           $('#img01').hide();
            $('#save-png').show();
            $('#clear').show();
        });
@@ -277,12 +365,11 @@
                contentType: false,
                success: function (response) {
                    console.log(response.signName)
-                   $("#img01").attr('src', response.signName);
                    $('.wrapper').hide();
-                   $('#img01').show();
                    $('#save-png').hide();
                    $('#clear').hide();
                    $('#signButton').hide();
+                   location.reload();
                },
                error: function (error) {
                    console.error("Error saving signature: ", error);

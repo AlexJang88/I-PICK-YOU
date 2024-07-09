@@ -22,10 +22,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Date;
-import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -36,6 +33,8 @@ import java.nio.file.Paths;
 public class RecruitServiceImpl implements RecruitService {
     @Value("${img.upload.path}")
     private String imgUploadPath;
+    @Value("${contract.upload.path}")
+    private String contactUploadPath;
 
     private final MemberJPARepository memberJPA;
     private final ItextPdfUtil itextPdfUtil;
@@ -218,21 +217,21 @@ public class RecruitServiceImpl implements RecruitService {
     }
 
     @Override
-    public void contract(HttpServletResponse response) {
+    public void contractPDF(HttpServletResponse response,Long id) {
+        Optional<ContractEntity> con =contractJPA.findById(id);
         // 미리 준비한 DTO 선언
         ItextPdfDto itextPdfDto = new ItextPdfDto();
-        // pdf 파일이 저장될 경로 ( Mac 기준 )
-        itextPdfDto.setPdfFilePath("/Users/jeon/Documents/JavaProject/Blog/pdf/");
+        // pdf 파일이 저장될 경로
+        itextPdfDto.setPdfFilePath(contactUploadPath+File.separator+id+File.separator);
 
         // pdf 파일이 저장될 경로 ( Windows 기준 )
         // itextPdfDto.setPdfFilePath("C:\\Users\\hyeok\\Desktop\\pdf");
 
-        // pdf 파일명 ( 테스트를 위해 랜덤으로 생성 )
-        itextPdfDto.setPdfFileName(new Random().nextInt() + ".pdf");
-        // itextPdfDto.setPdfFileName("test.pdf");
+        // pdf 파일명 ( 계약날짜로 생성 )
+        itextPdfDto.setPdfFileName(con.get().getContractDate() + ".pdf");
 
         // getHtml 에서 호출될 코드명
-        itextPdfDto.setPdfCode("hyeok");
+        itextPdfDto.setContractId(id);
 
         // ======================= PDF 존재 유무 체크 =======================
         // 없다면 PDF 파일 만들기
@@ -243,10 +242,10 @@ public class RecruitServiceImpl implements RecruitService {
 
         // ===============================================================
         // 파일 다운로드를 위한 header 설정
-        response.setContentType("application/octet-stream");
+        /*response.setContentType("application/octet-stream");
         response.setHeader("Content-Disposition", "attachment; filename="+itextPdfDto.getPdfFileName()+";");
         response.setContentLengthLong(fileSize);
-        response.setStatus(HttpServletResponse.SC_OK);
+        response.setStatus(HttpServletResponse.SC_OK);*/
         // ===============================================================
 
         // 파일 다운로드
@@ -297,7 +296,7 @@ public class RecruitServiceImpl implements RecruitService {
     }
 
     @Override
-    public Long contract(ContractDTO dto ) {
+    public Long contract(ContractDTO dto) {
         if(dto.getId()==0){
             dto.setId(null);
         }
@@ -320,11 +319,23 @@ public class RecruitServiceImpl implements RecruitService {
     }
 
     @Override
-    public void getContract(Model model, Long id) {
+    public void getContract(HttpServletResponse response, Model model, Long id,String userId) {
+        int type=10;
+        String comSign="없음";
+        String memSign="없음";
+        File companySign =null;
+        File memberSign = null;
+        File contractPdf =null;
         Optional<ContractEntity>  con = contractJPA.findById(id);
-
         if(con.isPresent()){
+            LocalDate conDate= con.get().getContractDate();
+            String s = conDate.toString();
+            s=s.substring(0,10);
+            companySign= new File(contactUploadPath+File.separator+id+File.separator+con.get().getCompanyId()+"_signature.png");
+            memberSign= new File(contactUploadPath+File.separator+id+File.separator+con.get().getMemberId()+"_signature.png");
+            contractPdf =new File(contactUploadPath+File.separator+id+File.separator+s+".pdf");
             ContractEntity ce = con.get();
+
             System.out.println("========================ce"+ce);
             model.addAttribute("contract",ce);
             Optional<MemberEntity> member = memberJPA.findById(ce.getMemberId());
@@ -334,8 +345,85 @@ public class RecruitServiceImpl implements RecruitService {
             }if(company.isPresent()){
                 model.addAttribute("company",company.get());
             }
-
         }
+        System.out.println("==================userId" + con.get().getCompanyId());
+        System.out.println("==================userId" + con.get().getMemberId());
+        System.out.println("==================userId" + userId);
+
+
+
+        if(con.get().getCompanyId().equals(userId) || con.get().getMemberId().equals(userId)) {
+            Optional<MemberEntity> mem = memberJPA.findById(userId);
+            System.out.println("==================authCheck" + mem.get().getAuth());
+            if (mem.get().getAuth().contains("COMPANY")) {
+                System.out.println("==================authCheck" + mem.get().getAuth());
+               if (companySign.exists() && !memberSign.exists()) {
+                    System.out.println("==================authCheck" + mem.get().getAuth());
+                    type = 11;
+                    comSign = "/upload/contract/" + id + File.separator + con.get().getCompanyId() + "_signature.png";
+                }if (!companySign.exists() && memberSign.exists()) {
+                    System.out.println("==================authCheck" + mem.get().getAuth());
+                    type = 12;
+                    memSign = "/upload/contract/" + id + File.separator + con.get().getMemberId() + "_signature.png";
+                }
+                if (companySign.exists() && memberSign.exists()) {
+                    comSign = "/upload/contract/" + id + File.separator + con.get().getCompanyId() + "_signature.png";
+                    memSign = "/upload/contract/" + id + File.separator + con.get().getMemberId() + "_signature.png";
+                    type = 100;
+                    if(!contractPdf.exists()){
+                        contractPDF(response,id);
+                    }
+                }
+            }
+            if (mem.get().getAuth().contains("USER")) {
+                if (memberSign.exists() && !companySign.exists()) {
+                    type = 21;
+                    memSign = "/upload/contract/" + id + File.separator + con.get().getMemberId() + "_signature.png";
+                    System.out.println("==================authCheck" + memSign);
+                }
+                if (!memberSign.exists() && companySign.exists()) {
+                    type = 22;
+                    comSign = "/upload/contract/" + id + File.separator + con.get().getCompanyId() + "_signature.png";
+                    System.out.println("==================authCheck" + comSign);
+                }
+                if (companySign.exists() && memberSign.exists()) {
+                    comSign = "/upload/contract/" + id + File.separator + con.get().getCompanyId() + "_signature.png";
+                    memSign = "/upload/contract/" + id + File.separator + con.get().getMemberId() + "_signature.png";
+                    type = 100;
+                    System.out.println("==================authCheck" + comSign);
+                    System.out.println("==================authCheck" + memSign);
+                }
+            }
+        }
+
+
+        model.addAttribute("signCheck",type);
+        model.addAttribute("comSign",comSign);
+        model.addAttribute("memSign",memSign);
+    }
+    @Override
+    public Map<String, String> saveSignature(MultipartFile signature, Long contractId, String sid) {
+        Map<String,String> sign = new HashMap<>();
+        String saveName="";
+        //시큐리티 세션으로 처리해야함
+        if(!signature.isEmpty()){
+            String folderPath = String.valueOf(contractId);
+            File uploadPathFolder = new File(contactUploadPath,folderPath);
+            if(!uploadPathFolder.exists()){
+                uploadPathFolder.mkdirs();
+            }
+            String filePath = contactUploadPath+File.separator+contractId+File.separator+sid+"_"+signature.getOriginalFilename();
+            File file = new File(filePath);
+            try{
+                signature.transferTo(file);
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+            String signName = "/upload/contract/"+contractId+File.separator+sid+"_"+signature.getOriginalFilename();
+            sign.put("signName",signName);
+        }
+
+        return sign;
     }
 
 

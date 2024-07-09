@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 public interface RecruitService {
     public void AllPosts(Model model, int pageNum);
@@ -15,8 +16,9 @@ public interface RecruitService {
     public void update(List<MultipartFile> files,RecruitDTO dto,RecruitDetailDTO rddto,int boardType);
     public int favoriteCheck(PickDTO dto);
     public int recruit(Long boardNum,String id);
-    public void contract(HttpServletResponse response);
+    public void contractPDF(HttpServletResponse response,Long id);
     public void userInfo(Model model,String memberId,String companyId);
     public Long contract(ContractDTO dto );
-    public void getContract(Model model,Long id);
+    public void getContract(HttpServletResponse response,Model model,Long id,String userId);
+    public Map<String,String> saveSignature(MultipartFile multipartFile,Long contractId,String userId);
 }

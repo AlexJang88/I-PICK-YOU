@@ -18,6 +18,7 @@ import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
 import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
+import com.project.pickyou.dto.ContractDTO;
 import com.project.pickyou.dto.ItextPdfDto;
 import org.springframework.stereotype.Component;
 
@@ -47,7 +48,7 @@ public class ItextPdfUtil {
     public void createPDF(ItextPdfDto itextPdfDto) {
 
         // 최초 문서 사이즈 설정
-        Document document = new Document(PageSize.B4, 30, 30, 30, 30);
+        Document document = new Document(PageSize.A4, 30, 30, 30, 30);
 
         try {
             // PDF 파일 생성
@@ -132,7 +133,7 @@ public class ItextPdfUtil {
             2. xml 기준 html 태그 확인( ex : <p> </p> , <img/> , <col/> )
             위 조건을 지키지 않을 경우 DocumentException 발생
             */
-            String htmlStr = getHtml(itextPdfDto.getPdfCode());
+            String htmlStr = getHtml(itextPdfDto.getContractDTO());
 
             // HTML 내용을 PDF 파일에 삽입
             StringReader stringReader = new StringReader(htmlStr);
@@ -167,37 +168,142 @@ public class ItextPdfUtil {
     }
 
     // 사용할 html 코드를 가져오는 메소드
-    public String getHtml(String code) {
+    public String getHtml(ContractDTO dto) {
 
         String return_html = "";
+       return_html = "<html>" +
+                        "<body>" +
 
-        switch (code) {
-            case "jeon" :
-                return_html = "<html>" +
-                        "<body>" +
-                        "<h1>jeon</h1>" +
-                        "</body>" +
-                        "</html>";
-                break;
-            case "nam" :
-                return_html = "<html>" +
-                        "<body>" +
-                        "<h1>nam</h1>" +
-                        "<p>CSS 테스트 입니다.</p>" +
-                        "</body>" +
-                        "</html>";
-                break;
-            case "hyeok" :
-                return_html = "<html>" +
-                        "<body>" +
-                        "<h1>hyeok</h1>" +
-                        "<p>이미지 테스트 합니다.</p>" +
-                        "<img src='http://localhost:8080/images/test.png' />" +
-                        "</body>" +
-                        "</html>";
-                break;
-        }
 
+//               "<div class='content'>"+
+//                        "<div class='title'>건설일용근로자 표준근로계약서</div>"+
+//                       "<div class='content'>"+
+//                    "<p> <span th:text='${company.companyInfo.name}'></span> (이하 '사업주'라 함)과(와) <span th:text='${member.memberInfo.name}'></span> (이하 '근로자'라 함)는 다음과 같이 근로계약을 체결한다.</p>"+
+//                        "<table>"+
+//                                "<tr>"+
+//                                    "<th>1. 근로계약기간</th>"+
+//                                    "<td>"+
+//                                        "<span th:text='${#temporals.format(contract.startDate, 'yyyy')}'></span>년"+
+//                <span th:text="${#temporals.format(contract.startDate, 'MM')}"></span>월
+//                <span th:text="${#temporals.format(contract.startDate, 'dd')}"></span>일
+//        부터
+//                <span th:text="${#temporals.format(contract.endDate, 'yyyy')}"></span>년
+//                <span th:text="${#temporals.format(contract.endDate, 'MM')}"></span>월
+//                <span th:text="${#temporals.format(contract.endDate, 'dd')}"></span>일 까지
+//                <br> ※ 근로계약기간을 정하지 않는 경우에는 "근로개시일"만 기재
+//                                    </td>
+//                                </tr>
+//                                <tr>
+//                                    <th>2. 근 무 장 소</th>
+//                                    <td><span th:text="${contract.location}"></span></td>
+//                                </tr>
+//                                <tr>
+//                                    <th>3. 업무의 내용(직종)</th>
+//                                    <td><span th:text="${contract.job}"></span></td>
+//                                </tr>
+//                                <tr>
+//                                    <th>4. 소정근로시간</th>
+//                                    <td><span th:text="${#strings.substring(contract.workStartTime,0,5)}"></span>부터 <span th:text="${#strings.substring(contract.workStartTime,0,5)}"></span>까지 </td>
+//                                </tr>
+//                                <tr>
+//                                    <th>5. 근무일/휴일</th>
+//                                    <td>매주 <span th:text="${contract.worksSchedule}"></span>일(또는 매일단위)근무 <br> ※ 주휴일은 1주간 소정근로일을 모두 근로한 경우에 주당 1일을 유급으로 부여</td>
+//                                </tr>
+//                                <tr>
+//                                    <th>6. 임 금</th>
+//                                    <td>
+//                                        <p>- <span th:text="${contract.wageType}"></span>금: <span th:text="${contract.wage}"></span>원</p>
+//                                        <p>- 기타 제수당(시간외근로수당, 야간·휴일근로수당 등): <span th:text="${contract.etc}"></span></p>
+//                                        <p>- 임금지급일: <span th:text="${contract.payDate}"> </span><span th:text="${contract.customPayDate}">일(휴일의 경우는 전일 지급)</span></p>
+//                                        <p>- 지급방법: <span th:text="${contract.wageInto}"></span></p>
+//                                    </td>
+//                                </tr>
+//                                <tr>
+//                                    <th>7. 연차유급휴가</th>
+//                                    <td>연차유급휴가는 근로기준법에서 정하는 바에 따라 부여함</td>
+//                                </tr>
+//                                <tr>
+//                                    <th>8. 사회보험 적용여부</th>
+//                                    <td>
+//                                        <p>□ 고용보험(<span th:if="${contract.insurance1=='없음'}" >해당없음</span><span th:unless="${contract.insurance1=='없음'}" >해당</span>)
+//                                            □ 산재보험(<span th:if="${contract.insurance2=='없음'}" >해당없음</span><span th:unless="${contract.insurance2=='없음'}" >해당</span>)
+//                                            □ 국민연금(<span th:if="${contract.insurance3=='없음'}" >해당없음</span><span th:unless="${contract.insurance3=='없음'}" >해당</span>)
+//                                            □ 건강보험(<span th:if="${contract.insurance4=='없음'}" >해당없음</span><span th:unless="${contract.insurance4=='없음'}" >해당</span>)</p>
+//                                    </td>
+//                                </tr>
+//                                <tr>
+//                                    <th>9. 근로계약서 교부</th>
+//                                    <td>사업주는 근로계약을 체결함과 동시에 본 계약서를 사본하여 "근로자"의 교부요구와 관계없이 "근로자"에게 교부함(근로기준법 제17조 이행)</td>
+//                                </tr>
+//                                <tr>
+//                                    <th>10. 근로계약, 취업규칙 등의 성실한 이행의무</th>
+//                                    <td>사업주와 근로자는 각각 근로계약, 취업규칙, 단체협약을 지키고 성실하게 이행하여야 함</td>
+//                                </tr>
+//                                <tr>
+//                                    <th>11. 기 타</th>
+//                                    <td>이 계약에 정함이 없는 사항은 근로기준법령에 의함</td>
+//                                </tr>
+//                            </table>
+//                            <br>
+//                            <h3><span th:text="${#temporals.format(contract.contractDate, 'yyyy')}"></span>년
+//                <span th:text="${#temporals.format(contract.contractDate, 'MM')}"></span>월
+//                <span th:text="${#temporals.format(contract.contractDate, 'dd')}"></span>일</h3>
+//                            <h4>사업주 </h4>
+//                            <h4>사업체 명 : <span th:text="${company.companyInfo.companyName}"> </span> (전화: <span th:text="${company.phone}"> </span>)</h4>
+//                            <h4>주소: <span th:text="${company.address}"> </span></h4>
+//                            <h4>대표자: <span th:text="${company.companyInfo.name}"> </span><img src="" id="img01"/></h4>
+//                            <h4>근로자 </h4>
+//                            <h4>연락처 : <span th:text="${member.phone}"> </span></h4>
+//                            <h4>주소: <span th:text="${member.address}"> </span></h4>
+//                            <h4>성 함: <span th:text="${member.memberInfo.name}"> </span><img src="" id="img02"/></h4>
+//                            <input type="hidden" id="signCheck" th:value=${signCheck}>
+//                            <input type="hidden" id="comSign" th:value="${comSign}">
+//                            <input type="hidden" id="memSign" th:value="${memSign}">
+//                            <br>
+//                            <input type="hidden" name="contractId" id="contractId" th:value="${contract.id}">
+//                            <p style="text-align: center;">
+//                                <button id="signButton" >서명하기</button>
+//                            </p>
+//                            <div class="wrapper">
+//                                <canvas id="signature-pad" class="signature-pad" width=400 height=200></canvas>
+//                            </div>
+//                            <button id="save-png" style="display: none;">저장</button>
+//                            <button id="clear" style="display: none;">다시쓰기</button>
+//                        </div>
+//                    </div>"+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//                        "<h1>hyeok</h1>" +
+//                        "<p>이미지 테스트 합니다.</p>" +
+//                        "<img src='http://localhost:8080/images/test.png' />" +
+//
+
+
+
+
+
+
+
+
+
+
+
+
+
+               "</body>" +
+                        "</html>";
         return return_html;
     }
 }

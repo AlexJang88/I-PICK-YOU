@@ -5,6 +5,7 @@ import com.project.pickyou.dto.PickDTO;
 import com.project.pickyou.dto.RecruitDTO;
 import com.project.pickyou.dto.RecruitDetailDTO;
 import com.project.pickyou.service.RecruitService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -127,7 +129,7 @@ public class RecruitController {
     }
     @GetMapping("/contract/{memberId}")
     public String contract(Model model,Principal principal,@PathVariable String memberId){
-            String name = "two";
+            String name = "five";
         service.userInfo(model,memberId,
                 //principal.getName()
                 name
@@ -135,39 +137,37 @@ public class RecruitController {
         return"recruit/contractForm";
     }
     @PostMapping("/contract/company")
-    public String signature(@ModelAttribute ContractDTO dto,Model model){
-
+    public String signature(@ModelAttribute ContractDTO dto){
         Long id=service.contract(dto);
-        System.out.println("======================="+dto);
-        service.getContract(model,id);
-        return"recruit/companySign";
+        String url = "redirect:/contract/sign/"+id;
+        return url;
     }
     @GetMapping("/contract/sign/{contractId}")
-    public String signatureMem(@PathVariable Long contractId,Model model){
-        service.getContract(model,contractId);
-        return"recruit/companySign";
-    }
+    public String signatureMem(HttpServletResponse response,@PathVariable Long contractId,Model model,Principal principal){
+        //String id = principal.getName();
+        String id = "five";
+        service.getContract(response,model,contractId,id);
 
-    @PostMapping("/contract")
-    public String insertContract(){
-        return "recruit/companyContract";
+        return"recruit/companySign";
     }
 
     @PostMapping("/saveSignature")
     public ResponseEntity<Map<String,String>> saveSignature(@RequestParam("signature") MultipartFile signature,@RequestParam("contractId") Long contractId) throws IOException{
-        Map<String,String> sign = new HashMap<>();
+
         //시큐리티 세션으로 처리해야함
-        String sid = "two";
-        String filePath = contactUploadPath+ File.separator+contractId+File.separator+"sid"+signature.getOriginalFilename();
-        System.out.println("=============== sign"+filePath);
-        File file = new File(filePath);
-        signature.transferTo(file);
-        String signName="/upload"+File.separator+"contract"+File.separator+signature.getOriginalFilename();
-        sign.put("signName",signName);
+        String sid = "five";
+        Map<String,String> sign = service.saveSignature(signature,contractId,sid);
         return ResponseEntity.ok(sign);
     }
-    @GetMapping("/stest")
-    public String stest(){
+    @GetMapping("/pdf")
+    public @ResponseBody String stest(HttpServletResponse response,Long id){
+
+
+        service.contractPDF(response, id);
         return"recruit/companySign";
+    }
+    @GetMapping("/stest")
+    public String cset(){
+        return "recruit/sign";
     }
 }
