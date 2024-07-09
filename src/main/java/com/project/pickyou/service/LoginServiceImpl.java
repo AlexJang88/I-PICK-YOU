@@ -102,7 +102,7 @@ public class LoginServiceImpl implements LoginService, UserDetailsService {
             return;   //로그인화면으로
         }
         //중복된 값이 없다면 회원가입 후 로그인 화면으로
-        memberDTO.setAuth("ROLE_ADMIN");
+        memberDTO.setAuth("ROLE_COMPANY");
         memberDTO.setPw(bCryptPasswordEncoder.encode(memberDTO.getPw()));
 
 

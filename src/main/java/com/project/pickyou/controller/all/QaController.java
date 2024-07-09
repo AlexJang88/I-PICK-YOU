@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @Controller
 @RequestMapping("/qa/*")
 @RequiredArgsConstructor
@@ -15,47 +17,41 @@ public class QaController {
 
     private final QaService qaService;
 
-    // qa 게시판
+    // qa 리스트 가져오기, 페이징 처리
     @GetMapping("posts")
-    public String qaList(Model model, HttpSession session) {
-        // 임시 관리자
-        session.setAttribute("sessionId", "admin");
-        // 임시 관리자
-
+    public String qaList(Model model, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                         HttpSession session, Principal principal) {
+        String memberId = principal.getName();
+        String sid = (String) session.getAttribute(memberId);
         // qa 리스트 가져오기
-        qaService.qaList(model);
+        qaService.AllPosts(model, pageNum);
         return "qa/list";
     }
 
     // qa 글쓰기
-    @GetMapping("postsWrite")
+    @GetMapping("posts/new")
     public String qaWrite() {
         return "qa/write";
     }
 
     // qa 글쓰기 pro
     @PostMapping("posts")
-    public String qaWritePro(QaDTO dto) {
+    public String qaWritePro(QaDTO dto, Principal principal) {
+        String memberId = principal.getName();
+        dto.setMemberId(memberId);
         // qa insert
         qaService.qaInsert(dto);
         return "redirect:/qa/posts";
     }
 
     // qa 상세정보 가져오기
-    @GetMapping("info/{ref}")
-    public String qaInfoRef(Model model, @PathVariable int ref, HttpSession session) {
+    @GetMapping("posts/{ref}")
+    public String qaInfoRef(Model model, @PathVariable int ref, HttpSession session, Principal principal) {
 
-        // 임시 관리자
-        String sessionId = (String) session.getAttribute("sessionId");
-        model.addAttribute("sessionId", sessionId);
-        // 임시 관리자
+        String sid = principal.getName();
+        model.addAttribute("sid", sid);
 
-        // 임시 아이디 ~
-        String id = "five";
-        model.addAttribute("id", id);
-        // ~ 임시 아이디
-
-
+       // System.out.println(sid+" : ----------------------------------------------------------");
         // qa 댓글 유무
         qaService.qaReplyCount(ref, model);
         // qa 상세정보 가져오기
@@ -63,19 +59,11 @@ public class QaController {
         return "/qa/info";
     }
 
-    // qa 댓글쓰기
-    @GetMapping("reply/{ref}")
-    public String qaReply(Model model, @PathVariable int ref) {
-        // qa 상세정보 가져오기
-        qaService.qaInformation(model, ref);
-        return "/qa/reply";
-    }
-
     // qa 댓글쓰기 pro
     @PostMapping("reply/{ref}")
     public String qaReplyPro(QaDTO dto, Model model, @PathVariable int ref) {
         // qa 댓글 인서트
         qaService.qaReplyInsert(dto, ref);
-        return "redirect:/qa/posts";
+        return "redirect:/qa/posts/{ref}";
     }
 }

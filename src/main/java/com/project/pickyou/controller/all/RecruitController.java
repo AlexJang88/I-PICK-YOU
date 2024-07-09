@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -20,23 +22,23 @@ public class RecruitController {
     private final RecruitService service;
 
     @GetMapping("/posts")
-    public String list(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum){
-        model.addAttribute("memberId","four");
+    public String list(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, Principal principal){
+        model.addAttribute("memberId",principal.getName());
 
         service.AllPosts(model,pageNum);
         return "recruit/list";
     }
     @GetMapping("/posts/{boardNum}")
-    public String educationsContent(Model model,@PathVariable Long boardNum){
-        String sid = "one";
+    public String educationsContent(Model model,@PathVariable Long boardNum,Principal principal){
+        String sid = principal.getName();
         //principal.getName();
         service.post(model,boardNum,sid);
         return "recruit/content";
     }
     //수정페이지 이동
     @GetMapping("posts/edit/{boardNum}")
-    public String edit(Model model,@PathVariable Long boardNum){
-        String sid = "one";
+    public String edit(Model model,@PathVariable Long boardNum,Principal principal){
+        String sid = principal.getName();
         //principal.getName();
         service.post(model,boardNum,sid);
         return "recruit/update";
@@ -49,8 +51,6 @@ public class RecruitController {
                          ){
         rdto.setStartDate(startDateParam);
         rdto.setEndDate(endDateParam);
-        System.out.println("============"+rdto);
-        System.out.println("============"+rddto);
         service.update(files,rdto,rddto,6);
         String url = "redirect:/recruit/posts/"+id;
         return url;
@@ -71,7 +71,7 @@ public class RecruitController {
     @PostMapping("/posts")
     public String insertpost(ArrayList<MultipartFile> files, RecruitDTO rdto, RecruitDetailDTO rddto,
                              @RequestParam("startDateParam") @DateTimeFormat(pattern = "yyyy-MM-dd")Date startDateParam,
-                             @RequestParam("endDateParam") @DateTimeFormat(pattern = "yyyy-MM-dd")Date endDateParam
+                             @RequestParam("endDateParam") @DateTimeFormat(pattern = "yyyy-MM-dd")Date endDateParam,Principal principal
     ){
         int check=0;
         check = rdto.getStatus();
@@ -81,7 +81,7 @@ public class RecruitController {
             url="redirect:/recruit/posts";
         }
         //사업자 아이디 = 로그인 구현후 session 받아와서 다시 처리
-        rdto.setMemberId("four");
+        rdto.setMemberId(principal.getName());
 
 
         check = rdto.getStatus();
@@ -97,8 +97,8 @@ public class RecruitController {
     }
 
     @GetMapping("/favorits/{boardNum}/{target}")
-    public String checkFavoritecheck(@PathVariable Long boardNum,@PathVariable String target){
-        String sid = "one";
+    public String checkFavoritecheck(@PathVariable Long boardNum,@PathVariable String target,Principal principal){
+        String sid = principal.getName();
         //principal.getName(); 로그인 적용후 번경
         PickDTO dto = new PickDTO();
         dto.setPicker(sid);
@@ -108,9 +108,9 @@ public class RecruitController {
         return url;
     }
     @PostMapping("/apply/{boardNum}")
-    public String apply(@PathVariable Long boardNum){
+    public String apply(@PathVariable Long boardNum,Principal principal){
         //로그인 처리후 세션으로 변경
-        String sid = "five";
+        String sid = principal.getName();
         String url="redirect:/recruit/posts/"+boardNum;
         if(service.recruit(boardNum,sid)==0){
             //추후에 이력서 등록페이지 만들어지면 url 바꿔야함
