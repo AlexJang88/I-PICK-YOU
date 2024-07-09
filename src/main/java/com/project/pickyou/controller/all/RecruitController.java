@@ -129,7 +129,7 @@ public class RecruitController {
     }
     @GetMapping("/contract/{memberId}")
     public String contract(Model model,Principal principal,@PathVariable String memberId){
-            String name = "five";
+            String name = "two";
         service.userInfo(model,memberId,
                 //principal.getName()
                 name
@@ -145,7 +145,7 @@ public class RecruitController {
     @GetMapping("/contract/sign/{contractId}")
     public String signatureMem(HttpServletResponse response,@PathVariable Long contractId,Model model,Principal principal){
         //String id = principal.getName();
-        String id = "five";
+        String id = "two";
         service.getContract(response,model,contractId,id);
 
         return"recruit/companySign";
@@ -155,7 +155,7 @@ public class RecruitController {
     public ResponseEntity<Map<String,String>> saveSignature(@RequestParam("signature") MultipartFile signature,@RequestParam("contractId") Long contractId) throws IOException{
 
         //시큐리티 세션으로 처리해야함
-        String sid = "five";
+        String sid = "two";
         Map<String,String> sign = service.saveSignature(signature,contractId,sid);
         return ResponseEntity.ok(sign);
     }
