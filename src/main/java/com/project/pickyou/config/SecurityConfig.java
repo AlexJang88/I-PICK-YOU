@@ -42,15 +42,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests((auth) -> auth
 
-                                .requestMatchers("/", "/login", "/join", "/joinProc", "/assets/**", "/img/**", "/register", "/css/**", "/js/**").permitAll()
-                                .requestMatchers("/login", "/join").permitAll()
-                                .requestMatchers("/admin").hasRole("ADMIN")
-                                .requestMatchers("/my/**").hasAnyRole("USER", "ADMIN")
-                                .requestMatchers("/educations/**").permitAll()
-                                .requestMatchers("/educations/posts/write/**", "/educations/posts/edit/**").hasRole("COMPANY")
-                                .anyRequest().authenticated()
+                .authorizeHttpRequests((auth)->auth
+
+                        .requestMatchers("/","/login","/joinCompany","/mail/**","/trainning/**","/posts/**","/join","/joinProc","/assets/**", "/img/**","/register","/css/**", "/js/**").permitAll()
+                        .requestMatchers("/login","/ajax/**").permitAll()
+                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/admin").hasRole("ADMIN")
+                        .requestMatchers("/my/**").hasAnyRole("USER","ADMIN")
+                        .anyRequest().authenticated()
+
                         /*.anyRequest().permitAll()*/
                 );
 
@@ -59,6 +60,9 @@ public class SecurityConfig {
                         .loginProcessingUrl("/loginProc")
                         .permitAll()
                 );
+
+
+
         http
                 .csrf((auth) -> auth.disable());
 

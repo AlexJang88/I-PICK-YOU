@@ -8,13 +8,20 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
-    @Value("${Nimg.upload.path}")
-    private String imgUploadPath;
 
+
+
+    @Value("${lprofile.upload.path}")
+    private String profileImgUploadPath;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry){
         registry.addResourceHandler("/upload/**")
                 .addResourceLocations("file:///C:/Users/upload/");
     }
+
+
+
+
+
 }
