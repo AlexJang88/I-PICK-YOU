@@ -86,7 +86,7 @@
                                         <small class="text-muted float-end">* 사업자 회원가입 입니다</small>
                                     </div>
                                     <div class="card-body">
-                                        <form id="inputForm" action="/joinProc" name="loginForm" method="post" enctype="multipart/form-data">
+                                        <form id="inputForm" action="/joinProc" name="loginForm" method="post" enctype="multipart/form-data"  >
 
                                             <div class="row mb-3">
                                                 <label class="col-sm-2 col-form-label">아이디</label>
@@ -256,13 +256,40 @@
                                                                 type="text"
                                                                 id="email"
                                                                 class="form-control"
-                                                                placeholder="email"
+                                                                placeholder="이메일 주소를 입력하세요"
                                                                 name="email"
                                                                 required
                                                                 maxlength="30"
                                                         />
                                                     </div>
-                                                    <div class="form-text">이메일 인증을 진행해주세요</div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <button type="button" class="btn btn-secondary" onclick="sendAuthCode()">이메일 인증</button>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-text">이메일 인증을 진행해주세요</div>
+
+                                            <div class="row mb-3">
+                                                <label class="col-sm-2 col-form-label">이메일 인증번호 확인</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group input-group-merge">
+                                                            <span class="input-group-text">
+                                                                <i class="bx bx-buildings"></i>
+                                                            </span>
+                                                        <input
+                                                                type="text"
+                                                                id="authCode"
+                                                                name="authCode"
+                                                                class="form-control"
+                                                                placeholder="비밀번호를 다시 입력하세요"
+                                                                required
+                                                                maxlength="15"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <button type="button" class="btn btn-secondary" onclick="verifyAuthCode()">인증 확인</button>
                                                 </div>
                                             </div>
 
@@ -323,12 +350,20 @@
                                             </div>
 
 
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="agreePrivacy" required disabled>
+                                                <label class="form-check-label" for="agreePrivacy">
+                                                    개인정보 제공에 동의합니다.
+                                                </label>
+                                            </div>
+
+
 
 
 
                                             <div class="row justify-content-end">
                                                 <div class="col-sm-10">
-                                                    <button type="submit" class="btn btn-primary" id="submitButton" disabled >Send</button>
+                                                    <button type="submit" class="btn btn-primary" id="submitBtn" disabled >Send</button>
                                                 </div>
                                             </div>
                                         </form>
@@ -392,19 +427,43 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+
+<script>
+    let isIdChecked = false;
+    let isBusinessChecked = false;
+    let isEmailVerified = false;
+
+    function updateAgreePrivacyCheckbox() {
+        const agreePrivacy = document.getElementById('agreePrivacy');
+        const submitBtn = document.getElementById('submitBtn');
+
+        if (isIdChecked && isBusinessChecked && isEmailVerified) {
+            agreePrivacy.disabled = false;
+        } else {
+            agreePrivacy.disabled = true;
+            agreePrivacy.checked = false;
+            submitBtn.disabled = true;
+        }
+    }
+
+    document.getElementById('agreePrivacy').addEventListener('change', function() {
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = !this.checked;
+    });
+</script>
+
+
+
 <!--아이디 중복확인-->
 <script>
     document.getElementById('checkDuplicate').addEventListener('click', function() {
         const id = document.getElementById('id').value;
 
-
-        // 아이디 입력란이 비어있는지 확인
         if (!id) {
             alert('아이디를 입력하세요.');
-            return; // 아이디가 비어 있으면 더 이상 실행하지 않음
+            return;
         }
 
-        // AJAX 요청
         $.ajax({
             url: '/ajax/idcheck',
             type: 'POST',
@@ -412,20 +471,17 @@
             data: JSON.stringify({ id: id }),
             dataType: 'json',
             success: function(response) {
-                // 성공적으로 응답을 받았을 때 처리할 로직
-                console.log(response);
-                var message = response.message;
+                const message = response.message;
                 alert(message);
 
-
-                 if (message === '사용할 수 있는 아이디입니다.') {
-                    document.getElementById('submitButton').disabled = false;
+                if (message === '사용할 수 있는 아이디입니다.') {
+                    isIdChecked = true;
                 } else {
-                    document.getElementById('submitButton').disabled = true;
+                    isIdChecked = false;
                 }
+                updateAgreePrivacyCheckbox();
             },
             error: function(error) {
-                // 오류 발생 시 처리할 로직
                 console.log('오류 발생', error);
                 alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
             }
@@ -464,7 +520,7 @@
             document.getElementById("passwordMatchMessage").innerHTML = "비밀번호가 동일합니다";
             document.getElementById("passwordMatchMessage").classList.remove("text-danger");
             document.getElementById("passwordMatchMessage").classList.add("text-success");
-             $("#submitButton").prop("disabled", false);
+
         } else {
             document.getElementById("passwordMatchMessage").innerHTML = "비밀번호를 확인해주세요";
             document.getElementById("passwordMatchMessage").classList.remove("text-success");
@@ -495,11 +551,60 @@
 </script>
 
 
+<!--이메일 인증 및 이메일전송-->
+<script>
+    function sendAuthCode() {
+        const email = document.querySelector('input[name="email"]').value;
+        fetch('/mail/sendAuthCode', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: email }),
+        }).then(response => response.json())
+        .then(data => alert(data.message))
+        .catch(error => console.error('Error:', error));
+    }
+
+    function verifyAuthCode() {
+        const email = document.querySelector('input[name="email"]').value;
+        const authCode = document.querySelector('input[name="authCode"]').value;
+
+        fetch('/mail/verifyAuthCode', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: email, authCode: authCode }),
+        }).then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('인증 코드가 틀렸습니다.');
+            }
+        }).then(data => {
+            alert(data.message);
+            isEmailVerified = true;
+            updateAgreePrivacyCheckbox();
+        }).catch(error => {
+            console.error('에러:', error);
+            alert('인증 실패: ' + error.message);
+            isEmailVerified = false;
+            updateAgreePrivacyCheckbox();
+        });
+    }
+</script>
+
+
+
+
+
+
+
 
 <!--사업자조회-->
 <script th:inline="javascript">
     function corp_chk() {
-    /*<![CDATA[*/
         $("#corp_reg").val($("#corp_reg").val().replace(/[^0-9]/g, ""));
         var reg_num = $("#corp_reg").val();
 
@@ -513,35 +618,33 @@
         };
 
         $.ajax({
-            url: "https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=V%2FSm2tGOI6LMsGw47LlhAlHC6Pbjx083Le3uMGgYPiNZEruSxeoLsX7Q9ZCJlquE3RTBMjXsCqXCw6dxMXgZjA%3D%3D",  // serviceKey 값을 xxxxxx에 입력
+            url: "https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=V%2FSm2tGOI6LMsGw47LlhAlHC6Pbjx083Le3uMGgYPiNZEruSxeoLsX7Q9ZCJlquE3RTBMjXsCqXCw6dxMXgZjA%3D%3D",
             type: "POST",
-            data: JSON.stringify(data), // json 을 string으로 변환하여 전송
+            data: JSON.stringify(data),
             dataType: "JSON",
             traditional: true,
             contentType: "application/json; charset=UTF-8",
             accept: "application/json",
             success: function(result) {
-                console.log(result);
                 if(result.match_cnt == "1") {
-                    //성공
-                     console.log("success");
                     alert("사업자 번호 확인 성공!");
-                    // 제출 버튼 활성화
-                    $("#submitButton").prop("disabled", false);
+                    isBusinessChecked = true;
                 } else {
-                    //실패
-                    console.log("fail");
                     alert(result.data[0]["tax_type"]);
+                    isBusinessChecked = false;
                 }
+                updateAgreePrivacyCheckbox();
             },
             error: function(result) {
                 console.log("error");
-                console.log(result.responseText); //responseText의 에러메세지 확인
+                console.log(result.responseText);
+                isBusinessChecked = false;
+                updateAgreePrivacyCheckbox();
             }
         });
-    /*]]>*/
     }
 </script>
+
 
 
 

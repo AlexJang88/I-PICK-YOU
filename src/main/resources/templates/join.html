@@ -401,10 +401,18 @@
                                                 </div>
                                             </div>
 
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="agreePrivacy" required disabled>
+                                                <label class="form-check-label" for="agreePrivacy">
+                                                    개인정보 제공에 동의합니다.
+                                                </label>
+                                            </div>
+
+
 
                                             <div class="row justify-content-end">
                                                 <div class="col-sm-10">
-                                                    <button type="submit" class="btn btn-primary" id="submitButton" disabled >Send</button>
+                                                    <button type="submit" class="btn btn-primary" id="submitBtn" disabled >Send</button>
                                                 </div>
                                             </div>
                                         </form>
@@ -468,19 +476,41 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+
+<script>
+    let isIdChecked = false;
+    let isEmailVerified = false;
+
+    function updateAgreePrivacyCheckbox() {
+        const agreePrivacy = document.getElementById('agreePrivacy');
+        const submitBtn = document.getElementById('submitBtn');
+
+        if (isIdChecked && isEmailVerified) {
+            agreePrivacy.disabled = false;
+        } else {
+            agreePrivacy.disabled = true;
+            agreePrivacy.checked = false;
+            submitBtn.disabled = true;
+        }
+    }
+
+    document.getElementById('agreePrivacy').addEventListener('change', function() {
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = !this.checked;
+    });
+</script>
+
+
 <!--아이디 중복확인-->
 <script>
     document.getElementById('checkDuplicate').addEventListener('click', function() {
         const id = document.getElementById('id').value;
 
-
-        // 아이디 입력란이 비어있는지 확인
         if (!id) {
             alert('아이디를 입력하세요.');
-            return; // 아이디가 비어 있으면 더 이상 실행하지 않음
+            return;
         }
 
-        // AJAX 요청
         $.ajax({
             url: '/ajax/idcheck',
             type: 'POST',
@@ -488,20 +518,17 @@
             data: JSON.stringify({ id: id }),
             dataType: 'json',
             success: function(response) {
-                // 성공적으로 응답을 받았을 때 처리할 로직
-                console.log(response);
-                var message = response.message;
+                const message = response.message;
                 alert(message);
 
-
-                 if (message === '사용할 수 있는 아이디입니다.') {
-                    document.getElementById('submitButton').disabled = false;
+                if (message === '사용할 수 있는 아이디입니다.') {
+                    isIdChecked = true;
                 } else {
-                    document.getElementById('submitButton').disabled = true;
+                    isIdChecked = false;
                 }
+                updateAgreePrivacyCheckbox();
             },
             error: function(error) {
-                // 오류 발생 시 처리할 로직
                 console.log('오류 발생', error);
                 alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
             }
@@ -528,15 +555,29 @@
     function verifyAuthCode() {
         const email = document.querySelector('input[name="email"]').value;
         const authCode = document.querySelector('input[name="authCode"]').value;
+
         fetch('/mail/verifyAuthCode', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ email: email, authCode: authCode }),
-        }).then(response => response.json())
-        .then(data => alert(data.message))
-        .catch(error => console.error('Error:', error));
+        }).then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('인증 코드가 틀렸습니다.');
+            }
+        }).then(data => {
+            alert(data.message);
+            isEmailVerified = true;
+            updateAgreePrivacyCheckbox();
+        }).catch(error => {
+            console.error('에러:', error);
+            alert('인증 실패: ' + error.message);
+            isEmailVerified = false;
+            updateAgreePrivacyCheckbox();
+        });
     }
 </script>
 
