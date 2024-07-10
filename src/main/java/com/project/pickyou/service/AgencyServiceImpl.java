@@ -38,7 +38,6 @@ public class AgencyServiceImpl implements AgencyService{
 
     private final AgencyJPARepository agencyJPARepository;
     private final ImageJPARepository imageJPARepository;
-    private final EducationServiceImpl eduservice;
 
     //소개소 메인
     @Override

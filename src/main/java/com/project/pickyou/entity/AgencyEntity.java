@@ -35,6 +35,7 @@ public class AgencyEntity {
         @UpdateTimestamp
         private Date reg;
 
+
         @Builder
         public AgencyEntity(Long id, String companyId, String companyName, String business,
                          String contact, String address, String content, int readCount, Date reg){

@@ -1,6 +1,4 @@
-
 <!DOCTYPE html>
-
 <html
         lang="en"
         class="light-style customizer-hide"
@@ -9,7 +7,6 @@
         data-assets-path="../assets/"
         data-template="vertical-menu-template-free"
         xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="utf-8" />
     <meta
@@ -17,7 +14,7 @@
             content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>로그인하기</title>
+    <title>비밀번호찾기</title>
 
     <meta name="description" content="" />
 
@@ -43,6 +40,8 @@
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
 
+
+
     <!-- Page CSS -->
     <!-- Page -->
     <link rel="stylesheet" href="../assets/vendor/css/pages/page-auth.css" />
@@ -52,20 +51,23 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="../assets/js/config.js"></script>
+    <link rel="stylesheet" href="../assets/vendor/css/core.css">
+    <link rel="stylesheet" href="../assets/vendor/css/theme-default.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </head>
 
 <body>
 <!-- Content -->
-<div th:if="${message}" class="alert alert-danger">
-    <p th:text="${message}"></p>
-</div>
 
 <div class="container-xxl">
     <div class="authentication-wrapper authentication-basic container-p-y">
-        <div class="authentication-inner">
-            <!-- Register Card -->
+        <div class="authentication-inner py-4">
+            <!-- Forgot Password -->
             <div class="card">
                 <div class="card-body">
+
                     <!-- Logo -->
                     <div class="app-brand justify-content-center">
                         <a href="/" class="app-brand-link gap-2">
@@ -124,92 +126,56 @@
                       </g>
                     </svg>
                   </span>
-                            <span class="app-brand-text demo text-body fw-bolder">I Pick You</span>
+                            <span class="app-brand-text demo text-body fw-bolder">I PICK YOU</span>
                         </a>
                     </div>
                     <!-- /Logo -->
-                    <h3 class="mb-2">방문을 환영합니다 🚀</h3>
-                    <br>
-                    <p class="mb-4">로그인을 진행해 주세요</p>
-
-                    <form id="formAuthentication" class="mb-3" action="/loginProc" method="post" name="loginForm">
-                        <div class="mb-3">
-                            <label for="username" class="form-label">아이디</label>
-                            <input
-                                    type="text"
-                                    class="form-control"
-                                    id="username"
-                                    name="username"
-                                    placeholder="아이디를 입력해주세요"
-                                    autofocus
-                                    required
-                            />
-                        </div>
-
-
-
-                        <div class="mb-3 form-password-toggle">
-                            <label class="form-label" for="password">비밀번호</label>
-                            <div class="input-group input-group-merge">
-                                <input
-                                        type="password"
-                                        id="password"
-                                        class="form-control"
-                                        name="password"
-                                        placeholder="비밀번호를 입력해주세요"
-                                        aria-describedby="password"
-                                        required
-                                />
-                                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
-                            </div>
-                        </div>
-
-
-                        <div class="mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="terms-conditions" name="remember-me" />
-                                <label class="form-check-label" for="terms-conditions">
-                                    간편한
-                                    <a href="javascript:void(0);">자동로그인</a>
-                                </label>
-                            </div>
-                        </div>
-
-
-                        <button class="btn btn-primary d-grid w-100">로그인하기</button>
-                    </form>
-
-                   <!-- <a th:href="@{/join}">-->
-                        <a href="/join">
-                        <button class="btn btn-success d-grid w-100">회원 가입하기</button>
-                    </a>
-
-                    <br>
-
-                    <a href="/joinCompany">
-                        <button class="btn btn-warning d-grid w-100">사업자 회원 가입하기</button>
-                    </a>
-
-                    <br>
-                    <p class="text-center">
-                        <span>아이디 & 비밀번호를 잊어버리셨나요?</span>
-                        <br>
-                        <a href="/forgotId">
-                            <span>아이디 찾아보기!</span>
+                    <div class="text-center">
+                        <a href="/login" class="d-flex align-items-center justify-content-center">
+                            <i class="bx bx-chevron-left scaleX-n1-rtl bx-sm"></i>
+                            로그인으로 돌아가기!
                         </a>
-                        <br>
-                        <a href="/forgotPw">
-                            <span>비밀번호 찾아보기!</span>
-                        </a>
-                    </p>
+                    </div>
+
+                    <br>
+
+                    <div class="container">
+                        <div id="id-form" class="form-container">
+                            <div th:if="${error}" style="color: red;">
+                                <p th:text="${error}"></p>
+                            </div>
+                            <h4 class="mb-2">비밀번호를 잊어버리셨나요🔒</h4>
+                            <p class="mb-4">이메일 인증으로 비밀번호를 찾아보세요!</p>
+                            <form id="formAuthentication" class="mb-3" action="/forgotPw/pwCheck" method="POST">
+
+                                <div class="mb-3">
+                                    <label for="id" class="form-label">아이디</label>
+                                    <input type="text" class="form-control" id="id" name="id" placeholder="아이디를 입력하세요" autofocus required />
+                                </div>
+
+
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="text" class="form-control" id="email" name="email" placeholder="이메일을 입력하세요" required />
+                                    <button type="button" class="btn btn-secondary" onclick="sendAuthCode()">인증코드발송</button>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="authCode" class="form-label">인증번호</label>
+                                    <input type="text" class="form-control" id="authCode" name="authCode" placeholder="발급받은 코드 입력" required maxlength="10" />
+                                    <button type="button" class="btn btn-secondary" onclick="verifyAuthCode()">인증번호확인</button>
+                                </div>
+
+                                <button id="submitButton" class="btn btn-primary d-grid w-100" disabled>찾아보기!</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <!-- Register Card -->
+            <!-- /Forgot Password -->
         </div>
     </div>
 </div>
-
-
 
 
 
@@ -232,5 +198,58 @@
 
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+
+<!--이메일인증-->
+<script>
+    let isEmailVerified = false;
+
+    function sendAuthCode() {
+        const email = document.querySelector('input[name="email"]').value;
+        fetch('/mail/sendAuthCode', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: email }),
+        }).then(response => response.json())
+        .then(data => alert(data.message))
+        .catch(error => console.error('Error:', error));
+    }
+
+    function verifyAuthCode() {
+        const email = document.querySelector('input[name="email"]').value;
+        const authCode = document.querySelector('input[name="authCode"]').value;
+
+        fetch('/mail/verifyAuthCode', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: email, authCode: authCode }),
+        }).then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('인증 코드가 틀렸습니다.');
+            }
+        }).then(data => {
+            alert(data.message);
+            isEmailVerified = true;
+            document.getElementById('submitButton').disabled = false;
+        }).catch(error => {
+            console.error('에러:', error);
+            alert('인증 실패: ' + error.message);
+            isEmailVerified = false;
+            document.getElementById('submitButton').disabled = true;
+        });
+    }
+</script>
+
+
+
 </body>
 </html>

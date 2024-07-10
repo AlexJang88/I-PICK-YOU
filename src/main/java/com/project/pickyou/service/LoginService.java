@@ -13,4 +13,10 @@ public interface LoginService {
     boolean checkIfIdExists(String id);  //아이디찾기
 
     public void joinCompanyProcess(MemberDTO memberDTO, CompanyInfoDTO companyInfoDTO, MultipartFile file); //사업자회원가입
+
+    public String findId(String email);
+
+    public Boolean checkPW(String email, String id);
+
+   public void changePw(MemberDTO memberDTO, String newPw);
 }
