@@ -20,30 +20,38 @@ public class EducationController {
 
     @GetMapping("/posts")
     public String list(Model model,@RequestParam(value = "pageNum",defaultValue = "1") int pageNum,Principal principal){
-            model.addAttribute("memberId",principal.getName());
+        if(principal!=null){
+        model.addAttribute("memberId",principal.getName());}
 
             service.AllPosts(model,pageNum);
         return "education/list";
     }
    @GetMapping("/posts/{boardNum}")
    public String educationsContent(Model model,@PathVariable Long boardNum,Principal principal){
-       String sid = principal.getName();
+       String sid="";
+        if(principal!=null){
+           sid= principal.getName();
+       }
+
        //principal.getName();
         service.post(model,boardNum,sid,2);
         return "education/content";
    }
    //수정페이지 이동
-   @GetMapping("posts/edit/{boardNum}")
+   @GetMapping("posts/{boardNum}/edit")
    public String edit(Model model,@PathVariable Long boardNum,Principal principal){
-       String sid = principal.getName();
+       String sid="";
+       if(principal!=null){
+           sid= principal.getName();
+       }
        //principal.getName();
        service.post(model,boardNum,sid,2);
         return "education/update";
    }
 
    //수정
-   @PutMapping("/posts")
-    public String update(@RequestParam(name = "id")Long id,@RequestParam(name = "files",required = false) ArrayList<MultipartFile> files, EducationDTO dto){
+   @PutMapping("/posts/{id}")
+    public String update(@PathVariable(name = "id")Long id,@RequestParam(name = "files",required = false) ArrayList<MultipartFile> files, EducationDTO dto){
         for(MultipartFile mf:files){
             if(mf.getOriginalFilename().isEmpty()){
                 files = new ArrayList<>();
@@ -55,22 +63,24 @@ public class EducationController {
         return url;
    }
    //삭제
-   @DeleteMapping("/posts")
-   public String delete(@RequestParam(name = "id")Long id){
+   @DeleteMapping("/posts/{id}")
+   public String delete(@PathVariable(name = "id")Long id){
         service.deletePost(id,2);
         return "redirect:/educations/posts";
    }
    //작성페이지이동
-    @GetMapping("/posts/write/{memberId}")
-    public String write(Model model,@PathVariable String memberId){
-        model.addAttribute("memberId",memberId);
+    @GetMapping("/posts/new")
+    public String write(Model model,@PathVariable Principal principal){
+        if(principal!=null){
+        model.addAttribute("memberId",principal.getName());
+        }
         return "education/write";
     }
     //작성
     @PostMapping("/posts")
     public String insertpost(ArrayList<MultipartFile> files, EducationDTO dto,Principal principal){
         //사업자 아이디 = 로그인 구현후 session 받아와서 다시 처리
-        dto.setCompanyId(principal.getName());
+        if(principal!=null){dto.setCompanyId(principal.getName());}
         String content = dto.getContent();
         content = content.replace("\r\n","<br>");
         dto.setContent(content);
@@ -79,7 +89,10 @@ public class EducationController {
     }
     @GetMapping("/favorits/{boardNum}/{target}")
     public String checkFavoritecheck(@PathVariable Long boardNum,@PathVariable String target,Principal principal){
-            String sid = principal.getName();
+        String sid="";
+        if(principal!=null){
+            sid= principal.getName();
+        }
         //principal.getName(); 로그인 적용후 번경
         PickDTO dto = new PickDTO();
             dto.setPicker(sid);

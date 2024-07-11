@@ -1,0 +1,246 @@
+<!DOCTYPE html >
+<html lang="ko" >
+<head>
+    <meta charset="UTF-8">
+    <title>건설일용근로자 표준근로계약서</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 70%;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid black;
+        }
+        .title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .content {
+            font-size: 14px;
+        }
+        .content table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .content td, .content th {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        .content th {
+            background-color: #f2f2f2;
+        }
+        .content input[type="text"], .content input[type="date"] {
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid black;
+            padding: 5px;
+            outline: none;
+        }
+        .inline-input {
+            border: none;
+            border-bottom: 1px solid black;
+            padding: 5px;
+            outline: none;
+            display: inline-block;
+            width: auto;
+            min-width: 100px;
+        }
+        h3{
+        text-align : center;
+        }
+        h4{
+        text-align:center;
+        }
+         .wrapper {
+            position: relative;
+            width: 400px;
+            height: 200px;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            display: none; /* 처음에는 숨김 */
+        }
+
+        .signature-pad {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 400px;
+            height: 200px;
+            background-color: white;
+        }
+
+        .text {
+            font-size: 30px;
+            margin-top: 70px;
+            vertical-align: middle;
+            display: block; /* 처음에는 보이게 */
+        }
+
+        #img01 {
+            text-align: center;
+            top: 30px;
+            left: 50px;
+            width: 200px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+</head>
+<body>
+<script>
+    $(function () {
+        var canvas = document.getElementById('signature-pad');
+        var signaturePad = new SignaturePad(canvas, {
+            backgroundColor: 'rgb(255, 255, 255, 0)',
+            penColor: "rgb(1, 2, 3)"
+        });
+
+        document.getElementById('draw').addEventListener('click', function () {
+            $('.wrapper').show();
+            $('#draw').hide();
+            $('#img01').hide();
+            $('#save-png').show();
+            $('#clear').show();
+        });
+
+        document.getElementById('save-png').addEventListener('click', function () {
+            if (signaturePad.isEmpty()) {
+                return alert("Please provide a signature first.");
+            }
+
+            var dataURL = signaturePad.toDataURL('image/png');
+            var blob = dataURLToBlob(dataURL);
+            var formData = new FormData();
+            formData.append("signature", blob, "signature.png");
+
+            $.ajax({
+                url: '/recruit/saveSignature',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    console.log(response.signName)
+                    $("#img01").attr('src', response.signName);
+                    $('.wrapper').hide();
+                    $('#img01').show();
+                    $('#save-png').hide();
+                    $('#clear').hide();
+                    $('#draw').show();
+                },
+                error: function (error) {
+                    console.error("Error saving signature: ", error);
+                }
+            });
+        });
+    document.getElementById('clear').addEventListener('click', function () {
+            signaturePad.clear();
+        });
+
+        function dataURLToBlob(dataURL) {
+            var binary = atob(dataURL.split(',')[1]);
+            var array = [];
+            for (var i = 0; i < binary.length; i++) {
+                array.push(binary.charCodeAt(i));
+            }
+            return new Blob([new Uint8Array(array)], { type: 'image/png' });
+        }
+    });
+</script>
+
+<div class="container">
+    <div class="title">건설일용근로자 표준근로계약서</div>
+    <div class="content">
+        <p>김길동 사장 (이하 "사업주"라 함)과(와) 이화백 일꾼 (이하 "근로자"라 함)는 다음과 같이 근로계약을 체결한다.</p>
+        <table>
+            <tr>
+                <th>1. 근로계약기간</th>
+                <td>년 월 일부터 년 월 일까지 <br> ※ 근로계약기간을 정하지 않는 경우에는 "근로계시일"만 기재</td>
+            </tr>
+            <tr>
+                <th>2. 근 무 장 소</th>
+                <td></td>
+            </tr>
+            <tr>
+                <th>3. 업무의 내용(직종)</th>
+                <td></td>
+            </tr>
+            <tr>
+                <th>4. 소정근로시간</th>
+                <td>시 분부터 시 분까지 (휴게시간: 시 분 시 분)</td>
+            </tr>
+            <tr>
+                <th>5. 근무일/휴일</th>
+                <td>매주 일(또는 매일단위)근무, 주휴일 매주 요일(해당자에 한함) <br> ※ 주휴일은 1주간 소정근로일을 모두 근로한 경우에 주당 1일을 유급으로 부여</td>
+            </tr>
+            <tr>
+                <th>6. 임 금</th>
+                <td>
+                    <p>- 월(일, 시간)금: 원(해당사항에 ○표)</p>
+                    <p>- 상여금: 있음 ( ) 원, 없음 ( )</p>
+                    <p>- 기타 제수당(시간외근로수당, 야간·휴일근로수당 등):</p>
+                    <p>. 시간외 근로수당: 원 ( 시간분)</p>
+                    <p>. 야간 근로수당: 원 ( 시간분)</p>
+                    <p>. 휴일 근로수당: 원 ( 시간분)</p>
+                    <p>- 임금지급일: 매월(매주 또는 매일) 일(휴일의 경우는 전일 지급)</p>
+                    <p>- 지급방법: 근로자에게 직접지급( ), 근로자 명의 예금통장에 입금( )</p>
+                </td>
+            </tr>
+            <tr>
+                <th>7. 연차유급휴가</th>
+                <td>연차유급휴가는 근로기준법에서 정하는 바에 따라 부여함</td>
+            </tr>
+            <tr>
+                <th>8. 사회보험 적용여부</th>
+                <td>
+                    <p>□ 고용보험 □ 산재보험 □ 국민연금 □ 건강보험</p>
+                </td>
+            </tr>
+            <tr>
+                <th>9. 근로계약서 교부</th>
+                <td>사업주는 근로계약을 체결함과 동시에 본 계약서를 사본하여 "근로자"의 교부요구와 관계없이 "근로자"에게 교부함(근로기준법 제17조 이행)</td>
+            </tr>
+            <tr>
+                <th>10. 근로계약, 취업규칙 등의 성실한 이행의무</th>
+                <td>사업주와 근로자는 각각 근로계약, 취업규칙, 단체협약을 지키고 성실하게 이행하여야 함</td>
+            </tr>
+            <tr>
+                <th>11. 기 타</th>
+                <td>이 계약에 정함이 없는 사항은 근로기준법령에 의함</td>
+            </tr>
+        </table>
+        <br>
+        <h3>년 월 일</h3>
+        <h4>사업주: 사업체명 (전화: )</h4>
+        <h4>주소: </h4>
+        <h4>대표자: <img src="/upload/contract/signature.png" id="img01" width=150 height="75"/></h4>
+        <div class="text">
+            <button id="draw">서명하기</button>
+
+
+            <br>
+            <h4>근로자: 주소 </h4>
+            <h4>연락처: </h4>
+            <h4>성명: </h4>
+            <div class="text"><h4>(서명)</h4></div>
+
+        </div>
+        <div class="wrapper">
+            <canvas id="signature-pad" class="signature-pad" width=400 height=200
+                    style="border: 1px solid red"></canvas>
+        </div>
+        <button id="save-png" style="display: none;">저장</button>
+        <button id="clear" style="display: none;">다시쓰기</button>
+    </div>
+</div>
+
+
+</body>
+</html>

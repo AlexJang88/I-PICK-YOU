@@ -95,7 +95,7 @@ public class TeamServiceImpl implements TeamService{
     }
 
     public String makeFolder(String uploadPath, int boardType, Long boardNum) {
-            String folderPath= folderPath = boardType + File.separator + boardNum;
+            String folderPath = boardType + File.separator + boardNum;
             File uploadPathFoler = new File(uploadPath, folderPath);
             if (!uploadPathFoler.exists()) {
                 uploadPathFoler.mkdirs();

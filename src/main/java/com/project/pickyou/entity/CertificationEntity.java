@@ -6,28 +6,32 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Data
 @NoArgsConstructor
 @Entity
+@DynamicInsert
+@DynamicUpdate
 @Table(name = "certification")
 @IdClass(CertificationID.class)
 public class CertificationEntity {
     @Id
-    @Column(name = "member_id")
-    private String memberId;
+    @Column(name = "resume_id")
+    private Long resumeId;
 
     @Id
     private String name;
 
     @Builder
-    public CertificationEntity(String memberId,String name){
-        this.memberId=memberId;
+    public CertificationEntity(Long resumeId,String name){
+        this.resumeId=resumeId;
         this.name=name;
     }
     public CertificationDTO toCertificationDTO(){
         return CertificationDTO.builder()
-                .memberId(this.memberId)
+                .resumeId(this.resumeId)
                 .name(this.name)
                 .build();
     }

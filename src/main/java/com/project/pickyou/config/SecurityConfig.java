@@ -43,14 +43,17 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
 
+
                 .authorizeHttpRequests((auth)->auth
 
                         .requestMatchers("/","/login","/joinCompany","/forgot/**","/mail/**","/agency/**","/trainning/**","/posts/**","/join","/joinProc","/assets/**", "/img/**","/register","/css/**", "/js/**").permitAll()
                         .requestMatchers("/login","/ajax/**","/forgotId/**","/forgotPw/**","/mypage/**","/notice/**").permitAll()
-                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/educations/**").permitAll()
+                        .requestMatchers("/recruit/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/my/**").hasAnyRole("USER","ADMIN")
                         .anyRequest().authenticated()
+
 
                         /*.anyRequest().permitAll()*/
                 );

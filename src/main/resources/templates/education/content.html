@@ -93,10 +93,10 @@
                 </div>
                 <!-- / Content -->
                 <div class="d-flex justify-content-end mb-3">
-                    <form th:action="@{/educations/posts/edit/{boardNum}(boardNum=${post.id})}" th:method="get">
+                    <form th:action="@{/educations/posts/{boardNum}/edit(boardNum=${post.id})}" th:method="get">
                         <button class="btn btn-primary" type="submit">수정하기</button>
                     </form>
-                    <form th:action="@{/educations/posts}" th:method="delete">
+                    <form th:action="@{/educations/posts/{boardNum(boardNum=${post.id})}}" th:method="delete">
                         <input type="hidden" name="id" th:value="${post.id}">
                         <button class="btn btn-primary" type="submit">삭제하기</button>
                     </form>
