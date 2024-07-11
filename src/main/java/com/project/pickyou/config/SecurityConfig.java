@@ -46,7 +46,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth)->auth
 
                         .requestMatchers("/","/login","/joinCompany","/forgot/**","/mail/**","/agency/**","/trainning/**","/posts/**","/join","/joinProc","/assets/**", "/img/**","/register","/css/**", "/js/**").permitAll()
-                        .requestMatchers("/login","/ajax/**","/forgotId/**","/forgotPw/**","/mypage/**").permitAll()
+                        .requestMatchers("/login","/ajax/**","/forgotId/**","/forgotPw/**","/mypage/**","/notice/**").permitAll()
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/my/**").hasAnyRole("USER","ADMIN")

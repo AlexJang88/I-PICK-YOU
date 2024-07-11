@@ -92,4 +92,13 @@ public class NoticeController {
         noticeService.update(files, dto);
         return "redirect:/notice/posts/"+id;
     }
+
+
+    @GetMapping()
+    public String IntroductionUs(){  //사이트 소개하기
+
+        return "/notice/IntroductionUs";
+    }
+
+
 }

@@ -1,6 +1,8 @@
 package com.project.pickyou.controller.member;
 
+import com.project.pickyou.dto.CompanyInfoDTO;
 import com.project.pickyou.dto.MemberDTO;
+import com.project.pickyou.dto.MemberInfoDTO;
 import com.project.pickyou.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 
@@ -35,6 +38,7 @@ public class MemberController {
         }
     }
 
+    //회원삭제
     @GetMapping("/deleteUser/{id}")
     public String DeleteUser(@PathVariable String id,Model model, Principal pc){
         String prid =pc.getName();
@@ -46,7 +50,7 @@ public class MemberController {
             return "/";
         }
     }
-
+    //회원삭제 프로
     @DeleteMapping("/deleteuserPro")
     public String deleteuserPro(MemberDTO memberDTO){
 
@@ -68,6 +72,74 @@ public class MemberController {
         }
     }
     /*사업자유저 기준*/
+
+
+
+    //일반 회원 수정
+    @GetMapping("/userUpdate/{id}")
+    public String userUpdate(Principal pc, Model model,@PathVariable String id){
+
+        String prid = pc.getName();
+        if (prid.equals(id)) {   //수정하기 버튼 누를때
+            memberService.findUserInfo(id, model);//회원정보 담아서 쏘기
+            return "/mypage/userUpdate";
+        } else {
+            return "/login";   //없으면 로그인
+        }
+    }
+
+    //일반유저정보수정
+    @PatchMapping("/userUpdatePro/{id}")
+    public String userUpdatePro(MemberDTO memberDTO, MemberInfoDTO memberInfoDTO, @RequestParam("file") MultipartFile file){
+
+        String id = memberDTO.getId();
+
+        memberService.updateUser(memberDTO,memberInfoDTO,file); //회원정보수정
+
+        return "redirect:/mypage/information/"+id;
+    }
+
+
+    //사업자 회원 수정
+
+    @GetMapping("/companyUpdate/{id}")
+    public String companyUpdate(Principal pc, Model model,@PathVariable String id){
+
+        String prid = pc.getName();
+        if (prid.equals(id)) {   //수정하기 버튼 누를때
+            memberService.findUserInfo(id, model);//회원정보 담아서 쏘기
+            return "/mypage/companyUpdate";
+        } else {
+            return "/login";   //없으면 로그인
+        }
+
+    }
+
+    //일반유저정보수정
+    @PatchMapping("/companyUpdatePro/{id}")
+    public String companyUpdatePro(MemberDTO memberDTO, CompanyInfoDTO companyInfoDTO, @RequestParam("file") MultipartFile file){
+
+        String id = memberDTO.getId();
+
+       memberService.updateCompany(memberDTO,companyInfoDTO,file); //사업자 정보수
+
+        return "redirect:/mypage/cominformation/"+id;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }
