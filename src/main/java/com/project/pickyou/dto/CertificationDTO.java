@@ -9,17 +9,17 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class CertificationDTO {
-    private String memberId;
+    private Long resumeId;
     private String name;
 
     @Builder
-    public CertificationDTO(String memberId,String name){
-        this.memberId=memberId;
+    public CertificationDTO(Long resumeId,String name){
+        this.resumeId=resumeId;
         this.name=name;
     }
     public CertificationEntity toCertificationEntity(){
         return CertificationEntity.builder()
-                .memberId(this.memberId)
+                .resumeId(this.resumeId)
                 .name(this.name)
                 .build();
     }
