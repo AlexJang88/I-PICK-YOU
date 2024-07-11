@@ -16,18 +16,18 @@ public class RecruitStateController {
     @GetMapping("/posts/apply/{recruitId}")
     public String statePosts(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @PathVariable Long recruitId){
         String sid="two";
-        service.onApply(model,pageNum,recruitId);
+        service.onApply(model,pageNum,recruitId,3);
         return "recruitState/applyList";
     }
     @GetMapping("/posts/confirm/{recruitId}")
     public String stateConfirm(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @PathVariable Long recruitId){
         String sid="two";
-        service.confirmedMember(model,pageNum,recruitId);
+        service.confirmedMember(model,pageNum,recruitId,3);
         return "recruitState/confirmedList";
     }
     @DeleteMapping("/posts/confirm/{memberId}/{recruitId}")
     public String deleteconfirm(@PathVariable String memberId,@PathVariable Long recruitId){
-        service.cancelConfirmed(memberId,recruitId);
+        service.cancelConfirmed(memberId,recruitId,3);
         String url = "redirect:/recruitState/apply/"+recruitId;
     return url;
     }
