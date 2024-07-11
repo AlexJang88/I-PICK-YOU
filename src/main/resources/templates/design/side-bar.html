@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
 <head>
     <meta charset="UTF-8">
@@ -94,11 +95,30 @@
             </li>
 
             <li class="menu-item">
-                <a href="/login/loginmain" class="menu-link">
+                <a th:href="@{/qa/posts}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-crown"></i>
                     <div data-i18n="Boxicons">문의하기</div>
                 </a>
             </li>
+
+            <li class="menu-item" sec:authorize="hasRole('ROLE_USER')">
+                <a th:href="@{/mypage/information/{id}(id=${#authentication.name})}" class="menu-link">
+                    <i class="bx bx-user me-2"></i>
+                    <div data-i18n="Boxicons">마이페이지</div>
+                </a>
+            </li>
+
+            <li class="menu-item" sec:authorize="hasRole('ROLE_COMPANY')">
+                <a th:href="@{/mypage/cominformation/{id}(id=${#authentication.name})}" class="menu-link">
+                    <i class="bx bx-user me-2"></i>
+                    <div data-i18n="Boxicons">마이페이지</div>
+                </a>
+            </li>
+
+
+
+
+
 
 
 
@@ -116,6 +136,16 @@
                             <div data-i18n="Account">필요하면써</div>
                         </a>
                     </li>
+                    <li class="menu-item">
+                        <a th:href="@{/educations/posts}" class="menu-link">
+                            <div data-i18n="Account">필요하면써</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a th:href="@{/educations/posts}" class="menu-link">
+                            <div data-i18n="Account">필요하면써</div>
+                        </a>
+                    </li>
 
                 </ul>
             </li>
@@ -125,6 +155,13 @@
                     <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
                     <div data-i18n="Authentications">인재목록</div>
                 </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a th:href="@{/auth-login-basic.html}" class="menu-link" target="_blank">
+                            <div data-i18n="Basic">필요하면써</div>
+                        </a>
+                    </li>
+                </ul>
                 <ul class="menu-sub">
                     <li class="menu-item">
                         <a th:href="@{/auth-login-basic.html}" class="menu-link" target="_blank">
@@ -147,28 +184,79 @@
                         </a>
                     </li>
                 </ul>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a th:href="@{/pages-misc-error.html}" class="menu-link">
+                            <div data-i18n="Error">필요하면써3</div>
+                        </a>
+                    </li>
+                </ul>
             </li>
 
             <!-- Components -->
             <li class="menu-header small text-uppercase"><span class="menu-header-text">교육&훈련&소개소</span></li>
 
             <li class="menu-item">
-                <a th:href="@{/agency/posts}" class="menu-link">
+                <a href="javascript:void(0)" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-collection"></i>
-                    <div data-i18n="Basic">소개소</div>
+                    <div data-i18n="User interface">인력사무소</div>
                 </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a th:href="@{/agency/posts}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-box"></i>
+                            <div data-i18n="Accordion">인력사무소 정보보기</div>
+                        </a>
+                    </li>
+                </ul>
+
+                <ul class="menu-sub" sec:authorize="hasRole('ROLE_COMPANY')">
+                    <li class="menu-item" >
+                        <a th:href="@{/agency/posts/new}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-box"></i>
+                            <div data-i18n="Accordion">인력사무소 등록하기</div>
+                        </a>
+                    </li>
+                </ul>
             </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             <li class="menu-item">
                 <a href="javascript:void(0)" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-box"></i>
-                    <div data-i18n="User interface">훈련정보</div>
+                    <div data-i18n="User interface">훈련소</div>
                 </a>
                 <ul class="menu-sub">
                     <li class="menu-item">
                         <a th:href="@{/trainning/posts}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-box"></i>
-                            <div data-i18n="Accordion">필요하면써4</div>
+                            <div data-i18n="Accordion">훈련소 정보보기</div>
+                        </a>
+                    </li>
+                </ul>
+
+                <ul class="menu-sub" sec:authorize="hasRole('ROLE_COMPANY')">
+                    <li class="menu-item" >
+                        <a th:href="@{/trainning/posts/new}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-box"></i>
+                            <div data-i18n="Accordion">훈련소 등록하기</div>
                         </a>
                     </li>
                 </ul>
