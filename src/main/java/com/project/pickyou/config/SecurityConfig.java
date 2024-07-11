@@ -43,14 +43,16 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
 
-                .authorizeHttpRequests((auth)->auth
+                .authorizeHttpRequests((auth) -> auth
 
-                        .requestMatchers("/","/login","/joinCompany","/mail/**","/trainning/**","/posts/**","/join","/joinProc","/assets/**", "/img/**","/register","/css/**", "/js/**").permitAll()
-                        .requestMatchers("/login","/ajax/**").permitAll()
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/admin").hasRole("ADMIN")
-                        .requestMatchers("/my/**").hasAnyRole("USER","ADMIN")
-                        .anyRequest().authenticated()
+                                .requestMatchers("/", "/error","/login", "/join", "/joinProc", "/assets/**", "/img/**", "/register", "/css/**", "/js/**").permitAll()
+                                .requestMatchers("/login", "/join").permitAll()
+                                .requestMatchers("/recruit/**").permitAll()
+                               // .requestMatchers("/admin").hasRole("ADMIN")
+                              //  .requestMatchers("/my/**").hasAnyRole("USER", "ADMIN")
+                                .requestMatchers("/educations/**").permitAll()
+                               // .requestMatchers("/educations/posts/write/**", "/educations/posts/edit/**").hasRole("COMPANY")
+                                .anyRequest().permitAll()
 
                         /*.anyRequest().permitAll()*/
                 );

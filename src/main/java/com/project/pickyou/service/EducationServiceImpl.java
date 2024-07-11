@@ -101,7 +101,6 @@ public class EducationServiceImpl implements EducationService {
         Long eduNum = educationJPA.getAutoIncrementValue("pickyou", "education");
         educationJPA.save(dto.toEducationEntity());
         filesUpload(files, boardType, eduNum, imgUploadPath);
-
     }
 
     @Override
@@ -145,9 +144,7 @@ public class EducationServiceImpl implements EducationService {
                 imageJPA.deleteAllByBoardTypeAndBoardNum(boardType, dto.getId());
                 filesUpload(files, boardType, dto.getId(), imgUploadPath);
             }
-
             educationJPA.save(dto.toEducationEntity());
-
         }
     }
 

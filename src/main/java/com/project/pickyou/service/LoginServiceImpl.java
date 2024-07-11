@@ -145,7 +145,6 @@ public class LoginServiceImpl implements LoginService, UserDetailsService {
     //회원인지 아닌지 확인해서 권한과 아이디를 넘겨주는것 (JoinUserDTO)에서 확인가능
     @Override
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
-
         Optional<MemberEntity> optionalMember = memberJPARepository.findById(id);
         if(optionalMember.isPresent()) {
             return new JoinUserDTO(optionalMember.get());
