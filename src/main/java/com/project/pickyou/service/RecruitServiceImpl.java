@@ -79,7 +79,7 @@ public class RecruitServiceImpl implements RecruitService {
     @Override
     public void myPosts(Model model, int pageNum, String id) {
         int pageSize = 10;
-        Long longCount = recruitJPA.count();
+        Long longCount = recruitJPA.countByMemberId(id);
         int count = longCount.intValue();
 
         Sort sort = Sort.by(Sort.Order.desc("reg"));

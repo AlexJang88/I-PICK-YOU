@@ -1,5 +1,6 @@
 package com.project.pickyou.service;
 
+import com.project.pickyou.dto.ConfirmDTO;
 import com.project.pickyou.entity.ConfirmEntity;
 import com.project.pickyou.entity.RecruitStateEntity;
 import com.project.pickyou.repository.ConfirmJPARepository;
@@ -16,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,16 +29,16 @@ public class RecruitStateServiceImpl implements RecruitStateService {
 
 
     @Override
-    public void confirmedMember(Model model, int pageNum, Long recruitId) {
+    public void confirmedMember(Model model, int pageNum, Long recruitId,Integer type) {
         int pageSize = 10;
-        Long longCount = confirmJPA.countByRecruitId(recruitId);
+        Long longCount = confirmJPA.countByRecruitIdAndApplyNot(recruitId,type);
         int count = longCount.intValue();
         Sort sort = Sort.by(Sort.Order.desc("id"));
        Page<ConfirmEntity> page = null;
        List<ConfirmEntity> posts=Collections.emptyList();
        System.out.println("=========count"+count);
         if (count > 0) {
-            page = confirmJPA.findByRecruitId(recruitId, PageRequest.of(pageNum - 1, pageSize, sort));
+            page = confirmJPA.findByRecruitIdAndApplyNot(recruitId,type, PageRequest.of(pageNum - 1, pageSize, sort));
             if (page != null) {
                 posts = page.getContent();
             }
@@ -64,12 +66,12 @@ public class RecruitStateServiceImpl implements RecruitStateService {
     }
 
     @Override
-    public void onApply(Model model,int pageNum, Long recruitId) {
+    public void onApply(Model model,int pageNum, Long recruitId,Integer type) {
         int pageSize = 10;
        List<RecruitStateEntity> posts = Collections.emptyList();
        List<ConfirmEntity> memberlist = Collections.emptyList();
        List<String> members = Collections.emptyList();
-        memberlist = confirmJPA.findByRecruitId(recruitId);
+        memberlist = confirmJPA.findByRecruitIdAndApplyNot(recruitId,type);
        if(CollectionUtils.isEmpty(memberlist)){
            for(ConfirmEntity ce:memberlist){
                members.add(ce.getMemberId());
@@ -108,7 +110,13 @@ public class RecruitStateServiceImpl implements RecruitStateService {
 
     @Override
     @Transactional
-    public void cancelConfirmed(String memberId,Long recruitId) {
-        confirmJPA.deleteByMemberIdAndRecruitId(memberId,recruitId);
+    public void cancelConfirmed(String memberId,Long recruitId,Integer type) {
+        ConfirmDTO confirm = new ConfirmDTO();
+        Optional<ConfirmEntity> ce =confirmJPA.findByMemberIdAndRecruitIdAndApplyNot(memberId,recruitId,type);
+        if(ce.isPresent()){
+            confirm=ce.get().toConfirmDTO();
+            confirm.setApply(3);
+            confirmJPA.save(confirm.toConfirmEntity());
+        }
     }
 }
