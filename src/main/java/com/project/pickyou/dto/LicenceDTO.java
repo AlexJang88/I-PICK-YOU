@@ -9,17 +9,17 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class LicenceDTO {
-    private String memberId;
+    private Long resumeId;
     private String name;
 
     @Builder
-    public LicenceDTO(String memberId,String name){
-        this.memberId=memberId;
+    public LicenceDTO(Long resumeId,String name){
+        this.resumeId=resumeId;
         this.name=name;
     }
     public LicenceEntity toLicenceEntity(){
         return LicenceEntity.builder()
-                .memberId(this.memberId)
+                .resumeId(this.resumeId)
                 .name(this.name)
                 .build();
     }

@@ -1,5 +1,6 @@
 package com.project.pickyou.repository;
 
+import com.project.pickyou.dto.MemberDTO;
 import com.project.pickyou.entity.MemberEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,6 +12,9 @@ public interface MemberJPARepository extends JpaRepository<MemberEntity,String> 
     Optional<MemberEntity> findById(String id);//회원인지 아닌지 확인절차
 
 
+    Optional<MemberEntity> findByEmail(String email);
+
+    Optional<MemberEntity> findByIdAndEmail(String id, String email);
 
 
 }

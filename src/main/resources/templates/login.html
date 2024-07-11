@@ -1,20 +1,3 @@
-<!--
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-login page
-<form  action="/loginProc" method="post" name="loginForm">
-    아이디 : <input  id="username" name="username" type="text" placeholder="id">
-    비밀번호 : <input id="password" name="password" type="password" placeholder="password">
- <input type="submit" value="로그인하기">
-</form>
-</body>
-</html>-->
-
 
 <!DOCTYPE html>
 
@@ -85,7 +68,7 @@ login page
                 <div class="card-body">
                     <!-- Logo -->
                     <div class="app-brand justify-content-center">
-                        <a href="index.html" class="app-brand-link gap-2">
+                        <a href="/" class="app-brand-link gap-2">
                   <span class="app-brand-logo demo">
                     <svg
                             width="25"
@@ -211,8 +194,12 @@ login page
                     <p class="text-center">
                         <span>아이디 & 비밀번호를 잊어버리셨나요?</span>
                         <br>
-                        <a href="auth-login-basic.html">
-                            <span>이메일 인증으로 찾아보기!</span>
+                        <a href="/forgotId">
+                            <span>아이디 찾아보기!</span>
+                        </a>
+                        <br>
+                        <a href="/forgotPw">
+                            <span>비밀번호 찾아보기!</span>
                         </a>
                     </p>
                 </div>

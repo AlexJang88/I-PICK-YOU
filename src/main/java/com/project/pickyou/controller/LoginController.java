@@ -8,14 +8,17 @@ import com.project.pickyou.dto.MemberInfoDTO;
 import com.project.pickyou.service.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -94,34 +97,83 @@ public class LoginController {
         return "joinCompany";
     }
 
-    // 사업자회원가입 테이터 처리
-    @PostMapping("/joinCompanyPro")
-    public String joinCompanyPro(MemberDTO memberDTO, CompanyInfoDTO companyInfoDTO, @RequestParam("file") MultipartFile file){
 
-        System.out.println("=====><>><><><><>"+memberDTO.getAddress());
-        System.out.println("=====><>><><><><>"+memberDTO.getPhone());
-        System.out.println("=====><>><><><><>"+memberDTO.getProfile());
-        System.out.println("=====><>><><><><>"+memberDTO.getId());
 
-        System.out.println("=====><>><><><><>"+companyInfoDTO.getId());
-        System.out.println("=====><>><><><><>"+companyInfoDTO.getName());
-        System.out.println("=====><>><><><><>"+companyInfoDTO.getCompanyName());
-        System.out.println("=====><>><><><><>"+companyInfoDTO.getCorpno());
-        System.out.println("=====><>><><><><>"+companyInfoDTO.getJob());
-        loginService.joinCompanyProcess(memberDTO, companyInfoDTO, file);
 
-        return "redirect:/login";
+    //아이디 찾기 페이지
+    @GetMapping("/forgotId")
+    public String forgotId(){
+
+        return "/findUser/forgotId";
+    }
+
+    //아이디 찾음
+    @PostMapping("/forgotId/idCheck")
+    public String idCheck(String email, RedirectAttributes redirectAttributes){
+
+        //이메일에 맞는 아이디 찾기
+        String id = loginService.findId(email);
+        redirectAttributes.addFlashAttribute("id", id);
+
+        return "redirect:/forgotId/idfind";
+    }
+
+    //본인아이디 보여줌
+    @GetMapping("/forgotId/idfind")
+    public String idfind(Model model){
+
+        if (model.containsAttribute("id")) {
+            String id = (String) model.getAttribute("id");
+            model.addAttribute("id",id);
+        }
+        return "/findUser/idfind";
     }
 
 
 
 
+    //비밀번호 찾기 페이지
+    @GetMapping("/forgotPw")
+    public String forgotPw(){
 
-    /*위에는 사업자 회원가입 경로 및 화면*/
+        return "/findUser/forgotPw";
+    }
 
+    //비밀번호 변경전 멤버 확인
+    @PostMapping("/forgotPw/pwCheck")
+    public String pwCheck(String email, String id, RedirectAttributes redirectAttributes){
 
+        Boolean pwCheck = loginService.checkPW(email,id);  //우선 회원의 여부
+        System.out.println("><><<>><><"+pwCheck);
 
+        if (pwCheck) {
+            String sid = loginService.findId(email);  //비밀번호 바꾸는곳에 아이디도 넘김
+            redirectAttributes.addFlashAttribute("sid", sid);
+            return "redirect:/forgotPw/pwChange";
+        } else { //그냥 문제사항 전달
+            redirectAttributes.addFlashAttribute("error", "아이디 혹은 이메일이 올바르지 않습니다."); // Flash attribute를 이용해 에러 메시지 전달
+            return "redirect:/forgotPw";
+        }
 
+    }
+
+    //비밀번호 변경하는곳
+    @GetMapping("/forgotPw/pwChange")
+    public String pwChange(Model model){
+
+        if (model.containsAttribute("sid")) {
+            String id = (String) model.getAttribute("sid");
+            model.addAttribute("id",id);
+        }
+            return "/findUser/pwChange";
+    }
+
+    //비밀번호 변경하는곳프로
+    @PatchMapping("/forgotPw/pwChangePro")
+    public String pwChangePro(MemberDTO memberDTO,@RequestParam("newPw") String newPw){
+        loginService.changePw(memberDTO, newPw);  //아이디에 맞춰 비번 변경
+        return "/login";
+    }
 
 
 }

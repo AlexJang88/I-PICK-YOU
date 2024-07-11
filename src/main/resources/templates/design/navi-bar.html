@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
@@ -28,12 +28,13 @@
                 <!--프로필이미지 불러오는곳-->
                 <a  class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);"
                    data-bs-toggle="dropdown">
+
                     <div>
                         <img sec:authorize="!isAuthenticated()"  th:src="@{/assets/img/avatars/2.png}" alt=""
                             />
-
-                        <img sec:authorize="isAuthenticated()"  th:src="@{/assets/img/avatars/1.png}" alt=""
+                        <img sec:authorize="isAuthenticated()"  th:src="@{/assets/img/avatars/3.png}" alt=""
                              class="w-px-40 h-auto rounded-circle" />
+                        <p sec:authorize="isAuthenticated()" th:text="${#authentication.name}"> </p>
                     </div>
                 </a>
 
@@ -67,8 +68,15 @@
                     <li>
                         <div  sec:authorize="isAuthenticated()" class="dropdown-divider"></div>
                     </li>
-                    <li sec:authorize="isAuthenticated()">
-                        <a class="dropdown-item" href="#">
+                    <li sec:authorize="hasRole('ROLE_USER')">
+                        <a class="dropdown-item" th:href="@{/mypage/information/{id}(id=${#authentication.name})}">
+                            <i class="bx bx-user me-2"></i>
+                            <span class="align-middle">마이페이지</span>
+                        </a>
+                    </li>
+
+                    <li sec:authorize="hasRole('ROLE_COMPANY')">
+                        <a class="dropdown-item" th:href="@{/mypage/cominformation/{id}(id=${#authentication.name})}">
                             <i class="bx bx-user me-2"></i>
                             <span class="align-middle">마이페이지</span>
                         </a>
