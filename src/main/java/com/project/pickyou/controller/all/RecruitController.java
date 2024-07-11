@@ -35,13 +35,25 @@ public class RecruitController {
 
     @GetMapping("/posts")
     public String list(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, Principal principal){
-        model.addAttribute("memberId",principal.getName());
+        if(principal!=null) {
+            model.addAttribute("memberId", principal.getName());
+        }
         service.AllPosts(model,pageNum);
         return "recruit/list";
     }
+    @GetMapping("/myPosts")
+    public String mylist(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, Principal principal){
+        if(principal!=null) {
+            model.addAttribute("memberId", principal.getName());
+        }
+        service.AllPosts(model,pageNum);
+        return "recruit/myList";
+    }
     @GetMapping("/posts/{boardNum}")
     public String educationsContent(Model model,@PathVariable Long boardNum,Principal principal){
-        String sid = principal.getName();
+        String sid ="";
+        if(principal!=null){
+                principal.getName();}
         //principal.getName();
         service.post(model,boardNum,sid);
         return "recruit/content";
@@ -49,7 +61,10 @@ public class RecruitController {
     //수정페이지 이동
     @GetMapping("posts/edit/{boardNum}")
     public String edit(Model model,@PathVariable Long boardNum,Principal principal){
-        String sid = principal.getName();
+        String sid = "";
+        if(principal!=null) {
+            principal.getName();
+        }
         //principal.getName();
         service.post(model,boardNum,sid);
         return "recruit/update";
@@ -92,7 +107,9 @@ public class RecruitController {
             url="redirect:/recruit/posts";
         }
         //사업자 아이디 = 로그인 구현후 session 받아와서 다시 처리
-        rdto.setMemberId(principal.getName());
+        if(principal!=null) {
+            rdto.setMemberId(principal.getName());
+        }
         check = rdto.getStatus();
         rdto.setStartDate(startDateParam);
         rdto.setEndDate(endDateParam);
@@ -107,7 +124,10 @@ public class RecruitController {
 
     @GetMapping("/favorits/{boardNum}/{target}")
     public String checkFavoritecheck(@PathVariable Long boardNum,@PathVariable String target,Principal principal){
-        String sid = principal.getName();
+        String sid = "";
+        if(principal!=null) {
+            principal.getName();
+        }
         //principal.getName(); 로그인 적용후 번경
         PickDTO dto = new PickDTO();
         dto.setPicker(sid);
@@ -119,7 +139,10 @@ public class RecruitController {
     @PostMapping("/apply/{boardNum}")
     public String apply(@PathVariable Long boardNum,Principal principal){
         //로그인 처리후 세션으로 변경
-        String sid = principal.getName();
+        String sid = "";
+        if(principal!=null) {
+            principal.getName();
+        }
         String url="redirect:/recruit/posts/"+boardNum;
         if(service.recruit(boardNum,sid)==0){
             //추후에 이력서 등록페이지 만들어지면 url 바꿔야함
@@ -127,28 +150,43 @@ public class RecruitController {
         }
         return url;
     }
-    @GetMapping("/contract/{memberId}")
-    public String contract(Model model,Principal principal,@PathVariable String memberId){
-            String name = "two";
-        service.userInfo(model,memberId,
-                //principal.getName()
-                name
-        );
-        return"recruit/contractForm";
+    @GetMapping("/contract/{memberId}/{stateId}")
+    public String contract(Model model,Principal principal,@PathVariable String memberId,@RequestParam int type,@PathVariable Long stateId){
+        String url="";
+        String name ="";
+        if(principal!=null) {
+             name=principal.getName();
+        }
+        if(type==1){
+                url="recruit/contractForm";
+
+            service.userInfo(model,memberId,
+
+                    name,stateId);
+            }
+        else if(type==2){
+            service.basicContract(memberId,name,1,stateId);
+            url="redirect:/recruitState/posts";
+        }else if(type==3){
+
+        }
+
+
+        return url;
     }
-    @PostMapping("/contract/company")
-    public String signature(@ModelAttribute ContractDTO dto){
-        Long id=service.contract(dto);
+    @PostMapping("/contract/company/{stateId}")
+    public String signature(@ModelAttribute ContractDTO dto,@PathVariable Long stateId){
+        Long id=service.contract(dto,stateId);
         String url = "redirect:/contract/sign/"+id;
         return url;
     }
-    @GetMapping("/contract/sign/{contractId}")
+    @GetMapping("/contract/{contractId}")
     public String signatureMem(HttpServletResponse response,@PathVariable Long contractId,Model model,Principal principal){
         //String id = principal.getName();
         String id = "two";
         service.getContract(response,model,contractId,id);
 
-        return"recruit/companySign";
+        return"recruit/contractSign";
     }
 
     @PostMapping("/saveSignature")
@@ -170,4 +208,5 @@ public class RecruitController {
     public String cset(){
         return "recruit/sign";
     }
+
 }

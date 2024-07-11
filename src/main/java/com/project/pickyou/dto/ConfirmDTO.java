@@ -16,19 +16,17 @@ public class ConfirmDTO {
     private Long contractId;
     private String companyId;
     private int apply;
-    private Date start;
-    private Date end;
+    private Long recruitId;
 
     @Builder
-    public ConfirmDTO(Long id, String memberId, Long contractId, String companyId, Integer apply, Date start, Date end) {
+    public ConfirmDTO(Long id, String memberId, Long contractId, String companyId, Integer apply,Long recruitId ) {
         super();
         this.id = id;
         this.memberId = memberId;
         this.contractId = contractId;
         this.companyId = companyId;
         this.apply = apply;
-        this.start = start;
-        this.end = end;
+        this.recruitId=recruitId;
     }
 
     public ConfirmEntity toConfirmEntity() {
@@ -38,8 +36,7 @@ public class ConfirmDTO {
                 .contractId(this.contractId)
                 .companyId(this.companyId)
                 .apply(this.apply)
-                .start(this.start)
-                .end(this.end)
+                .recruitId(this.recruitId)
                 .build();
     }
 }

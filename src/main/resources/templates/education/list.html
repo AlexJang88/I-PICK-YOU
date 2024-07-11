@@ -7,6 +7,7 @@
         data-assets-path="../assets/"
         data-template="vertical-menu-template-free"
         xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
 <head>
     <meta charset="utf-8"/>
@@ -66,8 +67,10 @@
                 <div class="container-fluid flex-grow-1 container-p-y">
                     <!-- Layout Demo -->
                     <div class="d-flex justify-content-end mb-3">
-                        <a class="btn btn-primary"
-                           th:href="@{/educations/posts/new)}">등록 하기</a>
+                        <a class="btn btn-primary" sec:authorize="isAnonymous()"
+                           th:href="@{/login}">등록 하기</a>
+                        <a class="btn btn-primary" sec:authorize="isAuthenticated()"
+                           th:href="@{/educations/posts/new}">등록 하기</a>
                         <!--로그인 활성화 이후 eight랑 바꿀것 {memberId}(memberId=${memberId})-->
                     </div>
                     <div class="layout-demo-wrapper">

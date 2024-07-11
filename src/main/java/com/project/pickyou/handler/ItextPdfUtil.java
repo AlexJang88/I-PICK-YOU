@@ -26,6 +26,10 @@ import com.project.pickyou.entity.MemberEntity;
 import com.project.pickyou.repository.ContractJPARepository;
 import com.project.pickyou.repository.MemberJPARepository;
 import lombok.RequiredArgsConstructor;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -39,6 +43,8 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class ItextPdfUtil {
+    @Value("${contract.upload.path}")
+    private String contactUploadPath;
 
     private final ContractJPARepository contractJPA;
     private final MemberJPARepository memberJPA;
@@ -46,6 +52,8 @@ public class ItextPdfUtil {
      * PDF 유무를 체크한 후
      * PDF 파일이 없을 경우 PDF 파일 생성 메소드 실행
      */
+    Image image1=null;
+    Image image2=null;
     public File checkPDF (ItextPdfDto pdfDto) {
         File file = new File(pdfDto.getPdfFilePath(),pdfDto.getPdfFileName());
         int fileSize = (int) file.length();
@@ -61,7 +69,9 @@ public class ItextPdfUtil {
      * CSS , Font 설정 기능 포함
      * */
     public void createPDF(ItextPdfDto itextPdfDto) {
-
+        Optional<ContractEntity> ce=contractJPA.findById(itextPdfDto.getContractId());
+        String com=ce.get().getCompanyId();
+        String mem=ce.get().getMemberId();
         // 최초 문서 사이즈 설정
         Document document = new Document(PageSize.A4, 30, 30, 30, 30);
 
@@ -70,15 +80,16 @@ public class ItextPdfUtil {
             PdfWriter pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(itextPdfDto.getPdfFilePath()+itextPdfDto.getPdfFileName()));
             // PDF 파일에 사용할 폰트 크기 설정
             pdfWriter.setInitialLeading(12.5f);
-
             // PDF 파일 열기
             document.open();
-            String imgname = "/Users/senar/Desktop/df/upload/contract/1/five_signature.png";
-            String imgname2= "/Users/senar/Desktop/df/upload/contract/1/two_signature.png";
-            Image image = Image.getInstance(imgname);
-            Image image1 = Image.getInstance(imgname2);
-            pdfWriter.add(image1);
-            pdfWriter.add(image);
+            String comimg = contactUploadPath+File.separator+itextPdfDto.getContractId()+"/"+com+"_signature.png";
+            String memimg= contactUploadPath+File.separator+itextPdfDto.getContractId()+"/"+mem+"_signature.png";
+            image1 = Image.getInstance(comimg);
+            image2 = Image.getInstance(memimg);
+            image1.scaleToFit(0f, 0f);
+            image2.scaleToFit(0f, 0f);
+            document.add(image1);
+            document.add(image2);
 
             // XMLWorkerHelper xmlWorkerHelper = XMLWorkerHelper.getInstance();
 
@@ -157,6 +168,8 @@ public class ItextPdfUtil {
             */
             String htmlStr = getHtml(itextPdfDto.getContractId());
 
+           // htmlStr =processHtmlImages(htmlStr,document);
+
             // HTML 내용을 PDF 파일에 삽입
             StringReader stringReader = new StringReader(htmlStr);
             // XML 파싱
@@ -187,6 +200,28 @@ public class ItextPdfUtil {
             }
         }
 
+    }
+    private String processHtmlImages(String html, Document document) throws IOException, DocumentException {
+        org.jsoup.nodes.Document doc = Jsoup.parse(html);
+        Elements imgElements = doc.select("img");
+
+        for (Element imgElement : imgElements) {
+            String imgId = imgElement.id();
+            String imgPath = imgElement.attr("src");
+            Image image = Image.getInstance(imgPath);
+
+            if ("img01".equals(imgId)) {
+                document.add(image);
+            } else if ("img02".equals(imgId)) {
+                document.add(image);
+            }
+
+            // Remove the img tag from HTML after adding the image to the PDF
+            imgElement.remove();
+        }
+
+        // 반환 전에 HTML을 문자열로 변환하여 반환
+        return doc.outerHtml();
     }
 
     // 사용할 html 코드를 가져오는 메소드
@@ -232,100 +267,85 @@ public class ItextPdfUtil {
             payDate=con.get().getCustomPayDate()+"일(휴일의 경우는 전일 지급)";
         }
 
-       String comimg="/Users/senar/Desktop/df/upload/contract/"+id+con.get().getCompanyId()+"_signature.png";
-        String memimg="/Users/senar/Desktop/df/upload/contract/"+id+con.get().getMemberId()+"_signature.png";
+       String comimg=contactUploadPath+File.separator+id+"/"+con.get().getCompanyId()+"_signature.png";
+        String memimg=contactUploadPath+File.separator+id+"/"+con.get().getMemberId()+"_signature.png";
         String startDate = con.get().getStartDate().format(DateTimeFormatter.ofPattern("YYYYMMdd"));
         String endDate = con.get().getEndDate().format(DateTimeFormatter.ofPattern("YYYYMMdd"));
         String contractDate = con.get().getContractDate().format(DateTimeFormatter.ofPattern("YYYYMMdd"));
 
-        String return_html = "";
-       return_html = "<html>" +
-                        "<body>" +
-               "<div class='content'>"+
-                        "<div class='title'>건설일용근로자 표준근로계약서</div>"+
-                        "<div class='content'>"+
-                            "<p> <span>"+company.getCompanyInfo().getName()+"</span> (이하 '사업주'라 함)과(와) <span>"+member.getMemberInfo().getName()+"</span> (이하 '근로자'라 함)는 다음과 같이 근로계약을 체결한다.</p>"+
-                            "<table>"+
-                                "<tr>"+
-                                    "<th>1. 근로계약기간</th>"+
-                                    "<td>"+
-                                        "<span>"+startDate.substring(0,4)+"</span>년 "+
-                "<span>"+startDate.substring(4,6)+"</span>월 "+
-                "<span>"+startDate.substring(6,8)+"</span>일 부터"+
-                "<span>"+endDate.substring(0,4)+"</span>년 "+
-                "<span>"+endDate.substring(4,6)+"</span>월 "+
-                "<span>"+endDate.substring(6,8)+"</span>일 까지"+
-                "<br/> ※ 근로계약기간을 정하지 않는 경우에는 '근로개시일'만 기재"+
-                                    "</td>"+
-                                "</tr>"+
-                                "<tr>"+
-                                    "<th>2. 근 무 장 소</th>"+
-                                    "<td><span>"+con.get().getLocation()+"</span></td>"+
-                                "</tr>"+
-                                "<tr>"+
-                                    "<th>3. 업무의 내용(직종)</th>"+
-                                    "<td><span>"+con.get().getJob()+"</span></td>"+
-                                "</tr>"+
-                                "<tr>"+
-                                    "<th>4. 소정근로시간</th>"+
-                                    "<td><span>"+con.get().getWorkStartTime().substring(0,5)+"</span>부터 <span>"+con.get().getWorkEndTime().substring(0,5)+"</span>까지 </td>"+
-                                "</tr>"+
-                                "<tr>"+
-                                    "<th>5. 근무일/휴일</th>"+
-                                    "<td>매주 <span>"+con.get().getWorksSchedule()+"</span>일(또는 매일단위)근무 <br/> ※ 주휴일은 1주간 소정근로일을 모두 근로한 경우에 주당 1일을 유급으로 부여</td>"+
-                                "</tr>"+
-                                "<tr>"+
-                                    "<th>6. 임 금</th>"+
-                                    "<td>"+
-                                        "<p>- <span>"+con.get().getWageType()+"</span>금: <span>"+con.get().getWage()+"</span>원</p>"+
-                                        "<p>- 기타 제수당(시간외근로수당, 야간·휴일근로수당 등): <span>"+con.get().getEtc()+"</span></p>"+
-                                        "<p>- 임금지급일: <span>"+con.get().getPayDate()+"</span><span>"+payDate+"</span></p>"+
-                                        "<p>- 지급방법: <span>"+con.get().getWageInto()+"</span></p>"+
-                                    "</td>"+
-                                "</tr>"+
-                                "<tr>"+
-                                    "<th>7. 연차유급휴가</th>"+
-                                    "<td>연차유급휴가는 근로기준법에서 정하는 바에 따라 부여함</td>"+
-                                "</tr>"+
-                                "<tr>"+
-                                    "<th>8. 사회보험 적용여부</th>"+
-                                    "<td>"+
-                                        "<p>□ 고용보험(<span>"+insurance1+"</span>)"+
-                                            "□ 산재보험(<span>"+insurance2+"</span>)"+
-                                            "□ 국민연금(<span>"+insurance3+"</span>)"+
-                                            "□ 건강보험(<span>"+insurance4+"</span>)</p>"+
-                                    "</td>"+
-                                "</tr>"+
-                                "<tr>"+
-                                    "<th>9. 근로계약서 교부</th>"+
-                                    "<td>사업주는 근로계약을 체결함과 동시에 본 계약서를 사본하여 '근로자'의 교부요구와 관계없이 '근로자'에게 교부함(근로기준법 제17조 이행)</td>"+
-                                "</tr>"+
-                                "<tr>"+
-                                    "<th>10. 근로계약, 취업규칙 등의 성실한 이행의무</th>"+
-                                    "<td>사업주와 근로자는 각각 근로계약, 취업규칙, 단체협약을 지키고 성실하게 이행하여야 함</td>"+
-                                "</tr>"+
-                                "<tr>"+
-                                    "<th>11. 기 타</th>"+
-                                    "<td>이 계약에 정함이 없는 사항은 근로기준법령에 의함</td>"+
-                                "</tr>"+
-                            "</table>"+
-                            "<br/>"+
-                            "<h3><span>"+contractDate.substring(0,4)+"</span>년 "+
-                "<span>"+contractDate.substring(4,6)+"</span>월 "+
-                "<span>"+contractDate.substring(6,8)+"</span>일</h3>"+
-                            "<h4>사업주 </h4>"+
-                            "<h4>사업체 명 : <span>"+company.getCompanyInfo().getCompanyName()+" </span> (전화: <span>"+company.getPhone()+" </span>)</h4>"+
-                            "<h4>주소: <span>"+company.getAddress()+" </span></h4>"+
-                            "<h4>대표자: <span>"+company.getCompanyInfo().getName()+" </span><img src='"+comimg+"' id='img01'/></h4>"+
-                            "<h4>근로자 </h4>"+
-                            "<h4>연락처 : <span>"+member.getPhone()+"</span></h4>"+
-                            "<h4>주소: <span>"+member.getAddress()+"</span></h4>"+
-                            "<h4>성 함: <span>"+member.getMemberInfo().getName()+"</span><img src='"+memimg+"' id='img02'/></h4>"+
-                            "<br/>"+
-                        "</div>"+
-                    "</div>"+
-               "</body>" +
-                        "</html>";
+        String return_html = "<html><body>" +
+                "<div class='content'>" +
+                "<div class='title'>건설일용근로자 표준근로계약서</div>" +
+                "<div class='content'>" +
+                "<p><span>" + company.getCompanyInfo().getName() + "</span> (이하 '사업주'라 함)과(와) <span>" + member.getMemberInfo().getName() + "</span> (이하 '근로자'라 함)는 다음과 같이 근로계약을 체결한다.</p>" +
+                "<table><tr><th>1. 근로계약기간</th><td>" +
+                "<span>" + startDate.substring(4, 6) + "</span>월 " +
+                "<span>" + startDate.substring(6, 8) + "</span>일 부터" +
+                "<span>" + endDate.substring(0, 4) + "</span>년 " +
+                "<span>" + endDate.substring(4, 6) + "</span>월 " +
+                "<span>" + endDate.substring(6, 8) + "</span>일 까지" +
+                "<br /> ※ 근로계약기간을 정하지 않는 경우에는 '근로개시일'만 기재" +
+                "</td></tr>" +
+                "<tr><th>2. 근 무 장 소</th>" +
+                "<td><span>" + con.get().getLocation() + "</span></td>" +
+                "</tr><tr><th>3. 업무의 내용(직종)</th>" +
+                "<td><span>" + con.get().getJob() + "</span></td>" +
+                "</tr><tr><th>4. 소정근로시간</th>" +
+                "<td><span>" + con.get().getWorkStartTime().substring(0, 5) + "</span>부터 <span>" + con.get().getWorkEndTime().substring(0, 5) + "</span>까지 </td>" +
+                "</tr><tr><th>5. 근무일/휴일</th>" +
+                "<td>매주 <span>" + con.get().getWorksSchedule() + "</span>일(또는 매일단위)근무 <br /> ※ 주휴일은 1주간 소정근로일을 모두 근로한 경우에 주당 1일을 유급으로 부여</td>" +
+                "</tr><tr><th>6. 임 금</th><td>" +
+                "<p>- <span>" + con.get().getWageType() + "</span>금: <span>" + con.get().getWage() + "</span>원</p>" +
+                "<p>- 기타 제수당(시간외근로수당, 야간·휴일근로수당 등): <span>" + con.get().getEtc() + "</span></p>" +
+                "<p>- 임금지급일: <span>" + con.get().getPayDate() + "</span><span>" + payDate + "</span></p>" +
+                "<p>- 지급방법: <span>" + con.get().getWageInto() + "</span></p>" +
+                "</td>" +
+                "</tr>" +
+                "<tr>" +
+                "<th>7. 연차유급휴가</th>" +
+                "<td>연차유급휴가는 근로기준법에서 정하는 바에 따라 부여함</td>" +
+                "</tr>" +
+                "<tr>" +
+                "<th>8. 사회보험 적용여부</th>" +
+                "<td>" +
+                "<p>□ 고용보험(<span>" + insurance1 + "</span>)" +
+                "□ 산재보험(<span>" + insurance2 + "</span>)" +
+                "□ 국민연금(<span>" + insurance3 + "</span>)" +
+                "□ 건강보험(<span>" + insurance4 + "</span>)</p>" +
+                "</td>" +
+                "</tr>" +
+                "<tr>" +
+                "<th>9. 근로계약서 교부</th>" +
+                "<td>사업주는 근로계약을 체결함과 동시에 본 계약서를 사본하여 '근로자'의 교부요구와 관계없이 '근로자'에게 교부함(근로기준법 제17조 이행)</td>" +
+                "</tr>" +
+                "<tr>" +
+                "<th>10. 근로계약, 취업규칙 등의 성실한 이행의무</th>" +
+                "<td>사업주와 근로자는 각각 근로계약, 취업규칙, 단체협약을 지키고 성실하게 이행하여야 함</td>" +
+                "</tr>" +
+                "<tr>" +
+                "<th>11. 기 타</th>" +
+                "<td>이 계약에 정함이 없는 사항은 근로기준법령에 의함</td>" +
+                "</tr>" +
+                "</table>" +
+                "<br />" +
+                "<h3><span>" + contractDate.substring(0, 4) + "</span>년 " +
+                "<span>" + contractDate.substring(4, 6) + "</span>월 " +
+                "<span>" + contractDate.substring(6, 8) + "</span>일</h3>" +
+                "<h4>사업주 </h4>" +
+                "<h4>사업체 명 : <span>" + company.getCompanyInfo().getCompanyName() + " </span> (전화: <span>" + company.getPhone() + " </span>)</h4>" +
+                "<h4>주소: <span>" + company.getAddress() + " </span></h4><br /><br />" +
+                "<h4>대표자: <span>" + company.getCompanyInfo().getName() + " </span><img id='img01' src='" + comimg + "' /></h4><br/><br/>" +
+                "<h4>근로자 </h4>" +
+                "<h4>연락처 : <span>" + member.getPhone() + "</span></h4>" +
+                "<h4>주소: <span>" + member.getAddress() + "</span></h4><br/><br/>" +
+                "<h4>성 함: <span>" + member.getMemberInfo().getName() + "</span><img id='img02' src='" + memimg + "' /></h4>" +
+                "<br />" +
+                "</div>" +
+                "</div>" +
+                "</body>" +
+                "</html>";
         return return_html;
     }
+
 }
+

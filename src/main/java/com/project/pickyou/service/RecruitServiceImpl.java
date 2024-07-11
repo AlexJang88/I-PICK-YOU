@@ -77,6 +77,39 @@ public class RecruitServiceImpl implements RecruitService {
     }
 
     @Override
+    public void myPosts(Model model, int pageNum, String id) {
+        int pageSize = 10;
+        Long longCount = recruitJPA.count();
+        int count = longCount.intValue();
+
+        Sort sort = Sort.by(Sort.Order.desc("reg"));
+
+        Page<RecruitEntity> page = recruitJPA.findById(id,PageRequest.of(pageNum - 1, pageSize, sort));
+
+        List<RecruitEntity> posts = page.getContent();
+
+        model.addAttribute("posts", posts);
+        model.addAttribute("count", count);
+        model.addAttribute("pageNum", pageNum);
+        model.addAttribute("pageSize", pageSize);
+        int pageCount = count / pageSize + (count % pageSize == 0 ? 0 : 1);
+        int startPage = (pageNum / 10) * 10 + 1;
+        int pageBlock = 10;   //페이징(이전/다음)을 몇개단위로 끊을지
+        int endPage = startPage + pageBlock - 1;
+        if (endPage > pageCount) {
+            endPage = pageCount;
+        }
+        model.addAttribute("pageCount", pageCount);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("pageBlock", pageBlock);
+        model.addAttribute("endPage", endPage);
+
+
+
+
+    }
+
+    @Override
     public void post(Model model, Long num, String sid) {
         Optional<RecruitEntity> post = recruitJPA.findById(num);
         RecruitDTO edto = new RecruitDTO();
@@ -280,7 +313,7 @@ public class RecruitServiceImpl implements RecruitService {
     }
 
     @Override
-    public void userInfo(Model model, String memberId, String companyId) {
+    public void userInfo(Model model, String memberId, String companyId,Long stateId) {
 
         Optional<MemberEntity> mem = memberJPA.findById(memberId);
         Optional<MemberEntity> com = memberJPA.findById(companyId);
@@ -290,13 +323,14 @@ public class RecruitServiceImpl implements RecruitService {
         if(com.isPresent()){
             model.addAttribute("com",com.get());
         }
+        model.addAttribute("stateId",stateId);
 
 
 
     }
 
     @Override
-    public Long contract(ContractDTO dto) {
+    public Long contract(ContractDTO dto,Long stateId) {
         if(dto.getId()==0){
             dto.setId(null);
         }
@@ -306,9 +340,8 @@ public class RecruitServiceImpl implements RecruitService {
         cdto.setMemberId(dto.getMemberId());
         cdto.setCompanyId(dto.getCompanyId());
         cdto.setApply(1);
-        cdto.setStart(Date.valueOf(dto.getStartDate()));
-        cdto.setEnd(Date.valueOf(dto.getEndDate()));
         cdto.setContractId(maxnum);
+        cdto.setContractId(stateId);
         System.out.println("========================cdto"+dto);
         contractJPA.save(dto.toContractEntity());
         System.out.println("========================confirmsave"+maxnum);
@@ -392,6 +425,9 @@ public class RecruitServiceImpl implements RecruitService {
                     type = 100;
                     System.out.println("==================authCheck" + comSign);
                     System.out.println("==================authCheck" + memSign);
+                    if(!contractPdf.exists()){
+                        contractPDF(response,id);
+                    }
                 }
             }
         }
@@ -424,6 +460,15 @@ public class RecruitServiceImpl implements RecruitService {
         }
 
         return sign;
+    }
+
+    @Override
+    public void basicContract(String memberId, String companyId,int type,Long stateId) {
+            ConfirmDTO cdto = new ConfirmDTO();
+            cdto.setMemberId(memberId);
+            cdto.setCompanyId(companyId);
+            cdto.setApply(type);
+            confirmJPA.save(cdto.toConfirmEntity());
     }
 
 

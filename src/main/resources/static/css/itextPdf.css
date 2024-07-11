@@ -1,64 +1,51 @@
 body {
-   font-family: AppleSDGothicNeo, sans-serif; font-size:12px; color:#222; background:#fff; height: 100%;
-    }
-    .container {
+    font-family: AppleSDGothicNeo, sans-serif;
+    font-size: 12px;
+    color: #222;
+    background: #fff;
+    margin: 0; /* Remove default body margin */
+    padding: 0; /* Remove default body padding */
+}
+
+.container {
     width: 70%;
     margin: 0 auto;
     padding: 20px;
     border: 1px solid black;
-    }
-    .title {
+}
+
+.title {
     text-align: center;
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 20px;
-    }
-    .content {
+}
+
+.content {
     font-size: 14px;
-    }
-    .content table {
+}
+
+.content table {
     width: 100%;
     border-collapse: collapse;
-    }
-    .content td, .content th {
+}
+
+.content td, .content th {
     border: 1px solid black;
     padding: 8px;
     text-align: left;
-    }
-    .content th {
+}
+
+.content th {
     background-color: #f2f2f2;
-    }
+}
 
-    h3{
-    text-align : center;
-    }
-    h4{
-    text-align:center;
-    }
+h3, h4 {
+    text-align: center;
+}
 
-
-
-
-    .text {
-    font-size: 30px;
-    margin-top: 70px;
-    vertical-align: middle;
-    display: block; /* Initially visible */
-    }
-    #img01, #img02 {
+#img01, #img02 {
     text-align: center;
     width: 150px;
     height: 75px;
-    }
-    .close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    }
-    .close:hover,
-    .close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-    }
+}

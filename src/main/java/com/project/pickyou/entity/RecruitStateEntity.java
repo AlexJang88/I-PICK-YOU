@@ -22,8 +22,6 @@ public class RecruitStateEntity {
     private Long recruitId;
     private Date reg;
 
-
-
     @Builder
     public RecruitStateEntity(Long id, String memberId, Long recruitId, Date reg ) {
         super();

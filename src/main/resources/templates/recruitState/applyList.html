@@ -5,8 +5,7 @@
       data-theme="theme-default"
       data-assets-path="../assets/"
       data-template="vertical-menu-template-free"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport"
@@ -63,43 +62,63 @@
                 <!-- Content -->
                 <div class="container-fluid flex-grow-1 container-p-y">
                     <!-- Layout Demo -->
-                    <div class="d-flex justify-content-end mb-3">
-                        <a class="btn btn-primary" sec:authorize="isAnonymous()"
-                           th:href="@{/login}">등록 하기</a>
-                        <a class="btn btn-primary" sec:authorize="isAuthenticated()"
-                           th:href="@{/recruit/posts/write/{memberId}(memberId=${memberId})}">등록 하기</a>
-                        <!--로그인 활성화 이후 eight랑 바꿀것 {memberId}(memberId=${memberId})-->
-                    </div>
-                        <!--내용 -->
+                    <!--내용 -->
                     <div class="card">
                         <div class="table-responsive text-nowrap">
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>채용공고</th>
-                                    <th> </th>
-                                    <th>급여</th>
-                                    <th>근무조건</th>
-                                    <th>지역</th>
-                                    <th>등록</th>
+                                    <th>공고글 제목</th>
+                                    <th>지원자 이름</th>
+                                    <th>지원 날짜</th>
+                                    <th>이력서 보기</th>
+                                    <th>채용 상태</th>
                                 </tr>
                                 </thead>
-                                <tbody class="table-border-bottom-0" th:each="post : ${posts}">
+
+                                <tbody class="table-border-bottom-0" th:if="${posts != null and #lists.isNotEmpty(posts)}" th:each="post : ${posts}">
 
                                 <tr>
                                     <td>
-                                        <i class="fab fa-angular fa-lg text-danger me-3"></i>
-                                        <span th:if="${post.status==1}" class="badge bg-label-secondary me-1">일반!</span>
-                                        <span th:if="${post.status==2}" class="badge bg-label-danger me-1">긴급!</span>
+                                        <span th:text="${post.title}"></span>
                                     </td>
-                                    <td><a th:href="@{/recruit/posts/{boardNum}(boardNum=${post.id})}"><span th:text="${post.title}"></span> </a></td>
-                                    <td><span th:text="${post.recruitDetail.wage}+' 원'"></span></td>
-                                    <td><span th:text="${post.recruitDetail.detail}"></span></td>
-                                    <td><span th:text="${post.member.address}"></span></td>
-                                    <td><span th:text="${#dates.format(post.reg, 'yyyy-MM-dd')}"></span></td>
-                                </tr>
+                                    <td>
+                                        <span th:text="${post.recruitState.memberId}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${#dates.format(post.recruitState.reg,'yyyy-MM-dd')}"></span>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-primary ">이력서 보기</a>
+                                    </td>
+                                    <td>
+                                        <!-- 채용확정 버튼 -->
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                            채용 확정
+                                        </button>
 
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">채용 확정</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body d-flex flex-column align-items-center">
+                                                        <a th:href="@{/recruit/contract/{memberId}/{statusId}?type=1(memberId=${post.recruitState.memberId},statusId=${post.id})}" class="btn btn-primary mb-2">온라인 계약서 작성</a>
+                                                        <a th:href="@{/recruit/contract/{memberId}/{statusId}?type=2(memberId=${post.recruitState.memberId},statusId=${post.id})}" class="btn btn-secondary mb-2">계약서 서면 작성</a>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
                                 </tbody>
+                                </div>
                             </table>
                         </div>
                     </div>
@@ -149,12 +168,8 @@
 </div>
 <!-- / Layout wrapper -->
 
-<div class="buy-now">
-    <a th:href="@{https://themeselection.com/products/sneat-bootstrap-html-admin-template/}"
-       target="_blank"
-       class="btn btn-danger btn-buy-now"
-    >Upgrade to Pro</a>
-</div>
+<!-- 모달 창 -->
+
 
 <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->
