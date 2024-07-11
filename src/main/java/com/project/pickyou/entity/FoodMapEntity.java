@@ -7,11 +7,15 @@ import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.Date;
 
 @Data
 @NoArgsConstructor
+@DynamicInsert
+@DynamicUpdate
 @Entity
 @Table(name = "food_map")
 public class FoodMapEntity {
