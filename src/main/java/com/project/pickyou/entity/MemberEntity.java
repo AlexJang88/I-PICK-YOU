@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -12,6 +13,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import java.util.Date;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @Entity
 @DynamicInsert   //인서트시에 사용

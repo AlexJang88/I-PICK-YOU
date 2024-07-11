@@ -11,7 +11,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>훈련소 등록</title>
+    <title>소개소 수정</title>
 
     <meta name="description" content="" />
 
@@ -35,7 +35,7 @@
     <!-- Vendors CSS -->
     <link th:href="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css}" rel="stylesheet" />
 
-    <!--주소-->
+    <!--지도-->
     <script th:src="@{'//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js'}"></script>
 
     <!-- Helpers -->
@@ -64,7 +64,7 @@
             <div class="content-wrapper">
                 <!-- Content -->
                 <div class="container-xxl flex-grow-1 container-p-y">
-                    <h4 class="fw-bold py-3 mb-4">훈련소 상세내용 작성</h4>
+                    <h4 class="fw-bold py-3 mb-4">훈련소 내용 수정하기</h4>
 
                     <!-- Basic Layout & Basic with Icons -->
                     <div class="row">
@@ -76,53 +76,32 @@
                                     <small class="text-muted float-end">Default label</small>
                                 </div>
                                 <div class="card-body">
-                                    <form action="/trainning/posts" method="post" enctype="multipart/form-data">
+                                    <!--   <form action="/trainning/trainningUpdatePro" method="post" enctype="multipart/form-data">-->
+                                    <form th:action="@{/agency/posts/{agencynum}(agencynum=${AgencyList.get().id})}" th:method="patch" enctype="multipart/form-data">
+                                        <input type="hidden" name="id" th:value="${AgencyList.get().id}">
+                                        <input type="hidden" name="companyId" th:value="${AgencyList.get().companyId}">
+
+                                        <span th:text="${AgencyList.get().reg}"></span>
+
+
                                         <div class="row mb-3">
-                                            <label class="col-sm-2 col-form-label" for="title"></p>모집 제목</label>
+                                            <label class="col-sm-2 col-form-label" for="companyName">소개소 이름</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control" id="title" name="title" placeholder="제목을 적어주세요" required />
+                                                <input type="text" class="form-control" id="companyName" name="companyName" th:value="${AgencyList.get().companyName}"  placeholder="업체이름을 적어주세요"  required/>
+
                                             </div>
                                         </div>
 
                                         <div class="row mb-3">
-                                            <label class="col-sm-2 col-form-label" >모집분야</label>
+                                            <label class="col-sm-2 col-form-label">분야</label>
                                             <div class="col-sm-10">
                                                 <input
                                                         type="text"
                                                         class="form-control"
-                                                        id="position"
+                                                        id="business"
                                                         placeholder="ex) 목공, 용접, 기계, 타일, 도배..."
-                                                        name="position"
-                                                        required
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3">
-                                            <label class="col-sm-2 col-form-label" >학원이름</label>
-                                            <div class="col-sm-10">
-                                                <input
-                                                        type="text"
-                                                        class="form-control"
-                                                        id="name"
-                                                        name="name"
-                                                        placeholder="ex) 목공, 용접, 기계, 타일, 도배..."
-                                                        required
-                                                />
-                                            </div>
-                                        </div>
-
-
-
-                                        <div class="row mb-3">
-                                            <label class="col-sm-2 col-form-label" for="trainner">모집인원</label>
-                                            <div class="col-sm-10">
-                                                <input
-                                                        type="text"
-                                                        class="form-control"
-                                                        id="trainner"
-                                                        name="trainner"
-                                                        placeholder="ex) 10명 / 5~10명"
+                                                        name="business"
+                                                        th:value="${AgencyList.get().business}"
                                                         required
                                                 />
                                             </div>
@@ -138,29 +117,15 @@
                                                         class="form-control phone-mask"
                                                         placeholder="02-1111-1111"
                                                         name="contact"
+                                                        th:value="${AgencyList.get().contact}"
                                                         required
                                                 />
                                             </div>
                                         </div>
 
 
-
-
                                         <div class="row mb-3">
-                                            <label class="col-sm-2 col-form-label" for="etc">기타사항</label>
-                                            <div class="col-sm-10">
-                                                <textarea
-                                                        id="etc"
-                                                        class="form-control"
-                                                        placeholder="기타사항을 적어주세요"
-                                                        name="etc"
-                                                        required
-                                                ></textarea>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3">
-                                            <label class="col-sm-2 col-form-label" for="address">주소를 입력하세요</label>
+                                            <label class="col-sm-2 col-form-label" for="address">주소</label>
                                             <div class="col-sm-10">
                                                 <input
                                                         type="text"
@@ -168,6 +133,7 @@
                                                         class="form-control phone-mask"
                                                         placeholder="주소를 입력하세요"
                                                         name="address"
+                                                        th:value="${AgencyList.get().address}"
                                                         required
                                                 />
                                                 <button type="button" id="addressButton">주소 검색</button>
@@ -184,22 +150,24 @@
                                                         class="form-control"
                                                         placeholder="기타사항을 적어주세요"
                                                         name="content"
+                                                        th:utext="${AgencyList.get().content}"
                                                         required
                                                 ></textarea>
                                             </div>
                                         </div>
 
+
                                         <div class="row mb-3">
                                             <label class="col-sm-2 col-form-label" for="file">사진 업로드</label>
                                             <div class="col-sm-10">
-                                                <input type="file" id="file" name="files" class="form-control" multiple required/>
+                                                <input type="file" id="file" name="files" class="form-control" multiple accept="image/*" onchange="return validateFiles()" required/>
+                                                <!--accept="image/*"  해당 코드는 이미지만 받는것이다-->
                                             </div>
                                         </div>
 
-
                                         <div class="row justify-content-end">
                                             <div class="col-sm-10">
-                                                <button type="submit" class="btn btn-primary">Send</button>
+                                                <button type="submit" class="btn btn-primary btn-block">수정 완료</button>
                                             </div>
                                         </div>
                                     </form>
@@ -209,7 +177,7 @@
 
 
 
-
+                    </div>
 
                     <!--/ Layout Demo -->
                 </div>
@@ -255,22 +223,45 @@
 
 <!-- Page JS -->
 
-    <!--주소-->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('addressButton').addEventListener('click', function () {
-                new daum.Postcode({
-                    oncomplete: function (data) {
-                        // 사용자가 주소를 선택했을 때 실행되는 함수
-                        var fullAddress = data.address; // 전체 주소
-                        document.getElementById('address').value = fullAddress; // 주소 입력 필드에 값 설정
-                    }
-                }).open();
-            });
+<!--주소-->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('addressButton').addEventListener('click', function () {
+            new daum.Postcode({
+                oncomplete: function (data) {
+                    // 사용자가 주소를 선택했을 때 실행되는 함수
+                    var fullAddress = data.address; // 전체 주소
+                    document.getElementById('address').value = fullAddress; // 주소 입력 필드에 값 설정
+                }
+            }).open();
         });
-    </script>
+    });
+</script>
 
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+<script>
+
+    function validateFiles() {
+
+        alert("사진을 선택하면 기존 사진은 사라집니다");
+
+        const input = document.getElementById('file');
+        const files = input.files;
+
+        for (let i = 0; i < files.length; i++) {
+            if (!files[i].type.startsWith('image/')) {
+                alert('이미지 파일만 등록할 수 있습니다.');
+                input.value = ''; // 선택된 파일을 초기화하여 무효화합니다.
+                return false;
+            }
+        }
+
+        return true;
+    }
+</script>
+
+
 </body>
 </html>
