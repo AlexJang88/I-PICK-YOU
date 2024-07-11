@@ -9,6 +9,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CareerID implements Serializable {
-    private String memberId;
+    private Long resumeId;
     private String name;
 }
