@@ -107,14 +107,11 @@
                                 <img th:src="@{/upload/emptyScore.png}" class="star" onclick="rate(4)" id="star4" data-score="4">
                                 <img th:src="@{/upload/emptyScore.png}" class="star" onclick="rate(5)" id="star5" data-score="5">
                             </div>
-                            <input type="hidden" name="score" id="score" th:value="${post.avg}">
+                            <input type="hidden" name="score" id="score" th:value="${avg}">
                             <div class="row mb-3">
-                                <label class="col-sm-2 col-form-label" for="content">상세 내용</label>
-                                <div class="col-sm-10">
-                                    <textarea id="content" class="form-control" name="content" placeholder="자세한 내용을 작성해주세요" th:utext="${post.content}"></textarea>
+                                <div class="col-sm-10"  th:each="post : ${posts}">
+                                    <textarea id="content" class="form-control" name="content" th:utext="${post.content}" READONLY></textarea>
                                 </div>
-                                <input type="hidden" name="target" th:if="${member!=null}" th:value="${member.id}">
-                                <input type="hidden" name="target" th:if="${company!=null}" th:value="${company.id}">
                             </div>
                         </form>
                     </div>

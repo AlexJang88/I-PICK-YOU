@@ -1,13 +1,12 @@
 package com.project.pickyou.controller.all;
 
+import com.project.pickyou.dto.SatisfactionDTO;
 import com.project.pickyou.service.SatisfactionService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -37,13 +36,35 @@ public class SatisfactionController {
         }
         return url;
     }
+    @PostMapping("/score/new")
+    public String scoreNew(SatisfactionDTO dto,Principal principal){
+        String writer="";
+        if(principal!=null){
+            writer= principal.getName();
+        }
+        dto.setWriter(writer);
+        service.scoreSet(dto);
+        return "redirect:/";
+    }
+    @PatchMapping("/score/edit")
+    public String scoreEdit(SatisfactionDTO dto,Principal principal){
+        String writer="";
+        if(principal!=null){
+            writer= principal.getName();
+        }
+        dto.setWriter(writer);
+        service.scoreEdit(dto);
+        return "redirect:/";
+    }
+
+
     @GetMapping("/score/my")
     public String myscore(Model model,Principal principal){
-        String id="";
+        String id="five";
         if(principal!=null){
             id= principal.getName();
         }
-
+        service.myScore(model,id);
         return "satisfaction/myScore";
     }
 }
