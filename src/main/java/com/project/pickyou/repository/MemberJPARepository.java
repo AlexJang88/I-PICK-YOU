@@ -12,4 +12,5 @@ public interface MemberJPARepository extends JpaRepository<MemberEntity,String> 
 
 
 
+
 }

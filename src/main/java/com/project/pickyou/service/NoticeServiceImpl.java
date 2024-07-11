@@ -31,7 +31,7 @@ import java.util.*;
 @Service
 public class NoticeServiceImpl implements NoticeService {
 
-    @Value("${img.upload.path}")
+    @Value("${Nimg.upload.path}")
     private String imgUploadPath; // 프로퍼티스에서 정한 결로를, 웹 컨피그에서 해당 경로를 지정해서 클래스안에 설정
 
     private final NoticeJPARepository noticeJPA;
@@ -47,6 +47,7 @@ public class NoticeServiceImpl implements NoticeService {
     @Transactional
     @Override
     public void AllPosts(Model model, int pageNum) {
+
         int pageSize = 10;
         Long longCount = noticeJPA.count();
         int count = longCount.intValue();
@@ -77,9 +78,6 @@ public class NoticeServiceImpl implements NoticeService {
     // 공지사항 인서트
     @Override
     public NoticeEntity noticeInsert(NoticeDTO dto) {
-        String memberId = "one";
-        dto.setMemberId(memberId);
-
         return noticeJPA.save(dto.toNoticeEntity());
     }
 
@@ -98,7 +96,7 @@ public class NoticeServiceImpl implements NoticeService {
                     int numtype = 1; // 공지사항 1번
                     String num = "1";
                     // 공지사항 ID를 기반으로 서브 폴더 생성
-                    String subFolder = num + File.separator + imageDTO.getBoardNum(); // 파일 이름 설정하는것_번호 // num = 타입 3번이고 File.separator는 안에 파일 + 파일번호
+                    String subFolder = num + File.separator + imageDTO.getBoardNum(); // 파일 이름 설정하는것_번호 // num = 타입 1번이고 File.separator는 안에 파일 + 파일번호
                     Path directory = Paths.get(baseDir, subFolder); // 프로퍼티스 경로와 + 파일생성된 경로 합치기
 
                     // 서브 폴더가 존재하지 않으면 생성
@@ -142,7 +140,6 @@ public class NoticeServiceImpl implements NoticeService {
         List<ImageEntity> images = imageJPA.findByBoardTypeAndBoardNum(boardType,boardNum);
         model.addAttribute("images", images);
     }
-
 
     // 공지사항 조회수 증가
     @Override

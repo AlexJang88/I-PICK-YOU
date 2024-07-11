@@ -42,6 +42,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+
                 .authorizeHttpRequests((auth) -> auth
 
                                 .requestMatchers("/", "/error","/login", "/join", "/joinProc", "/assets/**", "/img/**", "/register", "/css/**", "/js/**").permitAll()
@@ -52,6 +53,7 @@ public class SecurityConfig {
                                 .requestMatchers("/educations/**").permitAll()
                                // .requestMatchers("/educations/posts/write/**", "/educations/posts/edit/**").hasRole("COMPANY")
                                 .anyRequest().permitAll()
+
                         /*.anyRequest().permitAll()*/
                 );
 
@@ -60,6 +62,9 @@ public class SecurityConfig {
                         .loginProcessingUrl("/loginProc")
                         .permitAll()
                 );
+
+
+
         http
                 .csrf((auth) -> auth.disable());
 

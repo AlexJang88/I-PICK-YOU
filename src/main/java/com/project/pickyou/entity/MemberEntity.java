@@ -28,6 +28,7 @@ public class MemberEntity {
     private String auth;
     @CreationTimestamp
     private Date reg;
+
     @OneToOne
     @JoinColumn(name="id",referencedColumnName = "id",insertable = false,updatable = false)
     private CompanyInfoEntity companyInfo;
