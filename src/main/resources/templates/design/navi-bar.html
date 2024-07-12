@@ -19,24 +19,61 @@
     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
 
 
+
+
+
         <ul class="navbar-nav flex-row align-items-center ms-auto">
             <!-- Place this tag where you want the button to render. -->
+
+            <!--알림버튼-->
+
+                <button type="button" class="btn btn-icon btn-secondary position-relative" sec:authorize="hasRole('ROLE_USER')">
+                    <a th:href="@{/alarm/list/{id}(id=${#authentication.name})}">
+                    <span class="tf-icons bx bx-bell"></span>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        <span th:text="${messageCount > 0 ? messageCount : 0}">0</span>
+                        <span class="visually-hidden">unread messages</span>
+                    </span>
+                    </a>
+                </button>
+
+            <button type="button" class="btn btn-icon btn-secondary position-relative" sec:authorize="hasRole('ROLE_COMPANY')">
+                <a th:href="@{/alarm/list/{id}(id=${#authentication.name})}">
+                    <span class="tf-icons bx bx-bell"></span>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        <span th:text="${messageCount > 0 ? messageCount : 0}">0</span>
+                        <span class="visually-hidden">unread messages</span>
+                    </span>
+                </a>
+            </button>
+
+            <button type="button" class="btn btn-icon btn-secondary position-relative" sec:authorize="hasRole('ROLE_ADMIN')">
+                <a th:href="@{/alarm/adminlist/{id}(id=${#authentication.name})}">
+                    <span class="tf-icons bx bx-bell"></span>
+                </a>
+            </button>
+
+
+
 
             <!-- User -->
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
 
                 <!--프로필이미지 불러오는곳-->
-                <a  class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);"
-                   data-bs-toggle="dropdown">
-
-                    <div>
-                        <img sec:authorize="!isAuthenticated()"  th:src="@{/assets/img/avatars/2.png}" alt=""
-                            />
-                        <img sec:authorize="isAuthenticated()"  th:src="@{/assets/img/avatars/3.png}" alt=""
-                             class="w-px-40 h-auto rounded-circle" />
-                        <p sec:authorize="isAuthenticated()" th:text="${#authentication.name}"> </p>
+                <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+                    <div class="d-flex align-items-center">
+                        <div class="demo-inline-spacing" sec:authorize="!isAuthenticated()">
+                            <button type="button" class="btn btn-primary">로그인</button>
+                        </div>
+                        <div sec:authorize="isAuthenticated()">
+                            <img th:src="@{/assets/img/avatars/3.png}" alt="" class="w-px-40 h-auto rounded-circle" />
+                        </div>
+                        <div sec:authorize="isAuthenticated()">
+                            <p class="mb-0 ms-2" th:text="${#authentication.name}"></p>
+                        </div>
                     </div>
                 </a>
+
 
                 <!--프로필 눌렀을때-->
                 <ul  class="dropdown-menu dropdown-menu-end">

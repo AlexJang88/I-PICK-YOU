@@ -101,6 +101,13 @@
                 </a>
             </li>
 
+            <li class="menu-item" sec:authorize="hasRole('ROLE_ADMIN')">
+                <a th:href="@{/alarm/adminlist/{id}(id=${#authentication.name})}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-crown"></i>
+                    <div data-i18n="Boxicons">쪽지쓰기</div>
+                </a>
+            </li>
+
             <li class="menu-item" sec:authorize="hasRole('ROLE_USER')">
                 <a th:href="@{/mypage/information/{id}(id=${#authentication.name})}" class="menu-link">
                     <i class="bx bx-user me-2"></i>
