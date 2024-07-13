@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Room List</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .room-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .room-list li {
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Rooms for <span id="user"></span></h2>
+    <ul id="room-list" class="room-list"></ul>
+</div>
+
+<script>
+    $(document).ready(function() {
+        var pathParts = window.location.pathname.split('/');
+        var user = pathParts[2]; // URL 경로에서 사용자 추출
+        $('#user').text(user);
+
+        // 예시: 사용자가 참여한 방 목록을 생성
+        var rooms = [
+            {sender: user, receiver: 'user2'},
+            {sender: user, receiver: 'user3'}
+        ];
+
+        rooms.forEach(function(room) {
+            var roomId = [room.sender, room.receiver].sort().join('-');
+            var listItem = $('<li>').text('Chat with ' + (room.sender === user ? room.receiver : room.sender));
+            listItem.on('click', function() {
+                window.location.href = 'http://localhost:4000/chat/' + room.sender + '/' + room.receiver;
+            });
+            $('#room-list').append(listItem);
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,37 +1,56 @@
-const app = require('express')();
-const http = require('http').createServer(app);
-const io = require('socket.io')(http);
+const express = require('express');
+const http = require('http');
+const socketIo = require('socket.io');
+const path = require('path');
+const cors = require('cors');
 
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/chat.html');
+const app = express();
+const server = http.createServer(app);
+const io = socketIo(server);
+app.use(cors());
+
+app.use(express.static(path.join(__dirname, 'src')));
+
+app.get('/chat/:sender/:receiver', (req, res) => {
+    res.sendFile(path.join(__dirname, 'chat.html'));
 });
 
-let socketList = [];
+app.get('/rooms/:user', (req, res) => {
+    res.sendFile(path.join(__dirname, 'rooms.html'));
+});
+
+const activeRooms = {};
 
 io.on('connection', (socket) => {
-    socketList.push(socket);
-    console.log('User Join');
+    console.log('User connected');
+
+    socket.on('joinRoom', ({ sender, receiver }) => {
+        const roomId = [sender, receiver].sort().join('-');
+        socket.join(roomId);
+        socket.roomId = roomId;
+        if (!activeRooms[roomId]) {
+            activeRooms[roomId] = 0;
+        }
+        activeRooms[roomId] += 1;
+        console.log(`User ${sender} joined room ${roomId}`);
+    });
 
     socket.on('SEND', (msg) => {
-        socketList.forEach(function(item) {
-            if (item != socket) {
-                item.emit('SEND', msg);
-            }
-        });
-        // io.emit('response_message', msg); // Uncomment this line if you want to emit to all users
+        console.log(`Message received: ${msg.text}`);
+        io.to(socket.roomId).emit('SEND', msg);
     });
 
     socket.on('disconnect', () => {
-        socketList.splice(socketList.indexOf(socket), 1);
-        console.log('user disconnected');
+        if (socket.roomId) {
+            activeRooms[socket.roomId] -= 1;
+            if (activeRooms[socket.roomId] === 0) {
+                delete activeRooms[socket.roomId];
+            }
+            console.log(`User disconnected from room ${socket.roomId}`);
+        }
     });
 });
 
-// TEST CODE GOES HERE
-(async function(){
-    // Add your test code here
-})();
-
-http.listen(4000, () => {
-    console.log('Connected at 4000'); // Fixed the port number
+server.listen(4000, () => {
+    console.log('Connected at 4000');
 });

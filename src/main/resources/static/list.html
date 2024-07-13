@@ -1,10 +1,11 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Chat Application</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
+    <title>List Page</title>
+    <script th:src="@{https://code.jquery.com/jquery-3.6.0.min.js}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -34,17 +35,6 @@
             text-align: center;
             border-top-left-radius: 10px;
             border-top-right-radius: 10px;
-            position: relative;
-        }
-
-        .back-button {
-            position: absolute;
-            left: 10px;
-            top: 10px;
-            background-color: #ccc;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
         }
 
         .chat-messages {
@@ -96,18 +86,61 @@
             cursor: pointer;
         }
     </style>
+    <script>
+        $(document).ready(function() {
+    var sender = $('#sender').val(); // hidden input에서 sender 값을 가져옴
+    var receiver = $('#receiver').val();
+
+    $('#openChatBtn').click(function() {
+        $.ajax({
+            url: 'http://localhost:4000/chat/' + sender + '/' + receiver,
+            success: function(response) {
+                $('#popupContainer').html(response);
+                $('#myModal').modal('show');
+            },
+            error: function() {
+                alert('Failed to open chat.');
+            }
+        });
+    });
+});
+    </script>
 </head>
 <body>
-<div class="chat-container">
-    <div class="chat-header">
-        채팅
-        <button class="back-button" onclick="backToRooms()">뒤로가기</button>
+<input type="hidden" id="sender" th:value="${to}">
+<input type="hidden" id="receiver" th:value="${from}">
+<button id="openChatBtn">Open Chat</button>
+
+<!-- 모달 창 예시 (Bootstrap 사용) -->
+<div class="modal" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 모달 헤더 -->
+            <div class="modal-header">
+                <h4 class="modal-title">Chat</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- 모달 본문 -->
+            <div class="modal-body">
+                <div id="popupContainer">
+                    <div class="chat-container">
+                        <div class="chat-header">채팅</div>
+                        <div id="msg" class="chat-messages"></div>
+                        <form id="chatform" class="chat-input" onsubmit="return false">
+                            <input type="text" id="input_box" contenteditable="true" autocomplete="off">
+                            <input type="submit" id="sendmsg" value="전송">
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 모달 푸터 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
     </div>
-    <div id="msg" class="chat-messages"></div>
-    <form id="chatform" class="chat-input" onsubmit="return false">
-        <input type="text" id="input_box" contenteditable="true" autocomplete="off">
-        <input type="submit" id="sendmsg" value="전송">
-    </form>
 </div>
 <script>
     var socket = io(); // socket.io 연결
@@ -156,10 +189,8 @@
 
         chatView.scrollTop = chatView.scrollHeight;
     });
-
-    function backToRooms() {
-        window.location.href = 'http://localhost:4000/rooms/' + sender;
-    }
 </script>
+
 </body>
 </html>
+
