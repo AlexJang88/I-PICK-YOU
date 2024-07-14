@@ -19,6 +19,12 @@ app.get('/rooms/:user', (req, res) => {
     res.sendFile(path.join(__dirname, 'rooms.html'));
 });
 
+app.get('/api/rooms/:user', (req, res) => {
+    const user = req.params.user;
+    const userRooms = Object.keys(activeRooms).filter(roomId => roomId.includes(user));
+    res.json({ rooms: userRooms });
+});
+
 const activeRooms = {};
 
 io.on('connection', (socket) => {
@@ -26,6 +32,7 @@ io.on('connection', (socket) => {
 
     socket.on('joinRoom', ({ sender, receiver }) => {
         const roomId = [sender, receiver].sort().join('-');
+        console.log('roomId=====' + roomId);
         socket.join(roomId);
         socket.roomId = roomId;
         if (!activeRooms[roomId]) {
@@ -52,5 +59,5 @@ io.on('connection', (socket) => {
 });
 
 server.listen(4000, () => {
-    console.log('Connected at 4000');
+    console.log('Server is running on port 4000');
 });

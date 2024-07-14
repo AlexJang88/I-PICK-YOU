@@ -6,6 +6,30 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <style>
+        .modal-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* 배경을 블러처리 */
+        z-index: 999; /* 모달 창보다 낮은 z-index */
+    }
+
+    .chat-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 300px; /* 모달 창의 너비 조정 */
+        height: 400px; /* 모달 창의 높이 조정 */
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        z-index: 1000; /* 모달 창의 z-index */
+    }
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -52,26 +76,32 @@
             padding: 10px;
             overflow-y: scroll;
             border-bottom: 1px solid #ccc;
+            display: flex;
+            flex-direction: column-reverse; /* 새로운 줄바꿈 - 아래에서 위로 보여주게 */
         }
 
         .msgLine {
             margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .msgBox {
+            padding: 5px 10px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-bottom: 5px;
         }
 
         .me {
             background-color: #DCF8C6;
-            padding: 5px 10px;
-            border-radius: 10px;
-            display: inline-block;
-            text-align: right;
+            float: left;
+            text-align: left;
         }
 
-        .msgBox {
+        .other {
             background-color: #E0E0E0;
-            padding: 5px 10px;
-            border-radius: 10px;
-            display: inline-block;
-            text-align: left;
+            float: right;
+            text-align: right;
         }
 
         .chat-input {
@@ -138,27 +168,22 @@
 
     socket.on('SEND', function(message) {
         var msgLine = $('<div class="msgLine">');
-        var msgBox = $('<div class="msgBox">');
-
-        msgBox.append(message.text);
-        msgBox.css('display', 'inline-block');
+        var msgBox = $('<div class="msgBox">').text(message.text);
 
         if (message.sender === sender) {
-            msgLine.css('text-align', 'right');
-            msgBox.css('background-color', '#DCF8C6'); // 자신이 보낸 메시지
+            msgBox.addClass('me');
         } else {
-            msgLine.css('text-align', 'left');
-            msgBox.css('background-color', '#E0E0E0'); // 다른 사람이 보낸 메시지
+            msgBox.addClass('other');
         }
 
         msgLine.append(msgBox);
-        $('#msg').append(msgLine);
+        $('#msg').prepend(msgLine); // 새로운 메시지를 맨 위에 추가
 
-        chatView.scrollTop = chatView.scrollHeight;
+        chatView.scrollTop = chatView.scrollHeight; // 스크롤을 맨 아래로 이동
     });
 
     function backToRooms() {
-        window.location.href = 'http://localhost:4000/rooms/' + sender;
+        window.location.href = '/rooms/' + sender;
     }
 </script>
 </body>

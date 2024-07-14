@@ -41,19 +41,17 @@
         var user = pathParts[2]; // URL 경로에서 사용자 추출
         $('#user').text(user);
 
-        // 예시: 사용자가 참여한 방 목록을 생성
-        var rooms = [
-            {sender: user, receiver: 'user2'},
-            {sender: user, receiver: 'user3'}
-        ];
-
-        rooms.forEach(function(room) {
-            var roomId = [room.sender, room.receiver].sort().join('-');
-            var listItem = $('<li>').text('Chat with ' + (room.sender === user ? room.receiver : room.sender));
-            listItem.on('click', function() {
-                window.location.href = 'http://localhost:4000/chat/' + room.sender + '/' + room.receiver;
+        $.get('/api/rooms/' + user, function(data) {
+            var rooms = data.rooms;
+            rooms.forEach(function(roomId) {
+                var participants = roomId.split('-');
+                var otherUser = participants.find(participant => participant !== user);
+                var listItem = $('<li>').text('Chat with ' + otherUser);
+                listItem.on('click', function() {
+                    window.location.href = '/chat/' + user + '/' + otherUser;
+                });
+                $('#room-list').append(listItem);
             });
-            $('#room-list').append(listItem);
         });
     });
 </script>
