@@ -18,10 +18,14 @@ public class QaController {
     private final QaService qaService;
 
     // qa 리스트 가져오기, 페이징 처리
-    @GetMapping("posts")
+    @GetMapping("/posts")
     public String qaList(Model model, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                          HttpSession session, Principal principal) {
-        String memberId = principal.getName();
+        String memberId="";
+
+        if(principal!=null) {
+            memberId = principal.getName();
+        }
         String sid = (String) session.getAttribute(memberId);
         // qa 리스트 가져오기
         qaService.AllPosts(model, pageNum);
@@ -29,13 +33,13 @@ public class QaController {
     }
 
     // qa 글쓰기
-    @GetMapping("posts/new")
+    @GetMapping("/posts/new")
     public String qaWrite() {
         return "qa/write";
     }
 
     // qa 글쓰기 pro
-    @PostMapping("posts")
+    @PostMapping("/posts")
     public String qaWritePro(QaDTO dto, Principal principal) {
         String memberId = principal.getName();
         dto.setMemberId(memberId);
@@ -45,7 +49,7 @@ public class QaController {
     }
 
     // qa 상세정보 가져오기
-    @GetMapping("posts/{ref}")
+    @GetMapping("/posts/{ref}")
     public String qaInfoRef(Model model, @PathVariable int ref, HttpSession session, Principal principal) {
 
         String sid = principal.getName();
@@ -60,7 +64,7 @@ public class QaController {
     }
 
     // qa 댓글쓰기 pro
-    @PostMapping("reply/{ref}")
+    @PostMapping("/reply/{ref}")
     public String qaReplyPro(QaDTO dto, Model model, @PathVariable int ref) {
         // qa 댓글 인서트
         qaService.qaReplyInsert(dto, ref);

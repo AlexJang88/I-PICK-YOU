@@ -4,6 +4,7 @@ import com.project.pickyou.dto.MemberDTO;
 import com.project.pickyou.entity.MemberEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MemberJPARepository extends JpaRepository<MemberEntity,String> {
@@ -16,5 +17,7 @@ public interface MemberJPARepository extends JpaRepository<MemberEntity,String> 
 
     Optional<MemberEntity> findByIdAndEmail(String id, String email);
 
+
+    List<MemberEntity> findByAuth(String business);  //권한이 사업자인사람뽑기
 
 }
