@@ -16,4 +16,7 @@ public interface MemberService {
     public void updateUser(MemberDTO memberDTO, MemberInfoDTO memberInfoDTO, MultipartFile file); //유저정보수정
 
     public void updateCompany(MemberDTO memberDTO, CompanyInfoDTO companyInfoDTO, MultipartFile file);  //사업자정보수정
+
+    // 사업자 결제내역
+    public void ALlPosts(Model model, int pageNum, String memberId);
 }
