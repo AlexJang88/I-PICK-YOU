@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Room List</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .room-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .room-list li {
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Rooms for <span id="user"></span></h2>
+    <ul id="room-list" class="room-list"></ul>
+</div>
+
+<script>
+    $(document).ready(function() {
+        var pathParts = window.location.pathname.split('/');
+        var user = pathParts[2]; // URL 경로에서 사용자 추출
+        $('#user').text(user);
+
+        $.get('/api/rooms/' + user, function(data) {
+            var rooms = data.rooms;
+            rooms.forEach(function(roomId) {
+                var participants = roomId.split('-');
+                var otherUser = participants.find(participant => participant !== user);
+                var listItem = $('<li>').text('Chat with ' + otherUser);
+                listItem.on('click', function() {
+                    window.location.href = '/chat/' + user + '/' + otherUser;
+                });
+                $('#room-list').append(listItem);
+            });
+        });
+    });
+</script>
+</body>
+</html>

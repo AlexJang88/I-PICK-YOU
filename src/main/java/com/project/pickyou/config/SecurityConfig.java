@@ -43,16 +43,17 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
 
-                .authorizeHttpRequests((auth) -> auth
 
-                                .requestMatchers("/", "/error","/login", "/join", "/joinProc", "/assets/**", "/img/**", "/register", "/css/**", "/js/**").permitAll()
-                                .requestMatchers("/login", "/join").permitAll()
-                                .requestMatchers("/recruit/**").permitAll()
-                               // .requestMatchers("/admin").hasRole("ADMIN")
-                              //  .requestMatchers("/my/**").hasAnyRole("USER", "ADMIN")
-                                .requestMatchers("/educations/**").permitAll()
-                               // .requestMatchers("/educations/posts/write/**", "/educations/posts/edit/**").hasRole("COMPANY")
-                                .anyRequest().permitAll()
+                .authorizeHttpRequests((auth)->auth
+
+                        .requestMatchers("/","/login","/joinCompany","/forgot/**","/mail/**","/agency/**","/trainning/**","/posts/**","/join","/joinProc","/assets/**", "/img/**","/register","/css/**", "/js/**").permitAll()
+                        .requestMatchers("/login","/ajax/**","/forgotId/**","/forgotPw/**","/mypage/**","/notice/**").permitAll()
+                        .requestMatchers("/educations/**","/qa/**").permitAll()
+                        .requestMatchers("/recruit/**").permitAll()
+                        .requestMatchers("/admin").hasRole("ADMIN")
+                        .requestMatchers("/my/**").hasAnyRole("USER","ADMIN")
+                        .anyRequest().permitAll()
+
 
                         /*.anyRequest().permitAll()*/
                 );

@@ -20,7 +20,7 @@
         data-assets-path="../assets/"
         data-template="vertical-menu-template-free"
         xmlns:th="http://www.thymeleaf.org"
->
+        xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
     <meta
@@ -90,7 +90,7 @@
 
                     <!-- Grid Card -->
                     <h6 class="pb-1 mb-4 text-muted">훈련소 확인하기</h6>
-                    <button type="button" class="btn btn-primary">
+                    <button sec:authorize="hasRole('ROLE_COMPANY')" type="button" class="btn btn-primary">
                         <a href="/trainning/posts/new" style="color: inherit; text-decoration: none;">
                             훈련소 등록하기
                         </a>
@@ -98,6 +98,7 @@
 
                     <br>
                     <br>
+
 
                     <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
 

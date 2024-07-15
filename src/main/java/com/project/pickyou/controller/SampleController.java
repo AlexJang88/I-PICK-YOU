@@ -174,7 +174,7 @@ public class SampleController {
         return "sample/ui-collapse";
     }
 
-    @RequestMapping("/carousel")
+    @RequestMapping("/carousel")  //이거 메인어덤
     public String carousel(){
         return "sample/ui-carousel";
     }

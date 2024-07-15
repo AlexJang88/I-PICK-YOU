@@ -2,11 +2,13 @@ package com.project.pickyou.entity;
 
 import com.project.pickyou.dto.AlarmDTO;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
+@Getter
+@Setter
 @Data
 @NoArgsConstructor
 @Entity
@@ -21,6 +23,7 @@ public class AlarmEntity {
     @Column(name = "reader_id")
     private String readerId;
     private int status;
+    @CreationTimestamp
     private Date reg;
 
     @Builder

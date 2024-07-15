@@ -101,5 +101,17 @@ public class EducationController {
         service.favoriteCheck(dto);
         return url;
     }
+    @GetMapping("/ct/{receiver}")
+    public String ct(Model model,@PathVariable String receiver,Principal principal){
+        String sender = "";
+        if(principal!=null){
+            sender= principal.getName();
+        }
+System.out.println("=================sender"+sender);
+        System.out.println("=================receiver"+receiver);
+        model.addAttribute("to",sender);
+                model.addAttribute("from",receiver);
+        return "list";
+    }
 
 }

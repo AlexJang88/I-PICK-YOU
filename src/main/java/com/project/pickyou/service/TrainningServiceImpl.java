@@ -79,29 +79,8 @@ public class TrainningServiceImpl implements TrainningService{
         model.addAttribute("pageBlock", pageBlock);
         model.addAttribute("endPage", endPage);
 
-
-        /*List<TrainningEntity> trainninglist = trainningJPARepository.findAll();
-
-        model.addAttribute("trainninglist", trainninglist);*/
     }
     // 훈련소 리스트 가져오기
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -275,9 +254,7 @@ public class TrainningServiceImpl implements TrainningService{
                     //새로운 이미지 설정하기
                     if (mf.getContentType().startsWith("image")) {
                         String originalName = mf.getOriginalFilename();
-                        //String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);  //원래이름
 
-                        System.out.println("================folderBoardnum" + trainnignum);
                         String folderPath = makeFolder(imgUploadPath, 3, trainnignum);  //폴더경로
 
 
