@@ -1,6 +1,5 @@
 package com.project.pickyou.service;
 
-
 import com.project.pickyou.dto.CompanyInfoDTO;
 import com.project.pickyou.dto.MemberDTO;
 import com.project.pickyou.dto.MemberInfoDTO;

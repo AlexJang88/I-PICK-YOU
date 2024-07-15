@@ -1,0 +1,196 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>List Page</title>
+    <script th:src="@{https://code.jquery.com/jquery-3.6.0.min.js}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .chat-container {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            text-align: center;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: scroll;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .msgLine {
+            margin-bottom: 10px;
+        }
+
+        .me {
+            background-color: #DCF8C6;
+            padding: 5px 10px;
+            border-radius: 10px;
+            display: inline-block;
+            text-align: right;
+        }
+
+        .msgBox {
+            background-color: #E0E0E0;
+            padding: 5px 10px;
+            border-radius: 10px;
+            display: inline-block;
+            text-align: left;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 10px;
+        }
+
+        #input_box {
+            flex: 1;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #sendmsg {
+            margin-left: 10px;
+            padding: 5px 10px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        $(document).ready(function() {
+    var sender = $('#sender').val(); // hidden input에서 sender 값을 가져옴
+    var receiver = $('#receiver').val();
+
+    $('#openChatBtn').click(function() {
+        $.ajax({
+            url: 'http://localhost:4000/chat/' + sender + '/' + receiver,
+            success: function(response) {
+                $('#popupContainer').html(response);
+                $('#myModal').modal('show');
+            },
+            error: function() {
+                alert('Failed to open chat.');
+            }
+        });
+    });
+});
+    </script>
+</head>
+<body>
+<input type="hidden" id="sender" th:value="${to}">
+<input type="hidden" id="receiver" th:value="${from}">
+<button id="openChatBtn">Open Chat</button>
+
+<!-- 모달 창 예시 (Bootstrap 사용) -->
+<div class="modal" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 모달 헤더 -->
+            <div class="modal-header">
+                <h4 class="modal-title">Chat</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- 모달 본문 -->
+            <div class="modal-body">
+                <div id="popupContainer">
+                    <div class="chat-container">
+                        <div class="chat-header">채팅</div>
+                        <div id="msg" class="chat-messages"></div>
+                        <form id="chatform" class="chat-input" onsubmit="return false">
+                            <input type="text" id="input_box" contenteditable="true" autocomplete="off">
+                            <input type="submit" id="sendmsg" value="전송">
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 모달 푸터 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var socket = io(); // socket.io 연결
+
+    var chatForm = document.getElementById('chatform');
+    var chatView = document.getElementById('msg');
+    var pathParts = window.location.pathname.split('/');
+    var sender = pathParts[2]; // URL 경로에서 보내는 사람 추출
+    var receiver = pathParts[3]; // URL 경로에서 받는 사람 추출
+
+    // 방에 조인
+    socket.emit('joinRoom', { sender, receiver });
+
+    chatForm.addEventListener('submit', function() {
+        var msgText = $('#input_box');
+
+        if (msgText.val() == '') {
+            return;
+        } else {
+            var message = {
+                sender: sender,
+                text: msgText.val()
+            };
+            socket.emit('SEND', message);
+            msgText.val('');
+        }
+    });
+
+    socket.on('SEND', function(message) {
+        var msgLine = $('<div class="msgLine">');
+        var msgBox = $('<div class="msgBox">');
+
+        msgBox.append(message.text);
+        msgBox.css('display', 'inline-block');
+
+        if (message.sender === sender) {
+            msgLine.css('text-align', 'right');
+            msgBox.css('background-color', '#DCF8C6'); // 자신이 보낸 메시지
+        } else {
+            msgLine.css('text-align', 'left');
+            msgBox.css('background-color', '#E0E0E0'); // 다른 사람이 보낸 메시지
+        }
+
+        msgLine.append(msgBox);
+        $('#msg').append(msgLine);
+
+        chatView.scrollTop = chatView.scrollHeight;
+    });
+</script>
+
+</body>
+</html>
+

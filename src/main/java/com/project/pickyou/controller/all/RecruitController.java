@@ -41,9 +41,11 @@ public class RecruitController {
         service.AllPosts(model,pageNum);
         return "recruit/list";
     }
-    @GetMapping("/myPosts")
+    @GetMapping("/posts/my")
     public String mylist(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, Principal principal){
+        String memberId="";
         if(principal!=null) {
+            memberId= principal.getName();
             model.addAttribute("memberId", principal.getName());
         }
         service.AllPosts(model,pageNum);

@@ -7,11 +7,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ConfirmJPARepository extends JpaRepository<ConfirmEntity,Long> {
-    public List<ConfirmEntity> findByRecruitId(Long recruitId);
-    public Long countByRecruitId(Long recruitId);
-    public Page<ConfirmEntity> findByRecruitId(Long recruitId, Pageable pageable);
+    public List<ConfirmEntity> findByRecruitIdAndApplyNot(Long recruitId,Integer type);
+    public Long countByRecruitIdAndApplyNot(Long recruitId,Integer type);
+    public Page<ConfirmEntity> findByRecruitIdAndApplyNot(Long recruitId,Integer type, Pageable pageable);
+    public Long countByMemberIdAndCompanyId(String member,String company);
     @Transactional
     public void deleteByMemberIdAndRecruitId(String memberId,Long recruitId);
+    public Optional<ConfirmEntity> findByMemberIdAndRecruitIdAndApplyNot(String memberId,Long recruitId,Integer type);
 }

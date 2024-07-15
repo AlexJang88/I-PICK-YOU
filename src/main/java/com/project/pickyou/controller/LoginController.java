@@ -2,8 +2,6 @@ package com.project.pickyou.controller;
 
 
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.project.pickyou.dto.CompanyInfoDTO;
 import com.project.pickyou.dto.MemberDTO;
 import com.project.pickyou.dto.MemberInfoDTO;
