@@ -21,9 +21,10 @@ public class FoodMapDTO {
     private int readCount;
     @DateTimeFormat(pattern = "yy-MM-dd")
     private Date reg;
+    private int status;
 
     @Builder
-    public FoodMapDTO(Long id, String memberId, String title, String content, String map, int ref, int reply, int readCount, Date reg) {
+    public FoodMapDTO(Long id, String memberId, String title, String content, String map, int ref, int reply, int readCount, Date reg, int status) {
         this.id = id;
         this.memberId = memberId;
         this.title = title;
@@ -33,6 +34,7 @@ public class FoodMapDTO {
         this.reply = reply;
         this.readCount = readCount;
         this.reg = reg;
+        this.status = status;
     }
 
     public FoodMapEntity toFood_MapEntity() {
@@ -46,6 +48,7 @@ public class FoodMapDTO {
                 .reply(this.reply)
                 .readCount(this.readCount)
                 .reg(this.reg)
+                .status(this.status)
                 .build();
     }
 }

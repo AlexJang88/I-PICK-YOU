@@ -1,99 +1,61 @@
 <!DOCTYPE html>
-
-<!-- =========================================================
-* Sneat - Bootstrap 5 HTML Admin Template - Pro | v1.0.0
-==============================================================
-
-* Product Page: https://themeselection.com/products/sneat-bootstrap-html-admin-template/
-* Created by: ThemeSelection
-* License: You must have a valid license purchased in order to legally use the theme for your project.
-* Copyright ThemeSelection (https://themeselection.com)
-
-=========================================================
- -->
-<!-- beautify ignore:start -->
-<html
-        lang="en" xmlns:th="http://www.thymeleaf.org"
-        class="light-style layout-menu-fixed"
-        dir="ltr"
-        th:data-theme="theme-default"
-        th:data-assets-path="@{/assets/}"
-        th:data-template="vertical-menu-template-free"
->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      class="light-style layout-menu-fixed"
+      dir="ltr"
+      th:data-theme="theme-default"
+      th:data-assets-path="@{/assets/}"
+      th:data-template="vertical-menu-template-free">
 <head>
     <meta charset="utf-8" />
-    <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
-    />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
     <title>Fluid - Layouts | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
-
     <meta name="description" content="" />
-
-    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon/favicon.ico}" />
-
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-            href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
-            rel="stylesheet"
-    />
-
-    <!-- Icons. Uncomment required icon fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" th:href="@{/assets/vendor/fonts/boxicons.css}" />
-
-    <!-- Core CSS -->
     <link rel="stylesheet" th:href="@{/assets/vendor/css/core.css}" class="template-customizer-core-css" />
     <link rel="stylesheet" th:href="@{/assets/vendor/css/theme-default.css}" class="template-customizer-theme-css" />
     <link rel="stylesheet" th:href="@{/assets/css/demo.css}" />
-
-    <!-- Vendors CSS -->
     <link rel="stylesheet" th:href="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css}" />
-
-    <!-- Page CSS -->
-
-    <!-- Helpers -->
     <script th:src="@{/assets/vendor/js/helpers.js}"></script>
-
-    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
-    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script th:src="@{/assets/js/config.js}"></script>
 </head>
 
 <body>
-<!-- Layout wrapper -->
 <div class="layout-wrapper layout-content-navbar">
     <div class="layout-container">
-        <!-- Menu -->
         <div th:replace="design/side-bar :: side"></div>
-        <!-- / Menu -->
-
-        <!-- Layout container -->
         <div class="layout-page">
-            <!-- Navbar -->
             <div th:include="~{design/navi-bar :: navi}"></div>
-            <!-- / Navbar -->
-
-            <!-- Tables -->
-            <!-- Content wrapper -->
             <div class="content-wrapper">
-                <!-- Content -->
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <h2 class="fw-bold py-3 mb-4">
                         <span class="text-muted fw-light">Food_Map</span>
                     </h2>
-                    <!-- Basic Bootstrap Table -->
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="d-flex" style="margin-left: auto;">
-                                <form th:action="@{/foodMap/posts/{boardNum}/edit(boardNum=${fmInfo.get(0).id})}" th:method="get" style="margin-right: 10px;">
+                                <form th:action="@{/foodMap/posts/{boardNum}/check(boardNum=${foodMapInfo.id})}" th:method="post" style="margin-right: 10px;">
+                                    <input type="hidden" name="memberId" th:value="${foodMapInfo.memberId}" />
+                                    <input type="hidden" name="status" th:value="1" />
+                                    <input type="hidden" name="point" th:value="5000" />
+
+                                    <input type="hidden" name="id" th:value="${foodMapInfo.id}" />
+                                    <input type="hidden" name="title" th:value="${foodMapInfo.title}" />
+                                    <input type="hidden" name="content" th:value="${foodMapInfo.content}" />
+                                    <input type="hidden" name="map" th:value="${foodMapInfo.map}" />
+                                    <input type="hidden" name="ref" th:value="${foodMapInfo.ref}" />
+                                    <input type="hidden" name="reply" th:value="${foodMapInfo.reply}" />
+                                    <input type="hidden" name="readCount" th:value="${foodMapInfo.readCount}" />
+                                    <input type="hidden" name="reg" th:value="${foodMapInfo.reg}" />
+                                    <button class="btn btn-primary" type="submit">인증하기</button>
+                                </form>
+                                <form th:action="@{/foodMap/posts/{boardNum}/edit(boardNum=${foodMapInfo.id})}" th:method="get" style="margin-right: 10px;">
                                     <button class="btn btn-primary" type="submit">글수정</button>
                                 </form>
-
-                                <form th:action="@{/foodMap/posts/{boardNum}(boardNum=${fmInfo.get(0).id})}" th:method="post">
+                                <form th:action="@{/foodMap/posts/{boardNum}(boardNum=${foodMapInfo.id})}" th:method="post">
                                     <input type="hidden" name="_method" value="delete"/>
                                     <button type="submit" class="btn btn-primary">글삭제</button>
                                 </form>
@@ -104,103 +66,133 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <td th:text="'제목 : ' + ${fmInfo.get(0).title}"></td>
-                                    <td th:text="${#dates.format(fmInfo.get(0).reg, 'yyyy-MM-dd')}" class="text-end"></td>
+                                    <td th:text="'제목 : ' + ${foodMapInfo.title}"></td>
+                                    <td th:text="${#dates.format(foodMapInfo.reg, 'yyyy-MM-dd')}" class="text-end"></td>
                                 </tr>
                                 </thead>
                                 <tbody class="table-border-bottom-0">
                                 <tr>
-                                    <td colspan="2" class="text-center" th:text="${fmInfo.get(0).content}"></td>
+                                    <td colspan="2" class="text-center" th:text="${foodMapInfo.content}"></td>
                                 </tr>
 
-                                <tr th:each="image, index : ${images}">
+                                <tr th:each="image : ${images}">
                                     <td colspan="2" class="text-center">
-                                        <img th:src="@{'/upload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}" class="img-fluid rounded" style="max-width: 100%; height: auto;" alt="사진" />
+                                        <img th:src="@{'/upload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}"
+                                             class="img-fluid rounded"
+                                             style="max-width: 100%; height: auto;"
+                                             alt="사진" />
                                     </td>
                                 </tr>
 
-                                <br/>
-                                <br/>
-                                <br/>
-
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <div class="d-flex" style="margin-left: auto;">
-                                        <tr>
-                                            <td>
-                                                <form th:action="@{/foodMap/posts/{boardNum}/ref(boardNum=${fmInfo.get(0).id})}" th:method="post">
-                                                    <input type="text" name="content" class="form-control" />
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <div class="d-flex ml-auto">
+                                                <form th:action="@{/foodMap/posts/{boardNum}/ref(boardNum=${foodMapInfo.ref})}" th:method="post" class="form-inline" enctype="multipart/form-data">
+                                                    <textarea name="content" class="form-control mr-2"></textarea>
+                                                    <input type="file" name="files" class="form-control" multiple="multiple" />
                                                     <button type="submit" class="btn btn-primary">댓글작성</button>
                                                 </form>
-                                            </td>
-                                        </tr>
-                                    </div>
-                                </div>
-                                </tbody>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
 
+                                <tr>
+                                    <td colspan="5" style="height: 50px;"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="table-responsive text-nowrap">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <td colspan="5">
+                                        <h1 class="text-center">댓글 리스트</h1>
+                                    </td>
+                                </tr>
+                                </thead>
+                                <tbody class="table-border-bottom-0">
+                                <tr th:each="ref : ${refList}" th:class="${ref.id} != ${ref.reply} ? 'indent' : ''">
+                                    <td th:text="${ref.memberId}"></td>
+                                    <td th:text="${ref.content}"></td>
+                                    <td>
+                                        <div th:each="image : ${imagesRef}" th:if="${image.boardNum == ref.id}">
+                                            <img th:src="@{'/upload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}"
+                                                 class="img-fluid rounded"
+                                                 th:style="${ref.reply == ref.id} ? 'width: 140px; height: 105px;' : 'width: 70px; height: 52.5px;'" />
+                                        </div>
+                                    </td>
+                                    <td th:text="${#dates.format(ref.reg, 'yyyy-MM-dd')}" class="text-end"></td>
+                                    <td>
+                                        <form th:action="@{/foodMap/posts/{boardNum}/reply(boardNum=${ref.reply})}" th:method="post" class="form-inline" enctype="multipart/form-data">
+                                            <button type="button" class="btn btn-primary showFormButton">답글작성</button>
+                                            <div class="formElements hidden">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" th:text="'@' + ${ref.memberId} + ' : '"></span>
+                                                    <textarea name="content" class="form-control" placeholder="내용을 입력하세요"></textarea>
+                                                </div>
+                                                <input type="hidden" name="fullContent" th:value="'@' + ${ref.memberId} + ' : ' + ''" />
+
+                                                <input type="file" name="files" class="form-control" multiple="multiple" />
+                                                <input type="hidden" name="ref" th:value="${ref.ref}" />
+                                                <input type="hidden" name="title" th:value="${ref.title}" />
+                                                <input type="hidden" name="map" th:value="${ref.map}" />
+                                                <button type="submit" class="btn btn-primary">답글작성</button>
+                                            </div>
+                                        </form>
+                                    </td>
+                                </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
-                    <!--/ Basic Bootstrap Table -->
-
                 </div>
             </div>
-            <!-- /Content wrapper -->
-            <!-- Tables -->
-
-            <!-- Content wrapper -->
-            <div class="content-wrapper">
-                <!-- Content -->
-                <div class="container-fluid flex-grow-1 container-p-y">
-                    <!-- Layout Demo -->
-                    <div class="layout-demo-wrapper">
-
-                    </div>
-                    <!--/ Layout Demo -->
-                </div>
-                <!-- / Content -->
-
-                <!-- Footer -->
-                <div th:replace="design/footer :: footer"></div>
-                <!-- / Footer -->
-
-                <div class="content-backdrop fade"></div>
-            </div>
-            <!-- Content wrapper -->
+            <div th:replace="design/footer :: footer"></div>
+            <div class="content-backdrop fade"></div>
         </div>
-        <!-- / Layout page -->
     </div>
-
-    <!-- Overlay -->
     <div class="layout-overlay layout-menu-toggle"></div>
 </div>
-<!-- / Layout wrapper -->
 
 <div class="buy-now">
-    <a
-            href="https://themeselection.com/products/sneat-bootstrap-html-admin-template/"
-            target="_blank"
-            class="btn btn-danger btn-buy-now"
-    >Upgrade to Pro</a>
+    <a href="https://themeselection.com/products/sneat-bootstrap-html-admin-template/" target="_blank" class="btn btn-danger btn-buy-now">
+        Upgrade to Pro
+    </a>
 </div>
 
-<!-- Core JS -->
-<!-- build:js assets/vendor/js/core.js -->
 <script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
 <script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
 <script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
 <script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
-
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
-<!-- endbuild -->
-
-<!-- Vendors JS -->
-
-<!-- Main JS -->
 <script th:src="@{/assets/js/main.js}"></script>
-
-<!-- Page JS -->
-
-<!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.showFormButton').forEach(button => {
+            button.addEventListener('click', function() {
+                const formElements = this.nextElementSibling;
+                formElements.classList.toggle('hidden');
+                this.textContent = formElements.classList.contains('hidden') ? '답글작성' : '취소';
+            });
+        });
+    });
+</script>
+
+<style>
+    .hidden {
+        display: none;
+    }
+
+    .indent {
+        padding-left: 20px; /* 원하는 들여쓰기 크기 */
+    }
+</style>
+
 </body>
 </html>

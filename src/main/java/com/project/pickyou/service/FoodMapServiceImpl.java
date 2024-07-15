@@ -2,11 +2,13 @@ package com.project.pickyou.service;
 
 import com.project.pickyou.dto.FoodMapDTO;
 import com.project.pickyou.dto.ImageDTO;
+import com.project.pickyou.dto.PointDTO;
 import com.project.pickyou.entity.FoodMapEntity;
 import com.project.pickyou.entity.ImageEntity;
 import com.project.pickyou.entity.NoticeEntity;
 import com.project.pickyou.repository.FoodMapJPARepository;
 import com.project.pickyou.repository.ImageJPARepository;
+import com.project.pickyou.repository.PointJPARepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
@@ -38,6 +40,7 @@ public class FoodMapServiceImpl implements FoodMapService {
 
     private final FoodMapJPARepository foodMapJPA;
     private final ImageJPARepository imageJPA;
+    private final PointJPARepository pointJPA;
 
     // 푸드맵 리스트 가져오기, 페이징 처리
     @Override
@@ -46,7 +49,8 @@ public class FoodMapServiceImpl implements FoodMapService {
         Long longCount = foodMapJPA.fmCount();
         int count = longCount.intValue();
 
-        Sort sort = Sort.by(Sort.Order.desc("reg"));
+        Sort sort = Sort.by(Sort.Order.asc("status"), Sort.Order.desc("reg"));
+
 
         Page<FoodMapEntity> page = foodMapJPA.foodMapList(PageRequest.of(pageNum - 1, pageSize, sort));
 
@@ -76,6 +80,7 @@ public class FoodMapServiceImpl implements FoodMapService {
         Long ref = foodMapJPA.getAutoIncrementValue("pickyou", "food_map");
         int refInt = ref.intValue();
         dto.setRef(refInt);
+        dto.setStatus(2);
         return foodMapJPA.save(dto.toFood_MapEntity());
     }
 
@@ -123,8 +128,39 @@ public class FoodMapServiceImpl implements FoodMapService {
     // 푸드맵 상세정보
     @Override
     public void foodMapInfo(int ref, Model model) {
-        List<FoodMapEntity> fmInfo = foodMapJPA.findByRef(ref);
-        model.addAttribute("fmInfo", fmInfo);
+        long id = ref;
+
+        Optional<FoodMapEntity> optional =  foodMapJPA.findByIdAndRef(id, ref);
+        if (optional.isPresent()) {
+            FoodMapEntity entity = optional.get();
+            model.addAttribute("foodMapInfo", entity);
+        }
+
+
+/*
+        if (!fmInfoList.isEmpty()) {
+            FoodMapEntity firstItem = fmInfoList.get(0);
+            model.addAttribute("fmInfoGet0", firstItem);
+        }*/
+
+        List<FoodMapEntity> fmInfoList = foodMapJPA.findByRef(ref);
+        model.addAttribute("fmInfo", fmInfoList);
+
+        fmInfoList.sort(Comparator.comparing(FoodMapEntity::getReply));
+
+        if (!fmInfoList.isEmpty()) {
+            List<FoodMapEntity> fmInfoExcludingFirst = fmInfoList.subList(1, fmInfoList.size()); // 첫 번째 값을 제외한 나머지 엔터티 리스트를 가져옵니다.
+            model.addAttribute("refList", fmInfoExcludingFirst); // 모델에 첫 번째 값을 제외한 엔터티 리스트를 추가합니다.
+
+            List<ImageEntity> allImagesRef = new ArrayList<>();
+            for (FoodMapEntity entity : fmInfoExcludingFirst) {
+
+                List<ImageEntity> imagesRef = imageJPA.findByBoardTypeAndBoardNum(4, entity.getId());
+                allImagesRef.addAll(imagesRef);
+            }
+            model.addAttribute("imagesRef", allImagesRef); // 모델에 모든 이미지를 추가합니다.
+        }
+
     }
 
     // 푸드맵 이미지 가져오기
@@ -242,6 +278,84 @@ public class FoodMapServiceImpl implements FoodMapService {
             }
         }
         foodMapJPA.save(dto.toFood_MapEntity());
+    }
+
+    // 푸드맵 조회수 증가
+    @Override
+    public void foodMapCnt(Long id, int ref, Model model) {
+        Optional<FoodMapEntity> optional = foodMapJPA.findByIdAndRef(id, ref);
+        FoodMapDTO dto = new FoodMapDTO();
+
+        if (optional.isPresent()) {
+            FoodMapEntity foodMapEntity = optional.get();
+            dto = optional.get().toFood_MapDTO();
+
+            dto.setId(dto.getId());
+            dto.setContent(dto.getContent());
+            dto.setMemberId(dto.getMemberId());
+            dto.setRef(dto.getRef());
+            dto.setReg(dto.getReg());
+            dto.setTitle(dto.getTitle());
+            dto.setMap(dto.getMap());
+            dto.setReply(dto.getReply());
+            dto.setReadCount(dto.getReadCount()+1);
+
+            // 업데이트
+            foodMapJPA.save(dto.toFood_MapEntity());
+        }
+    }
+
+    // 푸드맵 댓글 인서트
+    @Override
+    public FoodMapEntity refInsert(FoodMapDTO dto, int ref) {
+        Long findId = foodMapJPA.getAutoIncrementValue("pickyou", "food_map");
+        findId.intValue();
+
+        List<FoodMapEntity> FoodMapEntityList = foodMapJPA.findByRef(ref);
+
+        FoodMapEntity foodMapEntity = FoodMapEntityList.get(0);
+
+        dto.setTitle(foodMapEntity.getTitle());
+        dto.setMap(foodMapEntity.getMap());
+        dto.setRef(foodMapEntity.getRef());
+        dto.setReply(findId.intValue());
+
+        return foodMapJPA.save(dto.toFood_MapEntity());
+    }
+
+    // 푸드맵 대댓글 인서트
+    @Override
+    public FoodMapEntity replyInsert(FoodMapDTO dto) {
+        /*List<FoodMapEntity> FoodMapEntityList = foodMapJPA.findByRef(ref);
+
+        FoodMapEntity foodMapEntity = FoodMapEntityList.get(0);*/
+
+        /*dto.setRef(dto.getRef());
+        dto.setTitle(dto.getTitle());
+        dto.setMap(dto.getMap());*/
+
+        return foodMapJPA.save(dto.toFood_MapEntity());
+    }
+
+    // 푸드맵 인증글 포인트 인서트
+    @Override
+    public void foodMapPointInsert(PointDTO dto, FoodMapDTO FMdto) {
+        System.out.println(FMdto);
+
+        FMdto.setId(FMdto.getId());
+        FMdto.setStatus(1);
+        FMdto.setMap(FMdto.getMap());
+        FMdto.setRef(FMdto.getRef());
+        FMdto.setTitle(FMdto.getTitle());
+        FMdto.setContent(FMdto.getContent());
+        FMdto.setReply(FMdto.getReply());
+        FMdto.setReadCount(FMdto.getReadCount());
+        FMdto.setReg(FMdto.getReg());
+        FMdto.setMemberId(FMdto.getMemberId());
+
+        foodMapJPA.save(FMdto.toFood_MapEntity());
+        // 포인트 인서트
+        pointJPA.save(dto.toPointEntity());
     }
 
     public String makeFolder(String uploadPath, int boardType, Long boardNum) {

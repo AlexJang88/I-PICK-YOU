@@ -3,8 +3,10 @@ package com.project.pickyou.controller.all;
 import com.project.pickyou.dto.FoodMapDTO;
 import com.project.pickyou.dto.ImageDTO;
 import com.project.pickyou.dto.NoticeDTO;
+import com.project.pickyou.dto.PointDTO;
 import com.project.pickyou.entity.FoodMapEntity;
 import com.project.pickyou.service.FoodMapService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,7 +45,7 @@ public class FoodMapController {
         dto.setMemberId(principal.getName());
         FoodMapEntity saveFoodMap = foodMapService.foodMapInsert(dto);
 
-        // 위에서 이미지 파일에 등록된 훈련소 번호의 숫자를 가져옴
+        // 위에서 이미지 파일에 등록된 푸드맵 번호의 숫자를 가져옴
         Long foodMapId = saveFoodMap.getId();
 
         // 푸드맵 이미지 인서트
@@ -55,11 +57,20 @@ public class FoodMapController {
 
     // 푸드맵 상세정보
     @GetMapping("posts/{ref}")
-    public String info(Model model, @PathVariable int ref) {
+    public String info(Model model, @PathVariable int ref, Principal principal, HttpSession session) {
         foodMapService.foodMapInfo(ref, model);
 
         long longRef = (long) ref;
         foodMapService.foodMapImage(longRef, 4, model);
+
+        // 푸드맵 조회수 증가
+        String memberId = principal.getName();
+        String sid = (String) session.getAttribute(memberId);
+
+        if (session.getAttribute(sid+"4_"+ref)==null) {
+            foodMapService.foodMapCnt(longRef, ref, model);
+            session.setAttribute(sid+"4_"+ref, "true");
+        }
         return "/foodMap/info";
     }
 
@@ -84,11 +95,69 @@ public class FoodMapController {
         return "redirect:/foodMap/posts/"+id;
     }
 
-    // 댓글작성하기
+    // 푸드맵 댓글 작성하기
     @PostMapping("/posts/{boardNum}/ref")
-    public String ref(Model model, @PathVariable Long boardNum) {
+    public String ref(ImageDTO imageDTO, FoodMapDTO fmDTO, Model model, @PathVariable int boardNum, Principal principal,
+                      @RequestParam("files") MultipartFile[] files) {
 
-        return "foodMap/update";
+        // foodMap 댓글 인서트
+        fmDTO.setMemberId(principal.getName());
+        FoodMapEntity saveFoodMap = foodMapService.refInsert(fmDTO, boardNum);
+
+
+        Long foodMapId = saveFoodMap.getId();
+        imageDTO.setBoardNum(foodMapId);
+        foodMapService.saveImage(imageDTO, files);
+
+        return "redirect:/foodMap/posts/{boardNum}";
     }
+
+    // 푸드맵 대댓글 작성하기
+    @PostMapping("/posts/{boardNum}/reply")
+    public String reply(ImageDTO imageDTO, FoodMapDTO fmDTO, Principal principal, @PathVariable int boardNum,
+                        @RequestParam("files") MultipartFile[] files,
+                        @RequestParam("fullContent") String fullContent) {
+
+        // int id = boardNum.intValue();
+
+        // foodMap 대댓글 인서트
+        fmDTO.setMemberId(principal.getName());
+        fmDTO.setReply(boardNum);
+        fmDTO.setContent(fullContent + fmDTO.getContent());
+        FoodMapEntity saveFoodMap = foodMapService.replyInsert(fmDTO);
+
+        Long foodMapId = saveFoodMap.getId();
+        imageDTO.setBoardNum(foodMapId);
+        foodMapService.saveImage(imageDTO, files);
+
+        return "redirect:/foodMap/posts";
+    }
+
+    // 푸드맵 인증글 체크
+    @PostMapping("/posts/{boardNum}/check")
+    public String check(PointDTO Pdto, @PathVariable Long boardNum, FoodMapDTO FMdto) {
+        foodMapService.foodMapPointInsert(Pdto, FMdto);
+        return "redirect:/foodMap/posts";
+    }
+
+    /*
+    @PostMapping("/posts/{boardNum}/reply")
+    public String reply(ImageDTO imageDTO, FoodMapDTO fmDTO, Principal principal,
+                        @RequestParam("files") MultipartFile[] files,
+                        @RequestParam("boardNum") Long boardNum) {
+
+        int id = boardNum.intValue();
+        // foodMap 대댓글 인서트
+        fmDTO.setMemberId(principal.getName());
+        FoodMapEntity saveFoodMap = foodMapService.replyInsert(fmDTO, id);
+
+        Long foodMapId = saveFoodMap.getId();
+        imageDTO.setBoardNum(foodMapId);
+        foodMapService.saveImage(imageDTO, files);
+
+        System.out.println("boardNum-------------------------------------------" + boardNum);
+        return "redirect:/foodMap/posts/{boardNum}";
+    }
+*/
 
 }

@@ -3,6 +3,7 @@ package com.project.pickyou.service;
 
 import com.project.pickyou.dto.FoodMapDTO;
 import com.project.pickyou.dto.ImageDTO;
+import com.project.pickyou.dto.PointDTO;
 import com.project.pickyou.entity.FoodMapEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,6 +36,15 @@ public interface FoodMapService {
     // 푸드맵 글 수정
     public void update(List<MultipartFile> files, FoodMapDTO foodMapDTO);
 
-    // 댓글작성하기
-    public void ref(Model model, FoodMapDTO dto);
+    // 푸드맵 조회수 증가
+    public void foodMapCnt(Long id, int ref, Model model);
+
+    // 푸드맵 댓글 인서트
+    public FoodMapEntity refInsert(FoodMapDTO dto, int ref);
+
+    // 푸드맵 대댓글 인서트
+    public FoodMapEntity replyInsert(FoodMapDTO dto);
+
+    // 푸드맵 인증글 포인트 인서트
+    public void foodMapPointInsert(PointDTO dto, FoodMapDTO FMdto);
 }

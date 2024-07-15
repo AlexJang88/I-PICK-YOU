@@ -5,11 +5,15 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.Date;
 
 @Getter
 @NoArgsConstructor
+@DynamicInsert
+@DynamicUpdate
 @Entity
 @Table(name = "point")
 public class PointEntity {
@@ -35,6 +39,9 @@ public class PointEntity {
         return PointDTO.builder()
                 .id(this.id)
                 .memberId(this.memberId)
+                .point(this.point)
+                .status(this.status)
+                .reg(this.reg)
                 .build();
     }
 }
