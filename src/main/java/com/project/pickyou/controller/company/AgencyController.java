@@ -24,6 +24,22 @@ public class AgencyController {
     private final AgencyService agencyService;
 
 
+    //테스트
+    @GetMapping("/test")
+    public String agencymain(){
+
+        return "/agency/ad";
+    }
+
+
+
+
+
+
+
+
+
+
     //소개소 메인페이지
     @GetMapping("/posts")
     public String agencymain(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum){

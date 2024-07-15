@@ -1,5 +1,6 @@
 package com.project.pickyou.service;
 
+import com.google.gson.JsonObject;
 import com.project.pickyou.dto.AlarmDTO;
 import com.project.pickyou.entity.AlarmEntity;
 import com.project.pickyou.entity.MemberEntity;
@@ -156,6 +157,19 @@ public class AlarmServiceImpl implements AlarmService{
             }
         }
 
+    }
+
+    @Override
+    public JsonObject getAlarmCount(String id) {
+        JsonObject jsonObject = new JsonObject();
+
+        int read = 1;
+
+        Long alarmcount = alarmJPARepository.countByReaderIdAndStatus(id, read);
+
+        jsonObject.addProperty("alarmcount", alarmcount);
+
+        return jsonObject;  // null 대신 jsonObject 반환
     }
 
 
