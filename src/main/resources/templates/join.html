@@ -658,7 +658,20 @@
     }
 </script>
 
+<script>
+    // 입력 필터링 함수
+    function allowOnlyEnglish(event) {
+        const inputField = event.target;
+        // 정규식을 사용하여 영어와 숫자만 허용
+        inputField.value = inputField.value.replace(/[^a-zA-Z0-9]/g, '');
+    }
 
+    // 이벤트 리스너 등록
+    window.onload = function() {
+        const idInput = document.getElementById('id');
+        idInput.addEventListener('input', allowOnlyEnglish);
+    }
+</script>
 
 
 

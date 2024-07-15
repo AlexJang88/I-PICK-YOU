@@ -42,6 +42,14 @@ public class TrainningEntity {
     @UpdateTimestamp   //업데이트시 필요 <- 디폴트 값으로 들어가있기때문에
     private Date reg;
 
+
+    @OneToOne
+    @JoinColumn(name="company_id",referencedColumnName = "id",insertable = false,updatable = false)
+    private MemberEntity memberen;
+
+
+
+
     @Builder
     public TrainningEntity(Long id, String companyId, String title, String position, String trainner, String etc, String name, String address, String contact, int readCount, String content, Date reg) {
         this.id = id;

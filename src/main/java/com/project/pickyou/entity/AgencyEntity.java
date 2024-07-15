@@ -36,6 +36,11 @@ public class AgencyEntity {
         private Date reg;
 
 
+    @OneToOne
+    @JoinColumn(name="company_id",referencedColumnName = "id",insertable = false,updatable = false)
+    private MemberEntity memberen;
+
+
         @Builder
         public AgencyEntity(Long id, String companyId, String companyName, String business,
                          String contact, String address, String content, int readCount, Date reg){
