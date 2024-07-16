@@ -6,6 +6,8 @@ import com.project.pickyou.dto.ImageDTO;
 import com.project.pickyou.dto.TrainningDTO;
 import com.project.pickyou.entity.AgencyEntity;
 import com.project.pickyou.service.AgencyService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,12 +25,13 @@ public class AgencyController {
 
     private final AgencyService agencyService;
 
+    private int type=7;
 
     //테스트
     @GetMapping("/test")
     public String agencymain(){
 
-        return "/agency/ad";
+        return "agency/ad";
     }
 
 
@@ -45,20 +48,40 @@ public class AgencyController {
     public String agencymain(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum){
 
         agencyService.agencymain(model, pageNum);
-        return "/agency/agencymain";
+        return "agency/agencymain";
     }
 
     //소개소 상세페이지
     @GetMapping("/posts/{agencynum}")
-    public String agencyDetails(Model model, @PathVariable Long agencynum, Principal principal){
-        if(principal != null){
-
-            String pid = principal.getName();
-            model.addAttribute("pid", pid);
+    public String agencyDetails(Model model, @PathVariable Long agencynum, HttpSession session, Principal principal, HttpServletRequest request){
+        String sid="";
+        String ip=request.getHeader("X-FORWARDED-FOR");
+        if(ip==null){
+            ip=request.getRemoteAddr();
         }
 
+
+        if(principal != null){  //로그인 되어잇을때 조회수 올리기
+
+           sid = principal.getName();
+            model.addAttribute("pid", sid);
+            if(session.getAttribute(sid+"_"+type+"_"+agencynum)==null){
+                agencyService.agencyCount(agencynum);
+                session.setAttribute(sid+"_"+type+"_"+agencynum,"true");
+            }
+
+        }else{   //로그인안되어있을때 조회수 올리기
+            sid=ip;
+            if(session.getAttribute(sid+"_"+type+"_"+agencynum)==null){
+                agencyService.agencyCount(agencynum);
+                session.setAttribute(sid+"_"+type+"_"+agencynum,"true");
+            }
+        }
+
+
+
         agencyService.agencyDetails(model, agencynum);
-        return "/agency/agencyDetails";
+        return "agency/agencyDetails";
     }
 
 
@@ -69,7 +92,7 @@ public class AgencyController {
     public String agencyInput(){
 
 
-        return "/agency/agencyInput";
+        return "agency/agencyInput";
     }
 
     @PostMapping("/posts")
@@ -102,7 +125,7 @@ public class AgencyController {
 
         agencyService.agencyDetails(model,agencynum);
 
-        return "/agency/agencyUpdate";
+        return "agency/agencyUpdate";
     }
 
     @PatchMapping("/posts/{agencynum}")

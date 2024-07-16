@@ -25,7 +25,7 @@ public class AlarmController {
 
            alarmService.findList(model, id, pageNum);  //본인의 쪽지 받은 목록확인
             model.addAttribute("id",id);
-            return "/alarm/list";
+            return "alarm/list";
         }else {
             return "/";
         }
@@ -39,7 +39,7 @@ public class AlarmController {
 
            alarmService.findContent(model,id, num);  //상세내용보기
 
-            return "/alarm/content";
+            return "alarm/content";
         }else {
             return "/";
         }
@@ -52,7 +52,7 @@ public class AlarmController {
 
             alarmService.adminSpend(model, id, pageNum);  //관리자가 보낸쪽지목록
             model.addAttribute("id",id);
-            return "/alarm/adminList";
+            return "alarm/adminList";
         }else {
             return "/";
         }
@@ -65,7 +65,7 @@ public class AlarmController {
 
             alarmService.adminSpendContent(model,id, num);  //상세내용보기
 
-            return "/alarm/adminContent";
+            return "alarm/adminContent";
         }else {
             return "/";
         }
@@ -77,7 +77,7 @@ public class AlarmController {
         String prid = pc.getName();
         if(id.equals(prid)){
             model.addAttribute("id",id);
-            return "/alarm/alarmWrite";
+            return "alarm/alarmWrite";
         }else {
             return "/";
         }

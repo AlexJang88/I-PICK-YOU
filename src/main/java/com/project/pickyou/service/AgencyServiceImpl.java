@@ -39,6 +39,18 @@ public class AgencyServiceImpl implements AgencyService{
     private final AgencyJPARepository agencyJPARepository;
     private final ImageJPARepository imageJPARepository;
 
+    @Override
+    public void agencyCount(Long agencynum) { //조회수 증가
+        Optional<AgencyEntity> optional = agencyJPARepository.findById(agencynum);
+
+        if (optional.isPresent()) {
+            AgencyEntity agcEntity = optional.get();
+            agcEntity.setReadCount(agcEntity.getReadCount()+1);
+            agencyJPARepository.save(agcEntity);
+        }
+
+    }
+
     //소개소 메인
     @Override
     public void agencymain(Model model, int pageNum) {

@@ -18,4 +18,8 @@ public interface LoginService {
     public Boolean checkPW(String email, String id);
 
    public void changePw(MemberDTO memberDTO, String newPw);
+
+    boolean checkIfEmailExists(String email);  //이메일 중복체크
+
+    boolean checkIfcorpnocheck(String corpno);  //사업자 중복체크
 }

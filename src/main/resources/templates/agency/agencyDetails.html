@@ -5,7 +5,9 @@
       data-theme="theme-default"
       data-assets-path="../assets/"
       data-template="vertical-menu-template-free"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport"
@@ -135,15 +137,20 @@
                         </div>
 
 
-                        <div class="col-md-6 text-center"  > <!-- 삭제하기 버튼 -->
-                            <form th:action="@{/agency/posts/{agencynum}(agencynum=${AgencyList.get().id})}" th:method="delete">
-                                <button type="submit" class="btn btn-danger btn-block">삭제하기</button>
+                        <div class="col-md-6 text-center"> <!-- 삭제하기 버튼 -->
+                            <form id="deleteForm" th:action="@{/agency/posts/{agencynum}(agencynum=${AgencyList.get().id})}" th:method="delete">
+                                <button type="button" class="btn btn-danger btn-block" onclick="confirmDelete()">삭제하기</button>
                             </form>
                         </div>
-
                     </div>
 
 
+
+                    <div class="col-md-6 text-center" sec:authorize="hasRole('ROLE_ADMIN')"> <!-- 관리자 삭제하기 버튼 -->
+                        <form id="AdmindeleteForm" th:action="@{/agency/posts/{agencynum}(agencynum=${AgencyList.get().id})}" th:method="delete">
+                            <button type="button" class="btn btn-danger btn-block" onclick="confirmDelete()">삭제하기</button>
+                        </form>
+                    </div>
 
 
                     <!-- /Text Alignment -->
@@ -166,12 +173,7 @@
 </div>
 <!-- / Layout wrapper -->
 
-<div class="buy-now">
-    <a href="https://themeselection.com/products/sneat-bootstrap-html-admin-template/"
-       target="_blank"
-       class="btn btn-danger btn-buy-now"
-    >Upgrade to Pro</a>
-</div>
+
 
 <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->
@@ -192,6 +194,22 @@
 
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+<script>
+    function confirmDelete() {
+        if (confirm("정말 삭제하시겠습니까?")) {
+            document.getElementById("deleteForm").submit();
+        }
+    }
+</script>
+<script>
+    function confirmDelete() {
+        if (confirm("정말 삭제하시겠습니까?")) {
+            document.getElementById("AdmindeleteForm").submit();
+        }
+    }
+</script>
 
 
 
