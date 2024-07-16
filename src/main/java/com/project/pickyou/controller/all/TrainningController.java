@@ -6,6 +6,8 @@ import com.project.pickyou.dto.ImageDTO;
 import com.project.pickyou.dto.TrainningDTO;
 import com.project.pickyou.entity.TrainningEntity;
 import com.project.pickyou.service.TrainningService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,8 @@ public class TrainningController {
 
     private final TrainningService trainningService;
 
+    private int type=3;
+
     public TrainningController(TrainningService trainningService){
         this.trainningService =trainningService;
     }
@@ -30,20 +34,42 @@ public class TrainningController {
 
         trainningService.trainningCompany(model, pageNum);
 
-        return "/trainning/trainningmain";
+        return "trainning/trainningmain";
     }
 
     //훈련소 내용상세보기
         @GetMapping ("/posts/{trainnignum}")
-        public String trainningDetails(Model model,@PathVariable Long trainnignum, Principal principal){ //훈련소 상세내용
+        public String trainningDetails(Model model, @PathVariable Long trainnignum, Principal principal,
+                                       HttpSession session, HttpServletRequest request
+                                       ){ //훈련소 상세내용
+
+            String sid="";
+            String ip=request.getHeader("X-FORWARDED-FOR");
+            if(ip==null){
+                ip=request.getRemoteAddr();
+            }
+
             if(principal != null){
 
-                String pid = principal.getName();
-                model.addAttribute("pid", pid);
+                sid = principal.getName();
+                model.addAttribute("pid", sid);
+                if(session.getAttribute(sid+"_"+type+"_"+trainnignum)==null){
+                    trainningService.trainngCount(trainnignum);
+                    session.setAttribute(sid+"_"+type+"_"+trainnignum,"true");
+                }
+            }else {   //로그인안되어있을때 조회수 올리기
+                sid = ip;
+                if (session.getAttribute(sid + "_" + type + "_" + trainnignum) == null) {
+                    trainningService.trainngCount(trainnignum);
+                    session.setAttribute(sid + "_" + type + "_" + trainnignum, "true");
+                }
+
             }
+
+
         trainningService.Details(model, trainnignum);//훈련소 내용상세보기
 
-        return  "/trainning/trainningDetails";
+        return  "trainning/trainningDetails";
         }
 
 
@@ -71,7 +97,7 @@ public class TrainningController {
 
         trainningService.Details(model, trainnignum);
 
-        return "/trainning/trainningUpdate";
+        return "trainning/trainningUpdate";
     }
 
     @PatchMapping("/posts/{trainnignum}")
@@ -92,7 +118,7 @@ public class TrainningController {
         @GetMapping("/posts/new")
         public String trainninginput(){
 
-        return "/trainning/trainninginput";
+        return "trainning/trainninginput";
         }
 
         @PostMapping("/posts")
@@ -113,13 +139,6 @@ public class TrainningController {
         return "redirect:/trainning/posts";
         }
 
-
-
-        @GetMapping("/test")
-        public String test(){
-
-            return "/trainning/test";
-        }
 
 
 }

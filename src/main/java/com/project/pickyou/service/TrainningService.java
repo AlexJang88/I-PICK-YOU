@@ -24,4 +24,5 @@ public interface TrainningService {
     public void trainningUpdate(Long trainnignum, TrainningDTO trainningDTO, MultipartFile[] files); //사진, 내용 업데이트
 
 
+    public void trainngCount(Long trainnignum); //훈련소 조회수
 }

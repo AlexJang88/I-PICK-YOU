@@ -97,7 +97,7 @@ public class NoticeController {
     @GetMapping()
     public String IntroductionUs(){  //사이트 소개하기
 
-        return "/notice/IntroductionUs";
+        return "notice/IntroductionUs";
     }
 
 
