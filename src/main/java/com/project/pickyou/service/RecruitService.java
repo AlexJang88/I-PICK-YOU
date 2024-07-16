@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface RecruitService {
-    public void AllPosts(Model model, int pageNum);
+    public void AllPosts(Model model, int pageNum,int checkType);
     public void myPosts(Model model,int pageNum,String id);
     public void post(Model model,Long num,String sid);
     public void writePost(List<MultipartFile> files, RecruitDTO rdto, RecruitDetailDTO rddto, int boardType);

@@ -84,6 +84,7 @@
 <input type="hidden" id="sender" th:value="${to}">
 <input type="hidden" id="receiver" th:value="${from}">
 <button id="openChatBtn" class="btn btn-primary">Open Chat</button>
+<button id="openChatRoomBtn" class="btn btn-primary">Open ChatRoom</button>
 
 <div class="modal" id="myModal" style="display: none;">
     <div class="modal-dialog">
@@ -109,6 +110,14 @@
             var sender = $('#sender').val();
             var receiver = $('#receiver').val();
             var chatUrl = 'http://localhost:4000/chat/' + sender + '/' + receiver;
+
+            $('#chatFrame').attr('src', chatUrl);
+            $('#myModal').modal('show');
+        });
+        $('#openChatRoomBtn').click(function() {
+            var sender = $('#sender').val();
+            var receiver = $('#receiver').val();
+            var chatUrl = 'http://localhost:4000/rooms/' + sender
 
             $('#chatFrame').attr('src', chatUrl);
             $('#myModal').modal('show');

@@ -48,17 +48,30 @@ public class RecruitServiceImpl implements RecruitService {
     private final ConfirmJPARepository confirmJPA;
 
     @Override
-    public void AllPosts(Model model, int pageNum) {
+    public void AllPosts(Model model, int pageNum,int checkType) {
         int pageSize = 10;
-        Long longCount = recruitJPA.count();
-        int count = longCount.intValue();
+        Long longCount=0L;
+        int count=0;
 
         Sort sort = Sort.by(Sort.Order.desc("reg"));
-
-        Page<RecruitEntity> page = recruitJPA.findAll(PageRequest.of(pageNum - 1, pageSize, sort));
-
-        List<RecruitEntity> posts = page.getContent();
-
+        Page<RecruitEntity> page =null;
+        List<RecruitEntity> posts =null;
+        if(checkType==1) {
+            longCount = recruitJPA.count();
+            count = longCount.intValue();
+             page = recruitJPA.findAll(PageRequest.of(pageNum - 1, pageSize, sort));
+             posts = page.getContent();
+        } else if (checkType==2) {
+            longCount = recruitJPA.countByStatus(1);
+            count = longCount.intValue();
+            page = recruitJPA.findByStatus(1,PageRequest.of(pageNum - 1, pageSize, sort));
+            posts = page.getContent();
+        } else if (checkType==3) {
+            longCount = recruitJPA.countByStatus(2);
+            count = longCount.intValue();
+            page = recruitJPA.findByStatus(2,PageRequest.of(pageNum - 1, pageSize, sort));
+            posts = page.getContent();
+        }
         model.addAttribute("posts", posts);
         model.addAttribute("count", count);
         model.addAttribute("pageNum", pageNum);

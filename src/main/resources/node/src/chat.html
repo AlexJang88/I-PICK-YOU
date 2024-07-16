@@ -7,29 +7,30 @@
     <script src="/socket.io/socket.io.js"></script>
     <style>
         .modal-background {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5); /* 배경을 블러처리 */
-        z-index: 999; /* 모달 창보다 낮은 z-index */
-    }
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* 배경을 블러처리 */
+            z-index: 999; /* 모달 창보다 낮은 z-index */
+        }
 
-    .chat-container {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 300px; /* 모달 창의 너비 조정 */
-        height: 400px; /* 모달 창의 높이 조정 */
-        background-color: white;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        display: flex;
-        flex-direction: column;
-        z-index: 1000; /* 모달 창의 z-index */
-    }
+        .chat-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px; /* 모달 창의 너비 조정 */
+            height: 400px; /* 모달 창의 높이 조정 */
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000; /* 모달 창의 z-index */
+        }
+
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -128,6 +129,7 @@
     </style>
 </head>
 <body>
+<div class="modal-background"></div>
 <div class="chat-container">
     <div class="chat-header">
         채팅
@@ -148,7 +150,7 @@
     var sender = pathParts[2]; // URL 경로에서 보내는 사람 추출
     var receiver = pathParts[3]; // URL 경로에서 받는 사람 추출
 
-    // 방에 조인
+    // 방에 조인 및 읽지 않은 메시지 초기화
     socket.emit('joinRoom', { sender, receiver });
 
     chatForm.addEventListener('submit', function() {
