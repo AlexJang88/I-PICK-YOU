@@ -26,6 +26,16 @@
             border: 1px solid #ccc;
             margin-bottom: 5px;
             cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .unread-count {
+            background-color: #f00;
+            color: #fff;
+            border-radius: 50%;
+            padding: 0 5px;
         }
     </style>
 </head>
@@ -38,15 +48,17 @@
 <script>
     $(document).ready(function() {
         var pathParts = window.location.pathname.split('/');
-        var user = pathParts[2]; // URL 경로에서 사용자 추출
+        var user = pathParts[2];
         $('#user').text(user);
 
         $.get('/api/rooms/' + user, function(data) {
             var rooms = data.rooms;
-            rooms.forEach(function(roomId) {
-                var participants = roomId.split('-');
+            rooms.forEach(function(room) {
+                var participants = room.roomId.split('-');
                 var otherUser = participants.find(participant => participant !== user);
                 var listItem = $('<li>').text('Chat with ' + otherUser);
+                var unreadBadge = $('<span class="unread-count">').text(room.unreadCount);
+                listItem.append(unreadBadge);
                 listItem.on('click', function() {
                     window.location.href = '/chat/' + user + '/' + otherUser;
                 });

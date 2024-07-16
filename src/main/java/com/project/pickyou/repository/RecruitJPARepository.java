@@ -11,8 +11,10 @@ import org.springframework.data.repository.query.Param;
 public interface RecruitJPARepository extends JpaRepository<RecruitEntity,Long> {
     @Query(value = "SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = :schema AND TABLE_NAME = :table", nativeQuery = true)
     Long getAutoIncrementValue(@Param("schema") String schema, @Param("table") String table);
-
+    public Long countByStatus(int status);
+    public Page<RecruitEntity> findByStatus(int status,Pageable page);
     public Long countByMemberId(String memberId);
     public Page<RecruitEntity> findByMemberId(String memberId, Pageable page);
     public Page<RecruitEntity> findById(String id,Pageable page);
+
 }

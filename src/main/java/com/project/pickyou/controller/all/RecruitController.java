@@ -34,11 +34,13 @@ public class RecruitController {
     private final RecruitService service;
 
     @GetMapping("/posts")
-    public String list(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, Principal principal){
+    public String list(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, Principal principal,@RequestParam(value = "type",defaultValue = "1") int type){
+            System.out.println("====================pageNum"+pageNum);
+        System.out.println("====================type");
         if(principal!=null) {
             model.addAttribute("memberId", principal.getName());
         }
-        service.AllPosts(model,pageNum);
+        service.AllPosts(model,pageNum,type);
         return "recruit/list";
     }
     @GetMapping("/posts/my")
@@ -48,7 +50,7 @@ public class RecruitController {
             memberId= principal.getName();
             model.addAttribute("memberId", principal.getName());
         }
-        service.AllPosts(model,pageNum);
+        service.myPosts(model,pageNum,memberId);
         return "recruit/myList";
     }
     @GetMapping("/posts/{boardNum}")
@@ -87,7 +89,7 @@ public class RecruitController {
     @DeleteMapping("/posts")
     public String delete(@RequestParam(name = "id")Long id){
         service.deletePost(id,6);
-        return "redirect:/recruit/posts";
+        return "redirect:/recruit/posts/all";
     }
     //작성페이지이동
     @GetMapping("/posts/write/{memberId}")
@@ -103,7 +105,7 @@ public class RecruitController {
     ){
         int check=0;
         check = rdto.getStatus();
-        String url="redirect:/recruit/posts";
+        String url="redirect:/recruit/posts/all";
         if(check==2){
             //결제 페이지로 이동
             url="redirect:/recruit/posts";
@@ -201,14 +203,8 @@ public class RecruitController {
     }
     @GetMapping("/pdf")
     public @ResponseBody String stest(HttpServletResponse response,Long id){
-
-
         service.contractPDF(response, id);
         return"recruit/companySign";
-    }
-    @GetMapping("/stest")
-    public String cset(){
-        return "recruit/sign";
     }
 
 }
