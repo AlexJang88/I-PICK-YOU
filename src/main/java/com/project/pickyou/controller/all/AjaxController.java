@@ -1,15 +1,18 @@
 package com.project.pickyou.controller.all;
 
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.project.pickyou.dto.AlarmDTO;
+
 import com.project.pickyou.dto.MemberDTO;
+import com.project.pickyou.service.AlarmService;
+
 import com.project.pickyou.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,10 +24,39 @@ public class AjaxController {
 
 
     private final LoginService loginService;
-    //아이디 중복값 체크
+    private final AlarmService alarmService;
 
-    @PostMapping("/idcheck")
+
+
+
+
+
+
+    //알람 컨트롤러
+    @PostMapping("/alarmnumber/number")
     @ResponseBody
+    public ResponseEntity<Map<String, Object>> getAlertCount(@RequestBody Map<String, String> requestBody){
+        String id = requestBody.get("id"); // JSON 데이터에서 "id" 값을 추출
+
+       JsonObject names = alarmService.getAlarmCount(id);
+
+        // JSON 객체를 Map으로 변환
+        Map<String, Object> response = new Gson().fromJson(names, Map.class);
+
+        return ResponseEntity.ok(response);
+    }
+
+
+
+
+
+
+
+
+
+
+   @PostMapping("/idcheck")
+   @ResponseBody
     public ResponseEntity<Map<String, String>> idcheck(@RequestBody MemberDTO dto){
 
         System.out.println("받은 아이디: " + dto.getId());

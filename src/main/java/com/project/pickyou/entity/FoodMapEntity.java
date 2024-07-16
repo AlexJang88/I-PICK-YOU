@@ -7,11 +7,15 @@ import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.Date;
 
 @Data
 @NoArgsConstructor
+@DynamicInsert
+@DynamicUpdate
 @Entity
 @Table(name = "food_map")
 public class FoodMapEntity {
@@ -28,9 +32,10 @@ public class FoodMapEntity {
     @Column(name = "read_count")
     private int readCount;
     private Date reg;
+    private int status;
 
     @Builder
-    public FoodMapEntity(Long id, String memberId, String title, String content, String map, int ref, int reply, int readCount, Date reg) {
+    public FoodMapEntity(Long id, String memberId, String title, String content, String map, int ref, int reply, int readCount, Date reg, int status) {
         this.id = id;
         this.memberId = memberId;
         this.title = title;
@@ -40,6 +45,7 @@ public class FoodMapEntity {
         this.reply = reply;
         this.readCount = readCount;
         this.reg = reg;
+        this.status = status;
     }
 
     public FoodMapDTO toFood_MapDTO() {
@@ -53,6 +59,7 @@ public class FoodMapEntity {
                 .reply(this.reply)
                 .readCount(this.readCount)
                 .reg(this.reg)
+                .status(this.status)
                 .build();
     }
 }

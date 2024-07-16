@@ -108,9 +108,8 @@
                                     <div class="col">
                                         <div class="card h-100">
 
-                                            <img class="card-img-top" src="../assets/img/elements/2.jpg" alt="Card image cap" />
+                                            <img class="card-img-top" th:src="@{'/kjwupload/profile/' + ${list.memberen.profile} }"  alt="Card image cap" />
                                             <div class="card-body">
-
                                                 <h5 class="card-title"><span th:text="${list.business}"></span> </h5>
                                                 <h3 class="card-title"><span th:text="${list.companyName}"></span> </h3>
                                                 <p class="card-text">

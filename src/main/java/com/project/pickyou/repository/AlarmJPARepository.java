@@ -23,4 +23,7 @@ public interface AlarmJPARepository extends JpaRepository<AlarmEntity,Long> {
     Page<AlarmEntity> findByMemberId(String id, Pageable pageSize); //관리자가 보낸 쪽지 내역 리스트화
 
     AlarmEntity findByIdAndMemberId(Long num, String id); //관리자가 보낸 쪽지 상세내용
+
+    Long countByReaderIdAndStatus(String id, int read);  //에이젝스로 받은 숫자 (안읽은 갯수)
+
 }

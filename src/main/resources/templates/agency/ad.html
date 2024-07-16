@@ -2,9 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>카결진행</title>
+
 </head>
 <body>
+가자 카결제~
+
+
+<button id="kaobtn" >카카오페이</button>
 
 </body>
+
+<script>
+    $("#kaobtn").click(function(){
+
+
+        $.ajax({
+            type:'get',
+            url:'/ajax/ready',
+            data:{
+                item_name : "갤럭시"
+                quantity : "1",
+                total_amount : "13000",
+                tax_free_amount : "0"
+            },
+            success:function(res){
+                location.href = res.next_redirect_mobile_url;
+            }
+        })
+    })
+
+</script>
+
 </html>

@@ -1,6 +1,7 @@
 package com.project.pickyou.service;
 
 
+import com.google.gson.JsonObject;
 import com.project.pickyou.dto.AlarmDTO;
 import org.springframework.ui.Model;
 
@@ -18,4 +19,6 @@ public interface AlarmService {
     public void insertOneUser(String id, String name, String message); //특정유저한테만 쪽지
 
     public void insertManyUser(String id, String name, String message, String type); //다양한 유정한테 보내기
+
+    JsonObject getAlarmCount(String id);  //알람 ajax 받은 갯수
 }
