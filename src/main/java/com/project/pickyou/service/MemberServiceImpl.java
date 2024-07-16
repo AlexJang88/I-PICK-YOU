@@ -3,16 +3,15 @@ package com.project.pickyou.service;
 import com.project.pickyou.dto.CompanyInfoDTO;
 import com.project.pickyou.dto.MemberDTO;
 import com.project.pickyou.dto.MemberInfoDTO;
-import com.project.pickyou.entity.CompanyInfoEntity;
-import com.project.pickyou.entity.MemberEntity;
-import com.project.pickyou.entity.MemberInfoEntity;
-import com.project.pickyou.repository.CompanyInfoJPARepository;
-import com.project.pickyou.repository.ImageJPARepository;
-import com.project.pickyou.repository.MemberInfoJAPRepository;
-import com.project.pickyou.repository.MemberJPARepository;
+import com.project.pickyou.entity.*;
+import com.project.pickyou.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,6 +36,7 @@ public class MemberServiceImpl implements MemberService {
         private final MemberJPARepository memberJPARepository;
         private final MemberInfoJAPRepository memberInfoJAPRepository;
         private final CompanyInfoJPARepository companyInfoJPARepository;
+        private final PaymentJPARepository paymentJPA;
 
 
         @Autowired
@@ -199,9 +200,34 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
+    // 사업자 결제 내역
+    @Override
+    public void ALlPosts(Model model, int pageNum, String memberId) {
+        int pageSize = 10;
+        int count = paymentJPA.countByMemberId(memberId);
 
+        Sort sort = Sort.by(Sort.Order.desc("reg"));
 
+        Page<PaymentEntity> page = paymentJPA.findByMemberId(memberId, (Pageable) PageRequest.of(pageNum - 1, pageSize, sort));
 
+        List<PaymentEntity> posts = page.getContent();
+
+        model.addAttribute("posts", posts);
+        model.addAttribute("count", count);
+        model.addAttribute("pageNum", pageNum);
+        model.addAttribute("pageSize", pageSize);
+        int pageCount = count / pageSize + (count % pageSize == 0 ? 0 : 1);
+        int startPage = (pageNum / 10) * 10 + 1;
+        int pageBlock = 10;   //페이징(이전/다음)을 몇개단위로 끊을지
+        int endPage = startPage + pageBlock - 1;
+        if (endPage > pageCount) {
+            endPage = pageCount;
+        }
+        model.addAttribute("pageCount", pageCount);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("pageBlock", pageBlock);
+        model.addAttribute("endPage", endPage);
+    }
 
 
 }

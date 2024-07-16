@@ -4,6 +4,7 @@ import com.project.pickyou.dto.CompanyInfoDTO;
 import com.project.pickyou.dto.MemberDTO;
 import com.project.pickyou.dto.MemberInfoDTO;
 import com.project.pickyou.service.MemberService;
+import com.project.pickyou.service.PointService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import java.security.Principal;
 public class MemberController {
 
     private final MemberService memberService;
+    private final PointService pointService;
 
     @Autowired
     private HttpSession session;
@@ -126,7 +128,15 @@ public class MemberController {
         return "redirect:/mypage/cominformation/"+id;
     }
 
+    // 포인트 내역
+    @GetMapping("/point/posts")
+    public String pointList(Principal principal, Model model,
+                            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
 
+        pointService.AllPosts(model, pageNum, principal.getName());
+
+        return "mypage/pointList";
+    }
 
 
 
