@@ -5,12 +5,15 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.Date;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @DynamicInsert
 @DynamicUpdate
@@ -24,6 +27,7 @@ public class PointEntity {
     private String memberId;
     private int point;
     private int status;
+    @CreationTimestamp
     private Date reg;
 
     @Builder
