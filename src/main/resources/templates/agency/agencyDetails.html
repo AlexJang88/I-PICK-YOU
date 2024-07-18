@@ -139,7 +139,7 @@
 
                         <div class="col-md-6 text-center"> <!-- 삭제하기 버튼 -->
                             <form id="deleteForm" th:action="@{/agency/posts/{agencynum}(agencynum=${AgencyList.get().id})}" th:method="delete">
-                                <button type="button" class="btn btn-danger btn-block" onclick="confirmDelete()">삭제하기</button>
+                                <button type="button" class="btn btn-danger btn-block" onclick="confirmDeleteUser(event)">삭제하기</button>
                             </form>
                         </div>
                     </div>
@@ -148,7 +148,7 @@
 
                     <div class="col-md-6 text-center" sec:authorize="hasRole('ROLE_ADMIN')"> <!-- 관리자 삭제하기 버튼 -->
                         <form id="AdmindeleteForm" th:action="@{/agency/posts/{agencynum}(agencynum=${AgencyList.get().id})}" th:method="delete">
-                            <button type="button" class="btn btn-danger btn-block" onclick="confirmDelete()">삭제하기</button>
+                            <button type="button" class="btn btn-danger btn-block" onclick="confirmDeleteAdmin(event)">삭제하기</button>
                         </form>
                     </div>
 
@@ -197,14 +197,16 @@
 
 
 <script>
-    function confirmDelete() {
+    function confirmDeleteUser(event) {
+        event.preventDefault();
         if (confirm("정말 삭제하시겠습니까?")) {
             document.getElementById("deleteForm").submit();
         }
     }
 </script>
 <script>
-    function confirmDelete() {
+    function confirmDeleteAdmin(event) {
+        event.preventDefault();
         if (confirm("정말 삭제하시겠습니까?")) {
             document.getElementById("AdmindeleteForm").submit();
         }
