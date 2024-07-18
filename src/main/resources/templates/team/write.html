@@ -33,6 +33,7 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script th:src="@{/assets/js/config.js}"></script>
+    <script th:src="@{'//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js'}"></script>
 </head>
 
 <body>
@@ -85,10 +86,11 @@
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <label class="col-sm-2 col-form-label" for="address">가능 지역</label>
+                                            <label class="col-sm-2 col-form-label" for="address">주소</label>
                                             <div class="col-sm-10">
-                                                <div class="input-group input-group-merge">
-                                                    <input type="text" id="address" name="address" class="form-control" placeholder="가능지역을 작성해주세요" required/>
+                                                <div class="input-group">
+                                                    <input type="text" id="address" name="address" class="form-control" placeholder="주소를 적어주세요" required/>
+                                                    <button type="button" id="addressButton" class="btn btn-primary">주소 검색</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -152,9 +154,7 @@
     </div>
     <!-- / Layout wrapper -->
 
-    <div class="buy-now">
-        Upgrade to Pro
-    </div>
+
 </div>
 <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->
@@ -218,6 +218,19 @@
 
         return true;
     }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('addressButton').addEventListener('click', function () {
+            new daum.Postcode({
+                oncomplete: function (data) {
+                    // 사용자가 주소를 선택했을 때 실행되는 함수
+                    var fullAddress = data.address; // 전체 주소
+                    document.getElementById('address').value = fullAddress; // 주소 입력 필드에 값 설정
+                }
+            }).open();
+        });
+    });
 </script>
 
 </body>

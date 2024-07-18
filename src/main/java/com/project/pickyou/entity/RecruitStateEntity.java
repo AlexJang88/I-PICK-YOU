@@ -5,12 +5,16 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.Date;
 @Data
 @NoArgsConstructor
 @Entity
 @Table(name = "recruit_state")
+@DynamicInsert
+@DynamicUpdate
 public class RecruitStateEntity {
 
     @Id
@@ -21,6 +25,10 @@ public class RecruitStateEntity {
     @Column(name="recruit_id")
     private Long recruitId;
     private Date reg;
+
+    @OneToOne
+    @JoinColumn(name="recruit_id",referencedColumnName = "id",insertable = false,updatable = false)
+    private RecruitEntity recruit;
 
     @Builder
     public RecruitStateEntity(Long id, String memberId, Long recruitId, Date reg ) {

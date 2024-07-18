@@ -216,56 +216,56 @@
             </ul>
         </div>
         <input type="hidden" id="ajaxId" th:value="${id}"> <!-- 실제 사용자 ID를 여기에 설정 -->
-        <script th:inline="javascript">
-            $(document).ready(function(){
-          $('#openChatBtn').click(function() {
-            var user = $('#user').text().trim();
-            var chatUrl = 'http://localhost:4000/chat/' + sender + '/' + receiver;
+<!--        <script th:inline="javascript">-->
+<!--            $(document).ready(function(){-->
+<!--          $('#openChatBtn').click(function() {-->
+<!--            var user = $('#user').text().trim();-->
+<!--            var chatUrl = 'http://localhost:4000/chat/' + sender + '/' + receiver;-->
 
-            $('#chatFrame').attr('src', chatUrl);
-            $('#myModal').modal('show');
-            });
-            $('#openChatRoomBtn').click(function() {
-            var sender = $('#sender').val();
-            var receiver = $('#receiver').val();
-            var chatUrl = 'http://localhost:4000/rooms/' + sender
+<!--            $('#chatFrame').attr('src', chatUrl);-->
+<!--            $('#myModal').modal('show');-->
+<!--            });-->
+<!--            $('#openChatRoomBtn').click(function() {-->
+<!--            var sender = $('#sender').val();-->
+<!--            var receiver = $('#receiver').val();-->
+<!--            var chatUrl = 'http://localhost:4000/rooms/' + sender-->
 
-            $('#chatFrame').attr('src', chatUrl);
-            $('#myModal').modal('show');
-        });
-              
-              function fetchAlarmCount() {
-                    console.log("ajax작동");
+<!--            $('#chatFrame').attr('src', chatUrl);-->
+<!--            $('#myModal').modal('show');-->
+<!--        });-->
+<!--              -->
+<!--              function fetchAlarmCount() {-->
+<!--                    console.log("ajax작동");-->
 
-                    var id = $("#ajaxId").val();  // hidden input 태그에서 id 값을 가져옴
+<!--                    var id = $("#ajaxId").val();  // hidden input 태그에서 id 값을 가져옴-->
 
-                    console.log("id:", id);
+<!--                    console.log("id:", id);-->
 
-                    // AJAX 요청 보내기
-                    $.ajax({
-                        url: '/ajax/alarmnumber/number',
-                        type: "POST",
-                        contentType: 'application/json',
-                        data: JSON.stringify({ id: id }),
-                        dataType: "json",
-                        success: function(data) {
-                            console.log("AJAX 성공:", data);
-                            $("#alertCounter").text(data.alarmcount); // 서버에서 받은 데이터로 알림 카운터 업데이트
-                        },
-                        error: function(xhr, status, error) {
-                            console.error("AJAX 에러:", error);
-                            console.log("xhr:", xhr);
-                            console.log("status:", status);
-                            console.log("error:", error);
-                        }
-                    });
-                }
+<!--                    // AJAX 요청 보내기-->
+<!--                    $.ajax({-->
+<!--                        url: '/ajax/alarmnumber/number',-->
+<!--                        type: "POST",-->
+<!--                        contentType: 'application/json',-->
+<!--                        data: JSON.stringify({ id: id }),-->
+<!--                        dataType: "json",-->
+<!--                        success: function(data) {-->
+<!--                            console.log("AJAX 성공:", data);-->
+<!--                            $("#alertCounter").text(data.alarmcount); // 서버에서 받은 데이터로 알림 카운터 업데이트-->
+<!--                        },-->
+<!--                        error: function(xhr, status, error) {-->
+<!--                            console.error("AJAX 에러:", error);-->
+<!--                            console.log("xhr:", xhr);-->
+<!--                            console.log("status:", status);-->
+<!--                            console.log("error:", error);-->
+<!--                        }-->
+<!--                    });-->
+<!--                }-->
 
-                // 페이지 로드 후 1분마다 fetchAlarmCount 함수 실행
-                fetchAlarmCount(); // 초기 실행
-                setInterval(fetchAlarmCount, 60000); // 1분(60000밀리초)마다 실행
-            });
-        </script>
+<!--                // 페이지 로드 후 1분마다 fetchAlarmCount 함수 실행-->
+<!--                fetchAlarmCount(); // 초기 실행-->
+<!--                setInterval(fetchAlarmCount, 60000); // 1분(60000밀리초)마다 실행-->
+<!--            });-->
+<!--        </script>-->
         <script>
             const cities = [
                 { engName: 'Seoul', korName: '서울' },

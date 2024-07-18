@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ConfirmJPARepository extends JpaRepository<ConfirmEntity,Long> {
-    public List<ConfirmEntity> findByRecruitIdAndApplyNot(Long recruitId,Integer type);
+    public List<ConfirmEntity> findByRecruitIdAndApplyNot(Long recruitId,int type);
     public Long countByRecruitIdAndApplyNot(Long recruitId,Integer type);
     public Page<ConfirmEntity> findByRecruitIdAndApplyNot(Long recruitId,Integer type, Pageable pageable);
     public Long countByMemberIdAndCompanyId(String member,String company);
     @Transactional
     public void deleteByMemberIdAndRecruitId(String memberId,Long recruitId);
-    public Optional<ConfirmEntity> findByMemberIdAndRecruitIdAndApplyNot(String memberId,Long recruitId,Integer type);
+    public Optional<ConfirmEntity> findByMemberIdAndRecruitIdAndApplyNot(String memberId,Long recruitId,int type);
 }

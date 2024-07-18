@@ -84,7 +84,30 @@
         .container-fluid {
             padding: 20px;
         }
+        .star {
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+        }
     </style>
+    <script th:inline="javascript">
+        // 점수 초기화 함수
+        function initializeStars(initialScore) {
+            for (let i = 1; i <= 5; i++) {
+                const star = document.getElementById(`star${i}`);
+                if (i <= initialScore) {
+                    star.src = /*[[@{/upload/filledScore.png}]]*/ '/upload/filledScore.png';  // 색이 칠해진 별 이미지
+                } else {
+                    star.src = /*[[@{/upload/emptyScore.png}]]*/ '/upload/emptyScore.png';   // 비어있는 별 이미지
+                }
+            }
+        }
+        // 초기 로드 시 점수를 설정
+        document.addEventListener("DOMContentLoaded", function() {
+            const initialScore = parseInt(document.getElementById('score').value, 10) || 0;
+            initializeStars(initialScore);
+        });
+    </script>
 </head>
 
 <body>
@@ -109,13 +132,19 @@
                         <div class="d-flex align-items-center mb-2">
                             <span th:text="${type}" class="badge bg-label-primary me-1" style="font-size: 1em; margin-right: 10px;"></span>
                             <a class="page-link" th:href="@{/recruit/favorits/{boardNum}/{target}(boardNum=${post.id},target=${member.id})}">
-                                <img th:if="${favoritecheck==0}" th:src="@{/img/favoritenoncheck.png}" width="30px">
-                                <img th:if="${favoritecheck==1}" th:src="@{/img/favoritecheck.png}" width="30px">
+                                <img th:if="${favoritecheck==0 and check!=1}" th:src="@{/img/favoritenoncheck.png}" width="30px">
+                                <img th:if="${favoritecheck==1 and check!=1}" th:src="@{/img/favoritecheck.png}" width="30px">
                             </a>
                         </div>
                         <h2 th:text="${post.title}" style="font-size: 3em;">제목
-
                         </h2>
+                        <div id="star-container">
+                            <img th:src="@{/upload/emptyScore.png}" class="star" onclick="rate(1)" id="star1" data-score="1" >
+                            <img th:src="@{/upload/emptyScore.png}" class="star" onclick="rate(2)" id="star2" data-score="2">
+                            <img th:src="@{/upload/emptyScore.png}" class="star" onclick="rate(3)" id="star3" data-score="3">
+                            <img th:src="@{/upload/emptyScore.png}" class="star" onclick="rate(4)" id="star4" data-score="4">
+                            <img th:src="@{/upload/emptyScore.png}" class="star" onclick="rate(5)" id="star5" data-score="5">
+                        </div>
                         <hr/>
                         <h4 th:text="${post.member.address}">주소</h4>
                         <hr/>
@@ -138,26 +167,27 @@
                             <img th:src="@{'/upload/image/'+${img.boardType}+'/'+${img.boardNum}+'/'+${img.name}}" style="max-width: 100%;">
                         </div>
                         <hr/>
-                         이력서를 작성하면 간편지원이 가능합니다!
-                        <hr/>
-                        <form th:action="@{/recruit/apply/{boardNum}(boardNum=${post.id})}" th:method="post">
-
-                            <button type="submit" class="btn btn-primary"> 간편 지원하기 </button>
+                        <form th:if="${applyCheck==1 and auth==1}" th:method="post" th:action="@{/recruitState/posts}">
+                            <input type="hidden" name="boardNum" th:value="${post.id}">
+                        <button class="btn btn-primary" type="submit">간편 지원하기</button>
                         </form>
+                        <div th:if="${applyCheck==2 and auth==1}"><button class="btn btn-secondary" type="button">지원함</button></div>
+                        <div th:if="${applyCheck==0 and auth==1}"><a class="btn btn-primary" th:href="@{/resume/posts/new}">이력서 작성하기</a></div>
+                        <hr/>
                     </div>
                     <!--/ Layout Demo -->
                 </div>
                 <!-- / Content -->
                 <div class="d-flex justify-content-end mb-3">
                     <form th:action="@{/recruitState/posts/apply/{recruitId}(recruitId=${post.id})}" th:method="get">
-                        <button class="btn btn-primary" type="submit">지원자 목록</button>
+                        <button class="btn btn-primary" type="submit" th:if="${check==1}">지원자 목록</button>
                     </form>
                     <form th:action="@{/recruit/posts/edit/{boardNum}(boardNum=${post.id})}" th:method="get">
-                        <button class="btn btn-primary" type="submit">수정하기</button>
+                        <button class="btn btn-primary" type="submit" th:if="${check==1}">수정하기</button>
                     </form>
                     <form th:action="@{/recruit/posts}" th:method="delete">
                         <input type="hidden" name="id" th:value="${post.id}">
-                        <button class="btn btn-primary" type="submit">삭제하기</button>
+                        <button class="btn btn-primary" type="submit" th:if="${check==1}">삭제하기</button>
                     </form>
                 </div>
                 <!-- Footer -->
@@ -174,9 +204,7 @@
         </div>
 
 
-        <div class="buy-now">
-            <a th:href="@{https://themeselection.com/products/sneat-bootstrap-html-admin-template/}" target="_blank" class="btn btn-danger btn-buy-now">Upgrade to Pro</a>
-        </div>
+
         <!-- Core JS -->
         <!-- build:js assets/vendor/js/core.js -->
         <script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>

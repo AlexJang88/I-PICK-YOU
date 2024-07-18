@@ -67,9 +67,10 @@
                             <div>
                                 <div class="d-flex align-items-center mb-2">
                                     <span th:text="${company.job}" style="font-size: 1.5em; margin-right: 10px;">사업자업종</span>
-                                    <a class="page-link" th:href="@{/educations/favorits/{boardNum}/{target}(boardNum=${post.id},target=${member.id})}" >
-                                        <img th:if="${favoritecheck==0}" th:src="@{/img/favoritenoncheck.png}" width="30px">
-                                        <img th:if="${favoritecheck==1}" th:src="@{/img/favoritecheck.png}" width="30px">
+                                    <span th:text="${favoriteCheck}"></span>
+                                    <a class="page-link" th:href="@{/educations/favorits/{boardNum}/{target}(boardNum=${post.id},target=${post.companyId})}" >
+                                        <img th:if="${favoriteCheck==0}" th:src="@{/img/favoritenoncheck.png}" width="30px">
+                                        <img th:if="${favoriteCheck==1}" th:src="@{/img/favoriteCheck.png}" width="30px">
                                     </a>
                                 </div>
                                 <h2 th:text="${company.companyName}" style="font-size: 3em;">회사 이름</h2>
@@ -94,11 +95,11 @@
                 <!-- / Content -->
                 <div class="d-flex justify-content-end mb-3">
                     <form th:action="@{/educations/posts/{boardNum}/edit(boardNum=${post.id})}" th:method="get">
-                        <button class="btn btn-primary" type="submit">수정하기</button>
+                        <button class="btn btn-primary" type="submit" th:if="${type==1}">수정하기</button>
                     </form>
                     <form th:action="@{/educations/posts/{boardNum(boardNum=${post.id})}}" th:method="delete">
                         <input type="hidden" name="id" th:value="${post.id}">
-                        <button class="btn btn-primary" type="submit">삭제하기</button>
+                        <button class="btn btn-primary" id="delete" type="submit" th:if="${type==1 or type==99}">삭제하기</button>
                     </form>
                 </div>
                 <!-- Footer -->
@@ -113,12 +114,6 @@
 </div>
 <!-- / Layout wrapper -->
 
-<div class="buy-now">
-    <a th:href="@{https://themeselection.com/products/sneat-bootstrap-html-admin-template/}"
-       target="_blank"
-       class="btn btn-danger btn-buy-now"
-    >Upgrade to Pro</a>
-</div>
 <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->
 <script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>

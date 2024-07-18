@@ -4,8 +4,11 @@ import com.project.pickyou.dto.ContractDTO;
 import com.project.pickyou.dto.PickDTO;
 import com.project.pickyou.dto.RecruitDTO;
 import com.project.pickyou.dto.RecruitDetailDTO;
+import com.project.pickyou.service.EducationService;
 import com.project.pickyou.service.RecruitService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -30,21 +33,24 @@ import java.util.Map;
 public class RecruitController {
     @Value("${contract.upload.path}")
     private String contactUploadPath;
+    private int type=6;
 
     private final RecruitService service;
+    private final EducationService educationService;
 
     @GetMapping("/posts")
     public String list(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, Principal principal,@RequestParam(value = "type",defaultValue = "1") int type){
-            System.out.println("====================pageNum"+pageNum);
-        System.out.println("====================type");
+        int mem=0;
         if(principal!=null) {
             model.addAttribute("memberId", principal.getName());
+           mem=educationService.authCheck(principal);
         }
+        model.addAttribute("auth",mem);
         service.AllPosts(model,pageNum,type);
         return "recruit/list";
     }
     @GetMapping("/posts/my")
-    public String mylist(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, Principal principal){
+    public  String mylist(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, Principal principal){
         String memberId="";
         if(principal!=null) {
             memberId= principal.getName();
@@ -54,11 +60,21 @@ public class RecruitController {
         return "recruit/myList";
     }
     @GetMapping("/posts/{boardNum}")
-    public String educationsContent(Model model,@PathVariable Long boardNum,Principal principal){
-        String sid ="";
+    public String educationsContent(HttpSession session, Model model, @PathVariable Long boardNum, Principal principal, HttpServletRequest request){
+        String sid="";
+        String ip=request.getHeader("X-FORWARDED-FOR");
+        if(ip==null){
+            ip=request.getRemoteAddr();
+        }
         if(principal!=null){
-                principal.getName();}
-        //principal.getName();
+            sid= principal.getName();
+        }else{
+            sid = ip;
+        }
+        if(session.getAttribute(sid+"_"+type+"_"+boardNum)==null){
+            service.updateReadCount(boardNum);
+            session.setAttribute(sid+"_"+type+"_"+boardNum,"true");
+        }
         service.post(model,boardNum,sid);
         return "recruit/content";
     }
@@ -89,12 +105,14 @@ public class RecruitController {
     @DeleteMapping("/posts")
     public String delete(@RequestParam(name = "id")Long id){
         service.deletePost(id,6);
-        return "redirect:/recruit/posts/all";
+        return "redirect:/recruit/posts";
     }
     //작성페이지이동
-    @GetMapping("/posts/write/{memberId}")
-    public String write(Model model,@PathVariable String memberId){
-        model.addAttribute("memberId",memberId);
+    @GetMapping("/posts/new")
+    public String write(Model model,Principal principal){
+        if(principal!=null) {
+            model.addAttribute("memberId", principal.getName());
+        }
         return "recruit/write";
     }
     //작성
@@ -105,7 +123,7 @@ public class RecruitController {
     ){
         int check=0;
         check = rdto.getStatus();
-        String url="redirect:/recruit/posts/all";
+        String url="redirect:/recruit/posts";
         if(check==2){
             //결제 페이지로 이동
             url="redirect:/recruit/posts";
@@ -130,7 +148,7 @@ public class RecruitController {
     public String checkFavoritecheck(@PathVariable Long boardNum,@PathVariable String target,Principal principal){
         String sid = "";
         if(principal!=null) {
-            principal.getName();
+            sid=principal.getName();
         }
         //principal.getName(); 로그인 적용후 번경
         PickDTO dto = new PickDTO();
@@ -142,13 +160,16 @@ public class RecruitController {
     }
     @PostMapping("/apply/{boardNum}")
     public String apply(@PathVariable Long boardNum,Principal principal){
+        int check=0;
         //로그인 처리후 세션으로 변경
         String sid = "";
         if(principal!=null) {
             principal.getName();
         }
         String url="redirect:/recruit/posts/"+boardNum;
-        if(service.recruit(boardNum,sid)==0){
+        check=service.recruit(boardNum,sid);
+
+        if(check==0){
             //추후에 이력서 등록페이지 만들어지면 url 바꿔야함
             url="redirect:/recruit/posts";
         }
@@ -181,23 +202,28 @@ public class RecruitController {
     @PostMapping("/contract/company/{stateId}")
     public String signature(@ModelAttribute ContractDTO dto,@PathVariable Long stateId){
         Long id=service.contract(dto,stateId);
-        String url = "redirect:/contract/sign/"+id;
+        String url = "redirect:/contract/"+id;
         return url;
     }
     @GetMapping("/contract/{contractId}")
     public String signatureMem(HttpServletResponse response,@PathVariable Long contractId,Model model,Principal principal){
-        //String id = principal.getName();
-        String id = "two";
+        String id = "";
+        if(principal!=null){
+            id= principal.getName();
+        }
         service.getContract(response,model,contractId,id);
 
         return"recruit/contractSign";
     }
 
     @PostMapping("/saveSignature")
-    public ResponseEntity<Map<String,String>> saveSignature(@RequestParam("signature") MultipartFile signature,@RequestParam("contractId") Long contractId) throws IOException{
+    public ResponseEntity<Map<String,String>> saveSignature(@RequestParam("signature") MultipartFile signature,@RequestParam("contractId") Long contractId,Principal principal) throws IOException{
 
         //시큐리티 세션으로 처리해야함
-        String sid = "two";
+        String sid = "";
+        if(principal!=null){
+            sid= principal.getName();
+        }
         Map<String,String> sign = service.saveSignature(signature,contractId,sid);
         return ResponseEntity.ok(sign);
     }

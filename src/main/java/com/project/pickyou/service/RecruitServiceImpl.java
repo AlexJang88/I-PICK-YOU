@@ -97,7 +97,7 @@ public class RecruitServiceImpl implements RecruitService {
 
         Sort sort = Sort.by(Sort.Order.desc("reg"));
 
-        Page<RecruitEntity> page = recruitJPA.findById(id,PageRequest.of(pageNum - 1, pageSize, sort));
+        Page<RecruitEntity> page = recruitJPA.findByMemberId(id,PageRequest.of(pageNum - 1, pageSize, sort));
 
         List<RecruitEntity> posts = page.getContent();
 
@@ -116,14 +116,13 @@ public class RecruitServiceImpl implements RecruitService {
         model.addAttribute("startPage", startPage);
         model.addAttribute("pageBlock", pageBlock);
         model.addAttribute("endPage", endPage);
-
-
-
-
     }
 
     @Override
     public void post(Model model, Long num, String sid) {
+        int check=0;
+        int auth=0;
+        int applyCheck=0;
         Optional<RecruitEntity> post = recruitJPA.findById(num);
         RecruitDTO edto = new RecruitDTO();
         CompanyInfoDTO cidto = new CompanyInfoDTO();
@@ -134,6 +133,23 @@ public class RecruitServiceImpl implements RecruitService {
         int favoritecheck = 0;
 
         if (post.isPresent()) {
+            if(post.get().getMemberId().equals(sid)){
+                check=1;
+            }
+            if(post.get().getMember().getAuth().contains("USER")){
+                auth=1;
+            } else if (post.get().getMember().getAuth().contains("COMPANY")) {
+                auth=2;
+            } else if (post.get().getMember().getAuth().contains("ADMIN")) {
+                auth=99;
+            }
+            if(resumeJPA.findByMemberIdAndRegType(sid,1).isPresent()){
+                applyCheck=1;
+                if(recruitStateJPA.countByMemberIdAndRecruitId(sid,num)>0){
+                    applyCheck=2;
+                }
+            }
+
             imageList = imageJPA.findByBoardTypeAndBoardNum(2, num);
             edto = post.get().toRecruitDTO();
             cidto = post.get().getMember().getCompanyInfo().toCompanyInfoDTO();
@@ -152,6 +168,11 @@ public class RecruitServiceImpl implements RecruitService {
             if (post.get().getStatus() == 2) {
                 type = "긴급";
             }
+            System.out.println("------------------applyCheck"+applyCheck);
+            System.out.println("------------------check"+check);
+            model.addAttribute("applyCheck",applyCheck);
+            model.addAttribute("auth",auth);
+            model.addAttribute("check",check);
             model.addAttribute("type", type);
             model.addAttribute("gender", gender);
             model.addAttribute("favoritecheck", favoritecheck);
@@ -263,15 +284,14 @@ public class RecruitServiceImpl implements RecruitService {
     }
 
     @Override
-    public void contractPDF(HttpServletResponse response,Long id) {
-        Optional<ContractEntity> con =contractJPA.findById(id);
+    public void contractPDF(HttpServletResponse response, Long id) {
+        Optional<ContractEntity> con = contractJPA.findById(id);
+
         // 미리 준비한 DTO 선언
         ItextPdfDto itextPdfDto = new ItextPdfDto();
-        // pdf 파일이 저장될 경로
-        itextPdfDto.setPdfFilePath(contactUploadPath+File.separator+id+File.separator);
 
-        // pdf 파일이 저장될 경로 ( Windows 기준 )
-        // itextPdfDto.setPdfFilePath("C:\\Users\\hyeok\\Desktop\\pdf");
+        // pdf 파일이 저장될 경로
+        itextPdfDto.setPdfFilePath(contactUploadPath + File.separator + id + File.separator);
 
         // pdf 파일명 ( 계약날짜로 생성 )
         itextPdfDto.setPdfFileName(con.get().getContractDate() + ".pdf");
@@ -279,49 +299,27 @@ public class RecruitServiceImpl implements RecruitService {
         // getHtml 에서 호출될 코드명
         itextPdfDto.setContractId(id);
 
-        // ======================= PDF 존재 유무 체크 =======================
-        // 없다면 PDF 파일 만들기
+        // PDF 존재 유무 체크, 없다면 PDF 파일 만들기
         File file = itextPdfUtil.checkPDF(itextPdfDto);
         int fileSize = (int) file.length();
-        // ===============================================================
 
-
-        // ===============================================================
         // 파일 다운로드를 위한 header 설정
-        /*response.setContentType("application/octet-stream");
-        response.setHeader("Content-Disposition", "attachment; filename="+itextPdfDto.getPdfFileName()+";");
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=" + itextPdfDto.getPdfFileName() + ";");
         response.setContentLengthLong(fileSize);
-        response.setStatus(HttpServletResponse.SC_OK);*/
-        // ===============================================================
+        response.setStatus(HttpServletResponse.SC_OK);
 
         // 파일 다운로드
-        BufferedInputStream in = null;
-        BufferedOutputStream out = null;
-
-        // PDF 파일을 버퍼에 담은 후 다운로드
-        try{
-            in = new BufferedInputStream(new FileInputStream(file));
-            out = new BufferedOutputStream(response.getOutputStream());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
+        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
+             BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream())) {
             byte[] buffer = new byte[4096];
-            int read = 0;
+            int read;
             while ((read = in.read(buffer)) != -1) {
                 out.write(buffer, 0, read);
             }
+            out.flush();
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            try {
-                in.close();
-                Objects.requireNonNull(out).flush();
-                out.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -482,6 +480,16 @@ public class RecruitServiceImpl implements RecruitService {
             cdto.setCompanyId(companyId);
             cdto.setApply(type);
             confirmJPA.save(cdto.toConfirmEntity());
+    }
+
+    @Override
+    public void updateReadCount(Long boardNum) {
+        Optional<RecruitEntity> oee = recruitJPA.findById(boardNum);
+        if(oee.isPresent()){
+            RecruitEntity re=oee.get();
+            re.setReadCount(re.getReadCount()+1);
+            recruitJPA.save(re);
+        }
     }
 
 

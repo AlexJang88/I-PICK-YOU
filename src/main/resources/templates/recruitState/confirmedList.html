@@ -94,8 +94,10 @@
                                     </td>
                                     <td>
                                         <!-- 채용취소 버튼 -->
-                                        <form th:action="@{/recruitState/posts/confirm/{memberId}/{recruitId}(memberId=${post.memberId},recruitId=${post.recruitId})}">
-                                        <button type="submit" class="btn btn-primary" >
+                                        <form th:action="@{/recruitState/posts}" th:method="patch">
+                                            <input type="hidden" name="boardNum" th:value="${post.recruitId}">
+                                            <input type="hidden" name="memberId" th:value="${post.memberId}">
+                                            <button type="submit" class="btn btn-primary" >
                                             채용 취소
                                         </button>
                                         </form>

@@ -47,6 +47,18 @@
 
     <!-- Template customizer & Theme config files -->
     <script src="../assets/js/config.js"></script>
+    <script>
+        function checkAuth(auth) {
+            if (auth != 2) {
+                var confirmLogin = confirm("사업자회원만 등록이 가능합니다. 사업자아이디로 로그인하시겠습니까?");
+                if (confirmLogin) {
+                    window.location.href = "/login";
+                }
+            } else {
+                window.location.href = "/teams/posts/new";
+            }
+        }
+    </script>
 </head>
 <body>
 <!-- Layout wrapper -->
@@ -67,10 +79,8 @@
                 <div class="container-fluid flex-grow-1 container-p-y">
                     <!-- Layout Demo -->
                     <div class="d-flex justify-content-end mb-3">
-                        <a class="btn btn-primary" sec:authorize="isAnonymous()"
-                           th:href="@{/login}">등록 하기</a>
-                        <a class="btn btn-primary" sec:authorize="isAuthenticated()"
-                           th:href="@{/teams/posts/write/{memberId}(memberId=${memberId})}">등록 하기</a>
+                        <a class="btn btn-primary" href="javascript:void(0);"
+                           th:onclick="'checkAuth(' + ${auth} + ');'">등록 하기</a>
                         <!--로그인 활성화 이후 eight랑 바꿀것 {memberId}(memberId=${memberId})-->
                     </div>
                     <div class="layout-demo-wrapper">
@@ -139,13 +149,7 @@
 </div>
 <!-- / Layout wrapper -->
 
-<div class="buy-now">
-    <a
-            href="https://themeselection.com/products/sneat-bootstrap-html-admin-template/"
-            target="_blank"
-            class="btn btn-danger btn-buy-now"
-    >Upgrade to Pro</a>
-</div>
+
 
 <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->

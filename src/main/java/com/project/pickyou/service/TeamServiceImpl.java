@@ -71,6 +71,7 @@ public class TeamServiceImpl implements TeamService{
 
     @Override
     public void post(Model model,Long num,String sid,int boardType) {
+        int type=0;
         Optional<TeamResumeEntity> post = teamJPA.findById(num);
         TeamResumeDTO tdto = new TeamResumeDTO();
         MemberDTO mdto = new MemberDTO();
@@ -78,6 +79,9 @@ public class TeamServiceImpl implements TeamService{
         int favoritecheck = 0;
 
         if (post.isPresent()) {
+            if(post.get().getMemberId().equals(sid)){
+                type=1;
+            }
             imageList = imageJPA.findByBoardTypeAndBoardNum(boardType, num);
             tdto = post.get().toTeam_ResumeDTO();
             mdto = post.get().getMember().toMemberDTO();
@@ -86,6 +90,7 @@ public class TeamServiceImpl implements TeamService{
             if (pickcheck.isPresent()) {
                 favoritecheck = 1;
             }
+            model.addAttribute("type",type);
             model.addAttribute("favoritecheck", favoritecheck);
             model.addAttribute("member", mdto);
             model.addAttribute("post", tdto);
@@ -223,5 +228,40 @@ public class TeamServiceImpl implements TeamService{
             dto.setStatus(1);
             teamJPA.save(dto.toTeam_ResumeEntity());
         }
+    }
+
+    @Override
+    public void MyPosts(Model model , String id,int boardType) {
+        Optional<TeamResumeEntity> post = teamJPA.findAllByMemberId(id);
+        TeamResumeDTO tdto = new TeamResumeDTO();
+        MemberDTO mdto = new MemberDTO();
+        List<ImageEntity> imageList = Collections.emptyList();
+        if (post.isPresent()) {
+            imageList = imageJPA.findByBoardTypeAndBoardNum(boardType, post.get().getId());
+
+            tdto = post.get().toTeam_ResumeDTO();
+            mdto = post.get().getMember().toMemberDTO();
+            System.out.println("========id"+post.get().getMemberId());
+            model.addAttribute("member", mdto);
+            model.addAttribute("post", post.get());
+            model.addAttribute("imgList", imageList);
+            model.addAttribute("check", 1);
+        }else{
+            model.addAttribute("check", 0);
+            model.addAttribute("memberId",id);
+            System.out.println("================id"+id);
+        }
+
+
+    }
+
+    @Override
+    public boolean checkMyPost(String id) {
+        boolean result=false;
+            Optional<TeamResumeEntity> check=teamJPA.findAllByMemberId(id);
+            if(check.isPresent()){
+                result=true;
+            }
+        return result;
     }
 }

@@ -90,10 +90,7 @@
                                                 th:text="'회사 주소 : '+${company.address}"></h5>
                                             <h5 class="card-title" th:if="${member!=null}"
                                                 th:text="'회원 이름 : '+${member.memberInfo.name}"></h5>
-                                            <h5 class="card-title" th:if="${member!=null}"
-<!--                                                th:text="'생년월일 : '+${#dates.format(member.memberInfo.birth,'yyyy-MM-dd')}"-->
-                                            ></h5>
-
+                                            <h5 class="card-title" th:if="${member!=null}"></h5>
                                         </div>
                                     </div>
                                 </div>
@@ -130,13 +127,6 @@
                             }
                         }
                     }
-
-                    // 점수를 설정하는 함수
-                    function rate(score) {
-                        document.getElementById('score').value = score;
-                        initializeStars(score);
-                    }
-
                     // 초기 로드 시 점수를 설정
                     document.addEventListener("DOMContentLoaded", function() {
                         const initialScore = parseInt(document.getElementById('score').value, 10) || 0;

@@ -10,6 +10,11 @@ import java.util.Optional;
 
 public interface RecruitStateJPARepository extends JpaRepository<RecruitStateEntity,Long> {
     public Optional<RecruitStateEntity> findByRecruitIdAndMemberId(Long boardNum,String id);
+    public Long countByRecruitId(Long id);
+    public Page<RecruitStateEntity> findByRecruitId(Long id,Pageable pageable);
     public Long countByRecruitIdAndMemberIdNotIn(Long recruitId,List<String> members);
     public Page<RecruitStateEntity> findByRecruitIdAndMemberIdNotIn(Long recruitId,List<String> members,Pageable page);
+    public Long countByMemberIdAndRecruitId(String member,Long num);
+    public Long countByMemberId(String member);
+    public Page<RecruitStateEntity> findByMemberId(String member,Pageable pageable);
 }
