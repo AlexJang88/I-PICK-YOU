@@ -34,9 +34,9 @@ public class MemberController {
         String prid = pc.getName();
         if (prid.equals(id)) {
             memberService.findUserInfo(id, model);//회원정보 담아서 쏘기
-            return "/mypage/myPage";
+            return "mypage/myPage";
         } else {
-            return "/login";   //없으면 로그인
+            return "login";   //없으면 로그인
         }
     }
 
@@ -47,7 +47,7 @@ public class MemberController {
 
         if(id.equals(prid)){
             model.addAttribute("id",id);
-            return "/mypage/DeleteUser";
+            return "mypage/DeleteUser";
         } else {
             return "/";
         }
@@ -68,9 +68,9 @@ public class MemberController {
         String prid = pc.getName();
         if (prid.equals(id)) {
             memberService.findUserInfo(id, model);//회원정보 담아서 쏘기
-            return "/mypage/companyMyPage";
+            return "mypage/companyMyPage";
         } else {
-            return "/login";   //없으면 로그인
+            return "login";   //없으면 로그인
         }
     }
     /*사업자유저 기준*/
@@ -84,9 +84,9 @@ public class MemberController {
         String prid = pc.getName();
         if (prid.equals(id)) {   //수정하기 버튼 누를때
             memberService.findUserInfo(id, model);//회원정보 담아서 쏘기
-            return "/mypage/userUpdate";
+            return "mypage/userUpdate";
         } else {
-            return "/login";   //없으면 로그인
+            return "login";   //없으면 로그인
         }
     }
 
@@ -110,9 +110,9 @@ public class MemberController {
         String prid = pc.getName();
         if (prid.equals(id)) {   //수정하기 버튼 누를때
             memberService.findUserInfo(id, model);//회원정보 담아서 쏘기
-            return "/mypage/companyUpdate";
+            return "mypage/companyUpdate";
         } else {
-            return "/login";   //없으면 로그인
+            return "login";   //없으면 로그인
         }
 
     }
@@ -138,6 +138,23 @@ public class MemberController {
         return "mypage/pointList";
     }
 
+    // 일반회원의 지원현황
+    @GetMapping("recruit/posts")
+    public String recruitStateList(Principal principal, Model model,
+                                   @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
+
+        memberService.userRecruitList(principal.getName(), pageNum, model);
+        return "mypage/recruitStateList";
+    }
+
+    // 유저입장에서 채용현황
+    @GetMapping("confirm/posts")
+    public String userConfirmList(Principal principal, Model model,
+                                   @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
+
+        memberService.confirmList(principal.getName(), pageNum, model);
+        return "mypage/userConfirmList";
+    }
 
 
 

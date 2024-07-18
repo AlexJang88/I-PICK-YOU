@@ -37,6 +37,8 @@ public class MemberServiceImpl implements MemberService {
         private final MemberInfoJAPRepository memberInfoJAPRepository;
         private final CompanyInfoJPARepository companyInfoJPARepository;
         private final PaymentJPARepository paymentJPA;
+        private final RecruitStateJPARepository recruitStateJPA;
+        private final ConfirmJPARepository confirmJPA;
 
 
         @Autowired
@@ -202,7 +204,7 @@ public class MemberServiceImpl implements MemberService {
 
     // 사업자 결제 내역
     @Override
-    public void ALlPosts(Model model, int pageNum, String memberId) {
+    public void paymentList(Model model, int pageNum, String memberId) {
         int pageSize = 10;
         int count = paymentJPA.countByMemberId(memberId);
 
@@ -211,6 +213,62 @@ public class MemberServiceImpl implements MemberService {
         Page<PaymentEntity> page = paymentJPA.findByMemberId(memberId, (Pageable) PageRequest.of(pageNum - 1, pageSize, sort));
 
         List<PaymentEntity> posts = page.getContent();
+
+        model.addAttribute("posts", posts);
+        model.addAttribute("count", count);
+        model.addAttribute("pageNum", pageNum);
+        model.addAttribute("pageSize", pageSize);
+        int pageCount = count / pageSize + (count % pageSize == 0 ? 0 : 1);
+        int startPage = (pageNum / 10) * 10 + 1;
+        int pageBlock = 10;   //페이징(이전/다음)을 몇개단위로 끊을지
+        int endPage = startPage + pageBlock - 1;
+        if (endPage > pageCount) {
+            endPage = pageCount;
+        }
+        model.addAttribute("pageCount", pageCount);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("pageBlock", pageBlock);
+        model.addAttribute("endPage", endPage);
+    }
+
+    // 회원의 지원현황 가져오기
+    @Override
+    public void userRecruitList(String memberId, int pageNum, Model model) {
+        int pageSize = 10;
+        int count = recruitStateJPA.countByMemberId(memberId);
+
+        Sort sort = Sort.by(Sort.Order.desc("reg"));
+
+        Page<RecruitStateEntity> page = recruitStateJPA.findByMemberId(memberId, (Pageable) PageRequest.of(pageNum - 1, pageSize, sort));
+
+        List<RecruitStateEntity> posts = page.getContent();
+
+        model.addAttribute("posts", posts);
+        model.addAttribute("count", count);
+        model.addAttribute("pageNum", pageNum);
+        model.addAttribute("pageSize", pageSize);
+        int pageCount = count / pageSize + (count % pageSize == 0 ? 0 : 1);
+        int startPage = (pageNum / 10) * 10 + 1;
+        int pageBlock = 10;   //페이징(이전/다음)을 몇개단위로 끊을지
+        int endPage = startPage + pageBlock - 1;
+        if (endPage > pageCount) {
+            endPage = pageCount;
+        }
+        model.addAttribute("pageCount", pageCount);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("pageBlock", pageBlock);
+        model.addAttribute("endPage", endPage);
+    }
+
+    // 유저 입장에서 채용현황 가져오기
+    @Override
+    public void confirmList(String memberId, int pageNum, Model model) {
+        int pageSize = 10;
+        int count = confirmJPA.countByMemberId(memberId);
+
+        Page<ConfirmEntity> page = confirmJPA.findByMemberId(memberId, (Pageable) PageRequest.of(pageNum - 1, pageSize));
+
+        List<ConfirmEntity> posts = page.getContent();
 
         model.addAttribute("posts", posts);
         model.addAttribute("count", count);

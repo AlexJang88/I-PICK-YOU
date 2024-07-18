@@ -4,7 +4,7 @@
       dir="ltr"
       th:data-theme="theme-default"
       th:data-assets-path="@{/assets/}"
-      th:data-template="vertical-menu-template-free">
+      th:data-template="vertical-menu-template-free" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
@@ -37,28 +37,39 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="d-flex" style="margin-left: auto;">
-                                <form th:action="@{/foodMap/posts/{boardNum}/check(boardNum=${foodMapInfo.id})}" th:method="post" style="margin-right: 10px;">
-                                    <input type="hidden" name="memberId" th:value="${foodMapInfo.memberId}" />
-                                    <input type="hidden" name="status" th:value="1" />
-                                    <input type="hidden" name="point" th:value="5000" />
+                                <div sec:authorize="hasRole('ROLE_ADMIN')" class="d-flex" style="gap: 0.3cm;">
+                                    <form th:action="@{/foodMap/posts/{boardNum}/check(boardNum=${foodMapInfo.id})}" th:method="post" style="margin-right: 10px;" id="checkForm">
+                                        <input type="hidden" name="memberId" th:value="${foodMapInfo.memberId}" />
+                                        <input type="hidden" name="status" th:value="1" />
+                                        <input type="hidden" name="point" th:value="5000" />
 
-                                    <input type="hidden" name="id" th:value="${foodMapInfo.id}" />
-                                    <input type="hidden" name="title" th:value="${foodMapInfo.title}" />
-                                    <input type="hidden" name="content" th:value="${foodMapInfo.content}" />
-                                    <input type="hidden" name="map" th:value="${foodMapInfo.map}" />
-                                    <input type="hidden" name="ref" th:value="${foodMapInfo.ref}" />
-                                    <input type="hidden" name="reply" th:value="${foodMapInfo.reply}" />
-                                    <input type="hidden" name="readCount" th:value="${foodMapInfo.readCount}" />
-                                    <input type="hidden" name="reg" th:value="${foodMapInfo.reg}" />
-                                    <button class="btn btn-primary" type="submit">인증하기</button>
-                                </form>
-                                <form th:action="@{/foodMap/posts/{boardNum}/edit(boardNum=${foodMapInfo.id})}" th:method="get" style="margin-right: 10px;">
-                                    <button class="btn btn-primary" type="submit">글수정</button>
-                                </form>
-                                <form th:action="@{/foodMap/posts/{boardNum}(boardNum=${foodMapInfo.id})}" th:method="post">
-                                    <input type="hidden" name="_method" value="delete"/>
-                                    <button type="submit" class="btn btn-primary">글삭제</button>
-                                </form>
+                                        <input type="hidden" name="id" th:value="${foodMapInfo.id}" />
+                                        <input type="hidden" name="title" th:value="${foodMapInfo.title}" />
+                                        <input type="hidden" name="content" th:value="${foodMapInfo.content}" />
+                                        <input type="hidden" name="map" th:value="${foodMapInfo.map}" />
+                                        <input type="hidden" name="ref" th:value="${foodMapInfo.ref}" />
+                                        <input type="hidden" name="reply" th:value="${foodMapInfo.reply}" />
+                                        <input type="hidden" name="readCount" th:value="${foodMapInfo.readCount}" />
+                                        <input type="hidden" name="reg" th:value="${foodMapInfo.reg}" />
+                                        <button class="btn btn-primary" type="button" onclick="confirmCheck()">인증하기</button>
+                                    </form>
+
+                                    <form th:action="@{/foodMap/posts/{boardNum}(boardNum=${foodMapInfo.id})}" th:method="post" id="deleteForm1">
+                                        <input type="hidden" name="_method" value="delete"/>
+                                        <button type="button" class="btn btn-danger" onclick="confirmDelete1()">글삭제</button>
+                                    </form>
+                                </div>
+
+                                <div th:if="${sessionId == foodMapInfo.memberId}" class="d-flex" style="gap: 0.3cm;">
+                                    <form th:action="@{/foodMap/posts/{boardNum}/edit(boardNum=${foodMapInfo.id})}" th:method="get" style="margin-right: 10px;">
+                                        <button class="btn btn-primary" type="submit">글수정</button>
+                                    </form>
+
+                                    <form th:action="@{/foodMap/posts/{boardNum}(boardNum=${foodMapInfo.id})}" th:method="post" id="deleteForm2">
+                                        <input type="hidden" name="_method" value="delete"/>
+                                        <button type="button" class="btn btn-danger" onclick="confirmDelete2()">글삭제</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
 
@@ -84,19 +95,21 @@
                                     </td>
                                 </tr>
 
-                                <tr>
-                                    <td colspan="2">
-                                        <div class="card-header d-flex justify-content-between align-items-center">
-                                            <div class="d-flex ml-auto">
-                                                <form th:action="@{/foodMap/posts/{boardNum}/ref(boardNum=${foodMapInfo.ref})}" th:method="post" class="form-inline" enctype="multipart/form-data">
-                                                    <textarea name="content" class="form-control mr-2"></textarea>
-                                                    <input type="file" name="files" class="form-control" multiple="multiple" />
-                                                    <button type="submit" class="btn btn-primary">댓글작성</button>
-                                                </form>
+                                <div sec:authorize="isAuthenticated()"> <!-- 비로그인시 버튼안보임 -->
+                                    <tr>
+                                        <td colspan="2">
+                                            <div class="card-header d-flex justify-content-between align-items-center">
+                                                <div class="d-flex ml-auto">
+                                                    <form th:action="@{/foodMap/posts/{boardNum}/ref(boardNum=${foodMapInfo.ref})}" th:method="post" class="form-inline" enctype="multipart/form-data">
+                                                        <textarea name="content" class="form-control mr-2"></textarea>
+                                                        <input type="file" name="files" class="form-control" multiple="multiple" />
+                                                        <button type="submit" class="btn btn-primary">댓글작성</button>
+                                                    </form>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                </tr>
+                                        </td>
+                                    </tr>
+                                </div>
 
                                 <tr>
                                     <td colspan="5" style="height: 50px;"></td>
@@ -114,8 +127,9 @@
                                     </td>
                                 </tr>
                                 </thead>
+
                                 <tbody class="table-border-bottom-0">
-                                <tr th:each="ref : ${refList}" th:class="${ref.id} != ${ref.reply} ? 'indent' : ''">
+                                <tr th:each="ref : ${refList}" th:class="${ref.id} != ${ref.reply} ? 'indent' : ''" th:style="${ref.reply == ref.id} ? 'padding-left: 20px;' : ''">
                                     <td th:text="${ref.memberId}"></td>
                                     <td th:text="${ref.content}"></td>
                                     <td>
@@ -128,7 +142,9 @@
                                     <td th:text="${#dates.format(ref.reg, 'yyyy-MM-dd')}" class="text-end"></td>
                                     <td>
                                         <form th:action="@{/foodMap/posts/{boardNum}/reply(boardNum=${ref.reply})}" th:method="post" class="form-inline" enctype="multipart/form-data">
-                                            <button type="button" class="btn btn-primary showFormButton">답글작성</button>
+                                            <div sec:authorize="isAuthenticated()">
+                                                <button type="button" class="btn btn-primary showFormButton">답글작성</button>
+                                            </div>
                                             <div class="formElements hidden">
                                                 <div class="input-group">
                                                     <span class="input-group-text" th:text="'@' + ${ref.memberId} + ' : '"></span>
@@ -140,6 +156,7 @@
                                                 <input type="hidden" name="ref" th:value="${ref.ref}" />
                                                 <input type="hidden" name="title" th:value="${ref.title}" />
                                                 <input type="hidden" name="map" th:value="${ref.map}" />
+                                                <input type="hidden" name="foodMapNum" th:value="${foodMapInfo.id}" />
                                                 <button type="submit" class="btn btn-primary">답글작성</button>
                                             </div>
                                         </form>
@@ -156,12 +173,6 @@
         </div>
     </div>
     <div class="layout-overlay layout-menu-toggle"></div>
-</div>
-
-<div class="buy-now">
-    <a href="https://themeselection.com/products/sneat-bootstrap-html-admin-template/" target="_blank" class="btn btn-danger btn-buy-now">
-        Upgrade to Pro
-    </a>
 </div>
 
 <script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
@@ -182,6 +193,30 @@
             });
         });
     });
+</script>
+
+<script type="text/javascript">
+    function confirmCheck() {
+        if (confirm("인증하시겠습니까?")) {
+            document.getElementById('checkForm').submit();
+        }
+    }
+</script>
+
+<script type="text/javascript">
+    function confirmDelete1() {
+        if (confirm("글을 삭제하시겠습니까?")) {
+            document.getElementById('deleteForm1').submit();
+        }
+    }
+</script>
+
+<script type="text/javascript">
+    function confirmDelete2() {
+        if (confirm("글을 삭제하시겠습니까?")) {
+            document.getElementById('deleteForm2').submit();
+        }
+    }
 </script>
 
 <style>

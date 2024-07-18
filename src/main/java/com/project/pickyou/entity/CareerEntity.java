@@ -14,7 +14,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @DynamicInsert
 @DynamicUpdate
 @Table(name = "career")
-@IdClass(CareerEntity.class)
+@IdClass(CareerID.class)
 public class CareerEntity {
     @Id
     @Column(name = "resume_id")
@@ -22,6 +22,12 @@ public class CareerEntity {
 
     @Id
     private String name;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "resume_id")
+    private ResumeEntity resume;
+
 
     @Builder
     public CareerEntity(Long resumeId,String name){

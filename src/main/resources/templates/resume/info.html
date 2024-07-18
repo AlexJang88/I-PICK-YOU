@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/"
+      data-template="vertical-menu-template-free" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
@@ -58,114 +60,196 @@
                     </h2>
                     <!-- Basic Bootstrap Table -->
                     <div class="card mb-4">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <div class="ml-auto d-flex">
-                                <div th:if="${sessionId == resumeInfo.memberId}">
-                                    <form th:action="@{/resume/posts/{num}/edit(num=${resumeInfo.id})}" class="me-2">
-                                        <button class="btn btn-primary" type="submit">글수정</button>
-                                    </form>
+                        <div class="card-header d-flex justify-content-end align-items-center">
 
-                                    <form th:action="@{/resume/posts/{num}(num=${resumeInfo.id})}" th:method="post">
+                            <!-- 사업자만 보이게 -->
+                            <div sec:authorize="hasRole('ROLE_COMPANY')" class="d-flex" style="gap: 0.3cm;">
+                                <form id="hireForm" th:action="@{/recruit/contract/{memberId}/0(memberId=${resumeInfo.memberId})}" class="me-2" th:method="get">
+                                    <input type="hidden" id="typeInput" name="type" value="">
+                                    <button class="btn btn-primary" type="button" onclick="showCustomModal()">채용하기</button>
+                                </form>
+                            </div>
+
+                            <!-- Custom Modal -->
+                            <div id="customModal" class="modal" style="display: none;">
+                                <div class="modal-content">
+                                    <p>계약서를 작성하시겠습니까?</p>
+                                    <button class="btn btn-primary" onclick="submitForm(1)">계약서작성</button>
+                                    <button class="btn btn-secondary" onclick="submitForm(2)">현장작성</button>
+                                    <button class="btn btn-light" onclick="closeModal()">취소</button>
+                                </div>
+                            </div>
+
+                            <!-- -->
+                            <div th:if="${sessionId == resumeInfo.memberId}" class="d-flex" style="gap: 0.3cm;">
+                                <form th:action="@{/resume/posts/{num}/edit(num=${resumeInfo.id})}" class="me-2">
+                                    <button class="btn btn-primary" type="submit">글수정</button>
+                                </form>
+
+                                    <form th:action="@{/resume/posts/{num}(num=${resumeInfo.id})}" th:method="post" id="deleteForm1">
                                         <input type="hidden" name="_method" value="delete"/>
-                                        <button type="submit" class="btn btn-danger">글삭제</button>
+                                        <button type="button" class="btn btn-danger" onclick="confirmDelete1()">글삭제</button>
                                     </form>
                                 </div>
+
+                            <div sec:authorize="hasRole('ROLE_ADMIN')" class="d-flex" style="gap: 0.3cm;">
+                                <form th:action="@{/resume/posts/{num}(num=${resumeInfo.id})}" th:method="post" id="deleteForm2">
+                                    <input type="hidden" name="_method" value="delete"/>
+                                    <button type="button" class="btn btn-danger" onclick="confirmDelete2()">글삭제</button>
+                                </form>
                             </div>
                         </div>
 
                         <div class="card-body">
                             <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <h5 th:text="${resumeInfo.member.memberInfo.name}"></h5>
+                                <div class="col-md-3">
+                                    <!-- 이미지 삽입 -->
+                                    <img th:src="@{'/kjwupload/profile/' + ${resumeInfo.member.profile} }" class="img-fluid" alt="사진" style="width: 150px; height: 150px;" />
                                 </div>
-                                <div class="col-md-6">
-                                    <h5 th:text="${genderAge}"></h5>
+                                <div class="col-md-9 d-flex align-items-center">
+                                    <div style="width: 100%;">
+                                        <ul style="list-style-type: disc; padding-left: 20px; font-size: 1.2rem;">
+                                            <li style="margin-bottom: 10px;" th:text="${resumeInfo.member.memberInfo.name}"></li>
+                                            <li style="margin-bottom: 10px;" th:text="${genderAge}"></li>
+                                            <li style="margin-bottom: 10px;" th:text="${address}"></li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <h5>현위치: <span th:text="${address}"></span></h5>
-                                </div>
-                            </div>
+
                             <hr/>
-                            <h4>경력사항</h4>
+
+                            <h3 style="text-align: center;">경력사항</h3>
                             <div class="row mb-3">
                                 <div class="col-md-12">
-                                    <h5>직종:</h5>
-                                    <ul class="list-unstyled mb-0">
-                                        <li th:each="job : ${jobInfo}" th:text="${job.name}"></li>
+                                    <h5>직종</h5>
+                                    <ul class="list-unstyled mb-0" style="padding-left: 20px; list-style-type: disc;">
+                                        <li th:each="job : ${jobInfo}" th:text="${job.name}" style="margin-left: 20px;"></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <h5>경력</h5>
+                                    <ul class="list-unstyled mb-0" style="padding-left: 20px; list-style-type: disc;">
+                                        <li th:text="${careerInfo.name}" style="margin-left: 20px;"></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <h5>희망급여</h5>
+                                    <ul class="list-unstyled mb-0" style="padding-left: 20px; list-style-type: disc;">
+                                        <li style="margin-left: 20px;">
+                                            <span class="fw-bold" th:text="${resumeInfo.wage}"></span> 원
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <hr/>
+
+                            <h3 style="text-align: center;">개인정보</h3>
+
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <h5>연락처</h5>
+                                    <ul class="list-unstyled mb-0" style="padding-left: 20px; list-style-type: disc;">
+                                        <li style="margin-left: 20px;">
+                                            <span th:text="${resumeInfo.member.phone}"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <h5>키 / 체중</h5>
+                                    <ul class="list-unstyled mb-0" style="padding-left: 20px; list-style-type: disc;">
+                                        <li style="margin-left: 20px;">
+                                            <span th:text="${resumeInfo.member.memberInfo.height}"></span> / <span th:text="${resumeInfo.member.memberInfo.weight}"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <h5>건강정보</h5>
+                                    <ul class="list-unstyled mb-0" style="padding-left: 20px; list-style-type: disc;">
+                                        <li style="margin-left: 20px;">
+                                            <span th:text="${resumeInfo.member.memberInfo.health}"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <hr/>
+
+                            <h3 style="text-align: center;">희망 근무지</h3>
+
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <h5>희망지역</h5>
+                                    <ul class="list-unstyled mb-0" style="padding-left: 20px; list-style-type: disc;">
+                                        <li style="margin-left: 20px;">
+                                            <span th:text="${resumeInfo.local}"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <hr/>
+
+                            <h3 style="text-align: center;">자기소개서</h3>
+
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <h5>나의 각오</h5>
+                                    <ul class="list-unstyled mb-0" style="padding-left: 20px; list-style-type: disc;">
+                                        <li style="margin-left: 20px;">
+                                            <span th:text="${resumeInfo.introduction}"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <hr/>
+
+                            <h3 style="text-align: center;">자격증</h3>
+
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <h5>이수증</h5>
+                                    <ul class="list-unstyled mb-0" style="padding-left: 20px; list-style-type: disc;">
+                                        <li th:each="certification : ${certificationInfo}" th:text="${certification.name}" style="margin-left: 20px;"></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <hr/>
+
+                            <h3 style="text-align: center;">면허증, 보유장비</h3>
+
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <h5>면허증</h5>
+                                    <ul class="list-unstyled mb-0" style="padding-left: 20px; list-style-type: disc;">
+                                        <li th:each="licence : ${licenceInfo}" th:text="${licence.name}" style="margin-left: 20px;"></li>
                                     </ul>
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <div class="col-md-12">
-                                    <h5>경력: <span th:text="${careerInfo.name}"></span></h5>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <h5>희망급여: <span class="fw-bold" th:text="${resumeInfo.wage}"></span> 원</h5>
-                                </div>
-                            </div>
-                            <hr/>
-                            <h4>개인정보</h4>
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <h5>연락처: <span th:text="${resumeInfo.member.phone}"></span></h5>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <h5>키: <span th:text="${resumeInfo.member.memberInfo.height}"></span></h5>
-                                </div>
-                                <div class="col-md-6">
-                                    <h5>체중: <span th:text="${resumeInfo.member.memberInfo.weight}"></span></h5>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <h5>건강정보: <span th:text="${resumeInfo.member.memberInfo.health}"></span></h5>
-                                </div>
-                            </div>
-                            <hr/>
-                            <h4>희망 근무지</h4>
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <h5>희망지역: <span th:text="${resumeInfo.local}"></span></h5>
-                                </div>
-                            </div>
-                            <hr/>
-                            <h4>자기소개서</h4>
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <h5>나의 각오: <span th:text="${resumeInfo.introduction}"></span></h5>
-                                </div>
-                            </div>
-                            <hr/>
-                            <h4># 자격증</h4>
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <ul class="list-unstyled mb-0">
-                                        <li th:each="certification : ${certificationInfo}" th:text="${certification.name}"></li>
+                                    <h5>보유장비</h5>
+                                    <ul class="list-unstyled mb-0" style="padding-left: 20px; list-style-type: disc;">
+                                        <li th:each="equipment : ${equipmentInfo}" th:text="${equipment.name}" style="margin-left: 20px;"></li>
                                     </ul>
                                 </div>
                             </div>
-                            <hr/>
-                            <h4># 면허증, 보유장비</h4>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <h5>면허증:</h5>
-                                    <ul class="list-unstyled mb-0">
-                                        <li th:each="licence : ${licenceInfo}" th:text="${licence.name}"></li>
-                                    </ul>
-                                </div>
-                                <div class="col-md-6">
-                                    <h5>보유장비:</h5>
-                                    <ul class="list-unstyled mb-0">
-                                        <li th:each="equipment : ${equipmentInfo}" th:text="${equipment.name}"></li>
-                                    </ul>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
 
@@ -187,10 +271,6 @@
 
 <div class="content-backdrop fade"></div>
 
-<div class="buy-now">
-    <a href="https://themeselection.com/products/sneat-bootstrap-html-admin-template/" target="_blank" class="btn btn-danger btn-buy-now">Upgrade to Pro</a>
-</div>
-
 <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->
 <script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
@@ -210,5 +290,68 @@
 
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+<script type="text/javascript">
+    function confirmDelete1() {
+        if (confirm("글을 삭제하시겠습니까?")) {
+            document.getElementById('deleteForm1').submit();
+        }
+    }
+</script>
+
+<script type="text/javascript">
+    function confirmDelete2() {
+        if (confirm("글을 삭제하시겠습니까?")) {
+            document.getElementById('deleteForm2').submit();
+        }
+    }
+</script>
+
+<script>
+    function showCustomModal() {
+        document.getElementById('customModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('customModal').style.display = 'none';
+    }
+
+    function submitForm(type) {
+        document.getElementById('typeInput').value = type;
+        document.getElementById('hireForm').submit();
+    }
+</script>
+
+<style>
+    /* Modal styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4);
+        padding-top: 60px;
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 300px;
+        text-align: center;
+    }
+
+    .modal-content button {
+        margin: 5px;
+    }
+</style>
+
 </body>
 </html>

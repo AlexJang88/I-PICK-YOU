@@ -38,6 +38,9 @@
     <!-- Helpers -->
     <script th:src="@{/assets/vendor/js/helpers.js}"></script>
 
+    <!--주소-->
+    <script th:src="@{'//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js'}"></script>
+
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script th:src="@{/assets/js/config.js}"></script>
@@ -465,10 +468,14 @@
                                                 </tr>
 
                                                 <tr>
+
                                                     <td class="py-3">
-                                                        <h4 class="text-light fw-semibold d-block">희망지역</h4>
+                                                        <h4 class="text-light fw-semibold d-block">희망 지역</h4>
                                                         <div class="mb-3">
-                                                            <input type="text" class="form-control" id="local" name="local" th:value="${resumeInfo.local}" required>
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control" id="address" name="address" th:value="${resumeInfo.local}" required>
+                                                                <button type="button" id="addressButton" class="btn btn-primary">주소 검색</button>
+                                                            </div>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -580,12 +587,14 @@
                                                         <div class="form-group"> <!-- 일급 입력 필드 그룹 -->
                                                             <h4 class="text-light fw-semibold d-block">일급</h4>
                                                             <div class="input-group">
-                                                                <input type="number" class="form-control" id="wage" th:value="${resumeInfo.wage}" name="wage">
+                                                                <input type="text" class="form-control" id="wage" name="wage" th:value="${resumeInfo.wage}" required maxlength="9"
+                                                                       oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                                                                 <span class="input-group-text">원</span>
                                                             </div>
                                                         </div>
                                                     </td>
                                                 </tr>
+
                                                 <tr>
                                                     <td>
                                                         <button type="submit" class="btn btn-primary float-end">Send</button>
@@ -622,13 +631,6 @@
 </div>
 <!-- / Layout wrapper -->
 
-<div class="buy-now">
-    <a href="https://themeselection.com/products/sneat-bootstrap-html-admin-template/"
-       target="_blank"
-       class="btn btn-danger btn-buy-now"
-    >Upgrade to Pro</a>
-</div>
-
 <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->
 <script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
@@ -648,5 +650,21 @@
 
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+<!--주소-->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('addressButton').addEventListener('click', function () {
+            new daum.Postcode({
+                oncomplete: function (data) {
+                    // 사용자가 주소를 선택했을 때 실행되는 함수
+                    var fullAddress = data.address; // 전체 주소
+                    document.getElementById('address').value = fullAddress; // 주소 입력 필드에 값 설정
+                }
+            }).open();
+        });
+    });
+</script>
+
 </body>
 </html>

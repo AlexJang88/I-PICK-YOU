@@ -41,8 +41,14 @@ public class QaController {
     // qa 글쓰기 pro
     @PostMapping("/posts")
     public String qaWritePro(QaDTO dto, Principal principal) {
-        String memberId = principal.getName();
-        dto.setMemberId(memberId);
+        String memberId="";
+
+        if(principal!=null) {
+            memberId = principal.getName();
+            dto.setMemberId(memberId);
+        }
+
+
         // qa insert
         qaService.qaInsert(dto);
         return "redirect:/qa/posts";
@@ -52,8 +58,14 @@ public class QaController {
     @GetMapping("/posts/{ref}")
     public String qaInfoRef(Model model, @PathVariable int ref, HttpSession session, Principal principal) {
 
-        String sid = principal.getName();
-        model.addAttribute("sid", sid);
+        String memberId="";
+
+        if(principal!=null) {
+            String sid = principal.getName();
+            model.addAttribute("sid", sid);
+        }
+
+
 
        // System.out.println(sid+" : ----------------------------------------------------------");
         // qa 댓글 유무
