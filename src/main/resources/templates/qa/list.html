@@ -198,15 +198,6 @@
 </div>
 <!-- / Layout wrapper -->
 
-<div class="buy-now">
-    <a
-            href="https://themeselection.com/products/sneat-bootstrap-html-admin-template/"
-            target="_blank"
-            class="btn btn-danger btn-buy-now"
-    >Upgrade to Pro</a
-    >
-</div>
-
 <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->
 <script src="../assets/vendor/libs/jquery/jquery.js"></script>
@@ -228,27 +219,3 @@
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 </body>
 </html>
-
-
-<!--
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>게시판</title>
-</head>
-<body>
-<form th:action="@{/qa/write}" method="get">
-    <div th:each="qa : ${qaList}">
-        <div>
-            <h1 th:text="${qa.id}"></h1>
-            <h1 th:text="${qa.memberId}"></h1>
-            <h1 th:text="${qa.title}"></h1>
-            <h1 th:text="${#dates.format(qa.reg, 'yyyy-MM-dd')}"></h1>
-        </div>
-    </div>
-    <input type="submit" value="글쓰기">
-</form>
-</body>
-</html>
--->

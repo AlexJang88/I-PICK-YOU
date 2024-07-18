@@ -138,6 +138,23 @@ public class MemberController {
         return "mypage/pointList";
     }
 
+    // 일반회원의 지원현황
+    @GetMapping("recruit/posts")
+    public String recruitStateList(Principal principal, Model model,
+                                   @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
+
+        memberService.userRecruitList(principal.getName(), pageNum, model);
+        return "mypage/recruitStateList";
+    }
+
+    // 유저입장에서 채용현황
+    @GetMapping("confirm/posts")
+    public String userConfirmList(Principal principal, Model model,
+                                   @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
+
+        memberService.confirmList(principal.getName(), pageNum, model);
+        return "mypage/userConfirmList";
+    }
 
 
 

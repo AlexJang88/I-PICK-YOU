@@ -4,6 +4,7 @@ import com.project.pickyou.entity.RecruitStateEntity;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -14,6 +15,7 @@ public class RecruitStateDTO {
     private Long id;
     private String memberId;
     private Long recruitId;
+    @DateTimeFormat(pattern = "yy-MM-dd")
     private Date reg;
 
     @Builder
@@ -25,7 +27,6 @@ public class RecruitStateDTO {
         this.reg = reg;
 
     }
-
 
     public RecruitStateEntity toRecruitStateEntity() {
         return RecruitStateEntity.builder()

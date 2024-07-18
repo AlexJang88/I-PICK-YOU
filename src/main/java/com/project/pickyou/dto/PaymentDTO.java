@@ -1,8 +1,10 @@
 package com.project.pickyou.dto;
 
+import com.project.pickyou.entity.PaymentEntity;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -15,6 +17,7 @@ public class PaymentDTO {
     private int point;
     private String title;
     private int pointHistory;
+    @DateTimeFormat(pattern = "yy-MM-dd")
     private Date reg;
 
     @Builder
@@ -27,5 +30,17 @@ public class PaymentDTO {
         this.title=title;
         this.pointHistory=pointHistory;
         this.reg=reg;
+    }
+
+    public PaymentEntity toPaymentEntity() {
+        return PaymentEntity.builder()
+                .id(this.id)
+                .memberId(this.memberId)
+                .money(this.money)
+                .point(this.point)
+                .title(this.title)
+                .pointHistory(pointHistory)
+                .reg(this.reg)
+                .build();
     }
 }

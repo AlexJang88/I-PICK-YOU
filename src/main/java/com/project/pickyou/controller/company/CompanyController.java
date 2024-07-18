@@ -20,7 +20,7 @@ public class CompanyController {
     public String posts(Model model, Principal principal,
                         @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
 
-        memberService.ALlPosts(model, pageNum, principal.getName());
+        memberService.paymentList(model, pageNum, principal.getName());
         return "mypage/paymentList";
     }
 }

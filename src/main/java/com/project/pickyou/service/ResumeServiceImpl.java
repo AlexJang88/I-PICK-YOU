@@ -5,6 +5,9 @@ import com.project.pickyou.entity.*;
 import com.project.pickyou.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -24,6 +27,7 @@ public class ResumeServiceImpl implements ResumeService {
     private final LicenceJPARepository licenceJPA;
     private final EquipmentJPARepository equipmentJPA;
     private final CertificationJPARepository certificationJPA;
+    private final ConfirmJPARepository comfirmJPA;
 
     // 이력서 리스트 가져오기
     @Override
@@ -93,6 +97,7 @@ public class ResumeServiceImpl implements ResumeService {
         if (resumeEntity.isPresent()) {
             ResumeEntity resumeInfo = resumeEntity.get();
             model.addAttribute("resumeInfo", resumeInfo);
+
 
             // 생년월일에 맞게 나이로 바꾸는 코드
             String birthdayString = resumeInfo.getMember().getMemberInfo().getBirth();
@@ -228,6 +233,78 @@ public class ResumeServiceImpl implements ResumeService {
             dto.setName(certificationName);
             certificationJPA.save(dto.toCertificationEntity());
         }
+    }
+
+    // 이력서 공개인 리스트
+    @Override
+    public void AllPosts(Model model, int pageNum) {
+        int pageSize = 9;
+
+        int count = resumeJPA.countByRegType(1);
+
+        Sort sort = Sort.by(Sort.Order.desc("reg"));
+
+        Page<ResumeEntity> page = resumeJPA.findAllByRegType(1, PageRequest.of(pageNum - 1, pageSize, sort));
+
+        List<ResumeEntity> posts = page.getContent();
+
+        List<String> jobName = new ArrayList<>();
+        List<String> careerName = new ArrayList<>();
+        List<String> genderAges = new ArrayList<>();
+
+        for (ResumeEntity post : posts) {
+
+            // Job names 리스트에 추가
+            for (JobEntity job : post.getJob()) {
+                jobName.add(job.getName());
+            }
+
+
+            // Career name 추가
+            if (post.getCareer() != null) {
+                careerName.add(post.getCareer().getName());
+            }
+
+            // 생년월일에 맞게 나이로 바꾸는 코드
+            String birthdayString = post.getMember().getMemberInfo().getBirth();
+            LocalDate birthday = LocalDate.parse(birthdayString);
+            int currentYear = LocalDate.now().getYear();
+            int birthYear = birthday.getYear();
+            int age = currentYear - birthYear;
+
+            // 성별
+            int genderNum = post.getMember().getMemberInfo().getGender();
+            String gender = getGender(genderNum);
+
+            // 성별 + 나이
+            String ageStr = String.valueOf(age);
+            String genderAge = gender + "    " + ageStr + "  세";
+            genderAges.add(genderAge); // genderAges 리스트에 추가
+        }
+
+        model.addAttribute("genderAges", genderAges);
+
+        model.addAttribute("posts", posts);
+        model.addAttribute("count", count);
+        model.addAttribute("pageNum", pageNum);
+        model.addAttribute("pageSize", pageSize);
+        int pageCount = count / pageSize + (count % pageSize == 0 ? 0 : 1);
+        int startPage = (pageNum / 10) * 10 + 1;
+        int pageBlock = 10;   //페이징(이전/다음)을 몇개단위로 끊을지
+        int endPage = startPage + pageBlock - 1;
+        if (endPage > pageCount) {
+            endPage = pageCount;
+        }
+        model.addAttribute("pageCount", pageCount);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("pageBlock", pageBlock);
+        model.addAttribute("endPage", endPage);
+    }
+
+    // 사업자 입장에서 이력서보고 채용 (인서트)
+    @Override
+    public void confirmInsert(ConfirmDTO dto) {
+        comfirmJPA.save(dto.toConfirmEntity());
     }
 
     // 성별

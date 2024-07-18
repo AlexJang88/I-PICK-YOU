@@ -1,5 +1,6 @@
 package com.project.pickyou.entity;
 
+import com.project.pickyou.dto.PaymentDTO;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,5 +34,17 @@ public class PaymentEntity {
         this.title=title;
         this.pointHistory=pointHistory;
         this.reg=reg;
+    }
+
+    public PaymentDTO paymentDTO() {
+        return PaymentDTO.builder()
+                .id(this.id)
+                .memberId(this.memberId)
+                .money(this.money)
+                .point(this.point)
+                .title(this.title)
+                .pointHistory(pointHistory)
+                .reg(this.reg)
+                .build();
     }
 }
