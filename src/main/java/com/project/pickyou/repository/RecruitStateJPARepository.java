@@ -10,12 +10,13 @@ import java.util.Optional;
 
 public interface RecruitStateJPARepository extends JpaRepository<RecruitStateEntity,Long> {
     public Optional<RecruitStateEntity> findByRecruitIdAndMemberId(Long boardNum,String id);
+    public Long countByRecruitId(Long id);
+    public Page<RecruitStateEntity> findByRecruitId(Long id,Pageable pageable);
     public Long countByRecruitIdAndMemberIdNotIn(Long recruitId,List<String> members);
     public Page<RecruitStateEntity> findByRecruitIdAndMemberIdNotIn(Long recruitId,List<String> members,Pageable page);
-
+    public Long countByMemberIdAndRecruitId(String member,Long num);
+    public Long countByMemberId(String member);
     // 나의 공고 지원 현황 가져오기
     public Page<RecruitStateEntity> findByMemberId(String memberId, Pageable pageable);
 
-    // 나의 공고 지원 현황 카운트
-    public int countByMemberId(String memberId);
 }

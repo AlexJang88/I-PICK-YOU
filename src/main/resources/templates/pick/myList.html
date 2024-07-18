@@ -5,8 +5,7 @@
       data-theme="theme-default"
       data-assets-path="../assets/"
       data-template="vertical-menu-template-free"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport"
@@ -39,21 +38,8 @@
     <!-- Helpers -->
     <script th:src="@{/assets/vendor/js/helpers.js}"></script>
 
-    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
-    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <!-- Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <script th:src="@{/assets/js/config.js}"></script>
-    <script>
-        function checkAuth(auth) {
-            if (auth != 2) {
-                var confirmLogin = confirm("사업자회원만 등록이 가능합니다. 사업자아이디로 로그인하시겠습니까?");
-                if (confirmLogin) {
-                    window.location.href = "/login";
-                }
-            } else {
-                window.location.href = "/recruit/posts/new";
-            }
-        }
-    </script>
 </head>
 
 <body>
@@ -70,73 +56,85 @@
             <div th:include="~{design/navi-bar :: navi}"></div>
             <!-- / Navbar -->
 
-            <!-- Content wrapper -->
-            <div class="content-wrapper">
-                <!-- Content -->
+            <!-- Content wrapper for check == 0 -->
+            <div class="content-wrapper" th:if="${check == 0}">
                 <div class="container-fluid flex-grow-1 container-p-y">
-                    <!-- Layout Demo -->
-                    <div class="d-flex justify-content-end mb-3">
-                        <a class="btn btn-primary" href="javascript:void(0);"
-                           th:onclick="'checkAuth(' + ${auth} + ');'">등록 하기</a>
-                        <!--로그인 활성화 이후 eight랑 바꿀것 {memberId}(memberId=${memberId})-->
+                    <div class="card mb-4">
+                        찜한사람이 없습니다
                     </div>
-                        <!--내용 -->
+                </div>
+            </div>
+
+            <!-- Content wrapper for type != 0 -->
+            <div class="content-wrapper" th:if="${type != 0}">
+                <!-- Content for type == 1 -->
+                <div class="container-fluid flex-grow-1 container-p-y" th:if="${type == 1}">
+                    <div class="d-flex justify-content-end mb-3"></div>
                     <div class="card">
                         <div class="table-responsive text-nowrap">
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>채용공고</th>
-                                    <th> </th>
-                                    <th>급여</th>
-                                    <th>근무조건</th>
-                                    <th>지역</th>
-                                    <th>조회수</th>
-                                    <th>등록일</th>
+                                    <th>아이디</th>
+                                    <th>회사이름</th>
+                                    <th>연락처</th>
+                                    <th>채팅</th>
                                 </tr>
                                 </thead>
                                 <tbody class="table-border-bottom-0" th:each="post : ${posts}">
-
                                 <tr>
-                                    <td>
-                                        <i class="fab fa-angular fa-lg text-danger me-3"></i>
-                                        <span th:if="${post.status==1}" class="badge bg-label-secondary me-1">일반!</span>
-                                        <span th:if="${post.status==2}" class="badge bg-label-danger me-1">긴급!</span>
-                                    </td>
-                                    <td><a th:href="@{/recruit/posts/{boardNum}(boardNum=${post.id})}"><span th:text="${post.title}"></span> </a></td>
-                                    <td><span th:text="${post.recruitDetail.wage}+' 원'"></span></td>
-                                    <td><span th:text="${post.recruitDetail.detail}"></span></td>
-                                    <td><span th:text="${post.member.address}"></span></td>
-                                    <td><span th:text="${post.readCount}"></span></td>
-                                    <td><span th:text="${#dates.format(post.reg, 'yyyy-MM-dd')}"></span></td>
+                                    <td><span th:text="${post.member.id}"></span></td>
+                                    <td><span th:text="${post.member.companyInfo.companyName}"></span></td>
+                                    <td><span th:text="${post.member.phone}"></span></td>
+                                    <td><a class="btn btn-primary" href="#">채팅하기</a></td>
                                 </tr>
-
                                 </tbody>
                             </table>
                         </div>
                     </div>
-
-                    <!--/ Layout Demo -->
                 </div>
-                <!-- / Content -->
+
+                <!-- Content for type == 2 -->
+                <div class="container-fluid flex-grow-1 container-p-y" th:if="${type == 2}">
+                    <div class="d-flex justify-content-end mb-3"></div>
+                    <div class="card">
+                        <div class="table-responsive text-nowrap">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>아이디</th>
+                                    <th>이름</th>
+                                    <th>연락처</th>
+                                    <th>채팅</th>
+                                </tr>
+                                </thead>
+                                <tbody class="table-border-bottom-0" th:each="post : ${posts}">
+                                <tr>
+                                    <td><span th:text="${post.id}"></span></td>
+                                    <td><span th:text="${post.member.memberInfo.name}"></span></td>
+                                    <td><span th:text="${post.phone}"></span></td>
+                                    <td><a class="btn btn-primary" href="#">채팅하기</a></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
                 <div class="row">
                     <div class="demo-inline-spacing">
                         <nav aria-label="Page navigation">
-                            <ul th:if="${count>0}" class="pagination pagination-lg justify-content-center">
-                                <!-- Previous Button -->
-                                <li th:if="${startPage>10}" class="page-item" >
+                            <ul th:if="${count > 0}" class="pagination pagination-lg justify-content-center">
+                                <li th:if="${startPage > 10}" class="page-item">
                                     <a class="page-link" th:href="@{'/recruit/posts?pageNum=' + (${startPage} - 10)}" aria-label="Previous">
                                         <i class="tf-icon bx bx-chevrons-left"></i>
                                     </a>
                                 </li>
-
-                                <!-- Page Numbers -->
-                                <li class="page-item" th:each="i : ${#numbers.sequence(startPage, endPage)}" >
+                                <li class="page-item" th:each="i : ${#numbers.sequence(startPage, endPage)}">
                                     <a class="page-link" th:href="@{'/recruit/posts?pageNum=' + ${i}}" th:text="${i}"></a>
                                 </li>
-
-                                <!-- Next Button -->
-                                <li class="page-item" th:if="${endPage<pageCount}">
+                                <li class="page-item" th:if="${endPage < pageCount}">
                                     <a class="page-link" th:href="@{'/recruit/posts?pageNum=' + (${startPage} + 10)}" aria-label="Next">
                                         <i class="tf-icon bx bx-chevrons-right"></i>
                                     </a>
@@ -145,23 +143,27 @@
                         </nav>
                     </div>
                 </div>
+
                 <!-- Footer -->
                 <div th:include="~{design/footer :: footer}"></div>
                 <!-- / Footer -->
 
                 <div class="content-backdrop fade"></div>
             </div>
-            <!-- Content wrapper -->
+            <!-- / Content wrapper for type != 0 -->
         </div>
         <!-- / Layout page -->
     </div>
-
     <!-- Overlay -->
     <div class="layout-overlay layout-menu-toggle"></div>
 </div>
 <!-- / Layout wrapper -->
 
-
+<div class="buy-now">
+    <a th:href="@{https://themeselection.com/products/sneat-bootstrap-html-admin-template/}"
+       target="_blank"
+       class="btn btn-danger btn-buy-now">Upgrade to Pro</a>
+</div>
 
 <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->
@@ -169,7 +171,6 @@
 <script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
 <script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
 <script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
-
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <!-- endbuild -->
 

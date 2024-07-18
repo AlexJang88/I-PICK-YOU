@@ -7,8 +7,8 @@
         data-assets-path="../assets/"
         data-template="vertical-menu-template-free"
         xmlns:th="http://www.thymeleaf.org"
-        xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
+
 <head>
     <meta charset="utf-8"/>
     <meta
@@ -47,6 +47,23 @@
 
     <!-- Template customizer & Theme config files -->
     <script src="../assets/js/config.js"></script>
+    <script>
+        function checkAuth(auth) {
+            if (auth != 2) {
+                var confirmLogin = confirm("사업자회원만 등록이 가능합니다. 사업자아이디로 로그인하시겠습니까?");
+                if (confirmLogin) {
+                    window.location.href = "/login";
+                }
+            } else {
+                window.location.href = "/educations/posts/new";
+            }
+        }
+    </script>
+    <style>
+        .text-right{
+            text-align : right;
+        }
+    </style>
 </head>
 <body>
 <!-- Layout wrapper -->
@@ -67,18 +84,15 @@
                 <div class="container-fluid flex-grow-1 container-p-y">
                     <!-- Layout Demo -->
                     <div class="d-flex justify-content-end mb-3">
-                        <a class="btn btn-primary" sec:authorize="isAnonymous()"
-                           th:href="@{/login}">등록 하기</a>
-                        <a class="btn btn-primary" sec:authorize="isAuthenticated()"
-                           th:href="@{/educations/posts/new}">등록 하기</a>
-                        <!--로그인 활성화 이후 eight랑 바꿀것 {memberId}(memberId=${memberId})-->
+                        <a class="btn btn-primary" href="javascript:void(0);"
+                           th:onclick="'checkAuth(' + ${auth} + ');'">등록 하기</a>
                     </div>
                     <div class="layout-demo-wrapper">
 
                         <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
                             <div class="col-md-4" th:each="post : ${posts}">
                                 <div class="card h-100">
-                                    <img class="card-img-top" src="../assets/img/elements/2.jpg" alt="Card image cap"/>
+                                    <img class="card-img-top" th:src="@{'/upload/profile/'+${post.member.profile}}" width="600px" height="400px"/>
                                     <div class="card-body">
                                         <h5 class="card-title"><span th:text="${post.title}"></span></h5>
                                         <a th:href="@{/educations/posts/{id}(id=${post.id})}">
@@ -141,13 +155,7 @@
 </div>
 <!-- / Layout wrapper -->
 
-<div class="buy-now">
-    <a
-            href="https://themeselection.com/products/sneat-bootstrap-html-admin-template/"
-            target="_blank"
-            class="btn btn-danger btn-buy-now"
-    >Upgrade to Pro</a>
-</div>
+
 
 <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->

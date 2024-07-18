@@ -15,4 +15,6 @@ public interface TeamService {
     public void update(MultipartFile profile,List<MultipartFile> files, TeamResumeDTO dto,int boardType);
     public int favoriteCheck(PickDTO dto);
     public void exposure(TeamResumeDTO dto);
+    public void MyPosts(Model model ,String id,int boardType);
+    public boolean checkMyPost(String id);
 }

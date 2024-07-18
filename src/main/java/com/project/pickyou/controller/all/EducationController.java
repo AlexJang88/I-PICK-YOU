@@ -3,6 +3,8 @@ package com.project.pickyou.controller.all;
 import com.project.pickyou.dto.EducationDTO;
 import com.project.pickyou.dto.PickDTO;
 import com.project.pickyou.service.EducationService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,20 +20,35 @@ import java.util.ArrayList;
 public class EducationController {
     private final EducationService service;
 
+    private int type=2;
     @GetMapping("/posts")
     public String list(Model model,@RequestParam(value = "pageNum",defaultValue = "1") int pageNum,Principal principal){
+        int mem = 0;
         if(principal!=null){
         model.addAttribute("memberId",principal.getName());}
-
+            mem=service.authCheck(principal);
             service.AllPosts(model,pageNum);
-        return "education/list";
+            model.addAttribute("auth",mem);
+            return "education/list";
+
     }
    @GetMapping("/posts/{boardNum}")
-   public String educationsContent(Model model,@PathVariable Long boardNum,Principal principal){
+   public String educationsContent(Model model, HttpSession session, @PathVariable Long boardNum, Principal principal, HttpServletRequest request){
        String sid="";
-        if(principal!=null){
-           sid= principal.getName();
+       String ip=request.getHeader("X-FORWARDED-FOR");
+       if(ip==null){
+           ip=request.getRemoteAddr();
        }
+       if(principal!=null){
+           sid= principal.getName();
+       }else{
+           sid = ip;
+       }
+       if(session.getAttribute(sid+"_"+type+"_"+boardNum)==null){
+           service.updateReadCount(boardNum);
+           session.setAttribute(sid+"_"+type+"_"+boardNum,"true");
+       }
+
 
        //principal.getName();
         service.post(model,boardNum,sid,2);
@@ -70,11 +87,17 @@ public class EducationController {
    }
    //작성페이지이동
     @GetMapping("/posts/new")
-    public String write(Model model,@PathVariable Principal principal){
+    public String write(Model model,Principal principal){
+        String sid="";
+        String url = "education/write";
         if(principal!=null){
-        model.addAttribute("memberId",principal.getName());
+        sid = principal.getName();
+        }else if(principal==null){
+            url="redirect:/educations/posts";
         }
-        return "education/write";
+        model.addAttribute("memberId",sid);
+        System.out.println("================mem"+sid);
+        return url;
     }
     //작성
     @PostMapping("/posts")
@@ -97,8 +120,9 @@ public class EducationController {
         PickDTO dto = new PickDTO();
             dto.setPicker(sid);
             dto.setTarget(target);
-            String url = "redirect:/educations/posts/"+boardNum;
-        service.favoriteCheck(dto);
+            System.out.println("----------------"+dto);
+            service.favoriteCheck(dto);
+        String url = "redirect:/educations/posts/"+boardNum;
         return url;
     }
     @GetMapping("/ct/{receiver}")

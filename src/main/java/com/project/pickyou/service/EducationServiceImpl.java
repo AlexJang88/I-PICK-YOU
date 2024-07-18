@@ -4,6 +4,7 @@ import com.project.pickyou.dto.*;
 import com.project.pickyou.entity.*;
 import com.project.pickyou.repository.EducationJPARepository;
 import com.project.pickyou.repository.ImageJPARepository;
+import com.project.pickyou.repository.MemberJPARepository;
 import com.project.pickyou.repository.PickJPARepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
@@ -21,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -35,13 +37,14 @@ public class EducationServiceImpl implements EducationService {
     private final EducationJPARepository educationJPA;
     private final ImageJPARepository imageJPA;
     private final PickJPARepository pickJPA;
+    private final MemberJPARepository memberJPA;
 
     @Override
     public void AllPosts(Model model, int pageNum) {
+        int type=0;
         int pageSize = 9;
         Long longCount = educationJPA.count();
         int count = longCount.intValue();
-
         Sort sort = Sort.by(Sort.Order.desc("reg"));
 
         Page<EducationEntity> page = educationJPA.findAll(PageRequest.of(pageNum - 1, pageSize, sort));
@@ -64,9 +67,22 @@ public class EducationServiceImpl implements EducationService {
         model.addAttribute("pageBlock", pageBlock);
         model.addAttribute("endPage", endPage);
     }
-
+    public int getfavoritStatus(String picker,String target){
+        int result=0;
+        PickID key = new PickID(picker, target);
+        key.setPicker(picker);
+        key.setTarget(target);
+        Optional<PickEntity> pickcheck = pickJPA.findById(key);
+        System.out.println("-------------key"+key);
+        if (pickcheck.isPresent()) {
+            System.out.println("-------------key"+pickcheck.get().getPicker());
+            result = 1;
+        }
+        return result;
+    }
     @Override
     public void post(Model model, Long num, String sid,int boardType) {
+        int type=0;
         Optional<EducationEntity> post = educationJPA.findById(num);
         EducationDTO edto = new EducationDTO();
         CompanyInfoDTO cidto = new CompanyInfoDTO();
@@ -74,22 +90,24 @@ public class EducationServiceImpl implements EducationService {
         List<ImageEntity> imageList = Collections.emptyList();
         int favoritecheck = 0;
 
+
+
         if (post.isPresent()) {
+            if(post.get().getId().equals(sid)){
+                type=1;
+            }
             imageList = imageJPA.findByBoardTypeAndBoardNum(boardType, num);
             edto = post.get().toEducationDTO();
             cidto = post.get().getMember().getCompanyInfo().toCompanyInfoDTO();
             mdto = post.get().getMember().toMemberDTO();
-            PickID key = new PickID(sid, mdto.getId());
+            favoritecheck=getfavoritStatus(sid,post.get().getCompanyId());
             edto.setContent(edto.getContent().replace("<br>", "\r\n"));
-            Optional<PickEntity> pickcheck = pickJPA.findById(key);
-            if (pickcheck.isPresent()) {
-                favoritecheck = 1;
-            }
-            model.addAttribute("favoritecheck", favoritecheck);
+            model.addAttribute("favoriteCheck", favoritecheck);
             model.addAttribute("member", mdto);
             model.addAttribute("company", cidto);
             model.addAttribute("post", edto);
             model.addAttribute("imgList", imageList);
+            model.addAttribute("type",type);
         }
 
     }
@@ -126,6 +144,24 @@ public class EducationServiceImpl implements EducationService {
     }
 
     @Override
+    public int authCheck(Principal principal) {
+        int auth=0;
+        if(principal!=null){
+            Optional<MemberEntity> opmem =memberJPA.findById(principal.getName());
+            if(opmem.isPresent()){
+                if(opmem.get().getAuth().contains("USER")){
+                 auth=1;
+                } else if (opmem.get().getAuth().contains("COMPANY")) {
+                    auth=2;
+                } else if (opmem.get().getAuth().contains("ADMIN")) {
+                    auth=99;
+                }
+            }
+        }
+        return auth;
+    }
+
+    @Override
     public void update(List<MultipartFile> files, EducationDTO dto, int boardType) {
         Optional<EducationEntity> education = educationJPA.findById(dto.getId());
         if (education.isPresent()) {
@@ -159,15 +195,27 @@ public int favoriteCheck(PickDTO dto) {
     key.setTarget(dto.getTarget());
     Optional<PickEntity> pickcheck = pickJPA.findById(key);
     if (pickcheck.isPresent()) {
+        System.out.println("--------------notempty"+key);
         pickJPA.deleteById(key);
     } else {
         pickJPA.save(dto.toPickEntity());
+        System.out.println("--------------empty"+dto);
         favoritecheck = 1;
     }
     return favoritecheck;
 }
 
-public String makeFolder(String uploadPath, int boardType, Long boardNum) {
+    @Override
+    public void updateReadCount(Long boardNum) {
+        Optional<EducationEntity> oee = educationJPA.findById(boardNum);
+        if(oee.isPresent()){
+            EducationEntity ee=oee.get();
+            ee.setReadCount(ee.getReadCount()+1);
+            educationJPA.save(ee);
+        }
+    }
+
+    public String makeFolder(String uploadPath, int boardType, Long boardNum) {
     String folderPath = boardType + File.separator + boardNum;
     File uploadPathFoler = new File(uploadPath, folderPath);
 

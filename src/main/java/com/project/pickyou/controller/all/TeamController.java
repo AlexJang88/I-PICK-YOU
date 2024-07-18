@@ -2,6 +2,7 @@ package com.project.pickyou.controller.all;
 
 import com.project.pickyou.dto.PickDTO;
 import com.project.pickyou.dto.TeamResumeDTO;
+import com.project.pickyou.service.EducationService;
 import com.project.pickyou.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -18,15 +19,29 @@ import java.util.ArrayList;
 public class TeamController {
 
     private final TeamService service;
+    private final EducationService educationService;
 
     @GetMapping("/posts")
     public String list(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum,Principal principal){
+        int mem=0;
         if(principal!=null){
             model.addAttribute("memberId",principal.getName());
+            mem= educationService.authCheck(principal);
         }
-
+        model.addAttribute("auth",mem);
         service.AllPosts(model,pageNum);
         return "team/list";
+    }
+    @GetMapping("/posts/my")
+    public String myList(Model model,Principal principal){
+        String url ="redirect:/educations/posts";
+        String sid="";
+        if(principal!=null){
+            sid= principal.getName();
+            url="team/myContent";
+            service.MyPosts(model,sid,5);
+        }
+        return url;
     }
     @GetMapping("/posts/{boardNum}")
     public String teamsContent(Model model, @PathVariable Long boardNum, Principal principal){
@@ -60,7 +75,7 @@ public class TeamController {
         String url = "redirect:/teams/posts/"+id;
         return url;
     }
-    //삭제
+    //비공개
     @PatchMapping("/posts")
     public String exposure(TeamResumeDTO dto){
         service.exposure(dto);
@@ -69,9 +84,17 @@ public class TeamController {
     }
     //작성페이지이동
     @GetMapping("/posts/write/{memberId}")
-    public String write(Model model,@PathVariable String memberId){
+    public String write(Model model,@PathVariable String memberId,Principal principal){
+        boolean check=false;
+        String url="team/write";
         model.addAttribute("memberId",memberId);
-        return "team/write";
+        if(principal!=null){
+            check=service.checkMyPost(principal.getName());
+        }
+        if(!check){
+            url="redirect:/teams/posts/my";
+        }
+        return url;
     }
     //작성
     @PostMapping("/posts")
@@ -86,10 +109,10 @@ public class TeamController {
         return "redirect:/teams/posts";
     }
     @GetMapping("/favorits/{boardNum}/{target}")
-    public String checkFavoritecheck(@PathVariable Long boardNum,@PathVariable String target,Principal principal){
+    public String checkFavorite(@PathVariable Long boardNum,@PathVariable String target,Principal principal){
         String sid = "";
         if(principal!=null) {
-            principal.getName();
+           sid= principal.getName();
         }
         //principal.getName(); 로그인 적용후 번경
         PickDTO dto = new PickDTO();

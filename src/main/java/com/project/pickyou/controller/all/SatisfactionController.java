@@ -60,7 +60,7 @@ public class SatisfactionController {
 
     @GetMapping("/score/my")
     public String myscore(Model model,Principal principal){
-        String id="five";
+        String id="";
         if(principal!=null){
             id= principal.getName();
         }
