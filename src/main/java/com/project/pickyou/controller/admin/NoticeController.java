@@ -4,6 +4,7 @@ import com.project.pickyou.dto.ImageDTO;
 import com.project.pickyou.dto.NoticeDTO;
 import com.project.pickyou.entity.NoticeEntity;
 import com.project.pickyou.service.NoticeService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,9 @@ import java.util.ArrayList;
 public class NoticeController {
 
     public final NoticeService noticeService;
+
+    // 공지사항 글번호
+    int type = 1;
 
     // 공지사항 리스트 가져오기
     @GetMapping("/posts")
@@ -56,19 +60,32 @@ public class NoticeController {
 
     // 공지사항 상세정보
     @GetMapping("/posts/{boardNum}")
-    public String noticeInfo(@PathVariable Long boardNum, Model model, HttpSession session, Principal principal) {
+    public String noticeInfo(@PathVariable Long boardNum, Model model, HttpSession session, Principal principal, HttpServletRequest request) {
         int boardType = 1;
         noticeService.noticeImage(boardNum, boardType, model);
 
         noticeService.noticeInfo(boardNum, model);
 
-        String memberId = principal.getName();
-        // 공지사항 조회수 증가
-        String sid = (String)session.getAttribute(memberId);
-        if(session.getAttribute(sid+"1_"+boardNum)==null){
-            noticeService.noticeCnt(boardNum, model);
-            session.setAttribute(sid+"1_"+boardNum,"true");
+        String sid="";
+        String ip=request.getHeader("X-FORWARDED-FOR");
+        if(ip==null){
+            ip=request.getRemoteAddr();
         }
+
+        if(principal != null){  //로그인 되어잇을때 조회수 올리기
+            sid = principal.getName();
+
+            if(session.getAttribute(sid+"_"+type+"_"+boardNum)==null){
+                noticeService.noticeCnt(boardNum, model);
+                session.setAttribute(sid+"_"+type+"_"+boardNum,"true");
+            }}else{   //로그인안되어있을때 조회수 올리기
+            sid=ip;
+            if(session.getAttribute(sid+"_"+type+"_"+boardNum)==null){
+                noticeService.noticeCnt(boardNum, model);
+                session.setAttribute(sid+"_"+type+"_"+boardNum,"true");
+            }
+        }
+
         return "notice/info";
     }
 
@@ -93,12 +110,9 @@ public class NoticeController {
         return "redirect:/notice/posts/"+id;
     }
 
-
     @GetMapping()
     public String IntroductionUs(){  //사이트 소개하기
 
         return "notice/IntroductionUs";
     }
-
-
 }

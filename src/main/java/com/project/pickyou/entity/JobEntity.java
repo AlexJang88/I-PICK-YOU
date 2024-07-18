@@ -23,6 +23,11 @@ public class JobEntity {
     @Id
     private String name;
 
+    @ManyToOne
+    @MapsId
+    @JoinColumn(name = "resume_id")
+    private ResumeEntity resume;
+
     @Builder
     public JobEntity(Long resumeId,String name){
         this.resumeId=resumeId;

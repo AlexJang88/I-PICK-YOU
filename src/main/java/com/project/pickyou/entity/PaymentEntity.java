@@ -39,6 +39,7 @@ public class PaymentEntity {
         this.reg=reg;
     }
 
+
     public PaymentDTO toPaymentDTO(){
         return PaymentDTO.builder()
                 .id(this.id)
@@ -50,9 +51,5 @@ public class PaymentEntity {
                 .reg(this.reg)
                 .build();
     }
-
-
-
-
 }
 

@@ -28,20 +28,15 @@ public class QaServiceImpl implements QaService {
     @Override
     public void AllPosts(Model model, int pageNum) {
         int pageSize = 10;
-        Long longCount = qaJPA.qaCount();
+        Long longCount = qaJPA.count();
         int count = longCount.intValue();
 
         Sort sort = Sort.by(Sort.Order.desc("reg"));
 
-       // Page<QaEntity> page = qaJPA.findByIdEqualsRef(PageRequest.of(pageNum - 1, pageSize, sort));
-        Page<QaEntity> page = qaJPA.qaList(PageRequest.of(pageNum - 1, pageSize, sort));
-       // List<QaEntity> posts = qaJPA.findByIdEqualsRef();
+        Page<QaEntity> page = qaJPA.findAll(PageRequest.of(pageNum - 1, pageSize, sort));
+
         List<QaEntity> posts = page.getContent();
 
-        // 이 부분
-        // List<QaEntity> qaList = qaJPA.findAllGroupByRef();
-
-        //model.addAttribute("qaList", qaList);
         model.addAttribute("posts", posts);
         model.addAttribute("count", count);
         model.addAttribute("pageNum", pageNum);
@@ -58,22 +53,6 @@ public class QaServiceImpl implements QaService {
         model.addAttribute("startPage", startPage);
         model.addAttribute("pageBlock", pageBlock);
         model.addAttribute("endPage", endPage);
-
-        /*
-        // qa 리스트 가져오기
-        List<QaEntity> qaList = qaJPA.findAll();
-        // qa 리스트 ref 중복값 제거
-        List<QaEntity> uniqueQaList = qaList.stream()
-                // TreeSet을 이용하여 중복을 제거합니다. TreeSet은 중복 요소를 허용하지 않습니다.
-                .collect(Collectors.collectingAndThen(
-                        // TreeSet을 생성합니다. TreeSet은 Comparator를 통해 정렬 및 중복 제거를 수행합니다.
-                        Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(QaEntity::getRef))),
-                        // TreeSet을 ArrayList로 변환합니다.
-                        collected -> new ArrayList<>(collected)
-                ));
-        model.addAttribute("qaList", uniqueQaList);
-        */
-
 
     }
 
@@ -98,7 +77,6 @@ public class QaServiceImpl implements QaService {
         List<QaEntity> qaInformation = qaJPA.findByRef(ref);
         model.addAttribute("qaInformation", qaInformation);
 
-        System.out.println(qaInformation.get(0).getMemberId()+"-------------------------------------------------------------");
     }
 
     // qa 댓글 인서트

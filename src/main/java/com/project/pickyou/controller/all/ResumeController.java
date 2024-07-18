@@ -1,5 +1,6 @@
 package com.project.pickyou.controller.all;
 
+import com.project.pickyou.dto.ConfirmDTO;
 import com.project.pickyou.dto.ResumeDTO;
 import com.project.pickyou.service.ResumeService;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +37,12 @@ public class ResumeController {
                            @RequestParam("jobName") List<String> jobNames,
                            @RequestParam("licenceName") List<String> licenceNames,
                            @RequestParam("equipmentName") List<String> equipmentNames,
-                           @RequestParam("certificationName") List<String> certificationNames) {
+                           @RequestParam("certificationName") List<String> certificationNames,
+                           @RequestParam("address") String address) {
 
         // 이력서 인서트
         Rdto.setMemberId(principal.getName());
+        Rdto.setLocal(address);
         resumeService.resumeInsert(Rdto, careerName, jobNames, licenceNames, equipmentNames, certificationNames);
 
         return "redirect:/resume/posts";
@@ -48,8 +51,17 @@ public class ResumeController {
     // 이력서 상세정보
     @GetMapping("/posts/{num}")
     public String info(@PathVariable Long num, Model model, Principal principal) {
-        model.addAttribute("sessionId", principal.getName());
+
+        String sessionId="";
+
+        if(principal!=null) {
+            sessionId = principal.getName();
+        }
+
+        model.addAttribute("sessionId", sessionId);
+
         resumeService.selectResumeInfo(model, num);
+
         return "resume/info";
     }
 
@@ -74,11 +86,36 @@ public class ResumeController {
                             @RequestParam("jobName") List<String> jobNames,
                             @RequestParam("licenceName") List<String> licenceNames,
                             @RequestParam("equipmentName") List<String> equipmentNames,
-                            @RequestParam("certificationName") List<String> certificationNames) {
+                            @RequestParam("certificationName") List<String> certificationNames,
+                            @RequestParam("address") String address) {
 
         Rdto.setMemberId(principal.getName());
+        Rdto.setLocal(address);
         resumeService.resumeUpdate(Rdto, careerName, jobNames, num, licenceNames, equipmentNames, certificationNames);
 
         return "redirect:/resume/posts/{num}";
     }
+
+    // 인재 정보 리스트
+    @GetMapping("/all/posts")
+    public String allPosts(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum) {
+        resumeService.AllPosts(model, pageNum);
+        return "resume/allList";
+    }
+
+    // 인재공고보고 사업자가 채용
+    @PostMapping("/posts/confirm")
+    public String confirmInsert(@RequestParam("memberId") String memberId,
+                                @RequestParam("num") Long num, Principal principal) {
+
+        ConfirmDTO dto = new ConfirmDTO();
+        dto.setMemberId(memberId);
+        dto.setCompanyId(principal.getName());
+        dto.setApply(2);
+        resumeService.confirmInsert(dto);
+
+        return "redirect:/resume/posts/"+num;
+    }
+
+
 }

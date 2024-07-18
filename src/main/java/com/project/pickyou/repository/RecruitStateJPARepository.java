@@ -12,4 +12,10 @@ public interface RecruitStateJPARepository extends JpaRepository<RecruitStateEnt
     public Optional<RecruitStateEntity> findByRecruitIdAndMemberId(Long boardNum,String id);
     public Long countByRecruitIdAndMemberIdNotIn(Long recruitId,List<String> members);
     public Page<RecruitStateEntity> findByRecruitIdAndMemberIdNotIn(Long recruitId,List<String> members,Pageable page);
+
+    // 나의 공고 지원 현황 가져오기
+    public Page<RecruitStateEntity> findByMemberId(String memberId, Pageable pageable);
+
+    // 나의 공고 지원 현황 카운트
+    public int countByMemberId(String memberId);
 }
