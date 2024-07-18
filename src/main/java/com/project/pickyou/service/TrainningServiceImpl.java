@@ -281,6 +281,23 @@ public class TrainningServiceImpl implements TrainningService{
         }
         trainningJPARepository.save(trainningDTO.toTrainningEntity());  // 이건 내용새로 업데이트
     }
+
+
+
+
+    @Override
+    public void trainngCount(Long trainnignum) {  //훈련소상세보기 조회수
+
+        Optional<TrainningEntity> optional = trainningJPARepository.findById(trainnignum); //값 가져오기
+
+        if(optional.isPresent()){
+            TrainningEntity traing = optional.get();
+            traing.setReadCount(traing.getReadCount()+1);
+            trainningJPARepository.save(traing);
+        }
+
+
+    }
     /*수정하기여기까지*/
 
 

@@ -7,6 +7,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface AgencyService {
+
+
+    public void agencyCount(Long agencynum); //조회수 증가
+
     public void agencymain(Model model, int pageNum);
 
     public void agencyDetails(Model model, Long agencynum);

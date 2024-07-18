@@ -9,7 +9,8 @@ import java.util.Optional;
 
 public interface MemberJPARepository extends JpaRepository<MemberEntity,String> {
 
-    boolean existsById(String id);
+    boolean existsById(String id);  //아이디 중복체크
+    boolean existsByEmail(String email);   //이메일 중복체크
     Optional<MemberEntity> findById(String id);//회원인지 아닌지 확인절차
 
 

@@ -1,5 +1,7 @@
 package com.project.pickyou.dto;
 
+
+import com.project.pickyou.entity.AgencyEntity;
 import com.project.pickyou.entity.PaymentEntity;
 import lombok.Builder;
 import lombok.Data;
@@ -32,15 +34,17 @@ public class PaymentDTO {
         this.reg=reg;
     }
 
-    public PaymentEntity toPaymentEntity() {
+
+    public PaymentEntity toPaymentEntity(){
         return PaymentEntity.builder()
                 .id(this.id)
                 .memberId(this.memberId)
                 .money(this.money)
                 .point(this.point)
                 .title(this.title)
-                .pointHistory(pointHistory)
+                .pointHistory(this.pointHistory)
                 .reg(this.reg)
                 .build();
     }
+
 }

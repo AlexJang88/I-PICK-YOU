@@ -91,7 +91,26 @@ public class LoginServiceImpl implements LoginService, UserDetailsService {
         return isExist;
     }
 
+    //이메일 중복체크용  ajax, 제이슨   <맞다, 아니다 결과값 반환>
+    @Override
+    public boolean  checkIfEmailExists(String email) {
 
+
+        Boolean isExist = memberJPARepository.existsByEmail(email);   //중복된 이메일이 있는지 확인하기
+
+        return isExist;
+    }
+
+
+    //사업자 중복체크용  ajax, 제이슨   <맞다, 아니다 결과값 반환>
+    @Override
+    public boolean  checkIfcorpnocheck(String corpno) {
+
+
+        Boolean isExist = companyInfoJPARepository.existsByCorpno(corpno);  //중복된 사업자 체크
+
+        return isExist;
+    }
 
 
     //사업자 회원가입

@@ -41,7 +41,9 @@ public class LoginController {
     }
 
     @GetMapping("/loginProc")
-    public String lod(){return "/sample/index1";}
+    public String lod(){
+        return "sample/index1";
+    }
 
 
     //로그아웃
@@ -104,7 +106,7 @@ public class LoginController {
     @GetMapping("/forgotId")
     public String forgotId(){
 
-        return "/findUser/forgotId";
+        return "findUser/forgotId";
     }
 
     //아이디 찾음
@@ -126,7 +128,7 @@ public class LoginController {
             String id = (String) model.getAttribute("id");
             model.addAttribute("id",id);
         }
-        return "/findUser/idfind";
+        return "findUser/idfind";
     }
 
 
@@ -136,7 +138,7 @@ public class LoginController {
     @GetMapping("/forgotPw")
     public String forgotPw(){
 
-        return "/findUser/forgotPw";
+        return "findUser/forgotPw";
     }
 
     //비밀번호 변경전 멤버 확인
@@ -165,14 +167,14 @@ public class LoginController {
             String id = (String) model.getAttribute("sid");
             model.addAttribute("id",id);
         }
-            return "/findUser/pwChange";
+            return "findUser/pwChange";
     }
 
     //비밀번호 변경하는곳프로
     @PatchMapping("/forgotPw/pwChangePro")
     public String pwChangePro(MemberDTO memberDTO,@RequestParam("newPw") String newPw){
         loginService.changePw(memberDTO, newPw);  //아이디에 맞춰 비번 변경
-        return "/login";
+        return "login";
     }
 
 
