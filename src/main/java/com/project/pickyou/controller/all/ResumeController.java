@@ -117,5 +117,4 @@ public class ResumeController {
         return "redirect:/resume/posts/"+num;
     }
 
-
 }

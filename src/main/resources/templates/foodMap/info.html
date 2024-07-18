@@ -95,19 +95,21 @@
                                     </td>
                                 </tr>
 
-                                <tr>
-                                    <td colspan="2">
-                                        <div class="card-header d-flex justify-content-between align-items-center">
-                                            <div class="d-flex ml-auto">
-                                                <form th:action="@{/foodMap/posts/{boardNum}/ref(boardNum=${foodMapInfo.ref})}" th:method="post" class="form-inline" enctype="multipart/form-data">
-                                                    <textarea name="content" class="form-control mr-2"></textarea>
-                                                    <input type="file" name="files" class="form-control" multiple="multiple" />
-                                                    <button type="submit" class="btn btn-primary">댓글작성</button>
-                                                </form>
+                                <div sec:authorize="isAuthenticated()"> <!-- 비로그인시 버튼안보임 -->
+                                    <tr>
+                                        <td colspan="2">
+                                            <div class="card-header d-flex justify-content-between align-items-center">
+                                                <div class="d-flex ml-auto">
+                                                    <form th:action="@{/foodMap/posts/{boardNum}/ref(boardNum=${foodMapInfo.ref})}" th:method="post" class="form-inline" enctype="multipart/form-data">
+                                                        <textarea name="content" class="form-control mr-2"></textarea>
+                                                        <input type="file" name="files" class="form-control" multiple="multiple" />
+                                                        <button type="submit" class="btn btn-primary">댓글작성</button>
+                                                    </form>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                </tr>
+                                        </td>
+                                    </tr>
+                                </div>
 
                                 <tr>
                                     <td colspan="5" style="height: 50px;"></td>
@@ -140,7 +142,9 @@
                                     <td th:text="${#dates.format(ref.reg, 'yyyy-MM-dd')}" class="text-end"></td>
                                     <td>
                                         <form th:action="@{/foodMap/posts/{boardNum}/reply(boardNum=${ref.reply})}" th:method="post" class="form-inline" enctype="multipart/form-data">
-                                            <button type="button" class="btn btn-primary showFormButton">답글작성</button>
+                                            <div sec:authorize="isAuthenticated()">
+                                                <button type="button" class="btn btn-primary showFormButton">답글작성</button>
+                                            </div>
                                             <div class="formElements hidden">
                                                 <div class="input-group">
                                                     <span class="input-group-text" th:text="'@' + ${ref.memberId} + ' : '"></span>
