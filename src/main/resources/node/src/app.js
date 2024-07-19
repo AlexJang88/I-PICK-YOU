@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
+const fs = require('fs');
 const cors = require('cors');
 
 const app = express();
@@ -14,6 +15,30 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 let activeRooms = {};
 let unreadMessages = {};
+
+// 이전 채팅 기록을 저장할 파일 경로
+const chatHistoryFilePath = path.join(__dirname, 'chatHistory.json');
+
+// 파일에서 이전 채팅 기록 로드 (서버 시작 시 호출)
+function loadChatHistory() {
+    if (fs.existsSync(chatHistoryFilePath)) {
+        const data = fs.readFileSync(chatHistoryFilePath, 'utf8');
+        if (data) {
+            const chatHistory = JSON.parse(data);
+            activeRooms = chatHistory.activeRooms || {};
+            unreadMessages = chatHistory.unreadMessages || {};
+        }
+    }
+}
+
+// 서버 시작 시 이전 채팅 기록 로드
+loadChatHistory();
+
+// 서버 종료 시 이전 채팅 기록 저장
+function saveChatHistory() {
+    const chatHistory = { activeRooms, unreadMessages };
+    fs.writeFileSync(chatHistoryFilePath, JSON.stringify(chatHistory), 'utf8');
+}
 
 // 채팅 HTML 파일을 서빙하는 라우트
 app.get('/chat/:sender/:receiver', (req, res) => {
@@ -31,7 +56,7 @@ app.get('/api/rooms/:user', (req, res) => {
     const userRooms = Object.keys(activeRooms).filter(roomId => roomId.includes(user));
     const roomsWithUnreadCounts = userRooms.map(roomId => ({
         roomId,
-        unreadCount: unreadMessages[roomId] && unreadMessages[roomId][user] ? unreadMessages[roomId][user] : 0
+        unreadCount: unreadMessages[roomId][user]
     }));
     res.json({ rooms: roomsWithUnreadCounts });
 });
@@ -59,12 +84,17 @@ io.on('connection', (socket) => {
         socket.join(roomId);
         socket.roomId = roomId;
         if (!activeRooms[roomId]) {
-            activeRooms[roomId] = 0;
+            activeRooms[roomId] = {};
             unreadMessages[roomId] = {};
         }
-        activeRooms[roomId] += 1;
-        if (!unreadMessages[roomId][sender]) {
-            unreadMessages[roomId][sender] = 0;
+        // 사용자가 방에 들어오면 해당 방의 안 읽은 메시지 수를 0으로 초기화
+        unreadMessages[roomId][sender] = 0;
+
+        // 이전 채팅 기록 확인 및 전송
+        if (activeRooms[roomId].history) {
+            activeRooms[roomId].history.forEach(message => {
+                socket.emit('SEND', message);
+            });
         }
     });
 
@@ -74,22 +104,36 @@ io.on('connection', (socket) => {
         const sender = msg.sender;
         const receiver = roomId.split('-').find(user => user !== sender);
 
-        if (!unreadMessages[roomId][receiver]) {
-            unreadMessages[roomId][receiver] = 0;
-        }
-        unreadMessages[roomId][receiver] += 1;
+        // 상대방에게 보낸 메시지 수를 증가시킴
 
+            unreadMessages[roomId][receiver] += 1;
+
+
+        // 메시지 기록 추가
+        if (!activeRooms[roomId].history) {
+            activeRooms[roomId].history = [];
+        }
+        activeRooms[roomId].history.push(msg);
+
+        // 실제 메시지 전송
         io.to(roomId).emit('SEND', msg);
     });
 
-    // 연결 종료 시 처리
-    socket.on('disconnect', () => {
+    // 채팅방을 나가는 이벤트
+    socket.on('leaveRoom', () => {
         if (socket.roomId) {
-            activeRooms[socket.roomId] -= 1;
-            if (activeRooms[socket.roomId] === 0) {
-                delete activeRooms[socket.roomId];
-                delete unreadMessages[socket.roomId];
-            }
+
+            const roomId = socket.roomId;
+             console.log(roomId);
+            const sender = Object.keys(activeRooms[roomId]).find(user => user !== 'history');
+             console.log(unreadMessages[roomId][sender]);
+            // 채팅방을 나갈 때, 채팅 기록 저장
+            saveChatHistory();
+            unreadMessages[roomId][sender] = 0;
+            // 상대방이 보낸 메시지 수를 사용자에게 안 읽은 메시지로 추가
+            console.log(unreadMessages[roomId][sender]);
+            // 방 데이터 초기화
+
         }
     });
 });

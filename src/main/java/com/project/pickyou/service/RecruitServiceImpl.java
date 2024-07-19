@@ -324,10 +324,15 @@ public class RecruitServiceImpl implements RecruitService {
     }
 
     @Override
-    public void userInfo(Model model, String memberId, String companyId,Long stateId) {
+    public void userInfo(Model model, String memberId, String companyId,Long stateId,int type) {
 
         Optional<MemberEntity> mem = memberJPA.findById(memberId);
         Optional<MemberEntity> com = memberJPA.findById(companyId);
+        if(type==1){
+            model.addAttribute("applyType",type);
+        } else if (type==3) {
+            model.addAttribute("applyType",type);
+        }
         if(mem.isPresent()){
             model.addAttribute("mem",mem.get());
         }
@@ -341,7 +346,7 @@ public class RecruitServiceImpl implements RecruitService {
     }
 
     @Override
-    public Long contract(ContractDTO dto,Long stateId) {
+    public Long contract(ContractDTO dto,Long stateId,int applyType) {
         if(dto.getId()==0){
             dto.setId(null);
         }
@@ -350,7 +355,11 @@ public class RecruitServiceImpl implements RecruitService {
         ConfirmDTO cdto = new ConfirmDTO();
         cdto.setMemberId(dto.getMemberId());
         cdto.setCompanyId(dto.getCompanyId());
-        cdto.setApply(1);
+        if(applyType==1) {
+            cdto.setApply(1);
+        } else if (applyType==3) {
+            cdto.setApply(4);
+        }
         cdto.setContractId(maxnum);
         cdto.setContractId(stateId);
         System.out.println("========================cdto"+dto);
