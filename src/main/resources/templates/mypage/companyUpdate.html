@@ -161,42 +161,12 @@
                                                                 th:value="${user.email}"
                                                                 name="email"
                                                                 required
+                                                                readonly
                                                                 maxlength="30"
                                                         />
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-2">
-                                                    <button type="button" class="btn btn-secondary" onclick="sendAuthCode()">이메일 인증</button>
-                                                </div>
                                             </div>
-
-                                            <div class="form-text">이메일 인증을 진행해주세요</div>
-
-                                            <div class="row mb-3">
-                                                <label class="col-sm-2 col-form-label">이메일 인증번호 확인</label>
-                                                <div class="col-sm-10">
-                                                    <div class="input-group input-group-merge">
-                                                            <span class="input-group-text">
-                                                                <i class="bx bx-buildings"></i>
-                                                            </span>
-                                                        <input
-                                                                type="text"
-                                                                id="authCode"
-                                                                name="authCode"
-                                                                class="form-control"
-                                                                placeholder="인증코드를 입력하세요"
-                                                                required
-                                                                maxlength="15"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-2">
-                                                    <button type="button" class="btn btn-secondary" onclick="verifyAuthCode()" >인증 확인</button>
-                                                </div>
-                                            </div>
-
-
-
 
 
 
@@ -403,51 +373,6 @@
 
 
 
-<!-- 이메일 인증 및 이메일 전송 -->
-<script>
-    let isEmailVerified = false;
-
-    function sendAuthCode() {
-        const email = document.querySelector('input[name="email"]').value;
-        fetch('/mail/sendAuthCode', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email: email }),
-        }).then(response => response.json())
-        .then(data => alert(data.message))
-        .catch(error => console.error('Error:', error));
-    }
-
-    function verifyAuthCode() {
-        const email = document.querySelector('input[name="email"]').value;
-        const authCode = document.querySelector('input[name="authCode"]').value;
-
-        fetch('/mail/verifyAuthCode', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email: email, authCode: authCode }),
-        }).then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error('인증 코드가 틀렸습니다.');
-            }
-        }).then(data => {
-            alert(data.message);
-            isEmailVerified = true;
-            updateSubmitButtonState();
-        }).catch(error => {
-            console.error('에러:', error);
-            alert('인증 실패: ' + error.message);
-            isEmailVerified = false;
-            updateSubmitButtonState();
-        });
-    }
-</script>
 
 <script>
     let isPasswordMatched = false;
@@ -475,7 +400,7 @@
 
     function updateSubmitButtonState() {
         const submitBtn = document.getElementById("submitBtn");
-        if (isEmailVerified && isPasswordMatched) {
+        if (isPasswordMatched) {
             submitBtn.disabled = false;
         } else {
             submitBtn.disabled = true;
