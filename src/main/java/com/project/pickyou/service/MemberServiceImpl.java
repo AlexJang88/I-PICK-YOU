@@ -237,13 +237,9 @@ public class MemberServiceImpl implements MemberService {
         int pageSize = 10;
         Long longcount = recruitStateJPA.countByMemberId(memberId);
         int count = longcount.intValue();
-
         Sort sort = Sort.by(Sort.Order.desc("reg"));
-
         Page<RecruitStateEntity> page = recruitStateJPA.findByMemberId(memberId, (Pageable) PageRequest.of(pageNum - 1, pageSize, sort));
-
         List<RecruitStateEntity> posts = page.getContent();
-
         model.addAttribute("posts", posts);
         model.addAttribute("count", count);
         model.addAttribute("pageNum", pageNum);
