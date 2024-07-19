@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -26,5 +27,6 @@ public interface PointJPARepository extends JpaRepository<PointEntity,Long> {
 
     @Query("SELECT SUM(p.point) FROM PointEntity p WHERE p.memberId = :memberId AND p.status = :status")
     Integer findTotalPointByMemberIdAndStatus(@Param("memberId") String memberId, @Param("status") int status);  //본인의 포인트 전체 합산값
+
 }
 

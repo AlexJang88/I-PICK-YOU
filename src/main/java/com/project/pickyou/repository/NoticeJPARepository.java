@@ -10,6 +10,9 @@ import java.util.Optional;
 public interface NoticeJPARepository extends JpaRepository<NoticeEntity,Long> {
     // 공지사항 상세정보 가져오기
     public Optional<NoticeEntity> findById(Long id);
+
+    // 메인에 공지사항 1개만 나오게
+    public Optional<NoticeEntity> findTopByOrderByRegDesc();
 }
 
 

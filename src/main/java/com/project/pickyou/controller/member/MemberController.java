@@ -128,15 +128,27 @@ public class MemberController {
         return "redirect:/mypage/cominformation/"+id;
     }
 
-    // 포인트 내역
-    @GetMapping("/point/posts")
-    public String pointList(Principal principal, Model model,
+    // 포인트 적립 내역
+    @GetMapping("/point/plus/posts")
+    public String pointPlusList(Principal principal, Model model,
                             @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
 
         pointService.AllPosts(model, pageNum, principal.getName());
 
         return "mypage/pointList";
     }
+
+    // 포인트 차감 내역
+    @GetMapping("/point/minus/posts")
+    public String pointMinusList(Principal principal, Model model,
+                            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
+
+        pointService.AllPosts(model, pageNum, principal.getName());
+
+        return "mypage/pointMinusList";
+    }
+
+
 
     // 일반회원의 지원현황
     @GetMapping("recruit/posts")

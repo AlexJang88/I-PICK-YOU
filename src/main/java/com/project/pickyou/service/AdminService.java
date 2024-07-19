@@ -8,4 +8,5 @@ public interface AdminService {
 
     // 포인트 차감 내역
     public void AllPost(Model model, int status, int pageNum);
+
 }

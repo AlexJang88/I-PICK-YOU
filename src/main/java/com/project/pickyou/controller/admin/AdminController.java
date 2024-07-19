@@ -18,7 +18,10 @@ public class AdminController {
     // 포인트 지급 내역
     @GetMapping("/point/give")
     public String giveList(Model model,
-                           @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
+                           @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                           @RequestParam(value = "month", defaultValue = "1") int month) {
+
+       System.out.println("month--------------------------------------------------"+month);
 
        adminService.AllPosts(model, 1, pageNum);
        return "admin/pointGiveList";
@@ -30,4 +33,5 @@ public class AdminController {
         adminService.AllPost(model, 2, pageNum);
         return "admin/pointDeductList";
     }
+
 }

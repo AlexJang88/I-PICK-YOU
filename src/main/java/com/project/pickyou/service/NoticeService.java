@@ -36,4 +36,7 @@ public interface NoticeService {
 
     // 공지사항 조회수 증가
     public void noticeCnt(Long id, Model model);
+
+    // 메인에 공지사항 최신글 1개
+    public void mainNotice(Model model);
 }

@@ -19,7 +19,7 @@ public class PointServiceImpl implements PointService {
 
     private final PointJPARepository pointJPA;
 
-    // 포인트 내역 가져오기
+    // 포인트 차감 내역 가져오기
     @Override
     public void AllPosts(Model model, int pageNum, String memberId) {
         int pageSize = 10;
@@ -32,6 +32,16 @@ public class PointServiceImpl implements PointService {
 
         List<PointEntity> posts = page.getContent();
 
+        int totalPoints = 0;
+        for (PointEntity post : posts) {
+            if (post.getStatus() == 1) {
+                totalPoints += post.getPoint();
+            } else if (post.getStatus() == 2) {
+                totalPoints -= post.getPoint();
+            }
+        }
+
+        model.addAttribute("totalPoints", totalPoints);
         model.addAttribute("posts", posts);
         model.addAttribute("count", count);
         model.addAttribute("pageNum", pageNum);

@@ -158,4 +158,11 @@ public class FoodMapController {
         return "redirect:/foodMap/posts";
     }
 
+    @GetMapping("posts/test")
+    public String test(Model model) {
+        model.addAttribute("myMap", "서울특별시 관악구 남부순환로 1542");
+        return "/foodMap/test";
+
+    }
+
 }
