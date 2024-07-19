@@ -26,6 +26,11 @@ public class KakaoController {
 
     @GetMapping("/Pay/{user}")
     public String kakaoPayGet(@PathVariable String user, Model model, Principal pc){  //결제 페이지
+
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
+
         String prid = pc.getName();
 
         if(user.equals(prid)){
@@ -47,7 +52,11 @@ public class KakaoController {
     }
 
     @GetMapping("/PaySuccess")   //성공시
-    public void kakaoPaySuccess(@RequestParam("pg_token")String pg_token, Model model, HttpSession session) {
+    public void kakaoPaySuccess(@RequestParam("pg_token")String pg_token, Model model, HttpSession session, Principal pc) {
+
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
 
         PaymentEntity paymentEntity = (PaymentEntity) session.getAttribute("paymentEntity");  //세션으로 값 가져옴
         kakaoPay.savepay(paymentEntity); //결제 넣기
@@ -67,8 +76,10 @@ public class KakaoController {
 
 
     @GetMapping("/PayCancle")  //실패시
-    public void kakaoPayCancle(@RequestParam("pg_token")String pg_token, Model model) {
-
+    public void kakaoPayCancle(@RequestParam("pg_token")String pg_token, Model model, Principal pc) {
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
 
     }
 

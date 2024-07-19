@@ -62,6 +62,7 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="../assets/js/config.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
@@ -76,7 +77,7 @@
         <!-- Layout container -->
         <div class="layout-page">
             <!-- Navbar -->
-            <div th:include="~{design/navi-bar :: navi}"></div>
+            <div th:insert="~{design/navi-bar :: navi}"></div>
 
             <!-- / Navbar -->
 
@@ -110,8 +111,8 @@
 
                                             <img class="card-img-top" th:src="@{'/kjwupload/profile/' + ${list.memberen.profile} }"  alt="Card image cap" style="width: 250px; height: 180px; display: block; margin: auto;"  />
                                             <div class="card-body">
-                                                <h5 class="card-title"><span th:text="${list.business}"></span> </h5>
-                                                <h3 class="card-title"><span th:text="${list.companyName}"></span> </h3>
+                                                <h5 class="card-title"><span th:text="${#strings.length(list.business) > 10 ? #strings.substring(list.business, 0, 10).concat('....') : list.business}"></span></h5>
+                                                <h4 class="card-title"><span th:text="${#strings.length(list.companyName) > 10 ? #strings.substring(list.companyName, 0, 10).concat('....') : list.companyName}"> </h4>
                                                 <p class="card-text">
                                                   주소 :  <span th:text="${list.address}"></span>
                                                 </p>

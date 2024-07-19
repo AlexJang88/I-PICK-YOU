@@ -20,6 +20,10 @@ public class AlarmController {
 
     @GetMapping("/list/{id}")  //일반쪽지 리스트
     public String alarmList(Model model, Principal pc, @PathVariable String id,  @RequestParam(value = "pageNum",defaultValue = "1") int pageNum){
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
+
         String prid = pc.getName();
         if(id.equals(prid)){
 
@@ -34,6 +38,11 @@ public class AlarmController {
 
     @GetMapping("/list/{id}/content/{num}")  //일반회원쪽지 내용
     public String alarmcontent(Model model, Principal pc, @PathVariable String id,@PathVariable Long num){
+
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
+
         String prid = pc.getName();
         if(id.equals(prid)){
 
@@ -47,6 +56,10 @@ public class AlarmController {
 
     @GetMapping("/adminlist/{id}")  //어드민이 보낸 메세지
     public String adminSpend(Model model, Principal pc, @PathVariable String id,  @RequestParam(value = "pageNum",defaultValue = "1") int pageNum){
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
+
         String prid = pc.getName();
         if(id.equals(prid)){
 
@@ -60,6 +73,10 @@ public class AlarmController {
 
     @GetMapping("/adminlist/{id}/content/{num}")  //관리자가 보낸 쪽지상세내용
     public String adminalarmcontent(Model model, Principal pc, @PathVariable String id,@PathVariable Long num){
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
+
         String prid = pc.getName();
         if(id.equals(prid)){
 
@@ -74,6 +91,9 @@ public class AlarmController {
     //쪽지쓰는곳
     @GetMapping("/alarmWrite/{id}")
     public String alarmWrite(Model model,Principal pc, @PathVariable String id){ //쪽지 쓰기
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
         String prid = pc.getName();
         if(id.equals(prid)){
             model.addAttribute("id",id);
