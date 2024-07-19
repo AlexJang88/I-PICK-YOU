@@ -2,6 +2,8 @@ package com.project.pickyou.repository;
 
 import com.project.pickyou.dto.MemberDTO;
 import com.project.pickyou.entity.MemberEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -20,5 +22,10 @@ public interface MemberJPARepository extends JpaRepository<MemberEntity,String> 
 
 
     List<MemberEntity> findByAuth(String business);  //권한이 사업자인사람뽑기
+
+    Long countByAuth(String auth); //일반 인원
+
+    Page<MemberEntity> findByAuth(String auth, Pageable pageable);
+
 
 }

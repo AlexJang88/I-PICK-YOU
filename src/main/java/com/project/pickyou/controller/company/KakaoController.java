@@ -18,13 +18,13 @@ import java.security.Principal;
 @Controller
 @RequiredArgsConstructor
 @Log
-@RequestMapping("/kakao/*")
+@RequestMapping("/payProcess/*")
 public class KakaoController {
 
     private final KakaoPayService kakaoPay;
 
 
-    @GetMapping("/kakaoPay/{user}")
+    @GetMapping("/Pay/{user}")
     public String kakaoPayGet(@PathVariable String user, Model model, Principal pc){  //결제 페이지
         String prid = pc.getName();
 
@@ -32,7 +32,7 @@ public class KakaoController {
             int savedMoney =  kakaoPay.savedMoney(user); //본인의 적릭금*/
             model.addAttribute("user",user);
             model.addAttribute("savedMoney",savedMoney);
-            return "kakao/kakaoPay";
+            return "payProcess/Pay";
         }else {
             return "/login";
         }
@@ -40,13 +40,13 @@ public class KakaoController {
     }
 
 
-    @PostMapping("/kakaoPay")  //카카오결제되는 부분
+    @PostMapping("/Pay")  //카카오결제되는 부분
     public String kakaoPay(KakaoPayDTO kakaoPayDTO, HttpSession session){
 
         return "redirect:" + kakaoPay.kakaoPayReady(kakaoPayDTO, session);
     }
 
-    @GetMapping("/kakaoPaySuccess")   //성공시
+    @GetMapping("/PaySuccess")   //성공시
     public void kakaoPaySuccess(@RequestParam("pg_token")String pg_token, Model model, HttpSession session) {
 
         PaymentEntity paymentEntity = (PaymentEntity) session.getAttribute("paymentEntity");  //세션으로 값 가져옴
@@ -66,7 +66,7 @@ public class KakaoController {
     }
 
 
-    @GetMapping("/kakaoPayCancle")  //실패시
+    @GetMapping("/PayCancle")  //실패시
     public void kakaoPayCancle(@RequestParam("pg_token")String pg_token, Model model) {
 
 

@@ -65,9 +65,9 @@ public class KakaoPayService {
         params.add("quantity", String.valueOf(kakaoPayDTO.getQuantity()));    //상품수량
         params.add("total_amount", String.valueOf(kakaoPayDTO.getTotalAmount()));  //상품가격
         params.add("tax_free_amount", String.valueOf(kakaoPayDTO.getTaxFreeAmount()));   //비과세 금액
-        params.add("approval_url", "http://localhost:8080/kakao/kakaoPaySuccess"); // 성공시 url
-        params.add("cancel_url", "http://localhost:8080/kakao/kakaoPayCancle"); // 실패시 url
-        params.add("fail_url", "http://localhost:8080/kakao/kakaoPayFail");
+        params.add("approval_url", "http://localhost:8080/payProcess/PaySuccess"); // 성공시 url
+        params.add("cancel_url", "http://localhost:8080/payProcess/PayCancle"); // 실패시 url
+        params.add("fail_url", "http://localhost:8080/payProcess/PayFail");
 
         // 헤더와 바디 붙이기
         HttpEntity<MultiValueMap<String, String>> body = new HttpEntity<>(params, headers);
@@ -81,7 +81,7 @@ public class KakaoPayService {
         } catch (RestClientException | URISyntaxException e) {
             e.printStackTrace();
         }
-        return "kakao/pay";
+        return "payProcess/pay";
     }
 
 
@@ -126,6 +126,10 @@ public class KakaoPayService {
 
        if(savePoint == null){
            savePoint = 0;
+       }
+
+       if(deductedPoint == null){
+           deductedPoint =0;
        }
 
         // 실제 보유 포인트

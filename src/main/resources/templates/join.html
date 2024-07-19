@@ -419,7 +419,7 @@
 
                                             <div class="row justify-content-end">
                                                 <div class="col-sm-10">
-                                                    <button type="submit" class="btn btn-primary" id="submitBtn" disabled >Send</button>
+                                                    <button type="submit" class="btn btn-primary" id="submitBtn" disabled >가입하기</button>
                                                 </div>
                                             </div>
                                         </form>
@@ -476,8 +476,7 @@
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-
+<!--시작-->
 <script>
     let isIdChecked = false;
     let isEmailVerified = false;
@@ -499,11 +498,7 @@
         const submitBtn = document.getElementById('submitBtn');
         submitBtn.disabled = !this.checked;
     });
-</script>
 
-
-<!--아이디 중복확인-->
-<script>
     document.getElementById('checkDuplicate').addEventListener('click', function() {
         const id = document.getElementById('id').value;
 
@@ -535,10 +530,7 @@
             }
         });
     });
-</script>
 
-
-<script>
     let isEmailChecked = false;
 
     document.getElementById('checkEmail').addEventListener('click', function() {
@@ -579,14 +571,14 @@
     });
 
     function sendAuthCode() {
-        console.log('sendAuthCode 함수가 호출되었습니다.');  // 디버깅 메시지 추가
+        console.log('sendAuthCode 함수가 호출되었습니다.');
         if (!isEmailChecked) {
             alert('먼저 이메일 중복확인을 해주세요.');
             return;
         }
 
         const email = document.querySelector('input[name="email"]').value;
-        console.log('인증 코드 전송 중: ', email);  // 디버깅 메시지 추가
+        console.log('인증 코드 전송 중: ', email);
 
         fetch('/mail/sendAuthCode', {
             method: 'POST',
@@ -601,7 +593,7 @@
             return response.json();
         })
         .then(data => {
-            console.log('응답 데이터: ', data);  // 디버깅 메시지 추가
+            console.log('응답 데이터: ', data);
             alert(data.message);
         })
         .catch(error => {
@@ -629,13 +621,35 @@
         }).then(data => {
             alert(data.message);
             isEmailVerified = true;
+            updateAgreePrivacyCheckbox();  // 상태 업데이트 후 확인
         }).catch(error => {
             console.error('에러:', error);
             alert('인증 실패: ' + error.message);
             isEmailVerified = false;
+            updateAgreePrivacyCheckbox();  // 상태 업데이트 후 확인
         });
     }
+
+    function checkPasswordMatch() {
+        var password = document.getElementById("password").value;
+        var confirmPassword = document.getElementById("password2").value;
+
+        if (password === confirmPassword) {
+            document.getElementById("passwordMatchMessage").innerHTML = "비밀번호가 동일합니다";
+            document.getElementById("passwordMatchMessage").classList.remove("text-danger");
+            document.getElementById("passwordMatchMessage").classList.add("text-success");
+        } else {
+            document.getElementById("passwordMatchMessage").innerHTML = "비밀번호를 확인해주세요";
+            document.getElementById("passwordMatchMessage").classList.remove("text-success");
+            document.getElementById("passwordMatchMessage").classList.add("text-danger");
+        }
+    }
+
+    document.getElementById("password2").addEventListener("input", checkPasswordMatch);
 </script>
+
+
+
 
 
 
@@ -673,28 +687,6 @@
             }).open();
         });
     });
-</script>
-
-<script>
-    // 비밀번호 입력란과 확인 입력란의 값 비교 함수
-    function checkPasswordMatch() {
-        var password = document.getElementById("password").value;
-        var confirmPassword = document.getElementById("password2").value;
-
-        // 비밀번호와 비밀번호 확인이 같은 경우
-        if (password === confirmPassword) {
-            document.getElementById("passwordMatchMessage").innerHTML = "비밀번호가 동일합니다";
-            document.getElementById("passwordMatchMessage").classList.remove("text-danger");
-            document.getElementById("passwordMatchMessage").classList.add("text-success");
-        } else {
-            document.getElementById("passwordMatchMessage").innerHTML = "비밀번호를 확인해주세요";
-            document.getElementById("passwordMatchMessage").classList.remove("text-success");
-            document.getElementById("passwordMatchMessage").classList.add("text-danger");
-        }
-    }
-
-    // 비밀번호 확인란이 입력될 때마다 비교 함수 호출
-    document.getElementById("password2").addEventListener("input", checkPasswordMatch);
 </script>
 
 
