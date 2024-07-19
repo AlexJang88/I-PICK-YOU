@@ -21,7 +21,14 @@ public class ResumeController {
     // 이력서 리스트
     @GetMapping("/posts")
     public String list(Principal principal, Model model) {
-        resumeService.selectResume(model, principal.getName());
+        String sid = "";
+
+        if(principal!=null) {
+            sid = principal.getName();
+            model.addAttribute("id", principal.getName());
+        }
+
+        resumeService.selectResume(model, sid);
         return "resume/list";
     }
 
@@ -56,14 +63,17 @@ public class ResumeController {
 
         if(principal!=null) {
             sessionId = principal.getName();
+            model.addAttribute("id", principal.getName());
         }
 
         model.addAttribute("sessionId", sessionId);
+
 
         resumeService.selectResumeInfo(model, num);
 
         return "resume/info";
     }
+
 
     // 이력서 삭제
     @DeleteMapping("/posts/{num}")

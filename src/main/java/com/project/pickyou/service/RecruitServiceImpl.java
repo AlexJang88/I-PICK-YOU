@@ -339,7 +339,7 @@ public class RecruitServiceImpl implements RecruitService {
         if(com.isPresent()){
             model.addAttribute("com",com.get());
         }
-        model.addAttribute("stateId",stateId);
+        //model.addAttribute("stateId",stateId);
 
 
 

@@ -194,7 +194,7 @@ public class RecruitController {
             service.userInfo(model,memberId,name,stateId,type);
         }else if(type==4){
             url="redirect:/recruitState/posts";
-            service.basicContract(memberId,name,1,stateId);
+            service.basicContract(memberId,name,4,stateId);
         }
 
 
