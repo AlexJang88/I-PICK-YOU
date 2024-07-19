@@ -18,8 +18,8 @@ public interface RecruitService {
     public int favoriteCheck(PickDTO dto);
     public int recruit(Long boardNum,String id);
     public void contractPDF(HttpServletResponse response,Long id);
-    public void userInfo(Model model,String memberId,String companyId,Long stateId);
-    public Long contract(ContractDTO dto ,Long stateId);
+    public void userInfo(Model model,String memberId,String companyId,Long stateId,int type);
+    public Long contract(ContractDTO dto ,Long stateId,int applyType);
     public void getContract(HttpServletResponse response,Model model,Long id,String userId);
     public Map<String,String> saveSignature(MultipartFile multipartFile,Long contractId,String userId);
     public void basicContract(String memberId,String companyId,int type,Long stateId);

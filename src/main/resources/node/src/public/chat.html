@@ -72,6 +72,16 @@
             cursor: pointer;
         }
 
+        .close-button {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background-color: #ccc;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
         .chat-messages {
             flex: 1;
             padding: 10px;
@@ -126,6 +136,17 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
+        .unread-messages {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 5px;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
@@ -134,6 +155,7 @@
     <div class="chat-header">
         채팅
         <button class="back-button" onclick="backToRooms()">뒤로가기</button>
+        <button class="close-button" onclick="closeModal()">Close</button>
     </div>
     <div id="msg" class="chat-messages"></div>
     <form id="chatform" class="chat-input" onsubmit="return false">
@@ -184,8 +206,16 @@
         chatView.scrollTop = chatView.scrollHeight; // 스크롤을 맨 아래로 이동
     });
 
+ function closeModal() {
+        socket.emit('leaveRoom');
+        window.parent.postMessage('modalClosed', 'http://localhost:8080');
+
+    }
+
+
     function backToRooms() {
-        window.location.href = '/rooms/' + sender;
+        socket.emit('leaveRoom'); // 채팅방 나가기 이벤트 전송
+        window.location.href = '/rooms/' + sender; // 예시: 채팅방 목록 페이지로 이동
     }
 </script>
 </body>

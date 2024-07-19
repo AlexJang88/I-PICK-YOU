@@ -95,6 +95,9 @@ public class TeamServiceImpl implements TeamService{
             model.addAttribute("member", mdto);
             model.addAttribute("post", tdto);
             model.addAttribute("imgList", imageList);
+            model.addAttribute("to",sid);
+            model.addAttribute("id",sid);
+
         }
 
     }

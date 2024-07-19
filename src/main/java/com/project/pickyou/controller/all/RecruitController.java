@@ -184,24 +184,25 @@ public class RecruitController {
         }
         if(type==1){
                 url="recruit/contractForm";
-
-            service.userInfo(model,memberId,
-
-                    name,stateId);
+            service.userInfo(model,memberId,name,stateId,type);
             }
         else if(type==2){
             service.basicContract(memberId,name,1,stateId);
             url="redirect:/recruitState/posts";
         }else if(type==3){
-
+            url="recruit/contractForm";
+            service.userInfo(model,memberId,name,stateId,type);
+        }else if(type==4){
+            url="redirect:/recruitState/posts";
+            service.basicContract(memberId,name,1,stateId);
         }
 
 
         return url;
     }
     @PostMapping("/contract/company/{stateId}")
-    public String signature(@ModelAttribute ContractDTO dto,@PathVariable Long stateId){
-        Long id=service.contract(dto,stateId);
+    public String signature(@ModelAttribute ContractDTO dto,@PathVariable Long stateId,@RequestParam int applyType){
+        Long id=service.contract(dto,stateId,applyType);
         String url = "redirect:/contract/"+id;
         return url;
     }

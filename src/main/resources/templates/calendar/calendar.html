@@ -1,0 +1,70 @@
+<head>
+    <meta charset='utf-8' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+          $.ajax({
+            url: '/ajax/calendar',
+            type: 'POST',
+            data: {
+                currentMonth: currentMonth
+            },
+            async: false,
+            success: function (response) {
+            	var events = [];
+
+                // 서버에서 받은 데이터(response)를 이벤트 객체로 변환하여 배열에 추가
+                for (var i = 0; i < response.length; i++) {
+                    var res = response[i];
+                    var event = {
+                        title: res.title,
+                        start: res.start
+                    };
+
+                    events.push(event);
+                }
+
+                console.log('Events:', events); // 콘솔 로그로 이벤트 확인
+                initializeFullCalendar(events);
+            },
+            error: function () {
+                // 에러 처리
+                console.log('Failed to fetch data from the server.');
+            }
+        });
+        });
+        function initializeFullCalendar(event1) {
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                start: 'prev next today',
+                center: 'title',
+                end: 'dayGridMonth,dayGridWeek,dayGridDay'
+            },
+            titleFormat: function (date) {
+                return date.date.year + '년 ' + (parseInt(date.date.month) + 1) + '월';
+            },
+            selectable: true,
+            droppable: true,
+            navLinks: true,
+            editable: true,
+            nowIndicator: true,
+            locale: 'ko',
+            events: event1, // 초기화 시 events 배열 사용
+            datesSet: function (info) {
+                currentMonth = info.view.title;
+                calendar.refetchEvents(); // FullCalendar에 이벤트 업데이트
+
+            }
+        });
+
+        calendar.render();
+    }
+
+    </script>
+</head>
+<body>
+<div id='calendar'></div>
+</body>
+</html>

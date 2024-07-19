@@ -235,7 +235,8 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void userRecruitList(String memberId, int pageNum, Model model) {
         int pageSize = 10;
-        int count = recruitStateJPA.countByMemberId(memberId);
+        Long longcount = recruitStateJPA.countByMemberId(memberId);
+        int count = longcount.intValue();
 
         Sort sort = Sort.by(Sort.Order.desc("reg"));
 
