@@ -2,6 +2,7 @@ package com.project.pickyou.controller.all;
 
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.project.pickyou.dto.AlarmDTO;
 
@@ -117,7 +118,13 @@ public class AjaxController {
         return ResponseEntity.ok(result);
     }
 
+    @PostMapping("/calendar")
+    @ResponseBody
+    public ResponseEntity<Map<String, JsonArray>> calendar(){
+        Map<String,JsonArray> result= new HashMap<>();
 
+        return ResponseEntity.ok(result);
+    }
 
 
 }

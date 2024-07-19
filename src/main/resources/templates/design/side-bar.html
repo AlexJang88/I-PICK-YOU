@@ -102,7 +102,7 @@
             </li>
 
             <li class="menu-item" sec:authorize="isAuthenticated()">
-                <a th:href="@{/kakao/kakaoPay/{user}(user=${#authentication.name})}" class="menu-link">
+                <a th:href="@{/payProcess/Pay/{user}(user=${#authentication.name})}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-crown"></i>
                     <div data-i18n="Boxicons">카카오페이</div>
                 </a>
@@ -413,7 +413,7 @@
 
            <!-- Tables -->
             <li class="menu-item">
-                <a th:href="@{/tables-basic.html}" class="menu-link">
+                <a th:href="@{https://www.moel.go.kr/info/defaulter/defaulterList.do}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-table"></i>
                     <div data-i18n="Tables">체불사업주</div>
                 </a>
@@ -421,32 +421,36 @@
 
 
 
-
-
-
-
-
-
-            <!-- Misc -->
-            <li class="menu-header small text-uppercase"><span class="menu-header-text">Misc</span></li>
-            <li class="menu-item">
-                <a href="#"
-                   target="_blank"
-                   class="menu-link"
-                >
-                    <i class="menu-icon tf-icons bx bx-support"></i>
-                    <div data-i18n="Support">문의번호 02)-***-****</div>
-
-            </li>
+            <!-- 관리자 페이지 -->
+            <li class="menu-header small text-uppercase"><span class="menu-header-text">고객센터</span></li>
 
             <li class="menu-item" sec:authorize="hasRole('ROLE_ADMIN')">
-                <a href="#"
-                   target="_blank"
-                   class="menu-link"
-                >
-                    <i class="menu-icon tf-icons bx bx-support"></i>
-                    <div data-i18n="Support">관리자 페이지</div>
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons bx bx-cube-alt"></i>
+                    <div data-i18n="Misc">관리자 페이지</div>
                 </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a th:href="@{/admin/management}" class="menu-link">
+                            <div data-i18n="Error">일반유저 정보</div>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a th:href="@{/admin/companyManagement}" class="menu-link">
+                            <div data-i18n="Error">사업자 정보</div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+            <li class="menu-item">
+                  <ul>
+                     <i class="menu-icon tf-icons bx bx-support"></i>
+                     <div data-i18n="Support">문의번호 02)-***-****</div>
+                  </ul>
             </li>
         </ul>
     </aside>

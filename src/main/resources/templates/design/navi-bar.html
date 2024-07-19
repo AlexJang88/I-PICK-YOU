@@ -3,75 +3,8 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
 
-<head>
-    <meta charset="UTF-8">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <title>Title</title>
-    <style>
-        .chat-window {
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 25%;
-            height: 100%;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            background-color: #f9f9f9;
-            z-index: 9999; /* Ensure it's above other elements */
-        }
-        .chat-header {
-            background-color: #f1f1f1;
-            padding: 10px;
-            border-bottom: 1px solid #ccc;
-            text-align: center;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-        }
-        .chat-body {
-            height: calc(100% - 40px); /* Adjust height for header and footer */
-            padding: 10px;
-            overflow-y: scroll;
-            border-bottom: 1px solid #ccc;
-        }
-        .chat-footer {
-            padding: 10px;
-            border-top: 1px solid #ccc;
-            text-align: center;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #f1f1f1;
-            border-bottom-left-radius: 10px;
-            border-bottom-right-radius: 10px;
-        }
-        #input_box {
-            width: calc(100% - 70px); /* Adjust width for send button */
-            padding: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        #sendmsg {
-            margin-left: 10px;
-            padding: 5px 10px;
-            border: none;
-            background-color: #4CAF50;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-</head>
-
-
-<body>
 <div th:fragment="navi">
-
-
     <nav class="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
          id="layout-navbar">
         <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
@@ -89,16 +22,18 @@
 
                 <!--알림버튼-->
 
-                    <button type="button" class="btn btn-icon btn-secondary position-relative" sec:authorize="hasRole('ROLE_USER')">
-                        <a th:href="@{/alarm/list/{id}(id=${#authentication.name})}">
+                <button type="button" class="btn btn-icon btn-secondary position-relative"
+                        sec:authorize="hasRole('ROLE_USER')">
+                    <a th:href="@{/alarm/list/{id}(id=${#authentication.name})}">
                         <span class="tf-icons bx bx-bell"></span>
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                               <span id="alertCounter">0</span> <!-- 알림 카운터를 표시할 요소 -->
                             <span class="visually-hidden">unread messages</span>
                         </span>
-                        </a>
-                    </button>
-                <button type="button" class="btn btn-icon btn-secondary position-relative" sec:authorize="hasRole('ROLE_COMPANY')">
+                    </a>
+                </button>
+                <button type="button" class="btn btn-icon btn-secondary position-relative"
+                        sec:authorize="hasRole('ROLE_COMPANY')">
                     <a th:href="@{/alarm/list/{id}(id=${#authentication.name})}">
                         <span class="tf-icons bx bx-bell"></span>
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -107,14 +42,25 @@
                         </span>
                     </a>
                 </button>
-                <button type="button" class="btn btn-icon btn-secondary position-relative" sec:authorize="hasRole('ROLE_ADMIN')">
+                <button type="button" class="btn btn-icon btn-secondary position-relative"
+                        sec:authorize="hasRole('ROLE_ADMIN')">
                     <a th:href="@{/alarm/adminlist/{id}(id=${#authentication.name})}">
                         <span class="tf-icons bx bx-bell"></span>
                     </a>
                 </button>
-                <span> </span>
-                <span> </span>
-                <span> </span>
+                <span class="mx-2"></span>
+                <span id="openChatRoomBtn" class="position-relative" sec:authorize="isAuthenticated()"
+                      style="cursor: pointer;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-dots-fill"
+                         viewBox="0 0 16 16">
+                        <path d="M16 8c0 3.866-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7M5 8a1 1 0 1 0-2 0 1 1 0 0 0 2 0m4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+                    </svg>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                          sec:authorize="isAuthenticated()">
+                        <span id="chatCount">0</span>
+                    </span>
+                </span>
+                <span class="mx-2"></span>
 
                 <!-- User -->
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
@@ -126,7 +72,8 @@
                                 <button type="button" class="btn btn-primary">로그인</button>
                             </div>
                             <div sec:authorize="isAuthenticated()">
-                                <img th:src="@{/assets/img/avatars/3.png}" alt="" class="w-px-40 h-auto rounded-circle" />
+                                <img th:src="@{/assets/img/avatars/3.png}" alt=""
+                                     class="w-px-40 h-auto rounded-circle"/>
                             </div>
                             <div sec:authorize="isAuthenticated()">
                                 <p class="mb-0 ms-2" th:text="${#authentication.name}"></p>
@@ -136,34 +83,36 @@
 
 
                     <!--프로필 눌렀을때-->
-                    <ul  class="dropdown-menu dropdown-menu-end">
+                    <ul class="dropdown-menu dropdown-menu-end">
                         <!--사람 이름과 하위메뉴-->
                         <li>
                             <a sec:authorize class="dropdown-item" href="#">
 
 
-                                    <div class="d-flex">
-                                        <div class="flex-shrink-0 me-3">
-                                            <div>
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div>
 
-                                                <img sec:authorize="isAuthenticated()" th:src="@{/assets/img/avatars/1.png}" alt=""
-                                                     class="w-px-40 h-auto rounded-circle" />
+                                            <img sec:authorize="isAuthenticated()" th:src="@{/assets/img/avatars/1.png}"
+                                                 alt=""
+                                                 class="w-px-40 h-auto rounded-circle"/>
 
-                                            </div>
-                                        </div>
-
-                                        <div class="flex-grow-1">
-
-                                            <span  sec:authorize="isAuthenticated()" class="fw-semibold d-block">John Doe</span>
-                                                <small sec:authorize="isAuthenticated()" class="text-muted">회원님</small>
                                         </div>
                                     </div>
+
+                                    <div class="flex-grow-1">
+
+                                        <span sec:authorize="isAuthenticated()"
+                                              class="fw-semibold d-block">John Doe</span>
+                                        <small sec:authorize="isAuthenticated()" class="text-muted">회원님</small>
+                                    </div>
+                                </div>
                             </a>
                         </li>
 
 
                         <li>
-                            <div  sec:authorize="isAuthenticated()" class="dropdown-divider"></div>
+                            <div sec:authorize="isAuthenticated()" class="dropdown-divider"></div>
                         </li>
                         <li sec:authorize="hasRole('ROLE_USER')">
                             <a class="dropdown-item" th:href="@{/mypage/information/{id}(id=${#authentication.name})}">
@@ -172,7 +121,8 @@
                             </a>
                         </li>
                         <li sec:authorize="hasRole('ROLE_COMPANY')">
-                            <a class="dropdown-item" th:href="@{/mypage/cominformation/{id}(id=${#authentication.name})}">
+                            <a class="dropdown-item"
+                               th:href="@{/mypage/cominformation/{id}(id=${#authentication.name})}">
                                 <i class="bx bx-user me-2"></i>
                                 <span class="align-middle">마이페이지</span>
                             </a>
@@ -192,21 +142,21 @@
                             </a>
                         </li>
                         <li>
-                            <div  sec:authorize="isAuthenticated()" class="dropdown-divider"></div>
+                            <div sec:authorize="isAuthenticated()" class="dropdown-divider"></div>
                         </li>
 
                         <li sec:authorize="!isAuthenticated()">
-                            <a  class="dropdown-item" th:href="@{/login}">
+                            <a class="dropdown-item" th:href="@{/login}">
                                 <i class="bx bx-power-off me-2"></i>
-                                <span  class="align-middle">Log in</span>
+                                <span class="align-middle">Log in</span>
                             </a>
                         </li>
 
 
                         <li sec:authorize="isAuthenticated()">
-                            <a  class="dropdown-item" th:href="@{/logout}">
+                            <a class="dropdown-item" th:href="@{/logout}">
                                 <i class="bx bx-power-off me-2"></i>
-                                <span  class="align-middle">Log Out</span>
+                                <span class="align-middle">Log Out</span>
                             </a>
                         </li>
 
@@ -216,57 +166,48 @@
             </ul>
         </div>
         <input type="hidden" id="ajaxId" th:value="${id}"> <!-- 실제 사용자 ID를 여기에 설정 -->
-<!--        <script th:inline="javascript">-->
-<!--            $(document).ready(function(){-->
-<!--          $('#openChatBtn').click(function() {-->
-<!--            var user = $('#user').text().trim();-->
-<!--            var chatUrl = 'http://localhost:4000/chat/' + sender + '/' + receiver;-->
 
-<!--            $('#chatFrame').attr('src', chatUrl);-->
-<!--            $('#myModal').modal('show');-->
-<!--            });-->
-<!--            $('#openChatRoomBtn').click(function() {-->
-<!--            var sender = $('#sender').val();-->
-<!--            var receiver = $('#receiver').val();-->
-<!--            var chatUrl = 'http://localhost:4000/rooms/' + sender-->
-
-<!--            $('#chatFrame').attr('src', chatUrl);-->
-<!--            $('#myModal').modal('show');-->
-<!--        });-->
-<!--              -->
-<!--              function fetchAlarmCount() {-->
-<!--                    console.log("ajax작동");-->
-
-<!--                    var id = $("#ajaxId").val();  // hidden input 태그에서 id 값을 가져옴-->
-
-<!--                    console.log("id:", id);-->
-
-<!--                    // AJAX 요청 보내기-->
-<!--                    $.ajax({-->
-<!--                        url: '/ajax/alarmnumber/number',-->
-<!--                        type: "POST",-->
-<!--                        contentType: 'application/json',-->
-<!--                        data: JSON.stringify({ id: id }),-->
-<!--                        dataType: "json",-->
-<!--                        success: function(data) {-->
-<!--                            console.log("AJAX 성공:", data);-->
-<!--                            $("#alertCounter").text(data.alarmcount); // 서버에서 받은 데이터로 알림 카운터 업데이트-->
-<!--                        },-->
-<!--                        error: function(xhr, status, error) {-->
-<!--                            console.error("AJAX 에러:", error);-->
-<!--                            console.log("xhr:", xhr);-->
-<!--                            console.log("status:", status);-->
-<!--                            console.log("error:", error);-->
-<!--                        }-->
-<!--                    });-->
-<!--                }-->
-
-<!--                // 페이지 로드 후 1분마다 fetchAlarmCount 함수 실행-->
-<!--                fetchAlarmCount(); // 초기 실행-->
-<!--                setInterval(fetchAlarmCount, 60000); // 1분(60000밀리초)마다 실행-->
-<!--            });-->
-<!--        </script>-->
         <script>
+            $(document).ready(function() {
+        fetchUnreadMessages();
+        $('#openChatRoomBtn').click(function() {
+            var sender = $('#ajaxId').val();
+            var chatUrl = 'http://localhost:4000/rooms/' + sender
+            $('#chatFrame').attr('src', chatUrl);
+            $('#myModal').modal('show');
+        });
+        window.addEventListener('message', event => {
+            if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
+            if (event.data === 'modalClosed') {
+                $('#myModal').modal('hide');  // 모달이 닫힌 후 동작 수행
+            }
+        });
+
+    });
+
+
+        function fetchUnreadMessages() {
+                    var userId = $('#ajaxId').val();
+                    $.ajax({
+                        url: 'http://localhost:4000/api/unread/' + userId,
+                        method: 'GET',
+                        success: function(response) {
+                            $('#chatCount').text(response.unreadCount);
+                        },
+                        error: function(error) {
+                            console.error('Error fetching unread messages:', error);
+                        }
+                    });
+                }
+
+                 var userId = $('#ajaxId').val();
+                 if(userId){
+                // 5초마다 갱신
+                setInterval(fetchUnreadMessages, 5000);
+                }
+
+
+
             const cities = [
                 { engName: 'Seoul', korName: '서울' },
                 { engName: 'Busan', korName: '부산' },
@@ -327,6 +268,6 @@
 
     </nav>
 </div>
-</body>
+
 
 </html>

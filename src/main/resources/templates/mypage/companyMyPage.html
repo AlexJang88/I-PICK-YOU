@@ -1,19 +1,3 @@
-<!--
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>사업자 마이페이지</title>
-</head>
-<body>
-
-
-여기는 사업자 마이페이지
-</body>
-</html>-->
-
-
-
 <!DOCTYPE html>
 <html lang="en"
       class="light-style layout-menu-fixed"
@@ -27,7 +11,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>일반회원 마이페이지</title>
+    <title>사업자 마이페이지</title>
 
     <meta name="description" content="" />
 
@@ -70,11 +54,7 @@
         <!-- Layout container -->
         <div class="layout-page">
             <!-- Navbar -->
-
-
             <div th:include="~{design/navi-bar :: navi}"></div>
-
-
             <!-- / Navbar -->
 
             <!-- Content wrapper -->
@@ -83,10 +63,6 @@
                 <div class="container-fluid flex-grow-1 container-p-y">
                     <!-- Layout Demo -->
 
-
-
-                    <span th:text="${user.id}"></span>
-
                     <div class="col-md-12 mb-4">
                         <div class="card">
                             <div class="container-xxl flex-grow-1 container-p-y text-center">
@@ -94,52 +70,102 @@
                                     <span th:text="${user.id}"></span>회원님의 마이페이지
                                 </h2>
 
-                                <div class="card-body">
+                                <div class="card-body text-center">
                                     <div class="mb-3">
                                         <!-- 이미지 삽입 -->
-                                        <img th:src="@{'/kjwupload/profile/' + ${user.profile} }" class="img-fluid" alt="사진" />
+                                        <img th:src="@{'/kjwupload/profile/' + ${user.profile} }"  alt="사진" style="width: 150px; height: 150px;" />
+                                    </div>
+
+                                    <div class="row">
+                                        <!-- 회사 이름, 대표자 이름, 사업자번호 카드 -->
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title fw-bold">
+                                                        <i class="bx bx-buildings text-muted"></i> 회사 이름
+                                                    </h5>
+                                                    <p class="card-text" th:text="${user.companyInfo.companyName}"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title fw-bold">
+                                                        <i class="bx bx-user text-muted"></i> 대표자 이름
+                                                    </h5>
+                                                    <p class="card-text" th:text="${user.companyInfo.name}"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title fw-bold">
+                                                        <i class="bx bx-id-card text-muted"></i> 사업자번호
+                                                    </h5>
+                                                    <p class="card-text" th:text="${user.companyInfo.corpno}"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- 직종, 이메일, 주소 카드 -->
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title fw-bold">
+                                                        <i class="bx bx-briefcase text-muted"></i> 직종
+                                                    </h5>
+                                                    <p class="card-text" th:text="${user.companyInfo.job}"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title fw-bold">
+                                                        <i class="bx bx-envelope text-muted"></i> 이메일
+                                                    </h5>
+                                                    <p class="card-text" th:text="${user.email}"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title fw-bold">
+                                                        <i class="bx bx-home text-muted"></i> 주소
+                                                    </h5>
+                                                    <p class="card-text" th:text="${user.address}"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- 연락처 카드 -->
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title fw-bold">
+                                                        <i class="bx bx-phone text-muted"></i> 연락처
+                                                    </h5>
+                                                    <p class="card-text" th:text="${user.phone}"></p>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <h5 class="fw-bold py-3 mb-4">
-                                    <span class="text-muted fw-light">회사 이름 : </span>
-                                    <span th:text="${user.companyInfo.companyName}"></span>
-                                    //
-                                    <span class="text-muted fw-light">대표자 이름 : </span>
-                                    <span th:text="${user.companyInfo.name}"></span>
-                                    //
-                                    <span class="text-muted fw-light">사업자번호 : </span>
-                                    <span th:text="${user.companyInfo.corpno}"></span>
-                                </h5>
-
-                                <h5 class="fw-bold py-3 mb-4">
-                                    <span class="text-muted fw-light">직종 : </span>
-                                    <span th:text="${user.companyInfo.job}"></span>
-                                    //
-                                    <span class="text-muted fw-light">이메일 : </span>
-                                    <span th:text="${user.email}"></span>
-                                    //
-                                    <span class="text-muted fw-light">주소 : </span>
-                                    <span th:text="${user.address}"></span>
-                                </h5>
-
-                                <h5 class="fw-bold py-3 mb-4">
-                                    <span class="text-muted fw-light">연락처 : </span>
-                                    <span th:text="${user.phone}"></span>
-                                </h5>
                             </div>
                         </div>
                     </div>
 
-                    <div class="row" >
+                    <div class="row">
                         <div class="col-md-6 text-center"> <!-- 수정하기 버튼 -->
                             <a th:href="@{/mypage/companyUpdate/{id}(id=${user.id})}">
-                                <button class="btn btn-danger btn-block"  >
-                                   사업자 회원 수정하기
+                                <button class="btn btn-primary btn-lg">
+                                    내정보 수정
                                 </button>
                             </a>
                         </div>
-
 
                         <div class="col-md-6 text-center"> <!-- 삭제하기 버튼 -->
                             <button class="btn btn-danger btn-block" onclick="confirmDelete()">
@@ -168,8 +194,6 @@
 </div>
 <!-- / Layout wrapper -->
 
-
-
 <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->
 <script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
@@ -190,8 +214,6 @@
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 
-
-
 <script th:inline="javascript">
     /*<![CDATA[*/
     function confirmDelete() {
@@ -202,9 +224,6 @@
     }
     /*]]>*/
 </script>
-
-
-
 
 </body>
 </html>

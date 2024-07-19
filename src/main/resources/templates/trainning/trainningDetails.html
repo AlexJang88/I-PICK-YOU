@@ -145,17 +145,17 @@
 
 
                                 <div class="col-md-6 text-center"> <!-- 삭제하기 버튼 -->
-                                    <form th:action="@{/trainning/posts/{trainnignum}(trainnignum=${DetailsList.get().id})}" th:method="delete">
-                                        <button type="submit" class="btn btn-danger btn-block" onclick="confirmDelete()">삭제하기</button>
+                                    <form id="deleteForm" th:action="@{/trainning/posts/{trainnignum}(trainnignum=${DetailsList.get().id})}" th:method="delete">
+                                        <button type="button" class="btn btn-danger btn-block" onclick="confirmDeleteUser(event)">삭제하기</button>
                                     </form>
                                 </div>
                             </div>
 
-                            <div class="col-md-6 text-center" sec:authorize="hasRole('ROLE_ADMIN')"> <!-- 삭제하기 버튼 -->
-                                <form th:action="@{/trainning/posts/{trainnignum}(trainnignum=${DetailsList.get().id})}" th:method="delete">
-                                    <button type="submit" class="btn btn-danger btn-block" onclick="confirmDelete()">삭제하기</button>
-                                </form>
-                            </div>
+                                <div class="col-md-6 text-center" sec:authorize="hasRole('ROLE_ADMIN')"> <!-- 삭제하기 버튼 -->
+                                    <form id="AdmindeleteForm" th:action="@{/trainning/posts/{trainnignum}(trainnignum=${DetailsList.get().id})}" th:method="delete">
+                                        <button type="button" class="btn btn-danger btn-block" onclick="confirmDeleteAdmin(event)">삭제하기</button>
+                                    </form>
+                                </div>
 
 
 
@@ -204,10 +204,20 @@
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 
+
 <script>
-    function confirmDelete() {
+    function confirmDeleteUser(event) {
+        event.preventDefault();
         if (confirm("정말 삭제하시겠습니까?")) {
             document.getElementById("deleteForm").submit();
+        }
+    }
+</script>
+<script>
+    function confirmDeleteAdmin(event) {
+        event.preventDefault();
+        if (confirm("정말 삭제하시겠습니까?")) {
+            document.getElementById("AdmindeleteForm").submit();
         }
     }
 </script>

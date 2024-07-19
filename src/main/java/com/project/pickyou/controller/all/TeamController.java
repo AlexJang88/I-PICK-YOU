@@ -49,7 +49,9 @@ public class TeamController {
         if(principal!=null) {
              sid = principal.getName();
         }
+        model.addAttribute("to",sid);
         service.post(model,boardNum,sid,5);
+
         return "team/content";
     }
     //수정페이지 이동

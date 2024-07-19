@@ -41,6 +41,7 @@ public class EducationController {
        }
        if(principal!=null){
            sid= principal.getName();
+           model.addAttribute("to",sid);
        }else{
            sid = ip;
        }
@@ -52,6 +53,7 @@ public class EducationController {
 
        //principal.getName();
         service.post(model,boardNum,sid,2);
+
         return "education/content";
    }
    //수정페이지 이동

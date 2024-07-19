@@ -48,6 +48,16 @@ public class MainController {
         return "main";
     }
 
+    @GetMapping("/calendar")
+    public String calendar(Principal principal,Model model){
+        String sid="";
+        if(principal!=null){
+            sid=principal.getName();
+            model.addAttribute("memberId",sid);
+        }
+        return "calendar/calendar";
+    }
+
 
 
 

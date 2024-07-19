@@ -149,7 +149,7 @@
                                              <p class="mb-4">현재 보유포인트는 <span th:text="${savedMoney}"></span>입니다.</p>
                                         </div>
 
-                                        <form class="mb-3" method="post" id="paymentForm" th:action="@{/kakao/kakaoPay}">
+                                        <form class="mb-3" method="post" id="paymentForm" th:action="@{/payProcess/Pay}">
                                             <input type="hidden" name="cid" value="TC0ONETIME">
                                             <input type="hidden" name="itemName" value="긴급구인">
                                             <input type="hidden" name="quantity" value="1">

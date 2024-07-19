@@ -12,7 +12,6 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>메인페이지</title>
 
     <meta name="description" content="" />
@@ -43,11 +42,84 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script th:src="@{/assets/js/config.js}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <style>
         .custom-image {
             width: 100%;
             height: 50%;
+        }
+        <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .modal-dialog {
+            max-width: 90%;
+        }
+        .chat-container {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-header {
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            text-align: center;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: scroll;
+            border-bottom: 1px solid #ccc;
+        }
+        .msgLine {
+            margin-bottom: 10px;
+        }
+        .me {
+            background-color: #DCF8C6;
+            padding: 5px 10px;
+            border-radius: 10px;
+            display: inline-block;
+            text-align: right;
+        }
+        .msgBox {
+            background-color: #E0E0E0;
+            padding: 5px 10px;
+            border-radius: 10px;
+            display: inline-block;
+            text-align: left;
+        }
+        .chat-input {
+            display: flex;
+            padding: 10px;
+        }
+        #input_box {
+            flex: 1;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #sendmsg {
+            margin-left: 10px;
+            padding: 5px 10px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -63,11 +135,24 @@
         <!-- Layout container -->
         <div class="layout-page">
             <!-- Navbar -->
-            <div th:include="~{design/navi-bar :: navi}"></div>
+            <div th:insert="~{design/navi-bar :: navi}"></div>
             <!-- / Navbar -->
 
             <!-- Content wrapper -->
             <div class="content-wrapper">
+                <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Chat</h4>
+                            </div>
+                            <div class="modal-body">
+                                <iframe id="chatFrame" width="100%" height="500px" frameborder="0"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Content -->
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
