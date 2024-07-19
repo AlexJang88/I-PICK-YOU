@@ -29,7 +29,14 @@ public class FoodMapController {
 
     // 푸드맵 리스트 가져오기, 페이징 처리
     @GetMapping("posts")
-    public String list(Model model, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
+    public String list(Model model, Principal principal,
+                       @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
+
+        // @@
+        if(principal!=null) {
+            model.addAttribute("id", principal.getName());
+        }
+        // @@
 
         foodMapService.AllPosts(model, pageNum);
         return "/foodMap/list";
@@ -37,7 +44,14 @@ public class FoodMapController {
 
     // 글쓰기
     @GetMapping("posts/new")
-    public String write() {
+    public String write(Principal principal, Model model) {
+
+        // @@
+        if(principal!=null) {
+            model.addAttribute("id", principal.getName());
+        }
+        // @@
+
         return "/foodMap/write";
     }
 
@@ -73,7 +87,7 @@ public class FoodMapController {
 
         if(principal != null){  //로그인 되어잇을때 조회수 올리기
             sid = principal.getName();
-
+            model.addAttribute("id", principal.getName());
             if(session.getAttribute(sid+"_"+type+"_"+ref)==null){
                 foodMapService.foodMapCnt(longRef, ref, model);
                 session.setAttribute(sid+"_"+type+"_"+ref,"true");
@@ -101,7 +115,13 @@ public class FoodMapController {
 
     // 푸드맵 글 수정
     @GetMapping("/posts/{boardNum}/edit")
-    public String update(Model model, @PathVariable Long boardNum) {
+    public String update(Model model, @PathVariable Long boardNum, Principal principal) {
+        // @@
+        if(principal!=null) {
+            model.addAttribute("id", principal.getName());
+        }
+        // @@
+
         foodMapService.foodMapUpdate(model, boardNum);
         return "foodMap/update";
     }

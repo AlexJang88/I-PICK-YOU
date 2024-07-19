@@ -23,6 +23,12 @@ public class AdminController {
                            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                            @RequestParam(value = "month", defaultValue = "1") int month) {
 
+        // @@
+        if(principal!=null) {
+            model.addAttribute("id", principal.getName());
+        }
+        // @@
+
         model.addAttribute("month", month);
        adminService.AllPostsGIVE(model, 1, pageNum, month);
        return "admin/pointGiveList";
@@ -32,15 +38,23 @@ public class AdminController {
     @GetMapping("/point/give/month")
     public String monthGIVE(Model model, @RequestParam("month") int month, RedirectAttributes redirectAttributes) {
 
+
+
         redirectAttributes.addAttribute("month", month);
         return "redirect:/admin/point/give";
     }
 
     // 포인트 사용 내역
     @GetMapping("/point/deduct")
-    public String deductList(Model model,
+    public String deductList(Model model, Principal principal,
                            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                            @RequestParam(value = "month", defaultValue = "1") int month) {
+
+        // @@
+        if(principal!=null) {
+            model.addAttribute("id", principal.getName());
+        }
+        // @@
 
         model.addAttribute("month", month);
         adminService.AllPostsGIVE(model, 2, pageNum, month);
@@ -49,7 +63,8 @@ public class AdminController {
 
     // 포인트 사용 내역(몇월인지 값받아오기)
     @GetMapping("/point/deduct/month")
-    public String monthDEDUCT(Model model, @RequestParam("month") int month, RedirectAttributes redirectAttributes) {
+    public String monthDEDUCT(Model model,
+                              @RequestParam("month") int month, RedirectAttributes redirectAttributes) {
 
         redirectAttributes.addAttribute("month", month);
         return "redirect:/admin/point/deduct";
@@ -58,9 +73,15 @@ public class AdminController {
 
     // 페이 결제 내역
     @GetMapping("/payment/posts")
-    public String paymentList(Model model,
+    public String paymentList(Model model, Principal principal,
                            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                            @RequestParam(value = "month", defaultValue = "1") int month) {
+
+        // @@
+        if(principal!=null) {
+            model.addAttribute("id", principal.getName());
+        }
+        // @@
 
         model.addAttribute("month", month);
         adminService.AllpaymentANDpoint(model, 1, pageNum, month);
@@ -69,7 +90,8 @@ public class AdminController {
 
     // 페이 결제 내역(몇월인지 값받아오기)
     @GetMapping("/payment/month")
-    public String paymentListMonth(Model model, @RequestParam("month") int month, RedirectAttributes redirectAttributes) {
+    public String paymentListMonth(Model model,
+                                   @RequestParam("month") int month, RedirectAttributes redirectAttributes) {
 
         redirectAttributes.addAttribute("month", month);
         return "redirect:/admin/payment/posts";

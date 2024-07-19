@@ -19,7 +19,11 @@ public class CompanyController {
     @GetMapping("/payment/posts")
     public String posts(Model model, Principal principal,
                         @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
-
+        // @@
+        if(principal!=null) {
+            model.addAttribute("id", principal.getName());
+        }
+        // @@
         memberService.paymentList(model, pageNum, principal.getName());
         return "mypage/paymentList";
     }

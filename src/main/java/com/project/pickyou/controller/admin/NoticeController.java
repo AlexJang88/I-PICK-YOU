@@ -27,14 +27,27 @@ public class NoticeController {
 
     // 공지사항 리스트 가져오기
     @GetMapping("/posts")
-    public String noticeList(Model model, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
+    public String noticeList(Model model, Principal principal,
+                             @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
+
+        // @@
+        if(principal!=null) {
+            model.addAttribute("id", principal.getName());
+        }
+        // @@
+
         noticeService.AllPosts(model, pageNum);
         return "notice/list";
     }
 
     // 공지사항 글쓰기
     @GetMapping("posts/new")
-    public String noticeWrite() {
+    public String noticeWrite(Principal principal, Model model) {
+        // @@
+        if(principal!=null) {
+            model.addAttribute("id", principal.getName());
+        }
+        // @@
         return "notice/write";
     }
 
@@ -74,6 +87,7 @@ public class NoticeController {
 
         if(principal != null){  //로그인 되어잇을때 조회수 올리기
             sid = principal.getName();
+            model.addAttribute("id", principal.getName());
 
             if(session.getAttribute(sid+"_"+type+"_"+boardNum)==null){
                 noticeService.noticeCnt(boardNum, model);
@@ -98,7 +112,13 @@ public class NoticeController {
 
     // 공지사항 글 수정
     @GetMapping("/posts/{boardNum}/edit")
-    public String noticeUpdate(Model model, @PathVariable Long boardNum) {
+    public String noticeUpdate(Model model, @PathVariable Long boardNum, Principal principal) {
+        // @@
+        if(principal!=null) {
+            model.addAttribute("id", principal.getName());
+        }
+        // @@
+
         noticeService.noticeUpdate(model, boardNum);
         return "notice/update";
     }

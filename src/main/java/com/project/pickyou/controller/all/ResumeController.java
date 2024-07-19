@@ -34,7 +34,12 @@ public class ResumeController {
 
     // 이력서 작성
     @GetMapping("/posts/new")
-    public String write() {
+    public String write(Principal principal, Model model) {
+        // @@
+        if(principal!=null) {
+            model.addAttribute("id", principal.getName());
+        }
+        // @@
         return "resume/write";
     }
 
@@ -84,7 +89,12 @@ public class ResumeController {
 
     // 이력서 업데이트
     @GetMapping("/posts/{num}/edit")
-    public String update(@PathVariable Long num, Model model) {
+    public String update(@PathVariable Long num, Model model, Principal principal) {
+        // @@
+        if(principal!=null) {
+            model.addAttribute("id", principal.getName());
+        }
+        // @@
 
         resumeService.selectResumeInfo(model, num);
         return "resume/update";
@@ -108,7 +118,13 @@ public class ResumeController {
 
     // 인재 정보 리스트
     @GetMapping("/all/posts")
-    public String allPosts(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum) {
+    public String allPosts(Model model, Principal principal,
+                           @RequestParam(value = "pageNum",defaultValue = "1") int pageNum) {
+        // @@
+        if(principal!=null) {
+            model.addAttribute("id", principal.getName());
+        }
+        // @@
         resumeService.AllPosts(model, pageNum);
         return "resume/allList";
     }
