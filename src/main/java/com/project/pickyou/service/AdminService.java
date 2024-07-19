@@ -9,6 +9,7 @@ public interface AdminService {
     // 포인트 차감 내역
     public void AllPost(Model model, int status, int pageNum);
 
+
     public void getUsre(Model model, int pageNum); //일반회원정보 가져오기
 
     public void userDelete(String id); //일반유저 삭제

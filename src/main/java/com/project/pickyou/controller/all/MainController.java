@@ -3,6 +3,8 @@ package com.project.pickyou.controller.all;
 
 import com.project.pickyou.dto.MemberDTO;
 import com.project.pickyou.service.LoginService;
+import com.project.pickyou.service.NoticeService;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,6 +25,9 @@ import java.util.Iterator;
 @RequiredArgsConstructor
 public class MainController {
 
+    // 정룡 (메인에 공지사항)
+    private final NoticeService noticeService;
+
     @GetMapping("/")
     public String mainp(Model model, Principal principal){
 
@@ -37,7 +42,8 @@ public class MainController {
         model.addAttribute("id",id);
         model.addAttribute("role",role);
 
-
+        // 정룡 (메인에 공지사항)
+        noticeService.mainNotice(model);
 
         return "main";
     }

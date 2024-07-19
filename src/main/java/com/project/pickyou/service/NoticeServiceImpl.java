@@ -163,6 +163,16 @@ public class NoticeServiceImpl implements NoticeService {
         }
     }
 
+    // 메인에 공지사항 최신글 1개
+    @Override
+    public void mainNotice(Model model) {
+        Optional<NoticeEntity> optional = noticeJPA.findTopByOrderByRegDesc();
+        if (optional.isPresent()) {
+            NoticeEntity noticeEntity = optional.get();
+            model.addAttribute("notice", noticeEntity);
+        }
+    }
+
     // 공지사항 글번호의 내용 가져오기
     @Override
     public void noticeInfo(Long id, Model model) {

@@ -191,6 +191,17 @@
                         <img src="/img/main3.png" alt="Main Image" class="custom-image" />
                     </div>
 
+                    <!-- 정룡 -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background-color: #f8f9fa; border: 1px solid #dee2e6; margin-bottom: 2rem;">
+                        <a th:href="@{/notice/posts/{boardNum}(boardNum=${notice.id})}"
+                           th:text="${notice.title}"
+                           style="font-size: 1.8rem; margin-right: 2rem; padding-left: 1rem;">
+                        </a>
+                        <span th:text="${#dates.format(notice.reg, 'yyyy-MM-dd')}"
+                              style="font-size: 1.2rem; margin-left: 2rem; padding-right: 3rem;">
+                        </span>
+                    </div>
+                    <!-- 정룡 -->
 
                 </div>
                 <!-- / Content -->

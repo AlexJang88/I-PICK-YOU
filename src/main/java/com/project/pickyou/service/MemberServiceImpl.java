@@ -231,6 +231,8 @@ public class MemberServiceImpl implements MemberService {
         model.addAttribute("endPage", endPage);
     }
 
+
+
     // 회원의 지원현황 가져오기
     @Override
     public void userRecruitList(String memberId, int pageNum, Model model) {

@@ -165,10 +165,24 @@
                             <div data-i18n="Account">평점주기</div>
                         </a>
                     </li>
+
                     <li class="menu-item">
-                        <a th:href="@{/educations/posts}" class="menu-link">
-                            <div data-i18n="Account">포인트</div>
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                            <i class="menu-icon tf-icons bx bx-dock-top"></i>
+                            <div data-i18n="Account Settings">포인트</div>
                         </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item">
+                                <a th:href="@{/mypage/point/plus/posts}" class="menu-link">
+                                    <div data-i18n="Account">포인트 적립 내역</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a th:href="@{/mypage/point/minus/posts}" class="menu-link">
+                                    <div data-i18n="Account">포인트 차감 내역</div>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </li>
@@ -217,9 +231,22 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a th:href="@{/educations/posts}" class="menu-link">
-                            <div data-i18n="Account">포인트</div>
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                            <i class="menu-icon tf-icons bx bx-dock-top"></i>
+                            <div data-i18n="Account Settings">포인트</div>
                         </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item">
+                                <a th:href="@{/mypage/point/plus/posts}" class="menu-link">
+                                    <div data-i18n="Account">포인트 적립 내역</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a th:href="@{/mypage/point/minus/posts}" class="menu-link">
+                                    <div data-i18n="Account">포인트 차감 내역</div>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </li>
