@@ -25,6 +25,7 @@ public class SatisfactionController {
         String writer="";
         if(principal!=null){
             writer= principal.getName();
+            model.addAttribute("id",principal.getName());
         }
         check = service.existCheck(writer,target,model);
         if(check==1){

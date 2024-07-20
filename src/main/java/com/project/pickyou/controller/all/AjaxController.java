@@ -10,12 +10,15 @@ import com.project.pickyou.dto.CompanyInfoDTO;
 import com.project.pickyou.dto.MemberDTO;
 import com.project.pickyou.service.AlarmService;
 
+import com.project.pickyou.service.CalendarService;
 import com.project.pickyou.service.LoginService;
+import com.project.pickyou.service.RecruitStateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +30,8 @@ public class AjaxController {
 
     private final LoginService loginService;
     private final AlarmService alarmService;
+    private final CalendarService calendarService;
+
 
 
 
@@ -120,8 +125,10 @@ public class AjaxController {
 
     @PostMapping("/calendar")
     @ResponseBody
-    public ResponseEntity<Map<String, JsonArray>> calendar(){
-        Map<String,JsonArray> result= new HashMap<>();
+    public ResponseEntity<Map<String, Object>> calendar(@RequestParam("memberId") String memberId ){
+
+        JsonObject list = calendarService.getCalendarData(memberId);
+        Map<String,Object> result = new Gson().fromJson(list,Map.class);
 
         return ResponseEntity.ok(result);
     }

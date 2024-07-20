@@ -25,7 +25,9 @@ public class EducationController {
     public String list(Model model,@RequestParam(value = "pageNum",defaultValue = "1") int pageNum,Principal principal){
         int mem = 0;
         if(principal!=null){
-        model.addAttribute("memberId",principal.getName());}
+        model.addAttribute("memberId",principal.getName());
+        model.addAttribute("id",principal.getName());
+        }
             mem=service.authCheck(principal);
             service.AllPosts(model,pageNum);
             model.addAttribute("auth",mem);
@@ -42,6 +44,7 @@ public class EducationController {
        if(principal!=null){
            sid= principal.getName();
            model.addAttribute("to",sid);
+           model.addAttribute("id",principal.getName());
        }else{
            sid = ip;
        }
@@ -62,6 +65,7 @@ public class EducationController {
        String sid="";
        if(principal!=null){
            sid= principal.getName();
+           model.addAttribute("id",principal.getName());
        }
        //principal.getName();
        service.post(model,boardNum,sid,2);
@@ -94,6 +98,7 @@ public class EducationController {
         String url = "education/write";
         if(principal!=null){
         sid = principal.getName();
+            model.addAttribute("id",principal.getName());
         }else if(principal==null){
             url="redirect:/educations/posts";
         }

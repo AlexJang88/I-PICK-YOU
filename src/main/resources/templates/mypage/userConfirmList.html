@@ -102,7 +102,7 @@
                                 <tr th:each="post : ${posts}">
                                     <td th:text="${post.recruitId}"></td>
                                     <td th:text="${post.memberId}"></td>
-                                    <td th:text="${post.contractId}"></td>
+                                    <td><a class="btn btn-primary" th:href="@{/recruit/contract/{contractId}(contractId=${post.contractId})}">계약서 보기</a></td>
                                     <td th:text="${post.companyId}"></td>
                                     <td th:switch="${post.apply}">
                                         <span th:case="1">공고 지원</span>

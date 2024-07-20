@@ -19,5 +19,6 @@ public interface ConfirmJPARepository extends JpaRepository<ConfirmEntity,Long> 
     public Optional<ConfirmEntity> findByMemberIdAndRecruitIdAndApplyNot(String memberId,Long recruitId,int type);
     // 유저 입장 채용현황
     public Page<ConfirmEntity> findByMemberId(String memberId, Pageable pageable);
+    public List<ConfirmEntity> findByMemberId(String memberId);
     public int countByMemberId(String memberId);
 }

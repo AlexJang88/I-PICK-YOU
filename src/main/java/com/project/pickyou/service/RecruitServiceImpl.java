@@ -124,6 +124,7 @@ public class RecruitServiceImpl implements RecruitService {
         int auth=0;
         int applyCheck=0;
         Optional<RecruitEntity> post = recruitJPA.findById(num);
+        Optional<MemberEntity> member=memberJPA.findById(sid);
         RecruitDTO edto = new RecruitDTO();
         CompanyInfoDTO cidto = new CompanyInfoDTO();
         MemberDTO mdto = new MemberDTO();
@@ -136,12 +137,14 @@ public class RecruitServiceImpl implements RecruitService {
             if(post.get().getMemberId().equals(sid)){
                 check=1;
             }
-            if(post.get().getMember().getAuth().contains("USER")){
-                auth=1;
-            } else if (post.get().getMember().getAuth().contains("COMPANY")) {
-                auth=2;
-            } else if (post.get().getMember().getAuth().contains("ADMIN")) {
-                auth=99;
+            if(member.isPresent()) {
+                if (member.get().getAuth().contains("USER")) {
+                    auth = 1;
+                } else if (member.get().getAuth().contains("COMPANY")) {
+                    auth = 2;
+                } else if (member.get().getAuth().contains("ADMIN")) {
+                    auth = 99;
+                }
             }
             if(resumeJPA.findByMemberIdAndRegType(sid,1).isPresent()){
                 applyCheck=1;
@@ -170,6 +173,7 @@ public class RecruitServiceImpl implements RecruitService {
             }
             System.out.println("------------------applyCheck"+applyCheck);
             System.out.println("------------------check"+check);
+            System.out.println("------------------auth"+auth);
             model.addAttribute("applyCheck",applyCheck);
             model.addAttribute("auth",auth);
             model.addAttribute("check",check);
@@ -331,7 +335,7 @@ public class RecruitServiceImpl implements RecruitService {
         if(type==1){
             model.addAttribute("applyType",type);
         } else if (type==3) {
-            model.addAttribute("applyType",type);
+            model.addAttribute("applyType",4);
         }
         if(mem.isPresent()){
             model.addAttribute("mem",mem.get());
@@ -361,7 +365,7 @@ public class RecruitServiceImpl implements RecruitService {
             cdto.setApply(4);
         }
         cdto.setContractId(maxnum);
-        cdto.setContractId(stateId);
+        cdto.setRecruitId(stateId);
         System.out.println("========================cdto"+dto);
         contractJPA.save(dto.toContractEntity());
         System.out.println("========================confirmsave"+maxnum);
@@ -374,6 +378,7 @@ public class RecruitServiceImpl implements RecruitService {
     @Override
     public void getContract(HttpServletResponse response, Model model, Long id,String userId) {
         int type=10;
+        int PDF=0;
         String comSign="없음";
         String memSign="없음";
         File companySign =null;
@@ -423,6 +428,7 @@ public class RecruitServiceImpl implements RecruitService {
                     comSign = "/upload/contract/" + id + File.separator + con.get().getCompanyId() + "_signature.png";
                     memSign = "/upload/contract/" + id + File.separator + con.get().getMemberId() + "_signature.png";
                     type = 100;
+                    PDF=1;
                     if(!contractPdf.exists()){
                         contractPDF(response,id);
                     }
@@ -443,6 +449,7 @@ public class RecruitServiceImpl implements RecruitService {
                     comSign = "/upload/contract/" + id + File.separator + con.get().getCompanyId() + "_signature.png";
                     memSign = "/upload/contract/" + id + File.separator + con.get().getMemberId() + "_signature.png";
                     type = 100;
+                    PDF=1;
                     System.out.println("==================authCheck" + comSign);
                     System.out.println("==================authCheck" + memSign);
                     if(!contractPdf.exists()){
@@ -452,7 +459,7 @@ public class RecruitServiceImpl implements RecruitService {
             }
         }
 
-
+        model.addAttribute("PDF",PDF);
         model.addAttribute("signCheck",type);
         model.addAttribute("comSign",comSign);
         model.addAttribute("memSign",memSign);
