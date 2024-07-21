@@ -32,35 +32,19 @@ public class AjaxController {
     private final AlarmService alarmService;
     private final CalendarService calendarService;
 
-
-
-
-
-
-
-
     //알람 컨트롤러
     @PostMapping("/alarmnumber/number")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> getAlertCount(@RequestBody Map<String, String> requestBody){
+    public ResponseEntity<Map<String, Object>> getAlertCount(@RequestBody Map<String, String> requestBody) {
         String id = requestBody.get("id"); // JSON 데이터에서 "id" 값을 추출
 
-       JsonObject names = alarmService.getAlarmCount(id);
+        JsonObject names = alarmService.getAlarmCount(id);
 
         // JSON 객체를 Map으로 변환
         Map<String, Object> response = new Gson().fromJson(names, Map.class);
 
         return ResponseEntity.ok(response);
     }
-
-
-
-
-
-
-
-
-
 
    @PostMapping("/idcheck")
    @ResponseBody
@@ -81,9 +65,6 @@ public class AjaxController {
         return ResponseEntity.ok(result);
     }
 
-
-
-
     @PostMapping("/emailcheck")
     @ResponseBody
     public ResponseEntity<Map<String, String>> emailcheck(@RequestBody MemberDTO dto){
@@ -102,7 +83,6 @@ public class AjaxController {
 
         return ResponseEntity.ok(result);
     }
-
 
     @PostMapping("/corpnocheck")
     @ResponseBody
@@ -126,8 +106,9 @@ public class AjaxController {
     @PostMapping("/calendar")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> calendar(@RequestParam("memberId") String memberId ){
-
+        System.out.println("-------------------------memberId"+memberId);
         JsonObject list = calendarService.getCalendarData(memberId);
+        System.out.println("-------------------------list"+list);
         Map<String,Object> result = new Gson().fromJson(list,Map.class);
 
         return ResponseEntity.ok(result);

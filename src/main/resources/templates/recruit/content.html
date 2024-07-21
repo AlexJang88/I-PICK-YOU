@@ -126,10 +126,10 @@
             <!-- Content wrapper -->
             <div class="content-wrapper">
                 <!-- Content -->
-                <div class="container-fluid flex-grow-1 container-p-y">
+                <div class="col-md-12 mb-4">
                     <!-- Layout Demo -->
-                    <div class="card mb-4">
-                        <div class="d-flex align-items-center mb-2">
+                    <div class="card">
+                        <div class="container-xxl flex-grow-1 container-p-y text-center">
                             <span th:text="${type}" class="badge bg-label-primary me-1" style="font-size: 1em; margin-right: 10px;"></span>
                             <a class="page-link" th:href="@{/recruit/favorits/{boardNum}/{target}(boardNum=${post.id},target=${member.id})}">
                                 <img th:if="${favoritecheck==0 and check!=1}" th:src="@{/img/favoritenoncheck.png}" width="30px">

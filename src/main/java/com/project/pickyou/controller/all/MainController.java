@@ -54,6 +54,7 @@ public class MainController {
         if(principal!=null){
             sid=principal.getName();
             model.addAttribute("memberId",sid);
+            model.addAttribute("id",principal.getName());
         }
         return "calendar/calendar";
     }

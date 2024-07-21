@@ -64,6 +64,7 @@ public class SatisfactionController {
         String id="";
         if(principal!=null){
             id= principal.getName();
+            model.addAttribute("id",principal.getName());
         }
         service.myScore(model,id);
         return "satisfaction/myScore";

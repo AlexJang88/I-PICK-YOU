@@ -22,6 +22,8 @@ public class PickController {
 
         if(principal!=null){
             service.myList(model, principal.getName(),pageNum);
+            model.addAttribute("to",principal.getName());
+            model.addAttribute("id",principal.getName());
         }
 
         return "pick/myList";
