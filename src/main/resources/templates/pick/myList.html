@@ -40,6 +40,19 @@
 
     <!-- Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <script th:src="@{/assets/js/config.js}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#openChatBtn').click(function() {
+                var sender = $('#sender').val();
+                var receiver = $('#receiver').val();
+                var chatUrl = 'http://localhost:4000/chat/' + sender + '/' + receiver;
+                $('#chatFrame').attr('src', chatUrl);
+                $('#myModal').modal('show');
+            });
+        });
+    </script>
 </head>
 
 <body>
@@ -79,6 +92,8 @@
                                     <th>회사이름</th>
                                     <th>연락처</th>
                                     <th>채팅</th>
+                                    <input type="hidden" id="sender" th:value="${to}">
+                                    <input type="hidden" id="ajaxId" th:value="${id}">
                                 </tr>
                                 </thead>
                                 <tbody class="table-border-bottom-0" th:each="post : ${posts}">
@@ -86,7 +101,9 @@
                                     <td><span th:text="${post.member.id}"></span></td>
                                     <td><span th:text="${post.member.companyInfo.companyName}"></span></td>
                                     <td><span th:text="${post.member.phone}"></span></td>
-                                    <td><a class="btn btn-primary" href="#">채팅하기</a></td>
+                                    <td><button id="openChatBtn" class="btn btn-primary">채팅</button></td>
+
+                                    <input type="hidden" id="receiver" th:value="${post.member.id}">
                                 </tr>
                                 </tbody>
                             </table>
@@ -110,13 +127,26 @@
                                 </thead>
                                 <tbody class="table-border-bottom-0" th:each="post : ${posts}">
                                 <tr>
-                                    <td><span th:text="${post.id}"></span></td>
+                                    <td><span th:text="${post.member.id}"></span></td>
                                     <td><span th:text="${post.member.memberInfo.name}"></span></td>
                                     <td><span th:text="${post.phone}"></span></td>
-                                    <td><a class="btn btn-primary" href="#">채팅하기</a></td>
+                                    <td><button id="openChatBtn" class="btn btn-primary">채팅</button></td>
+                                    <input type="hidden" id="receiver" th:value="${post.member.id}">
                                 </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Chat</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <iframe id="chatFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
