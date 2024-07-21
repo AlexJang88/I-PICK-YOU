@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin/*")
@@ -35,26 +37,39 @@ public class AdminController {
 
 
     @GetMapping("/management")
-    public String Management(Model model, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum){
+    public String Management(Model model, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, Principal pc){
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
+
         adminService.getUsre(model, pageNum); //일반회원 정보 가져오기
         return "admin/management";
     }
 
     @DeleteMapping("/userDelete")
-    public String userDelete(String id){ //일반유저삭제
+    public String userDelete(String id, Principal pc, Model model){ //일반유저삭제
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
         adminService.userDelete(id);
         return "redirect:/admin/management";
     }
 
 
     @GetMapping("/companyManagement")
-    public String companyManagement(Model model, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum){
+    public String companyManagement(Model model, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, Principal pc){
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
         adminService.getCompany(model, pageNum); //사업자회원 정보 가져오기
         return  "admin/companyManagement";
     }
 
     @DeleteMapping("/companyDelete")
-    public String companyDelete(String id){ //사업자유저삭제
+    public String companyDelete(String id, Principal pc, Model model){ //사업자유저삭제
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
         adminService.userDelete(id);
         return "redirect:/admin/companyManagement";
     }

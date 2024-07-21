@@ -31,6 +31,10 @@ public class MemberController {
     /*일반유저 기준*/
     @GetMapping("/information/{id}")
     public String myInformation(Principal pc, Model model,@PathVariable String id) {
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
+
         String prid = pc.getName();
         if (prid.equals(id)) {
             memberService.findUserInfo(id, model);//회원정보 담아서 쏘기
@@ -43,6 +47,10 @@ public class MemberController {
     //회원삭제
     @GetMapping("/deleteUser/{id}")
     public String DeleteUser(@PathVariable String id,Model model, Principal pc){
+
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
         String prid =pc.getName();
 
         if(id.equals(prid)){
@@ -54,7 +62,10 @@ public class MemberController {
     }
     //회원삭제 프로
     @DeleteMapping("/deleteuserPro")
-    public String deleteuserPro(MemberDTO memberDTO){
+    public String deleteuserPro(MemberDTO memberDTO, Principal pc, Model model){
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
 
         memberService.deleteUser(memberDTO);
         session.invalidate();  //세션날리기
@@ -65,6 +76,9 @@ public class MemberController {
     /*사업자유저 기준*/
     @GetMapping("/cominformation/{id}")
     public String comInformation(Principal pc, Model model,@PathVariable String id) {
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
         String prid = pc.getName();
         if (prid.equals(id)) {
             memberService.findUserInfo(id, model);//회원정보 담아서 쏘기
@@ -80,6 +94,9 @@ public class MemberController {
     //일반 회원 수정
     @GetMapping("/userUpdate/{id}")
     public String userUpdate(Principal pc, Model model,@PathVariable String id){
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
 
         String prid = pc.getName();
         if (prid.equals(id)) {   //수정하기 버튼 누를때
@@ -106,6 +123,9 @@ public class MemberController {
 
     @GetMapping("/companyUpdate/{id}")
     public String companyUpdate(Principal pc, Model model,@PathVariable String id){
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
 
         String prid = pc.getName();
         if (prid.equals(id)) {   //수정하기 버튼 누를때
@@ -132,6 +152,9 @@ public class MemberController {
     @GetMapping("/point/plus/posts")
     public String pointPlusList(Principal principal, Model model,
                             @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
+        if(principal != null){
+            model.addAttribute("id",principal.getName()) ;
+        }
 
         pointService.AllPosts(model, pageNum, principal.getName());
 
@@ -142,6 +165,9 @@ public class MemberController {
     @GetMapping("/point/minus/posts")
     public String pointMinusList(Principal principal, Model model,
                             @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
+        if(principal != null){
+            model.addAttribute("id",principal.getName()) ;
+        }
 
         pointService.AllPosts(model, pageNum, principal.getName());
 

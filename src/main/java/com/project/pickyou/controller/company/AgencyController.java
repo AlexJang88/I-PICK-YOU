@@ -45,8 +45,10 @@ public class AgencyController {
 
     //소개소 메인페이지
     @GetMapping("/posts")
-    public String agencymain(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum){
-
+    public String agencymain(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, Principal pc){
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
         agencyService.agencymain(model, pageNum);
         return "agency/agencymain";
     }
@@ -54,6 +56,10 @@ public class AgencyController {
     //소개소 상세페이지
     @GetMapping("/posts/{agencynum}")
     public String agencyDetails(Model model, @PathVariable Long agencynum, HttpSession session, Principal principal, HttpServletRequest request){
+        if(principal != null){
+            model.addAttribute("id",principal.getName()) ;
+        }
+
         String sid="";
         String ip=request.getHeader("X-FORWARDED-FOR");
         if(ip==null){
@@ -89,14 +95,17 @@ public class AgencyController {
 
     //소개소 추가하기
     @GetMapping("/posts/new")
-    public String agencyInput(){
-
+    public String agencyInput(Principal pc, Model model){
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
 
         return "agency/agencyInput";
     }
 
     @PostMapping("/posts")
     public String agencyPro(AgencyDTO agencyDTO, ImageDTO imageDTO, @RequestParam("files")MultipartFile [] files, Principal principal){
+
 
         String companyId = principal.getName();  //세션아이디설정
         agencyDTO.setCompanyId(companyId); // 디티오넣기
@@ -113,6 +122,7 @@ public class AgencyController {
     @DeleteMapping("/posts/{agencynum}")
     public String agencyDelete(@PathVariable Long agencynum) {
 
+
         agencyService.deleteAgencyImg(agencynum);  //소개소 이미지 지우기
         agencyService.deleteAgencyNum(agencynum);  //소개소 한개 지우기
 
@@ -121,10 +131,11 @@ public class AgencyController {
 
 
     @GetMapping("/posts/{agencynum}/edit")
-    public String agencyUpdate(Model model,@PathVariable Long agencynum){
-
+    public String agencyUpdate(Model model,@PathVariable Long agencynum, Principal pc){
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
         agencyService.agencyDetails(model,agencynum);
-
         return "agency/agencyUpdate";
     }
 
