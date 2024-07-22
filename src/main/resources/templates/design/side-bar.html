@@ -120,7 +120,7 @@
 
             <li class="menu-item" sec:authorize="hasRole('ROLE_USER')">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
-                    <i class="bx bx-user me-2"></i></i>
+                    <i class="bx bx-user me-2"></i>
                     <div data-i18n="Account Settings">마이페이지</div>
                 </a>
                 <ul class="menu-sub">
@@ -454,6 +454,7 @@
                 </ul>
                 <ul class="menu-sub">
                     <li class="menu-item">
+
                         <a th:href="@{/admin/payment/totalRevenue}" class="menu-link">
                             <div data-i18n="Error">매출 현황</div>
                         </a>
@@ -477,6 +478,10 @@
                     <li class="menu-item">
                         <a th:href="@{/admin/point/deduct}" class="menu-link">
                             <div data-i18n="Error">포인트 사용 내역</div>
+
+                        <a th:href="@{/admin/pointPayment}" class="menu-link">
+                            <div data-i18n="Error">포인트 지급 승인</div>
+
                         </a>
                     </li>
                 </ul>

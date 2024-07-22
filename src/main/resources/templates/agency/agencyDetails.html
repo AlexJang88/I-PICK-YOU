@@ -43,6 +43,7 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script th:src="@{/assets/js/config.js}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
@@ -56,7 +57,7 @@
         <!-- Layout container -->
         <div class="layout-page">
             <!-- Navbar -->
-            <div th:include="~{design/navi-bar :: navi}"></div>
+            <div th:insert="~{design/navi-bar :: navi}"></div>
             <!-- / Navbar -->
 
             <!-- Content wrapper -->
@@ -65,97 +66,118 @@
 
 
                 <div class="col-md-12 mb-4">
-                    <div class="card">
-                        <div class="container-xxl flex-grow-1 container-p-y text-center">
-                            <h2 class="fw-bold py-3 mb-4">
-                                <span th:text="${AgencyList.get().companyName}"></span>
-                            </h2>
-                            <h5 class="fw-bold py-3 mb-4">
-                                <span class="text-muted fw-light">분야 : </span>
-                                <span th:text="${AgencyList.get().business}"></span>
-                            </h5>
+                    <div class="card shadow-lg"> <!-- 그림자를 진하게 하기 위해 shadow-lg 클래스 추가 -->
+                        <div class="card-body">
+                            <!-- 제목 -->
+                            <div class="text-center mb-4">
+                                <h2 class="fw-bold py-3" th:text="${AgencyList.get().companyName}"></h2>
+                            </div>
 
-                            <h5 class="fw-bold py-3 mb-4">
-                                <span class="text-muted fw-light">전화번호 : </span>
-                                <span th:text="${AgencyList.get().contact}"></span>
-                                //
-                                <span class="text-muted fw-light">주소 : </span>
-                                <span th:text="${AgencyList.get().address}"></span>
-                            </h5>
+                            <!-- 정보 섹션 -->
+                            <div class="row mb-4">
+                                <div class="col-md-4 mb-4">
+                                    <div class="card h-100 shadow-lg">
+                                        <div class="card-body">
+                                            <h5 class="card-title fw-bold">
+                                                <i class="bx bx-calendar text-muted"></i> 등록날짜
+                                            </h5>
+                                            <p class="card-text" th:text="${#dates.format(AgencyList.get().reg, 'yyyy-MM-dd')}"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card h-100 shadow-lg">
+                                        <div class="card-body">
+                                            <h5 class="card-title fw-bold">
+                                                <i class="bx bx-show text-muted"></i> 조회수
+                                            </h5>
+                                            <p class="card-text" th:text="${AgencyList.get().readCount}"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card h-100 shadow-lg">
+                                        <div class="card-body">
+                                            <h5 class="card-title fw-bold">
+                                                <i class="bx bx-map text-muted"></i> 주소
+                                            </h5>
+                                            <p class="card-text" th:text="${AgencyList.get().address}"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100 shadow-lg">
+                                        <div class="card-body">
+                                            <h5 class="card-title fw-bold">
+                                                <i class="bx bx-briefcase text-muted"></i> 분야
+                                            </h5>
+                                            <p class="card-text" th:text="${AgencyList.get().business}"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100 shadow-lg">
+                                        <div class="card-body">
+                                            <h5 class="card-title fw-bold">
+                                                <i class="bx bx-phone text-muted"></i> 전화번호
+                                            </h5>
+                                            <p class="card-text" th:text="${AgencyList.get().contact}"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                            <h5 class="fw-bold py-3 mb-4">
-                                <span class="text-muted fw-light">등록날짜 : </span>
-                                <span th:text="${#dates.format(AgencyList.get().reg, 'yyyy-MM-dd')}"></span>
-                                //
-                                <span class="text-muted fw-light">조회수 : </span>
-                                <span th:text="${AgencyList.get().readCount}"></span>
-                            </h5>
+                            <!-- 소개내용 카드 -->
+                            <div class="card mb-4 shadow-lg">
+                                <div class="card">
+                                    <h5 class="card-header text-center">소개내용</h5>
+                                    <div class="card-body d-flex justify-content-center align-items-center">
+                                        <div class="divider text-center">
+                                            <span th:text="${AgencyList.get().content}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                        </div>
-                    </div>
-                </div>
+                            <!-- 사진 보기 카드 -->
+                            <div class="card mb-4 shadow-lg">
+                                <h5 class="card-header text-center">사진 보기</h5>
+                                <div class="card-body d-flex justify-content-center align-items-center">
+                                    <div class="row justify-content-center" style="gap: 20px;"> <!-- gap 값을 조정 -->
+                                        <div th:each="image : ${images}" class="col-md-4 mb-3 d-flex justify-content-center">
+                                            <!-- 이미지 삽입 -->
+                                            <img th:src="@{'/kjwupload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}" alt="사진" style="width: 250px; height: 250px;"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                <br>
+                            <!-- 수정하기 및 삭제하기 버튼 -->
+                            <div class="row" th:if="${AgencyList.get().companyId == pid}">
+                                <div class="col-md-6 text-center"> <!-- 수정하기 버튼 -->
+                                    <a class="btn btn-danger btn-block" th:href="@{/agency/posts/{agencynum}/edit(agencynum=${AgencyList.get().id})}">
+                                        수정하기
+                                    </a>
+                                </div>
+                                <div class="col-md-6 text-center"> <!-- 삭제하기 버튼 -->
+                                    <form id="deleteForm" th:action="@{/agency/posts/{agencynum}(agencynum=${AgencyList.get().id})}" th:method="delete">
+                                        <button type="button" class="btn btn-danger btn-block" onclick="confirmDeleteUser(event)">삭제하기</button>
+                                    </form>
+                                </div>
+                            </div>
 
-                <div class="row">
-                    <!-- Basic -->
-                    <div class="col-md-12 mb-4">
-                        <div class="card">
-                            <h5 class="card-header">소개내용</h5>
-                            <div class="card-body">
-                                <div class="divider">
-                                    <span th:text="${AgencyList.get().content}"></span>
-
+                            <!-- 관리자 삭제하기 버튼 -->
+                            <div class="row">
+                                <div class="col-md-6 text-center" sec:authorize="hasRole('ROLE_ADMIN')"> <!-- 관리자 삭제하기 버튼 -->
+                                    <form id="AdmindeleteForm" th:action="@{/agency/posts/{agencynum}(agencynum=${AgencyList.get().id})}" th:method="delete">
+                                        <button type="button" class="btn btn-danger btn-block" onclick="confirmDeleteAdmin(event)">삭제하기</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-
-
-
-                    <!--사진넣기 진행중-->
-                    <div class="col-md-12 mb-4">
-                        <div class="card">
-                            <h5 class="card-header">사진 보기</h5>
-                            <div class="card-body">
-                                <div th:each="image : ${images}" class="mb-3">
-                                    <!-- 이미지 삽입 -->
-                                    <img th:src="@{'/kjwupload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}" class="img-fluid" alt="사진" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-                    <div class="row" th:if="${AgencyList.get().companyId == pid}">
-                        <div class="col-md-6 text-center"> <!-- 수정하기 버튼 -->
-                            <a class="btn btn-danger btn-block"  th:href="@{/agency/posts/{agencynum}/edit(agencynum=${AgencyList.get().id})}" >
-                                수정하기
-                            </a>
-                        </div>
-
-
-                        <div class="col-md-6 text-center"> <!-- 삭제하기 버튼 -->
-                            <form id="deleteForm" th:action="@{/agency/posts/{agencynum}(agencynum=${AgencyList.get().id})}" th:method="delete">
-                                <button type="button" class="btn btn-danger btn-block" onclick="confirmDeleteUser(event)">삭제하기</button>
-                            </form>
-                        </div>
-                    </div>
-
-
-
-                    <div class="col-md-6 text-center" sec:authorize="hasRole('ROLE_ADMIN')"> <!-- 관리자 삭제하기 버튼 -->
-                        <form id="AdmindeleteForm" th:action="@{/agency/posts/{agencynum}(agencynum=${AgencyList.get().id})}" th:method="delete">
-                            <button type="button" class="btn btn-danger btn-block" onclick="confirmDeleteAdmin(event)">삭제하기</button>
-                        </form>
-                    </div>
-
-
-                    <!-- /Text Alignment -->
                 </div>
-                <!-- / Content -->
+
 
                 <!-- Footer -->
                 <div th:include="~{design/footer :: footer}"></div>

@@ -44,6 +44,7 @@ public class RecruitController {
         if(principal!=null) {
             model.addAttribute("memberId", principal.getName());
            mem=educationService.authCheck(principal);
+            model.addAttribute("id",principal.getName());
         }
         model.addAttribute("auth",mem);
         service.AllPosts(model,pageNum,type);
@@ -55,6 +56,7 @@ public class RecruitController {
         if(principal!=null) {
             memberId= principal.getName();
             model.addAttribute("memberId", principal.getName());
+            model.addAttribute("id",principal.getName());
         }
         service.myPosts(model,pageNum,memberId);
         return "recruit/myList";
@@ -68,6 +70,7 @@ public class RecruitController {
         }
         if(principal!=null){
             sid= principal.getName();
+            model.addAttribute("id",principal.getName());
         }else{
             sid = ip;
         }
@@ -84,6 +87,7 @@ public class RecruitController {
         String sid = "";
         if(principal!=null) {
             principal.getName();
+            model.addAttribute("id",principal.getName());
         }
         //principal.getName();
         service.post(model,boardNum,sid);
@@ -112,6 +116,7 @@ public class RecruitController {
     public String write(Model model,Principal principal){
         if(principal!=null) {
             model.addAttribute("memberId", principal.getName());
+            model.addAttribute("id",principal.getName());
         }
         return "recruit/write";
     }
@@ -121,21 +126,23 @@ public class RecruitController {
                              @RequestParam("startDateParam") @DateTimeFormat(pattern = "yyyy-MM-dd")Date startDateParam,
                              @RequestParam("endDateParam") @DateTimeFormat(pattern = "yyyy-MM-dd")Date endDateParam,Principal principal
     ){
+        String sid="";
         int check=0;
         check = rdto.getStatus();
         String url="redirect:/recruit/posts";
-        if(check==2){
-            //결제 페이지로 이동
-            url="redirect:/recruit/posts";
-        }
-        //사업자 아이디 = 로그인 구현후 session 받아와서 다시 처리
         if(principal!=null) {
             rdto.setMemberId(principal.getName());
+            sid= principal.getName();
         }
+        if(check==2){
+            //결제 페이지로 이동
+            url="redirect:/payProcess/Pay/"+sid;
+        }
+        //사업자 아이디 = 로그인 구현후 session 받아와서 다시 처리
+
         check = rdto.getStatus();
         rdto.setStartDate(startDateParam);
         rdto.setEndDate(endDateParam);
-        rdto.setMemberId("four");
         String content = rdto.getContent();
         content = content.replace("\r\n","<br>");
         rdto.setContent(content);
@@ -179,8 +186,10 @@ public class RecruitController {
     public String contract(Model model,Principal principal,@PathVariable String memberId,@RequestParam int type,@PathVariable Long stateId){
         String url="";
         String name ="";
+        //memberId=사용자 / principal=사업자
         if(principal!=null) {
              name=principal.getName();
+            model.addAttribute("id",principal.getName());
         }
         if(type==1){
                 url="recruit/contractForm";
@@ -188,12 +197,13 @@ public class RecruitController {
             }
         else if(type==2){
             service.basicContract(memberId,name,1,stateId);
-            url="redirect:/recruitState/posts";
+            url="redirect:/";
         }else if(type==3){
             url="recruit/contractForm";
             service.userInfo(model,memberId,name,stateId,type);
         }else if(type==4){
             url="redirect:/recruit/posts";
+
             service.basicContract(memberId,name,4,stateId);
         }
 
@@ -203,7 +213,7 @@ public class RecruitController {
     @PostMapping("/contract/company/{stateId}")
     public String signature(@ModelAttribute ContractDTO dto,@PathVariable Long stateId,@RequestParam int applyType){
         Long id=service.contract(dto,stateId,applyType);
-        String url = "redirect:/contract/"+id;
+        String url = "redirect:/recruit/contract/"+id;
         return url;
     }
     @GetMapping("/contract/{contractId}")
@@ -211,6 +221,7 @@ public class RecruitController {
         String id = "";
         if(principal!=null){
             id= principal.getName();
+            model.addAttribute("id",principal.getName());
         }
         service.getContract(response,model,contractId,id);
 

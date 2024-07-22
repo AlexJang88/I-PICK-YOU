@@ -131,7 +131,10 @@ public class NoticeController {
     }
 
     @GetMapping()
-    public String IntroductionUs(){  //사이트 소개하기
+    public String IntroductionUs(Principal pc, Model model){  //사이트 소개하기
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
 
         return "notice/IntroductionUs";
     }

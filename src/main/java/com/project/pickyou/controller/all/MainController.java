@@ -29,7 +29,8 @@ public class MainController {
     private final NoticeService noticeService;
 
     @GetMapping("/")
-    public String mainp(Model model, Principal principal){
+    public String mainp(Model model){
+
 
         //아래 코드는 메인에서 로그인시 어떤 권한을가지고 있는지 확인하다
         String id = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -54,6 +55,7 @@ public class MainController {
         if(principal!=null){
             sid=principal.getName();
             model.addAttribute("memberId",sid);
+            model.addAttribute("id",principal.getName());
         }
         return "calendar/calendar";
     }

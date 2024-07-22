@@ -11,7 +11,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>받은 쪽지내역</title>
+    <title>포인트 승인 페이지</title>
 
     <meta name="description" content="" />
 
@@ -57,7 +57,7 @@
             <!-- Navbar -->
 
 
-            <div th:insert="~{design/navi-bar :: navi}"></div>
+            <div th:include="~{design/navi-bar :: navi}"></div>
 
 
             <!-- / Navbar -->
@@ -66,47 +66,57 @@
             <div class="content-wrapper">
                 <!-- Content -->
                 <div class="container-fluid flex-grow-1 container-p-y">
+
+
+
                     <!-- Layout Demo -->
 
+                    <div class="container-xxl flex-grow-1 container-p-y">
 
-
-                    <div class="card">
-                        <h5 class="card-header">내가 받은 쪽지함</h5>
-                        <div class="table-responsive text-nowrap">
-                            <table class="table">
-                                <thead class="table-light">
-                                <tr>
-                                    <th><strong>번호</strong></th>
-                                    <th><strong>보낸사람</strong></th>
-                                    <th><strong>내용</strong></th>
-                                    <th><strong>받는사람</strong></th>
-                                    <th><strong>확인 결과</strong></th>
-                                    <th><strong>날짜</strong></th>
-                                </tr>
-                                </thead>
-                                <tbody class="table-border-bottom-0">
-                                <!--alarmEntityList-->
-                                <tr th:each="list, iterStat : ${alarmEntityList}">
-                                    <td><span th:text="${iterStat.index + 1}"></span></td>
-                                    <td><span th:text="${list.memberId}"></span></td>
-                                    <td>
-                                        <a th:href="@{/alarm/list/{id}/content/{num}(id=${list.readerId}, num=${list.id})}">
-                                            <span th:text="${#strings.length(list.content) > 9 ? #strings.substring(list.content, 0, 9).concat('....') : list.content}"></span>
-                                        </a>
-                                    </td>
-                                    <td><span th:text="${list.readerId}"></span></td>
-                                    <td>
-                                        <span th:if="${list.status == 1}">안읽음</span>
-                                        <span th:if="${list.status == 2}">읽음</span>
-                                    </td>
-                                    <td><span th:text="${#dates.format(list.reg, 'yyyy-MM-dd HH:mm')}"></span></td>
-                                </tr>
-                                </tbody>
-                            </table>
+                        <!-- Basic Bootstrap Table -->
+                        <div class="card">
+                            <h5 class="card-header">포인트 승인페이지</h5>
+                            <div class="table-responsive text-nowrap">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>번호</th>
+                                        <th>아이디</th>
+                                        <th>등급</th>
+                                        <th>변환할 금액</th>
+                                        <th>요청날짜</th>
+                                        <th>승인 비승인</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="table-border-bottom-0">
+                                    <tr th:each="list, iterStat : ${getpointlist}">
+                                        <td><span th:text="${iterStat.index + 1}"></span></td>
+                                        <th> <span th:text="${list.memberId}"></span></th>
+                                        <th>
+                                            <span th:switch="${list.member.auth}">
+                                                <span th:case="'ROLE_USER'">일반유저</span>
+                                                <span th:case="'ROLE_COMPANY'">사업자유저</span>
+                                            </span>
+                                        </th>
+                                        <th> <span th:text="${list.point}"></span></th>
+                                        <th> <span th:text="${list.reg}"></span></th>
+                                        <th>
+                                            <form id="patchForm" th:action="@{/admin/userPointPatch}" th:method="patch">
+                                                <input type="hidden" name="id" th:value="${list.id}" />
+                                                <input type="hidden" name="memberId" th:value="${list.memberId}" />
+                                                <button type="button" class="btn btn-warning" onclick="confirmApprovalUser(event)">승인</button>
+                                            </form>
+                                        </th>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
+                    <!--/ Layout Demo -->
 
 
+                    <!--페이징처리-->
                     <div class="row">
                         <div class="demo-inline-spacing">
                             <!--pagination -->
@@ -114,19 +124,19 @@
                                 <ul th:if="${count>0}" class="pagination pagination-lg justify-content-center">
                                     <!-- Previous Button -->
                                     <li th:if="${startPage>10}" class="page-item" >
-                                        <a class="page-link" th:href="@{'/alrm/list/{id}?pageNum=' + (${startPage} - 10)(id=${id})}" aria-label="Previous">
+                                        <a class="page-link" th:href="@{'/admin/pointPayment?pageNum=' + (${startPage} - 10)}" aria-label="Previous">
                                             <i class="tf-icon bx bx-chevrons-left"></i>
                                         </a>
                                     </li>
 
                                     <!-- Page Numbers -->
                                     <li class="page-item" th:each="i : ${#numbers.sequence(startPage, endPage)}" >
-                                        <a class="page-link" th:href="@{'/alarm/list/{id}?pageNum=' + ${i}(id=${id})}" th:text="${i}"></a>
+                                        <a class="page-link" th:href="@{'/admin/pointPayment?pageNum=' + ${i}}" th:text="${i}"></a>
                                     </li>
 
                                     <!-- Next Button -->
                                     <li class="page-item" th:if="${endPage<pageCount}">
-                                        <a class="page-link" th:href="@{'/alarm/list/{id}?pageNum=' + (${startPage} + 10)(id=${id})}" aria-label="Next">
+                                        <a class="page-link" th:href="@{'/admin/pointPayment?pageNum=' + (${startPage} + 10)}" aria-label="Next">
                                             <i class="tf-icon bx bx-chevrons-right"></i>
                                         </a>
                                     </li>
@@ -139,14 +149,6 @@
 
 
 
-
-
-
-
-
-
-
-                    <!--/ Layout Demo -->
                 </div>
                 <!-- / Content -->
 
@@ -167,7 +169,6 @@
 <!-- / Layout wrapper -->
 
 
-
 <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->
 <script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
@@ -179,7 +180,14 @@
 <!-- endbuild -->
 
 <!-- Vendors JS -->
-
+<script>
+    function confirmApprovalUser(event) {
+        event.preventDefault();
+        if (confirm("정말 승인하시겠습니까?")) {
+            document.getElementById("patchForm").submit();
+        }
+    }
+</script>
 <!-- Main JS -->
 <script th:src="@{/assets/js/main.js}"></script>
 
@@ -187,5 +195,9 @@
 
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
 </body>
 </html>

@@ -135,6 +135,7 @@ public class RecruitStateServiceImpl implements RecruitStateService {
         if(ce.isPresent()){
             confirm=ce.get().toConfirmDTO();
             confirm.setApply(3);
+            confirm.setRecruitId(recruitId);
             System.out.println("---------------dto"+confirm);
             System.out.println("---------------check"+check);
             confirmJPA.save(confirm.toConfirmEntity());

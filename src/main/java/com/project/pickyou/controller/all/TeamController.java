@@ -27,6 +27,7 @@ public class TeamController {
         if(principal!=null){
             model.addAttribute("memberId",principal.getName());
             mem= educationService.authCheck(principal);
+            model.addAttribute("id",principal.getName());
         }
         model.addAttribute("auth",mem);
         service.AllPosts(model,pageNum);
@@ -40,6 +41,7 @@ public class TeamController {
             sid= principal.getName();
             url="team/myContent";
             service.MyPosts(model,sid,5);
+            model.addAttribute("id",principal.getName());
         }
         return url;
     }
@@ -48,9 +50,11 @@ public class TeamController {
         String sid ="";
         if(principal!=null) {
              sid = principal.getName();
+            model.addAttribute("id",principal.getName());
         }
         model.addAttribute("to",sid);
         service.post(model,boardNum,sid,5);
+
 
         return "team/content";
     }
@@ -59,7 +63,8 @@ public class TeamController {
     public String edit(Model model,@PathVariable Long boardNum,Principal principal){
         String sid = "";
         if(principal!=null) {
-         sid=   principal.getName();
+         sid=principal.getName();
+         model.addAttribute("id",principal.getName());
         }
         //principal.getName();
         service.post(model,boardNum,sid,5);
@@ -92,6 +97,7 @@ public class TeamController {
         model.addAttribute("memberId",memberId);
         if(principal!=null){
             check=service.checkMyPost(principal.getName());
+            model.addAttribute("id",principal.getName());
         }
         if(!check){
             url="redirect:/teams/posts/my";

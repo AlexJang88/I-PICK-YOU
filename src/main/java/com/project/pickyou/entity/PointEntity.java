@@ -30,6 +30,13 @@ public class PointEntity {
     @CreationTimestamp
     private Date reg;
 
+
+
+    @OneToOne
+    @JoinColumn(name="member_id",referencedColumnName = "id",insertable = false,updatable = false)
+    private MemberEntity member;
+
+
     @Builder
     public PointEntity(Long id,String memberId,int point,int status,Date reg) {
         super();

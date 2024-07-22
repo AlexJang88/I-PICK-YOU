@@ -30,13 +30,14 @@ public class ConfirmEntity {
     private int apply;
     @Column(name="recruit_id")
     private Long recruitId;
+    private Date reg;
 
     @OneToOne
     @JoinColumn(name = "recruit_id",referencedColumnName = "id",updatable = false,insertable = false)
     private RecruitEntity recruit;
 
     @Builder
-    public ConfirmEntity(Long id, String memberId, Long contractId, String companyId, Integer apply,Long recruitId) {
+    public ConfirmEntity(Long id, String memberId, Long contractId, String companyId, Integer apply,Long recruitId,Date reg) {
         super();
         this.id = id;
         this.memberId = memberId;
@@ -44,6 +45,7 @@ public class ConfirmEntity {
         this.companyId = companyId;
         this.apply = apply;
         this.recruitId = recruitId;
+        this.reg=reg;
 
     }
 
@@ -55,6 +57,7 @@ public class ConfirmEntity {
                 .companyId(this.companyId)
                 .apply(this.apply)
                 .recruitId(this.recruitId)
+                .reg(this.reg)
                 .build();
     }
 }

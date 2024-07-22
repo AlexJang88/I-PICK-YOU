@@ -20,6 +20,7 @@ public class RecruitStateController {
         String sid="";
         if(principal!=null) {
             sid= principal.getName();
+            model.addAttribute("id",principal.getName());
             service.onApply(model, pageNum, recruitId, 3);
         }
         return "recruitState/applyList";
@@ -30,6 +31,7 @@ public class RecruitStateController {
         if(principal!=null) {
             sid= principal.getName();
             service.confirmedMember(model, pageNum, recruitId, 3);
+            model.addAttribute("id",principal.getName());
         }
         return "recruitState/confirmedList";
     }
@@ -39,6 +41,7 @@ public class RecruitStateController {
         if(principal!=null){
             sid=principal.getName();
             service.myApply(model,sid,pageNum);
+            model.addAttribute("id",principal.getName());
         }
         return "recruitState/myList";
     }
