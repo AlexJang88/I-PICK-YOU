@@ -1,5 +1,6 @@
 package com.project.pickyou.service;
 
+import com.project.pickyou.dto.PointDTO;
 import org.springframework.ui.Model;
 
 public interface AdminService {
@@ -15,4 +16,8 @@ public interface AdminService {
     public void userDelete(String id); //일반유저 삭제
 
     public void getCompany(Model model, int pageNum); //사업자 유저 정보 가져오기
+
+    public void getnPoitApproval(Model model, int pageNum); //포인트 승인하는곳
+
+    public void patchPoint(PointDTO pointDTO); //포인트 변환
 }
