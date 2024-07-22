@@ -131,9 +131,9 @@
                     <div class="card">
                         <div class="container-xxl flex-grow-1 container-p-y text-center">
                             <span th:text="${type}" class="badge bg-label-primary me-1" style="font-size: 1em; margin-right: 10px;"></span>
-                            <a class="page-link" th:href="@{/recruit/favorits/{boardNum}/{target}(boardNum=${post.id},target=${member.id})}">
-                                <img th:if="${favoritecheck==0 and check!=1}" th:src="@{/img/favoritenoncheck.png}" width="30px">
-                                <img th:if="${favoritecheck==1 and check!=1}" th:src="@{/img/favoritecheck.png}" width="30px">
+                            <a th:if="${check!=1 and auth!=0 and auth!=2}" class="page-link" th:href="@{/recruit/favorits/{boardNum}/{target}(boardNum=${post.id},target=${member.id})}">
+                                <img th:if="${favoritecheck==0}" th:src="@{/img/favoritenoncheck.png}" width="30px">
+                                <img th:if="${favoritecheck==1}" th:src="@{/img/favoritecheck.png}" width="30px">
                             </a>
                         </div>
                         <h2 th:text="${post.title}" style="font-size: 3em;">제목

@@ -90,16 +90,17 @@ public class TeamController {
         return url;
     }
     //작성페이지이동
-    @GetMapping("/posts/write/{memberId}")
-    public String write(Model model,@PathVariable String memberId,Principal principal){
+    @GetMapping("/posts/new")
+    public String write(Model model,Principal principal){
         boolean check=false;
         String url="team/write";
-        model.addAttribute("memberId",memberId);
+
         if(principal!=null){
             check=service.checkMyPost(principal.getName());
             model.addAttribute("id",principal.getName());
+            model.addAttribute("memberId",principal.getName());
         }
-        if(!check){
+        if(check){
             url="redirect:/teams/posts/my";
         }
         return url;

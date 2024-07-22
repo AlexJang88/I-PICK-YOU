@@ -91,7 +91,7 @@
                   </td>
                   <td>
                     <!-- 지원취소 버튼 -->
-                    <form th:method="delete" th:action="@{/recruitState/posts}">
+                    <form th:method="delete" th:action="@{/recruitState/posts}" class="cancel-application-form">
                       <input type="hidden" name="recruitId" th:value="${post.recruitId}">
                     <button type="submit" class="btn btn-primary" >
                       지원 취소
@@ -172,5 +172,19 @@
 
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const forms = document.querySelectorAll('.cancel-application-form');
+    forms.forEach(form => {
+      form.addEventListener('submit', function(event) {
+        const confirmCancel = confirm('정말로 지원을 취소하시겠습니까?');
+        if (!confirmCancel) {
+          event.preventDefault();
+        }
+      });
+    });
+  });
+</script>
+
 </body>
 </html>

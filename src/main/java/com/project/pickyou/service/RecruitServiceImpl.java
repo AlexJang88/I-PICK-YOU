@@ -508,6 +508,19 @@ public class RecruitServiceImpl implements RecruitService {
         }
     }
 
+    @Override
+    public void mainList(Model model) {
+
+        List<RecruitEntity> argentPost =recruitJPA.findByStatus(2);
+        List<RecruitEntity> normalPost=recruitJPA.findByStatus(1);
+
+        model.addAttribute("argentPost",argentPost);
+        model.addAttribute("normalPost",normalPost);
+
+
+
+    }
+
 
     public String makeFolder(String uploadPath, int boardType, Long boardNum) {
         String folderPath = boardType + File.separator + boardNum;

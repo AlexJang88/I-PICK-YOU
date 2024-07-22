@@ -70,14 +70,14 @@
                                 <div class="d-flex align-items-center mb-2">
                                     <span th:text="${company.job}" style="font-size: 1.5em; margin-right: 10px;">사업자업종</span>
                                     <span th:text="${favoriteCheck}"></span>
-                                    <a class="page-link" th:href="@{/educations/favorits/{boardNum}/{target}(boardNum=${post.id},target=${post.companyId})}" >
+                                    <a class="page-link" th:if="${type!=1 and auth!=0 and auth!=2}"  th:href="@{/educations/favorits/{boardNum}/{target}(boardNum=${post.id},target=${post.companyId})}" >
                                         <img th:if="${favoriteCheck==0}" th:src="@{/img/favoritenoncheck.png}" width="30px">
                                         <img th:if="${favoriteCheck==1}" th:src="@{/img/favoriteCheck.png}" width="30px">
                                     </a>
                                 </div>
                                 <h2 th:text="${company.companyName}" style="font-size: 3em;">회사 이름</h2>
                                 <!--채팅창 -->
-                                <button th:if="${type!=1}" id="openChatBtn" class="btn btn-primary">채팅</button>
+                                <button th:if="${type!=1 and check!=1 and auth!=0}" id="openChatBtn" class="btn btn-primary">채팅</button>
                                     <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
                                         <div class="modal-dialog">
                                             <div class="modal-content">

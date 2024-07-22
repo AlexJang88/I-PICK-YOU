@@ -207,4 +207,5 @@ public class RecruitStateServiceImpl implements RecruitStateService {
 
         return check;
     }
+
 }

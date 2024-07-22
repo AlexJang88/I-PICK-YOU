@@ -50,8 +50,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         function checkAuth(auth) {
-            if (auth != 2) {
-                var confirmLogin = confirm("사업자회원만 등록이 가능합니다. 사업자아이디로 로그인하시겠습니까?");
+            if (auth != 1) {
+                var confirmLogin = confirm("일반회원만 등록이 가능합니다. 일반회원 아이디로 로그인하시겠습니까?");
                 if (confirmLogin) {
                     window.location.href = "/login";
                 }

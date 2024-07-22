@@ -61,14 +61,14 @@
                             <div>
                                 <div class="d-flex align-items-center mb-2">
                                     <span th:text="${post.job}" style="font-size: 1.5em; margin-right: 10px;">업종</span>
-                                    <a class="page-link" th:href="@{/teams/favorits/{boardNum}/{target}(boardNum=${post.id},target=${member.id})}" >
+                                    <a th:if="${type!=1 and auth!=0 and auth!=2}" class="page-link" th:href="@{/teams/favorits/{boardNum}/{target}(boardNum=${post.id},target=${member.id})}" >
                                     <img th:if="${favoritecheck==0}" th:src="@{/img/favoritenoncheck.png}" width="30px">
                                     <img th:if="${favoritecheck==1}" th:src="@{/img/favoritecheck.png}" width="30px">
                                     </a>
                                     <input type="hidden" id="sender" th:value="${to}">
                                     <input type="hidden" id="receiver" th:value="${post.memberId}">
                                     <input type="hidden" id="ajaxId" th:value="${to}">
-                                    <button th:if="${type!=1}" id="openChatBtn" class="btn btn-primary">채팅</button>
+                                    <button th:if="${check!=1 and auth!=0}" id="openChatBtn" class="btn btn-primary">채팅</button>
                                         <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
@@ -119,8 +119,8 @@
                         <input type="hidden" name="advantage" th:value="${post.advantage}">
                         <input type="hidden" name="profile" th:value="${post.profile}">
                         <input type="hidden" name="status" th:value="${post.status}">
-                        <button th:if="${post.status==0 and check==1}" class="btn btn-primary" type="submit" >이력서 공개</button>
-                        <button th:if="${post.status==1 and check==1}" class="btn btn-primary" type="submit" >이력서 비공개</button>
+                        <button th:if="${post.status==0 and type==1}" class="btn btn-primary" type="submit" >이력서 공개</button>
+                        <button th:if="${post.status==1 and type==1}" class="btn btn-primary" type="submit" >이력서 비공개</button>
                     </form>
                 </div>
                 <script>
