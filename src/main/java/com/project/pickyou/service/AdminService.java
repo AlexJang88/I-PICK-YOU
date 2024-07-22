@@ -21,4 +21,6 @@ public interface AdminService {
     // 결제, 포인트 사용내역 가져오기
     public void AllpaymentANDpoint(Model model, int pointHistory, int pageNum, int month);
 
+    // TEST ////////////////////////
+    public void TEST(Model model, int pointHistory, int month, String chartType);
 }

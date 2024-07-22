@@ -18,10 +18,7 @@ import org.springframework.ui.Model;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -185,5 +182,96 @@ public class AdminServiceImpl implements AdminService{
         model.addAttribute("endPage", endPage);
         model.addAttribute("month", month); // 추가: 현재 월을 모델에 추가
     }
+
+
+
+
+    // 결제, 포인트 사용내역 가져오기
+    public void TEST(Model model, int pointHistory, int month, String chartType) {
+        // 페이지 크기 설정
+        int pageSize = Integer.MAX_VALUE; // 페이지 크기를 매우 큰 값으로 설정
+        Pageable pageable = PageRequest.of(0, pageSize, Sort.by(Sort.Order.desc("reg")));
+
+        // 데이터 조회
+        Page<PaymentEntity> page = paymentJPA.findByPointHistory(pointHistory, pageable);
+
+        // 페이지 내용 가져오기
+        List<PaymentEntity> allPosts = page.getContent();
+
+        // 월별로 필터링
+        List<PaymentEntity> filteredPosts = allPosts.stream()
+                .filter(post -> {
+                    // 날짜를 LocalDate로 변환
+                    LocalDate regDate = post.getReg().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    return regDate.getMonthValue() == month;
+                })
+                .collect(Collectors.toList());
+
+        // 필터링된 데이터 집계 (money와 point)
+        Map<LocalDate, Integer> moneyAggregatedData = filteredPosts.stream()
+                .collect(Collectors.groupingBy(
+                        post -> post.getReg().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                        Collectors.summingInt(PaymentEntity::getMoney)
+                ));
+
+        Map<LocalDate, Integer> pointAggregatedData = filteredPosts.stream()
+                .collect(Collectors.groupingBy(
+                        post -> post.getReg().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                        Collectors.summingInt(PaymentEntity::getPoint)
+                ));
+
+        // 총합 계산
+        int totalMoney = moneyAggregatedData.values().stream().mapToInt(Integer::intValue).sum();
+        int totalPoint = pointAggregatedData.values().stream().mapToInt(Integer::intValue).sum();
+        int totalDifference = totalMoney - totalPoint;
+
+        // 두 데이터 집계 결과를 하나로 합쳐서 차이 계산
+        Map<LocalDate, Integer> combinedData = new TreeMap<>(moneyAggregatedData); // 날짜 정렬을 위해 TreeMap 사용
+
+        pointAggregatedData.forEach((date, pointValue) ->
+                combinedData.putIfAbsent(date, moneyAggregatedData.get(date) - pointValue));
+
+        // 차트 데이터 형식으로 변환
+        List<Map<String, Object>> chartDataMoney = moneyAggregatedData.entrySet().stream()
+                .map(entry -> {
+                    Map<String, Object> dataPoint = new HashMap<>();
+                    dataPoint.put("x", entry.getKey().toString()); // 날짜를 문자열로 변환
+                    dataPoint.put("y", entry.getValue()); // 금액
+                    return dataPoint;
+                })
+                .collect(Collectors.toList());
+
+        List<Map<String, Object>> chartDataPoint = pointAggregatedData.entrySet().stream()
+                .map(entry -> {
+                    Map<String, Object> dataPoint = new HashMap<>();
+                    dataPoint.put("x", entry.getKey().toString()); // 날짜를 문자열로 변환
+                    dataPoint.put("y", entry.getValue()); // 포인트
+                    return dataPoint;
+                })
+                .collect(Collectors.toList());
+
+        List<Map<String, Object>> chartDataDifference = combinedData.entrySet().stream()
+                .map(entry -> {
+                    Map<String, Object> dataPoint = new HashMap<>();
+                    dataPoint.put("x", entry.getKey().toString()); // 날짜를 문자열로 변환
+                    dataPoint.put("y", entry.getValue()); // 차이 (money - point)
+                    return dataPoint;
+                })
+                .collect(Collectors.toList());
+
+        // 모델에 데이터 추가
+        model.addAttribute("posts", filteredPosts);
+        model.addAttribute("chartDataMoney", chartDataMoney);
+        model.addAttribute("chartDataPoint", chartDataPoint);
+        model.addAttribute("chartDataDifference", chartDataDifference);
+        model.addAttribute("chartType", chartType); // 현재 그래프 타입을 모델에 추가
+        model.addAttribute("month", month); // 현재 월을 모델에 추가
+        model.addAttribute("totalMoney", totalMoney); // 총 금액
+        model.addAttribute("totalPoint", totalPoint); // 총 포인트
+        model.addAttribute("totalDifference", totalDifference); // 총 차이
+    }
+
+
+
 
 }

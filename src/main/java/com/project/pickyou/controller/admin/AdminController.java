@@ -1,5 +1,6 @@
 package com.project.pickyou.controller.admin;
 
+import com.project.pickyou.entity.PaymentEntity;
 import com.project.pickyou.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.bouncycastle.math.raw.Mod;
@@ -9,6 +10,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -21,7 +28,7 @@ public class AdminController {
     @GetMapping("/point/give")
     public String giveList(Model model, Principal principal,
                            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-                           @RequestParam(value = "month", defaultValue = "1") int month) {
+                           @RequestParam(value = "month", defaultValue = "7") int month) {
 
         // @@
         if(principal!=null) {
@@ -38,8 +45,6 @@ public class AdminController {
     @GetMapping("/point/give/month")
     public String monthGIVE(Model model, @RequestParam("month") int month, RedirectAttributes redirectAttributes) {
 
-
-
         redirectAttributes.addAttribute("month", month);
         return "redirect:/admin/point/give";
     }
@@ -48,7 +53,7 @@ public class AdminController {
     @GetMapping("/point/deduct")
     public String deductList(Model model, Principal principal,
                            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-                           @RequestParam(value = "month", defaultValue = "1") int month) {
+                           @RequestParam(value = "month", defaultValue = "7") int month) {
 
         // @@
         if(principal!=null) {
@@ -75,7 +80,7 @@ public class AdminController {
     @GetMapping("/payment/posts")
     public String paymentList(Model model, Principal principal,
                            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-                           @RequestParam(value = "month", defaultValue = "1") int month) {
+                           @RequestParam(value = "month", defaultValue = "7") int month) {
 
         // @@
         if(principal!=null) {
@@ -97,13 +102,61 @@ public class AdminController {
         return "redirect:/admin/payment/posts";
     }
 
-    // 테스트 /////////////////////////
+
+    // 달력 총 매출, 순이익 내역
+    @GetMapping("/payment/month/totalRevenue")
+    public String TEST2(Model model,
+                        @RequestParam("chartType") String chartType,
+                        @RequestParam("month") int month, RedirectAttributes redirectAttributes) {
+
+        redirectAttributes.addAttribute("month", month);
+        redirectAttributes.addAttribute("chartType", chartType);
+
+        return "redirect:/admin/payment/totalRevenue";
+    }
     // 총 매출, 순이익 내역
     @GetMapping("/payment/totalRevenue")
-    public String totalRevenue() {
+    public String TEST(Model model, Principal principal,
+                       @RequestParam(value = "month", defaultValue = "7") int month,
+                       @RequestParam(value = "chartType", defaultValue = "both") String chartType) {
+
+        if (principal != null) {
+            model.addAttribute("id", principal.getName());
+        }
+
+        // Retrieve and process data for the selected month
+        adminService.TEST(model, 1, month, chartType);
+
+        // Process data to be used in the chart
+        List<PaymentEntity> payments = (List<PaymentEntity>) model.getAttribute("posts");
+
+        // Aggregate data by date
+        Map<LocalDate, Integer> aggregatedData = payments.stream()
+                .collect(Collectors.groupingBy(
+                        post -> post.getReg().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                        Collectors.summingInt(PaymentEntity::getMoney)
+                ));
+
+        // Convert aggregated data to chart-friendly format
+        List<Map<String, Object>> chartData = aggregatedData.entrySet().stream()
+                .map(entry -> {
+                    Map<String, Object> dataPoint = new HashMap<>();
+                    dataPoint.put("x", entry.getKey().toString()); // Use LocalDate's default toString for formatting
+                    dataPoint.put("y", entry.getValue());
+                    return dataPoint;
+                })
+                .collect(Collectors.toList());
+
+        model.addAttribute("chartData", chartData);
+        model.addAttribute("month", month);
         return "admin/totalRevenue";
     }
-    // 테스트 /////////////////////////
+
+
+
+
+
+
 
 
     @GetMapping("/management")
