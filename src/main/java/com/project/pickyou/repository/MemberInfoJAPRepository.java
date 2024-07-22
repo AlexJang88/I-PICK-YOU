@@ -6,14 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface MemberInfoJAPRepository extends JpaRepository<MemberInfoEntity,String> {
 
 
-
-
-
-
-
-
-
-
-
-
+    public void deleteByName(String userName);
 }

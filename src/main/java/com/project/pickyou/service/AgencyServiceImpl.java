@@ -258,6 +258,9 @@ public class AgencyServiceImpl implements AgencyService{
                 }
             }
         }
+        AgencyEntity agency = agencyUpdate.get();
+        agency.setReadCount(agency.getReadCount());
+
         agencyJPARepository.save(agencyDTO.toAgencyEntity());  // 이건 내용새로 업데이트
     }
 

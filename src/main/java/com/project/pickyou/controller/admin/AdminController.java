@@ -1,6 +1,8 @@
 package com.project.pickyou.controller.admin;
 
 
+import com.project.pickyou.dto.MemberDTO;
+import com.project.pickyou.dto.MemberInfoDTO;
 import com.project.pickyou.entity.PaymentEntity;
 import com.project.pickyou.dto.PointDTO;
 import com.project.pickyou.service.AdminService;
@@ -174,11 +176,14 @@ public class AdminController {
     }
 
     @DeleteMapping("/userDelete")
-    public String userDelete(String id, Principal pc, Model model){ //일반유저삭제
+    public String userDelete(MemberInfoDTO memberInfoDTO, Principal pc, Model model){ //일반유저삭제
         if(pc != null){
             model.addAttribute("id",pc.getName()) ;
         }
-        adminService.userDelete(id);
+
+        System.out.println("><<><><><이거삭제"+memberInfoDTO.getName());
+        String userName = memberInfoDTO.getName();
+        adminService.userDelete(userName);
         return "redirect:/admin/management";
     }
 
@@ -193,11 +198,11 @@ public class AdminController {
     }
 
     @DeleteMapping("/companyDelete")
-    public String companyDelete(String id, Principal pc, Model model){ //사업자유저삭제
+    public String companyDelete(String memberId, Principal pc, Model model){ //사업자유저삭제
         if(pc != null){
             model.addAttribute("id",pc.getName()) ;
         }
-        adminService.userDelete(id);
+        adminService.userDelete(memberId);
         return "redirect:/admin/companyManagement";
     }
 

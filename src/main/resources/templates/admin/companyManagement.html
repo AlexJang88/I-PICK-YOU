@@ -97,7 +97,7 @@
                                         <th> <span th:text="${list.phone}"></span></th>
                                         <th>
                                             <form  id="deleteForm" th:action="@{/admin/companyDelete}" th:method="delete">
-                                                <input type="hidden" name="id" th:value="${list.id}" />
+                                                <input type="hidden" name="memberId" th:value="${list.companyInfo.name}" />
                                                 <button type="button" class="btn btn-warning" onclick="confirmDeleteUser(event)">가입해지하기</button>
                                             </form>
                                         </th>

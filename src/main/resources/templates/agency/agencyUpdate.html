@@ -81,6 +81,7 @@
                                     <form th:action="@{/agency/posts/{agencynum}(agencynum=${AgencyList.get().id})}" th:method="patch" enctype="multipart/form-data">
                                         <input type="hidden" name="id" th:value="${AgencyList.get().id}">
                                         <input type="hidden" name="companyId" th:value="${AgencyList.get().companyId}">
+                                        <input type="hidden" name="readCount" th:value="${AgencyList.get().readCount}">
 
                                         <span th:text="${AgencyList.get().reg}"></span>
 
@@ -118,8 +119,10 @@
                                                         class="form-control phone-mask"
                                                         placeholder="02-1111-1111"
                                                         name="contact"
+                                                        maxlength="13"
                                                         th:value="${AgencyList.get().contact}"
                                                         required
+                                                        oninput="autoFormatPhone(this)"
                                                 />
                                             </div>
                                         </div>
@@ -135,6 +138,7 @@
                                                         placeholder="주소를 입력하세요"
                                                         name="address"
                                                         th:value="${AgencyList.get().address}"
+                                                        readonly
                                                         required
                                                 />
                                                 <button type="button" id="addressButton">주소 검색</button>
@@ -254,6 +258,24 @@
         }
 
         return true;
+    }
+</script>
+
+
+<script>
+    function autoFormatPhone(input) {
+        // 입력된 내용에서 숫자만 추출하여 연결
+        let phoneNumber = input.value.replace(/\D/g, '');
+
+        // 길이에 따라서 특정 형식으로 변환
+        if (phoneNumber.length >= 4 && phoneNumber.length <= 7) {
+            phoneNumber = phoneNumber.replace(/(\d{3})(\d+)/, '$1-$2');
+        } else if (phoneNumber.length >= 8) {
+            phoneNumber = phoneNumber.replace(/(\d{3})(\d{4})(\d+)/, '$1-$2-$3');
+        }
+
+        // 입력 필드에 변환된 값 적용
+        input.value = phoneNumber;
     }
 </script>
 
