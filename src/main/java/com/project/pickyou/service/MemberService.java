@@ -3,8 +3,13 @@ package com.project.pickyou.service;
 import com.project.pickyou.dto.CompanyInfoDTO;
 import com.project.pickyou.dto.MemberDTO;
 import com.project.pickyou.dto.MemberInfoDTO;
+import com.project.pickyou.entity.ConfirmEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public interface MemberService {
 
@@ -25,4 +30,11 @@ public interface MemberService {
 
     // 유저 입장에서 채용현황 가져오기
     public void confirmList(String memberId, int pageNum, Model model);
+
+    // 고용 요청 내역(사업자가 요청한것)
+    public void findByCompanyIdAndApply(String companyId, int apply, int pageNum, Model model);
+
+    // 채용 확정 내역 (사업자)
+    public void findByCompanyIdAndApplyIn(String companyId, int pageNum, Model model);
+
 }

@@ -99,8 +99,8 @@
                                 </tr>
                                 </thead>
                                 <tbody class="table-border-bottom-0">
-                                <tr th:each="post : ${posts}">
-                                    <td th:text="${post.recruitId}"></td>
+                                <tr th:each="post, iterStat : ${posts}">
+                                    <td th:text="${iterStat.index + 1}"></td>
                                     <td th:text="${post.memberId}"></td>
                                     <td th:text="${post.contractId}"></td>
                                     <td th:text="${post.companyId}"></td>
