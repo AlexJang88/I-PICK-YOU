@@ -1,5 +1,6 @@
 package com.project.pickyou.controller.admin;
 
+import com.project.pickyou.dto.PointDTO;
 import com.project.pickyou.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.bouncycastle.math.raw.Mod;
@@ -73,5 +74,32 @@ public class AdminController {
         adminService.userDelete(id);
         return "redirect:/admin/companyManagement";
     }
+
+    @GetMapping("/pointPayment")
+    public String pointPayment(Principal pc, Model model, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum){ //포인트 승인 하는곳
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
+
+        adminService.getnPoitApproval(model, pageNum); //포인트 승인 요청내역 가져오기
+
+        return "admin/pointPayment";
+    }
+
+    @PatchMapping("/userPointPatch")
+    public String userPointPatch (Principal pc, Model model, PointDTO pointDTO){ //포인트 차감으로 변경해주기
+        if(pc != null){
+            model.addAttribute("id",pc.getName()) ;
+        }
+        System.out.println("><><><><><"+pointDTO.getMemberId());
+        System.out.println("><><><><><"+pointDTO.getId());
+
+        adminService.patchPoint(pointDTO);
+
+        return "redirect:/admin/pointPayment";
+    }
+
+
+
 
 }

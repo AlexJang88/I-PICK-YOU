@@ -1,5 +1,6 @@
 package com.project.pickyou.service;
 
+import com.project.pickyou.dto.PointDTO;
 import com.project.pickyou.entity.MemberEntity;
 import com.project.pickyou.entity.PointEntity;
 import com.project.pickyou.entity.TrainningEntity;
@@ -14,10 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -152,6 +150,54 @@ public class AdminServiceImpl implements AdminService{
         model.addAttribute("startPage", startPage);
         model.addAttribute("pageBlock", pageBlock);
         model.addAttribute("endPage", endPage);
+    }
+
+
+    @Override
+    public void getnPoitApproval(Model model, int pageNum) {  //유저 포인트 승인하는곳에 리스트 가져오기
+        int pageSize = 10;
+        int status = 3;  //1적립, 2 차감, 3 포인트 지급요청
+        Long longCount = (long) pointJPA.countByStatus(status);// //포인트테이블 3인사람만(변환요청한사람)
+
+        int count =longCount.intValue(); //타입변환
+        Sort sort = Sort.by(Sort.Order.desc("reg")); //내림차순
+
+        Page<PointEntity> page = pointJPA.findByStatus(status, PageRequest.of(pageNum - 1, pageSize, sort));
+
+        List<PointEntity> getpointlist = page.getContent();
+
+        model.addAttribute("getpointlist", getpointlist);
+        model.addAttribute("count", count);
+        model.addAttribute("pageNum", pageNum);
+        model.addAttribute("pageSize", pageSize);
+
+        int pageCount = count / pageSize + (count % pageSize == 0 ? 0 : 1);
+        int startPage = (pageNum - 1) / 10 * 10 + 1;
+        int pageBlock = 10;  // 페이징(이전/다음)을 몇 개 단위로 끊을지
+        int endPage = startPage + pageBlock - 1;
+        if (endPage > pageCount) {
+            endPage = pageCount;
+        }
+
+        model.addAttribute("pageCount", pageCount);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("pageBlock", pageBlock);
+        model.addAttribute("endPage", endPage);
+
+    }
+
+    @Override
+    @Transactional
+    public void patchPoint(PointDTO pointDTO) {// 포인트 변환
+        Optional<PointEntity> pointEntity = pointJPA.findById(pointDTO.getId());
+        int status = 2;
+
+        if(pointEntity.isPresent()){
+            PointEntity point = pointEntity.get(); // 포인트 정보를 여기에 담고
+            point.setStatus(status);  //포인트 상태를 2(차감)으로 바꾸고
+            pointJPA.save(point);  //다시 저장
+        }
+
     }
 
 }
