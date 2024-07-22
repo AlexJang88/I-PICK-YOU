@@ -3,6 +3,7 @@ package com.project.pickyou.controller.member;
 import com.project.pickyou.dto.CompanyInfoDTO;
 import com.project.pickyou.dto.MemberDTO;
 import com.project.pickyou.dto.MemberInfoDTO;
+import com.project.pickyou.dto.PointDTO;
 import com.project.pickyou.service.MemberService;
 import com.project.pickyou.service.PointService;
 import jakarta.servlet.http.HttpSession;
@@ -174,6 +175,26 @@ public class MemberController {
         return "mypage/pointMinusList";
     }
 
+    // 포인트 변환 신청하기
+    @PostMapping("/point/change")
+    public String pointChange(Principal principal, @RequestParam("pointValue") int pointValue, Model model) {
+        String id = "";
+        // @@
+        if(principal!=null) {
+            id = principal.getName();
+            model.addAttribute("id", id);
+        }
+        // @@
+
+        PointDTO dto = new PointDTO();
+        dto.setMemberId(id);
+        dto.setStatus(3);
+        dto.setPoint(pointValue);
+        pointService.pointInsert(dto);
+
+        return "redirect:/mypage/point/plus/posts";
+    }
+
 
 
     // 일반회원의 지원현황
@@ -194,7 +215,38 @@ public class MemberController {
         return "mypage/userConfirmList";
     }
 
+    // 고용 요청 내역(사업자가 요청한것)
+    @GetMapping("company/employment/posts")
+    public String findByCompanyIdAndApply(Principal principal, Model model,
+                                          @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
+        String companyId = "";
+        // @@
+        if(principal!=null) {
+            companyId = principal.getName();
+            model.addAttribute("id", principal.getName());
+        }
+        // @@
 
+        memberService.findByCompanyIdAndApply(companyId, 4, pageNum, model);
+        return "mypage/employmentList";
+    }
+
+    // 채용 확정된 리스트
+    @GetMapping("company/confirmation/posts")
+    public String comfirnmationList(Principal principal, Model model,
+                                    @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
+
+        String companyId = "";
+        // @@
+        if(principal!=null) {
+            companyId = principal.getName();
+            model.addAttribute("id", principal.getName());
+        }
+        // @@
+
+        memberService.findByCompanyIdAndApplyIn(companyId, pageNum, model);
+        return "mypage/ConfirmationList";
+    }
 
 
 

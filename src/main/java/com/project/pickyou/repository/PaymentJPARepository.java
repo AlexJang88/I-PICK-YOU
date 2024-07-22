@@ -10,4 +10,10 @@ public interface PaymentJPARepository extends JpaRepository<PaymentEntity,Long> 
     public Page<PaymentEntity> findByMemberId(String memberId, Pageable pageable);
 
     public int countByMemberId(String memberId);
+
+    // 테스트 ///////
+    // 결제, 포인트 사용내역 가져오기
+    public Page<PaymentEntity> findByPointHistory(int pointHistory, Pageable pageable);
+    public int countByPointHistory(int pointHistory);
+    // 테스트 ///////
 }

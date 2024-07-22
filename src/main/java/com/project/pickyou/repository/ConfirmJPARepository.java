@@ -22,4 +22,12 @@ public interface ConfirmJPARepository extends JpaRepository<ConfirmEntity,Long> 
     public Page<ConfirmEntity> findByMemberId(String memberId, Pageable pageable);
     public List<ConfirmEntity> findByMemberId(String memberId);
     public int countByMemberId(String memberId);
+
+    // 고용 요청 내역(사업자가 요청한것)
+    public Page<ConfirmEntity> findByCompanyIdAndApply(String companyId, int apply, Pageable pageable);
+    public int countByCompanyIdAndApply(String companyId, int apply);
+
+    // 채용 확정 내역
+    public Page<ConfirmEntity> findByCompanyIdAndApplyIn(String companyId, List<Integer> applies, Pageable pageable);
+    public int countByCompanyIdAndApplyIn(String companyId, List<Integer> applies);
 }

@@ -21,13 +21,25 @@ public class ResumeController {
     // 이력서 리스트
     @GetMapping("/posts")
     public String list(Principal principal, Model model) {
-        resumeService.selectResume(model, principal.getName());
+        String sid = "";
+
+        if(principal!=null) {
+            sid = principal.getName();
+            model.addAttribute("id", principal.getName());
+        }
+
+        resumeService.selectResume(model, sid);
         return "resume/list";
     }
 
     // 이력서 작성
     @GetMapping("/posts/new")
-    public String write() {
+    public String write(Principal principal, Model model) {
+        // @@
+        if(principal!=null) {
+            model.addAttribute("id", principal.getName());
+        }
+        // @@
         return "resume/write";
     }
 
@@ -56,14 +68,17 @@ public class ResumeController {
 
         if(principal!=null) {
             sessionId = principal.getName();
+            model.addAttribute("id", principal.getName());
         }
 
         model.addAttribute("sessionId", sessionId);
+
 
         resumeService.selectResumeInfo(model, num);
 
         return "resume/info";
     }
+
 
     // 이력서 삭제
     @DeleteMapping("/posts/{num}")
@@ -74,7 +89,12 @@ public class ResumeController {
 
     // 이력서 업데이트
     @GetMapping("/posts/{num}/edit")
-    public String update(@PathVariable Long num, Model model) {
+    public String update(@PathVariable Long num, Model model, Principal principal) {
+        // @@
+        if(principal!=null) {
+            model.addAttribute("id", principal.getName());
+        }
+        // @@
 
         resumeService.selectResumeInfo(model, num);
         return "resume/update";
@@ -98,7 +118,13 @@ public class ResumeController {
 
     // 인재 정보 리스트
     @GetMapping("/all/posts")
-    public String allPosts(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum) {
+    public String allPosts(Model model, Principal principal,
+                           @RequestParam(value = "pageNum",defaultValue = "1") int pageNum) {
+        // @@
+        if(principal!=null) {
+            model.addAttribute("id", principal.getName());
+        }
+        // @@
         resumeService.AllPosts(model, pageNum);
         return "resume/allList";
     }

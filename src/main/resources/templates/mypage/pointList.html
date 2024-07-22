@@ -41,6 +41,12 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script th:src="@{/assets/js/config.js}"></script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
@@ -70,13 +76,16 @@
                     </h2>
                     <!-- Basic Bootstrap Table -->
                     <div class="card">
-
                         <div class="table-responsive text-nowrap">
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th colspan="4" style="text-align: center;">
+                                    <th colspan="2" style="text-align: center;">
                                         <h3>총 포인트: <span th:text="${totalPoints}"></span></h3>
+                                    </th>
+                                    <th colspan="2" style="text-align: right;">
+                                        <!-- 포인트 변환신청 버튼 -->
+                                        <button class="btn btn-primary" data-toggle="modal" data-target="#pointModal">포인트 변환신청</button>
                                     </th>
                                 </tr>
                                 <tr>
@@ -87,6 +96,7 @@
                                 </tr>
                                 </thead>
                                 <tbody class="table-border-bottom-0">
+                                <!-- 여기서부터는 데이터 로우 -->
                                 <tr th:each="post, iterStat : ${posts}" th:if="${post.status == 1}">
                                     <td th:text="${iterStat.index + 1}"></td>
                                     <td th:text="${post.point}"></td>
@@ -95,8 +105,32 @@
                                 </tr>
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
 
-
+                    <!-- 모달 -->
+                    <div class="modal fade" id="pointModal" tabindex="-1" role="dialog" aria-labelledby="pointModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <form id="pointForm" method="post" th:action="@{/mypage/point/change}">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="pointModalLabel">포인트 변환</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <label for="pointValue">포인트 값 입력 (최대 <span th:text="${totalPoints}"></span>까지 가능):</label>
+                                            <input type="number" id="pointValue" name="pointValue" class="form-control" min="1" max="${totalPoints}" required>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                                        <button type="submit" class="btn btn-primary">변환하기</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     <!--/ Basic Bootstrap Table -->
@@ -160,12 +194,6 @@
 </div>
 <!-- / Layout wrapper -->
 
-<div class="buy-now">
-    <a href="https://themeselection.com/products/sneat-bootstrap-html-admin-template/"
-       target="_blank"
-       class="btn btn-danger btn-buy-now"
-    >Upgrade to Pro</a>
-</div>
 
 <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->
@@ -186,5 +214,19 @@
 
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+<script>
+    // 폼 제출 전에 입력 값 검증
+    document.getElementById('pointForm').addEventListener('submit', function(event) {
+        var pointValueInput = document.getElementById('pointValue');
+        var maxPoints = parseInt('${totalPoints}'); // 최대 포인트 값
+
+        if (parseInt(pointValueInput.value) > maxPoints) {
+            alert('최대 포인트 값을 초과할 수 없습니다.');
+            event.preventDefault(); // 폼 제출을 중지합니다.
+        }
+    });
+</script>
+
 </body>
 </html>

@@ -66,12 +66,12 @@
                 <!-- Content -->
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <h2 class="fw-bold py-3 mb-4">
-                        <span class="text-muted fw-light">포인트 사용내역</span>
+                        <span class="text-muted fw-light">결제 내역</span>
                     </h2>
                     <!-- Basic Bootstrap Table -->
                     <div class="card">
 
-                        <form th:action="@{/admin/point/deduct/month}" method="get">
+                        <form th:action="@{/admin/payment/month}" method="get">
                             <label for="month">월 선택:</label>
                             <select id="month" name="month">
                                 <option value="01">1월</option>
@@ -95,18 +95,21 @@
                                 <thead>
                                 <tr>
                                     <th>이름</th>
-                                    <th>포인트</th>
-                                    <th>내역</th>
+                                    <th>결제 제목</th>
+                                    <th>결제 금액</th>
+                                    <th>포인트 사용 금액</th>
                                     <th>날짜</th>
                                 </tr>
                                 </thead>
                                 <tbody class="table-border-bottom-0">
                                 <tr th:each="post : ${posts}">
                                     <td th:text="${post.memberId}"></td>
+                                    <td th:text="${post.title}"></td>
+                                    <td th:text="${post.money}"></td>
                                     <td th:text="${post.point}"></td>
-                                    <td th:switch="${post.status}">
-                                        <span th:case="2">사용</span>
-                                    </td>
+                                    <!--<td th:switch="${post.pointHistory}">
+                                        <span th:case="1">사용</span>
+                                    </td>-->
                                     <td th:text="${#dates.format(post.reg, 'yyyy-MM-dd')}"></td>
                                 </tr>
                                 </tbody>
@@ -129,7 +132,7 @@
                         <ul th:if="${count > 0}" class="pagination pagination-lg justify-content-center">
                             <!-- Previous Button -->
                             <li class="page-item" th:if="${pageNum > 1}">
-                                <a class="page-link" th:href="@{'/admin/point/deduct?pageNum=' + (${pageNum} - 1) + '&month=' + ${month}}"
+                                <a class="page-link" th:href="@{'/admin/payment/posts?pageNum=' + (${pageNum} - 1) + '&month=' + ${month}}"
                                    aria-label="Previous">
                                     <i class="tf-icon bx bx-chevrons-left"></i>
                                 </a>
@@ -137,13 +140,13 @@
 
                             <!-- Page Numbers -->
                             <li class="page-item" th:each="i : ${#numbers.sequence(startPage, endPage)}">
-                                <a class="page-link" th:href="@{'/admin/point/deduct?pageNum=' + ${i} + '&month=' + ${month}}"
+                                <a class="page-link" th:href="@{'/admin/payment/posts?pageNum=' + ${i} + '&month=' + ${month}}"
                                    th:text="${i}"></a>
                             </li>
 
                             <!-- Next Button -->
                             <li class="page-item" th:if="${pageNum < pageCount}">
-                                <a class="page-link" th:href="@{'/admin/point/deduct?pageNum=' + (${pageNum} + 1) + '&month=' + ${month}}"
+                                <a class="page-link" th:href="@{'/admin/payment/posts?pageNum=' + (${pageNum} + 1) + '&month=' + ${month}}"
                                    aria-label="Next">
                                     <i class="tf-icon bx bx-chevrons-right"></i>
                                 </a>

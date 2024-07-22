@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -280,6 +281,65 @@ public class MemberServiceImpl implements MemberService {
         if (endPage > pageCount) {
             endPage = pageCount;
         }
+        model.addAttribute("pageCount", pageCount);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("pageBlock", pageBlock);
+        model.addAttribute("endPage", endPage);
+    }
+
+    // 고용 요청 내역(사업자가 요청한것)
+    @Override
+    public void findByCompanyIdAndApply(String companyId, int apply, int pageNum, Model model) {
+        int pageSize = 10;
+        int count = confirmJPA.countByCompanyIdAndApply(companyId, apply);
+
+        // Sort sort = Sort.by(Sort.Order.desc("reg"));
+        Page<ConfirmEntity> page = confirmJPA.findByCompanyIdAndApply(companyId, apply, (Pageable) PageRequest.of(pageNum - 1, pageSize));
+        List<ConfirmEntity> posts = page.getContent();
+
+        model.addAttribute("posts", posts);
+        model.addAttribute("count", count);
+        model.addAttribute("pageNum", pageNum);
+        model.addAttribute("pageSize", pageSize);
+
+        int pageCount = count / pageSize + (count % pageSize == 0 ? 0 : 1);
+        int startPage = (pageNum / 10) * 10 + 1;
+        int pageBlock = 10;   //페이징(이전/다음)을 몇개단위로 끊을지
+        int endPage = startPage + pageBlock - 1;
+        if (endPage > pageCount) {
+            endPage = pageCount;
+        }
+
+        model.addAttribute("pageCount", pageCount);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("pageBlock", pageBlock);
+        model.addAttribute("endPage", endPage);
+    }
+
+    // 채용 확정
+    @Override
+    public void findByCompanyIdAndApplyIn(String companyId, int pageNum, Model model) {
+        List<Integer> applies = Arrays.asList(1, 2);
+        int pageSize = 10;
+        int count = confirmJPA.countByCompanyIdAndApplyIn(companyId, applies);
+
+        // Sort sort = Sort.by(Sort.Order.desc("reg"));
+        Page<ConfirmEntity> page = confirmJPA.findByCompanyIdAndApplyIn(companyId, applies, (Pageable) PageRequest.of(pageNum - 1, pageSize));
+        List<ConfirmEntity> posts = page.getContent();
+
+        model.addAttribute("posts", posts);
+        model.addAttribute("count", count);
+        model.addAttribute("pageNum", pageNum);
+        model.addAttribute("pageSize", pageSize);
+
+        int pageCount = count / pageSize + (count % pageSize == 0 ? 0 : 1);
+        int startPage = (pageNum / 10) * 10 + 1;
+        int pageBlock = 10;   //페이징(이전/다음)을 몇개단위로 끊을지
+        int endPage = startPage + pageBlock - 1;
+        if (endPage > pageCount) {
+            endPage = pageCount;
+        }
+
         model.addAttribute("pageCount", pageCount);
         model.addAttribute("startPage", startPage);
         model.addAttribute("pageBlock", pageBlock);

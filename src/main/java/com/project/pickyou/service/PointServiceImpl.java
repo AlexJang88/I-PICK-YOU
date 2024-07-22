@@ -1,5 +1,6 @@
 package com.project.pickyou.service;
 
+import com.project.pickyou.dto.PointDTO;
 import com.project.pickyou.entity.NoticeEntity;
 import com.project.pickyou.entity.PointEntity;
 import com.project.pickyou.repository.PointJPARepository;
@@ -18,6 +19,12 @@ import java.util.List;
 public class PointServiceImpl implements PointService {
 
     private final PointJPARepository pointJPA;
+
+    // 포인트 변환 인서트
+    @Override
+    public void pointInsert(PointDTO dto) {
+        pointJPA.save(dto.toPointEntity());
+    }
 
     // 포인트 차감 내역 가져오기
     @Override

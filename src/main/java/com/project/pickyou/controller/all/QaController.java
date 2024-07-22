@@ -24,6 +24,7 @@ public class QaController {
         String memberId="";
 
         if(principal!=null) {
+            model.addAttribute("id", principal.getName());
             memberId = principal.getName();
         }
         String sid = (String) session.getAttribute(memberId);
@@ -34,7 +35,12 @@ public class QaController {
 
     // qa 글쓰기
     @GetMapping("/posts/new")
-    public String qaWrite() {
+    public String qaWrite(Principal principal, Model model) {
+        // @@
+        if(principal!=null) {
+            model.addAttribute("id", principal.getName());
+        }
+        // @@
         return "qa/write";
     }
 
@@ -62,6 +68,7 @@ public class QaController {
 
         if(principal!=null) {
             String sid = principal.getName();
+            model.addAttribute("id", principal.getName());
             model.addAttribute("sid", sid);
         }
 
