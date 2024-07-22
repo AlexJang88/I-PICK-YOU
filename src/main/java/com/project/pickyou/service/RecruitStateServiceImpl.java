@@ -70,7 +70,7 @@ public class RecruitStateServiceImpl implements RecruitStateService {
     }
 
     @Override
-    public void onApply(Model model,int pageNum, Long recruitId,Integer type) {
+    public void onApply(Model model,int pageNum, Long recruitId,int type) {
         int pageSize = 10;
        List<RecruitStateEntity> posts = Collections.emptyList();
        List<ConfirmEntity> memberlist = Collections.emptyList();
