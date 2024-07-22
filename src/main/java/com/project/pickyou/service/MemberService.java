@@ -23,7 +23,7 @@ public interface MemberService {
     public void updateCompany(MemberDTO memberDTO, CompanyInfoDTO companyInfoDTO, MultipartFile file);  //사업자정보수정
 
     // 사업자 결제내역
-    public void paymentList(Model model, int pageNum, String memberId);
+    public void paymentList(Model model, int pageNum, String memberId, int pointHistory);
 
     // 회원의 지원현황 가져오기
     public void userRecruitList(String memberId, int pageNum, Model model);

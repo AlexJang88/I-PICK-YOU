@@ -42,8 +42,8 @@
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script th:src="@{/assets/js/config.js}"></script>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -97,7 +97,7 @@
                                 </thead>
                                 <tbody class="table-border-bottom-0">
                                 <!-- 여기서부터는 데이터 로우 -->
-                                <tr th:each="post, iterStat : ${posts}" th:if="${post.status == 1}">
+                                <tr th:each="post, iterStat : ${posts}">
                                     <td th:text="${iterStat.index + 1}"></td>
                                     <td th:text="${post.point}"></td>
                                     <td th:text="'적립'"></td>
@@ -219,10 +219,14 @@
     // 폼 제출 전에 입력 값 검증
     document.getElementById('pointForm').addEventListener('submit', function(event) {
         var pointValueInput = document.getElementById('pointValue');
-        var maxPoints = parseInt('${totalPoints}'); // 최대 포인트 값
+        var maxPoints = [[${totalPoints}]]; // 타임리프 변수를 자바스크립트로 렌더링
+        var pointValue = parseInt(pointValueInput.value);
 
-        if (parseInt(pointValueInput.value) > maxPoints) {
+        if (pointValue > maxPoints) {
             alert('최대 포인트 값을 초과할 수 없습니다.');
+            event.preventDefault(); // 폼 제출을 중지합니다.
+        } else if (pointValue < 5000) {
+            alert('최소 5000원부터 가능합니다.');
             event.preventDefault(); // 폼 제출을 중지합니다.
         }
     });

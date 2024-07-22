@@ -157,7 +157,7 @@ public class MemberController {
             model.addAttribute("id",principal.getName()) ;
         }
 
-        pointService.AllPosts(model, pageNum, principal.getName());
+        pointService.AllPosts(model, pageNum, 1, principal.getName());
 
         return "mypage/pointList";
     }
@@ -170,7 +170,7 @@ public class MemberController {
             model.addAttribute("id",principal.getName()) ;
         }
 
-        pointService.AllPosts(model, pageNum, principal.getName());
+        pointService.AllPosts(model, pageNum, 2, principal.getName());
 
         return "mypage/pointMinusList";
     }

@@ -205,13 +205,13 @@ public class MemberServiceImpl implements MemberService {
 
     // 사업자 결제 내역
     @Override
-    public void paymentList(Model model, int pageNum, String memberId) {
+    public void paymentList(Model model, int pageNum, String memberId, int pointHistory) {
         int pageSize = 10;
-        int count = paymentJPA.countByMemberId(memberId);
+        int count = paymentJPA.countByMemberIdAndPointHistory(memberId, pointHistory);
 
         Sort sort = Sort.by(Sort.Order.desc("reg"));
 
-        Page<PaymentEntity> page = paymentJPA.findByMemberId(memberId, (Pageable) PageRequest.of(pageNum - 1, pageSize, sort));
+        Page<PaymentEntity> page = paymentJPA.findByMemberIdAndPointHistory(memberId, pointHistory, (Pageable) PageRequest.of(pageNum - 1, pageSize, sort));
 
         List<PaymentEntity> posts = page.getContent();
 
