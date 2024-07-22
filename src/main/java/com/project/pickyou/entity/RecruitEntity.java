@@ -40,10 +40,6 @@ public class RecruitEntity {
     @JoinColumn(name = "member_id",referencedColumnName = "id",insertable = false,updatable = false)
     private MemberEntity member;
 
-    @OneToOne
-    @JoinColumn(name="id",referencedColumnName = "recruit_id",insertable = false,updatable = false)
-    private RecruitStateEntity recruitState;
-
 
     @OneToOne
     @JoinColumn(name = "id",referencedColumnName = "recruit_id",insertable = false,updatable = false)
