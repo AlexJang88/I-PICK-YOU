@@ -176,14 +176,12 @@ public class AdminController {
     }
 
     @DeleteMapping("/userDelete")
-    public String userDelete(MemberInfoDTO memberInfoDTO, Principal pc, Model model){ //일반유저삭제
+    public String userDelete(String memberId, Principal pc, Model model){ //일반유저삭제
         if(pc != null){
             model.addAttribute("id",pc.getName()) ;
         }
 
-        System.out.println("><<><><><이거삭제"+memberInfoDTO.getName());
-        String userName = memberInfoDTO.getName();
-        adminService.userDelete(userName);
+        adminService.userDelete(memberId);
         return "redirect:/admin/management";
     }
 
@@ -202,6 +200,7 @@ public class AdminController {
         if(pc != null){
             model.addAttribute("id",pc.getName()) ;
         }
+
         adminService.userDelete(memberId);
         return "redirect:/admin/companyManagement";
     }

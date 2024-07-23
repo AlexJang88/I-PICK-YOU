@@ -96,9 +96,10 @@
                                         <th> <span th:text="${list.companyInfo.companyName}"></span></th>
                                         <th> <span th:text="${list.phone}"></span></th>
                                         <th>
-                                            <form  id="deleteForm" th:action="@{/admin/companyDelete}" th:method="delete">
-                                                <input type="hidden" name="memberId" th:value="${list.companyInfo.name}" />
-                                                <button type="button" class="btn btn-warning" onclick="confirmDeleteUser(event)">가입해지하기</button>
+                                            <form id="deleteForm" th:action="@{/admin/companyDelete}" th:method="post" style="display: inline;">
+                                                <input type="hidden" name="memberId" th:value="${list.id}" />
+                                                <input type="hidden" name="_method" value="delete">
+                                                <button type="button" class="btn btn-warning" onclick="confirmDeleteUser(this)">가입해지하기</button>
                                             </form>
                                         </th>
                                     </tr>
@@ -175,10 +176,9 @@
 
 <!-- Vendors JS -->
 <script>
-    function confirmDeleteUser(event) {
-        event.preventDefault();
-        if (confirm("정말 삭제하시겠습니까?")) {
-            document.getElementById("deleteForm").submit();
+    function confirmDeleteUser(button) {
+        if (confirm('정말로 가입해지 하시겠습니까?')) {
+            button.closest('form').submit();
         }
     }
 </script>

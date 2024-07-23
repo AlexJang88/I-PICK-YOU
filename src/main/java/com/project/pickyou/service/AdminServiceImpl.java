@@ -69,8 +69,9 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override  //유저삭제
-    public void userDelete(String userName) { //일반, 사업자 유저 삭제
-        memberInfoJAPRepository.deleteByName(userName);
+    public void userDelete(String memberId) { //일반, 사업자 유저 삭제
+
+        memberJPARepository.deleteById(memberId);
     }
 
     @Override

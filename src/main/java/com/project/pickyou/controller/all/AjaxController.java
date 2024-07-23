@@ -32,7 +32,7 @@ public class AjaxController {
     private final AlarmService alarmService;
     private final CalendarService calendarService;
 
-    //알람 컨트롤러
+    //알람 컨트롤러 (회원별 알람 수)
     @PostMapping("/alarmnumber/number")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getAlertCount(@RequestBody Map<String, String> requestBody) {
@@ -46,6 +46,7 @@ public class AjaxController {
         return ResponseEntity.ok(response);
     }
 
+    //아이디중복체크
    @PostMapping("/idcheck")
    @ResponseBody
     public ResponseEntity<Map<String, String>> idcheck(@RequestBody MemberDTO dto){
@@ -61,10 +62,32 @@ public class AjaxController {
             result.put("message", "사용할 수 있는 아이디입니다.");
         }
 
+        return ResponseEntity.ok(result);
+    }
+
+
+    //알람보낼 시 회원 유무 체크
+    @PostMapping("/usercheck")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> usercheck(@RequestBody MemberDTO dto){
+
+        System.out.println("받은 아이디: " + dto.getId());
+        /*제이슨 객체생성*/
+
+        boolean isExist = loginService.userCheckIFIdExists(dto.getId());
+        Map<String, String> result = new HashMap<>();
+        if (isExist) {
+            result.put("message", "존재하는 회원입니다.");
+        } else {
+            result.put("message", "존재하지 않는 회원입니다.");
+        }
 
         return ResponseEntity.ok(result);
     }
 
+
+
+    //이메일 중복체크
     @PostMapping("/emailcheck")
     @ResponseBody
     public ResponseEntity<Map<String, String>> emailcheck(@RequestBody MemberDTO dto){
@@ -84,6 +107,7 @@ public class AjaxController {
         return ResponseEntity.ok(result);
     }
 
+    //사업자번호체크
     @PostMapping("/corpnocheck")
     @ResponseBody
     public ResponseEntity<Map<String, String>> corpnocheck(@RequestBody CompanyInfoDTO dto){

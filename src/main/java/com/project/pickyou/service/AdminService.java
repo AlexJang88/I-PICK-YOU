@@ -12,7 +12,7 @@ public interface AdminService {
 
     public void getUsre(Model model, int pageNum); //일반회원정보 가져오기
 
-    public void userDelete(String userName); //일반유저 삭제
+    public void userDelete(String memberId); //일반유저 삭제
 
     public void getCompany(Model model, int pageNum); //사업자 유저 정보 가져오기
 

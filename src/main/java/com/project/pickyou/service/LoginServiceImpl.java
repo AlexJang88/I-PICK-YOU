@@ -91,6 +91,17 @@ public class LoginServiceImpl implements LoginService, UserDetailsService {
         return isExist;
     }
 
+    //쪽지 보낼때 존재하는 회원인지 확인
+    @Override
+    public boolean userCheckIFIdExists(String id) {
+
+        Boolean trueUser = memberJPARepository.existsById(id); //아이디가 실존 하는지
+
+        return trueUser;
+    }
+
+
+
     //이메일 중복체크용  ajax, 제이슨   <맞다, 아니다 결과값 반환>
     @Override
     public boolean  checkIfEmailExists(String email) {
@@ -111,6 +122,8 @@ public class LoginServiceImpl implements LoginService, UserDetailsService {
 
         return isExist;
     }
+
+
 
 
     //사업자 회원가입
