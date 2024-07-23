@@ -1,12 +1,17 @@
 package com.project.pickyou.service;
 
 import com.project.pickyou.dto.SatisfactionDTO;
+import com.project.pickyou.entity.ConfirmEntity;
+import com.project.pickyou.entity.EducationEntity;
 import com.project.pickyou.entity.MemberEntity;
 import com.project.pickyou.entity.SatisfactionEntity;
 import com.project.pickyou.repository.ConfirmJPARepository;
 import com.project.pickyou.repository.MemberJPARepository;
 import com.project.pickyou.repository.SatisfactionJPARepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
@@ -124,4 +129,56 @@ public class SatisfactionServiceImpl implements SatisfactionService {
     public void scoreEdit(SatisfactionDTO dto) {
         satisfactionJPA.save(dto.toSatisfactionEntity());
     }
+
+    @Override
+    public void scoreList(Model model, String sid,int pageNum) {
+        int type=0;
+        int auth=0;
+        int pageSize = 10;
+        int count =0;
+        Sort sort = Sort.by(Sort.Order.desc("reg"));
+        Optional<MemberEntity> member = memberJPA.findById(sid);
+        Page<ConfirmEntity> page = Page.empty();
+        List<ConfirmEntity> posts = Collections.emptyList();
+        int pageCount = count / pageSize + (count % pageSize == 0 ? 0 : 1);
+        int startPage = (pageNum / 10) * 10 + 1;
+        int pageBlock = 10;   //페이징(이전/다음)을 몇개단위로 끊을지
+        int endPage = startPage + pageBlock - 1;
+        if (endPage > pageCount) {
+            endPage = pageCount;
+        }
+
+        List<SatisfactionEntity> sfList = satisfactionJPA.findByWriter(sid);
+        List<String> targetList=Collections.emptyList();
+        if(!sfList.isEmpty()){
+            for(SatisfactionEntity sfe:sfList){
+                targetList.add(sfe.getTarget());
+            }
+            if(member.isPresent()) {
+                if(member.get().getAuth().contains("USER")) {
+                    Long longcount = confirmJPA.countByMemberIdAndCompanyIdNotIn(sid, targetList);
+                    count = longcount.intValue();
+                    page = confirmJPA.findByMemberIdAndCompanyIdNotIn(sid,targetList,PageRequest.of(pageNum - 1, pageSize, sort));
+                    posts=page.getContent();
+                    auth=1;
+                } else if (member.get().getAuth().contains("COMPANY")) {
+                    Long longcount = confirmJPA.countByCompanyIdAndMemberIdNotIn(sid,targetList);
+                    count= longcount.intValue();
+                    page=confirmJPA.findByCompanyIdAndMemberIdNotIn(sid,targetList,PageRequest.of(pageNum - 1, pageSize, sort));
+                    posts=page.getContent();
+                    auth=2;
+                }
+            }
+        }
+        model.addAttribute("auth",auth);
+        model.addAttribute("posts", posts);
+        model.addAttribute("count", count);
+        model.addAttribute("pageNum", pageNum);
+        model.addAttribute("pageSize", pageSize);
+        model.addAttribute("pageCount", pageCount);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("pageBlock", pageBlock);
+        model.addAttribute("endPage", endPage);
+    }
+
 }
