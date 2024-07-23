@@ -76,6 +76,16 @@
                             <form th:action="@{/admin/payment/month/totalRevenue}" method="get">
                                 <div class="row mb-3 justify-content-center">
                                     <div class="col-auto">
+                                        <!-- 연도 선택 드롭다운 -->
+                                        <select id="yearSelect" name="year" class="form-select">
+                                            <option th:each="yr : ${years}"
+                                                    th:value="${yr}"
+                                                    th:text="${yr} + '년'"
+                                                    th:selected="${yr == year}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-auto">
+                                        <!-- 월 선택 드롭다운 -->
                                         <select id="month" name="month" class="form-select">
                                             <option value="1" th:selected="${month == 1}">1월</option>
                                             <option value="2" th:selected="${month == 2}">2월</option>
@@ -92,6 +102,7 @@
                                         </select>
                                     </div>
                                     <div class="col-auto">
+                                        <!-- 차트 타입 선택 드롭다운 -->
                                         <select id="chartType" name="chartType" class="form-select">
                                             <option value="both" th:selected="${chartType == 'both'}">총매출</option>
                                             <option value="difference" th:selected="${chartType == 'difference'}">순매출</option>
@@ -248,7 +259,6 @@
             },
             axisX: {
                 valueFormatString: "MM-DD", // X축 날짜 형식 설정
-
             },
             axisY: {
                 title: "",
@@ -262,6 +272,5 @@
     }
     /*]]>*/
 </script>
-
 </body>
 </html>

@@ -66,7 +66,7 @@
                         </div>
 
                         <div class="table-responsive text-nowrap">
-                            <form th:action="@{/foodMap/posts/{id}(id=${Fdto.id})}" id="noticeForm" th:method="put" enctype="multipart/form-data" novalidate onsubmit="return validateForm()">
+                            <form id="foodMapForm" th:action="@{/foodMap/posts/{id}(id=${Fdto.id})}" th:method="put" enctype="multipart/form-data" novalidate onsubmit="return validateForm()">
                                 <table class="table">
                                     <tbody>
                                     <tr>
@@ -84,7 +84,7 @@
                                     <tr>
                                         <th scope="row">File</th>
                                         <td>
-                                            <input type="file" name="files" class="form-control" multiple="multiple" accept="image/*" onclick="uploadwarn()" required/>
+                                            <input type="file" id="files" name="files" class="form-control" multiple="multiple" accept="image/*" onclick="uploadwarn()" required/>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -156,7 +156,7 @@
     }
 
     function validateForm() {
-        const form = document.getElementById('noticeForm');
+        const form = document.getElementById('foodMapForm');
 
         const files = form.files.files;
         const content = form.content.value.trim();

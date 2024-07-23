@@ -90,7 +90,7 @@
 
                                 <tr th:each="image : ${images}">
                                     <td colspan="2" class="text-center">
-                                        <img th:src="@{'/upload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}"
+                                        <img th:src="@{'/kjwupload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}"
                                              class="img-fluid rounded"
                                              style="max-width: 100%; height: auto;"
                                              alt="사진" />
@@ -109,7 +109,7 @@
                                             <div class="card-header d-flex justify-content-between align-items-center">
                                                 <div class="d-flex ml-auto">
                                                     <form th:action="@{/foodMap/posts/{boardNum}/ref(boardNum=${foodMapInfo.ref})}" th:method="post" class="form-inline" enctype="multipart/form-data">
-                                                        <textarea name="content" class="form-control mr-2"></textarea>
+                                                        <textarea name="content" class="form-control mr-2" required></textarea>
                                                         <input type="file" name="files" class="form-control" multiple="multiple" />
                                                         <button type="submit" class="btn btn-primary">댓글작성</button>
                                                     </form>
@@ -125,6 +125,9 @@
                                 </tbody>
                             </table>
                         </div>
+
+
+
 
                         <div class="table-responsive text-nowrap">
                             <table class="table">
@@ -142,7 +145,7 @@
                                     <td th:text="${ref.content}"></td>
                                     <td>
                                         <div th:each="image : ${imagesRef}" th:if="${image.boardNum == ref.id}">
-                                            <img th:src="@{'/upload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}"
+                                            <img th:src="@{'/kjwupload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}"
                                                  class="img-fluid rounded"
                                                  th:style="${ref.reply == ref.id} ? 'width: 140px; height: 105px;' : 'width: 70px; height: 52.5px;'" />
                                         </div>
@@ -173,6 +176,9 @@
                                 </tbody>
                             </table>
                         </div>
+
+
+
                     </div>
                 </div>
             </div>
@@ -191,11 +197,17 @@
 <script th:src="@{/assets/js/main.js}"></script>
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 
+<style>
+    .hidden {
+        display: none;
+    }
+</style>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.showFormButton').forEach(button => {
             button.addEventListener('click', function() {
-                const formElements = this.nextElementSibling;
+                const formElements = this.closest('form').querySelector('.formElements');
                 formElements.classList.toggle('hidden');
                 this.textContent = formElements.classList.contains('hidden') ? '답글작성' : '취소';
             });

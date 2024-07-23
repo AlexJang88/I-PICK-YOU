@@ -66,26 +66,35 @@
                 <!-- Content -->
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <h2 class="fw-bold py-3 mb-4">
-                        <span class="text-muted fw-light">포인트 지급내역</span>
+                        <span class="text-muted fw-light">인증글 포인트 지급내역</span>
                     </h2>
                     <!-- Basic Bootstrap Table -->
                     <div class="card">
 
                         <form th:action="@{/admin/point/give/month}" method="get">
-                            <label for="month">월 선택:</label>
-                            <select id="month" name="month">
-                                <option value="01">1월</option>
-                                <option value="02">2월</option>
-                                <option value="03">3월</option>
-                                <option value="04">4월</option>
-                                <option value="05">5월</option>
-                                <option value="06">6월</option>
-                                <option value="07">7월</option>
-                                <option value="08">8월</option>
-                                <option value="09">9월</option>
-                                <option value="10">10월</option>
-                                <option value="11">11월</option>
-                                <option value="12">12월</option>
+                            <label for="yearSelect">연도 선택:</label>
+                            <select id="yearSelect" name="year">
+                                <option th:each="yr : ${years}"
+                                        th:value="${yr}"
+                                        th:text="${yr}"
+                                        th:selected="${yr == year}"></option>
+                            </select>
+
+                            <!-- 월 선택 드롭다운 -->
+                            <label for="monthSelect">월 선택:</label>
+                            <select id="monthSelect" name="month">
+                                <option value="1" th:selected="${month == 1}">1월</option>
+                                <option value="2" th:selected="${month == 2}">2월</option>
+                                <option value="3" th:selected="${month == 3}">3월</option>
+                                <option value="4" th:selected="${month == 4}">4월</option>
+                                <option value="5" th:selected="${month == 5}">5월</option>
+                                <option value="6" th:selected="${month == 6}">6월</option>
+                                <option value="7" th:selected="${month == 7}">7월</option>
+                                <option value="8" th:selected="${month == 8}">8월</option>
+                                <option value="9" th:selected="${month == 9}">9월</option>
+                                <option value="10" th:selected="${month == 10}">10월</option>
+                                <option value="11" th:selected="${month == 11}">11월</option>
+                                <option value="12" th:selected="${month == 12}">12월</option>
                             </select>
                             <button type="submit">검색하기</button>
                         </form>
@@ -129,7 +138,7 @@
                         <ul th:if="${count > 0}" class="pagination pagination-lg justify-content-center">
                             <!-- Previous Button -->
                             <li class="page-item" th:if="${pageNum > 1}">
-                                <a class="page-link" th:href="@{'/admin/point/give?pageNum=' + (${pageNum} - 1) + '&month=' + ${month}}"
+                                <a class="page-link" th:href="@{'/admin/point/give?pageNum=' + (${pageNum} - 1) + '&month=' + ${month} + '&year=' + ${year}}"
                                    aria-label="Previous">
                                     <i class="tf-icon bx bx-chevrons-left"></i>
                                 </a>
@@ -137,13 +146,13 @@
 
                             <!-- Page Numbers -->
                             <li class="page-item" th:each="i : ${#numbers.sequence(startPage, endPage)}">
-                                <a class="page-link" th:href="@{'/admin/point/give?pageNum=' + ${i} + '&month=' + ${month}}"
+                                <a class="page-link" th:href="@{'/admin/point/give?pageNum=' + ${i} + '&month=' + ${month} + '&year=' + ${year}}"
                                    th:text="${i}"></a>
                             </li>
 
                             <!-- Next Button -->
                             <li class="page-item" th:if="${pageNum < pageCount}">
-                                <a class="page-link" th:href="@{'/admin/point/give?pageNum=' + (${pageNum} + 1) + '&month=' + ${month}}"
+                                <a class="page-link" th:href="@{'/admin/point/give?pageNum=' + (${pageNum} + 1) + '&month=' + ${month} + '&year=' + ${year}}"
                                    aria-label="Next">
                                     <i class="tf-icon bx bx-chevrons-right"></i>
                                 </a>
