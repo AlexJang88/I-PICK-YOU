@@ -80,7 +80,7 @@ public class SatisfactionController {
             id= principal.getName();
             model.addAttribute("id",principal.getName());
         }
-        service.myScore(model,id);
+        service.myScore(model,id,1);
         return "satisfaction/myScore";
     }
 }

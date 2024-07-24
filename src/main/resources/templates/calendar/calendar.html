@@ -61,141 +61,149 @@
          .fc-day-number.fc-sun.fc-past { color:#FF0000; }
     </style>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-         const city = { engName: 'Seoul', korName: '서울' };
-         const calendarEl = document.getElementById('calendar');
-         const userId = document.getElementById('userId').value;
-         let events = [];
+        $(document).ready(function() {
+                    window.addEventListener('message', event => {
+                       if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
+                       if (event.data === 'modalClosed') {
+                           $('#myModal').modal('hide');
+                             $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                       }
+                   });
+       document.addEventListener('DOMContentLoaded', function() {
+        const city = { engName: 'Seoul', korName: '서울' };
+        const calendarEl = document.getElementById('calendar');
+        const userId = document.getElementById('userId').value;
+        let events = [];
 
-         fetchData();
+        fetchData();
 
-         function initializeFullCalendar(events) {
-             var calendar = new FullCalendar.Calendar(calendarEl, {
-                 initialView: 'dayGridMonth',
-                 headerToolbar: {
-                     start: 'prev,next today',
-                     center: 'title',
-                     end: 'dayGridMonth,dayGridWeek,dayGridDay'
-                 },
-                 locale: 'ko',
-                 events: events,
-                 eventContent: function(arg) {
-                     let arrayOfDomNodes = [];
+        function initializeFullCalendar(events) {
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    start: 'prev,next today',
+                    center: 'title',
+                    end: 'dayGridMonth,dayGridWeek,dayGridDay'
+                },
+                locale: 'ko',
+                events: events,
+                eventContent: function(arg) {
+                    let arrayOfDomNodes = [];
 
-                     let titleEl = document.createElement('div');
-                     if (arg.event.extendedProps.weatherIcon) {
-                         let weatherIconEl = document.createElement('img');
-                         weatherIconEl.src = arg.event.extendedProps.weatherIcon;
-                         weatherIconEl.className = 'weather-icon';
-                         titleEl.appendChild(weatherIconEl);
-                     }
+                    let titleEl = document.createElement('div');
+                    if (arg.event.extendedProps.weatherIcon) {
+                        let weatherIconEl = document.createElement('img');
+                        weatherIconEl.src = arg.event.extendedProps.weatherIcon;
+                        weatherIconEl.className = 'weather-icon';
+                        titleEl.appendChild(weatherIconEl);
+                    }
 
-                     if (arg.event.extendedProps.weatherTemp) {
-                         let weatherTempEl = document.createElement('span');
-                         weatherTempEl.innerHTML = ` ${arg.event.extendedProps.weatherTemp}℃`;
-                         weatherTempEl.className = 'weather-temp';
-                         titleEl.appendChild(weatherTempEl);
-                     }
+                    if (arg.event.extendedProps.weatherTemp) {
+                        let weatherTempEl = document.createElement('span');
+                        weatherTempEl.innerHTML = ` ${arg.event.extendedProps.weatherTemp}℃`;
+                        weatherTempEl.className = 'weather-temp';
+                        titleEl.appendChild(weatherTempEl);
+                    }
 
-                     let titleTextEl = document.createElement('span');
-                     titleTextEl.innerHTML = ` ${arg.event.title}`;
-                     titleEl.appendChild(titleTextEl);
+                    let titleTextEl = document.createElement('span');
+                    titleTextEl.innerHTML = ` ${arg.event.title}`;
+                    titleEl.appendChild(titleTextEl);
 
-                     arrayOfDomNodes.push(titleEl);
+                    arrayOfDomNodes.push(titleEl);
 
-                     return { domNodes: arrayOfDomNodes };
-                 },
-                 eventClick: function(info) {
-                     window.location.href = info.event.url;
-                     info.jsEvent.preventDefault(); // don't let the browser navigate
-                 }
-             });
+                    return { domNodes: arrayOfDomNodes };
+                },
+                eventClick: function(info) {
+                    window.location.href = info.event.url;
+                    info.jsEvent.preventDefault(); // don't let the browser navigate
+                }
+            });
 
-             calendar.render();
-         }
+            calendar.render();
+        }
 
-         function fetchWeather(cityId, cityName) {
-             fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${cityId}&appid=99612c2cd2cf86724058d9b5b6cba6d5&units=metric&lang=kr`)
-                 .then(response => response.json())
-                 .then(data => {
-                     const uniqueDates = new Set();
-                     data.list.forEach(forecast => {
-                         const date = forecast.dt_txt.split(' ')[0];
-                         if (uniqueDates.size < 5 && !uniqueDates.has(date)) {
-                             uniqueDates.add(date);
-                             const temperature = forecast.main.temp;
-                             const weatherIcon = forecast.weather[0].icon;
+        function fetchWeather(cityId, cityName) {
+            fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${cityId}&appid=99612c2cd2cf86724058d9b5b6cba6d5&units=metric&lang=kr`)
+                .then(response => response.json())
+                .then(data => {
+                    const uniqueDates = new Set();
+                    data.list.forEach(forecast => {
+                        const date = forecast.dt_txt.split(' ')[0];
+                        if (uniqueDates.size < 5 && !uniqueDates.has(date)) {
+                            uniqueDates.add(date);
+                            const temperature = forecast.main.temp;
+                            const weatherIcon = forecast.weather[0].icon;
 
-                             const event = {
-                                 title: '',
-                                 start: date,
-                                 display: 'background',
-                                 extendedProps: {
-                                     weatherIcon: `https://openweathermap.org/img/wn/${weatherIcon}.png`,
-                                     weatherTemp: temperature
-                                 }
-                             };
+                            const event = {
+                                title: '',
+                                start: date,
+                                display: 'background',
+                                extendedProps: {
+                                    weatherIcon: `https://openweathermap.org/img/wn/${weatherIcon}.png`,
+                                    weatherTemp: temperature
+                                }
+                            };
 
-                             events.push(event);
-                         }
-                     });
-
-                     console.log('Events with Weather:', events);
-                     initializeFullCalendar(events);
-                 })
-                 .catch(error => console.error(`API 요청 중 에러 발생 (${cityName}):`, error));
-         }
-
-         function fetchData() {
-             $.ajax({
-                 url: '/ajax/calendar',
-                 type: 'POST',
-                 data: {
-                     memberId: userId
-                 },
-                 success: function(response) {
-                     console.log('Response from server:', response);
-                     var confirms = response.confirm || [];
-                     var applies = response.apply || [];
-                     console.log('Confirms:', confirms);
-                     console.log('Applies:', applies);
-
-                     confirms.forEach(res => {
-                         let url ='mypage/confirm/posts';
-                         if(res.auth==2){
-                         url='/'
-                         }
-                         events.push({
-                             title: res.title,
-                             color: "#0000FF", // Blue color for confirm events
-                             eventTextColor: "black", // Text color for confirm events
-                             start: res.date,
-                             url: url // Add URL for confirm events
-                         });
-                     });
-                     applies.forEach(res => {
-                        let url='recruitState/posts/my';
-                        if(res.auth==2){
-                        url='recruit/posts/'+res.recruitId;
+                            events.push(event);
                         }
-                         events.push({
-                             title: res.title,
-                             color: "#FF6666", // Red color for apply events
-                             eventTextColor: "black", // Text color for apply events
-                             start: res.date,
-                             url: url // Add URL for apply events
-                         });
-                     });
+                    });
 
-                     console.log('Events:', events);
-                     fetchWeather(city.engName, city.korName);
-                 },
-                 error: function() {
-                     console.log('Failed to fetch data from the server.');
-                 }
-             });
-         }
-     });
+                    console.log('Events with Weather:', events);
+                    initializeFullCalendar(events);
+                })
+                .catch(error => console.error(`API 요청 중 에러 발생 (${cityName}):`, error));
+        }
+
+        function fetchData() {
+            $.ajax({
+                url: '/ajax/calendar',
+                type: 'POST',
+                data: {
+                    memberId: userId
+                },
+                success: function(response) {
+                    console.log('Response from server:', response);
+                    var confirms = response.confirm || [];
+                    var applies = response.apply || [];
+                    console.log('Confirms:', confirms);
+                    console.log('Applies:', applies);
+
+                    confirms.forEach(res => {
+                        let url ='mypage/confirm/posts';
+                        if(res.auth==2){
+                        url='/'
+                        }
+                        events.push({
+                            title: res.title,
+                            color: "#0000FF", // Blue color for confirm events
+                            eventTextColor: "black", // Text color for confirm events
+                            start: res.date,
+                            url: url // Add URL for confirm events
+                        });
+                    });
+                    applies.forEach(res => {
+                       let url='recruitState/posts/my';
+                       if(res.auth==2){
+                       url='recruit/posts/'+res.recruitId;
+                       }
+                        events.push({
+                            title: res.title,
+                            color: "#FF6666", // Red color for apply events
+                            eventTextColor: "black", // Text color for apply events
+                            start: res.date,
+                            url: url // Add URL for apply events
+                        });
+                    });
+
+                    console.log('Events:', events);
+                    fetchWeather(city.engName, city.korName);
+                },
+                error: function() {
+                    console.log('Failed to fetch data from the server.');
+                }
+            });
+        }
+    });
 
     </script>
     </body>
@@ -225,6 +233,19 @@
             <div class="content-wrapper">
                 <!-- Content -->
                 <div class="container-fluid flex-grow-1 container-p-y">
+                    <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Chat</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <iframe id="roomFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Layout Demo -->
                     <input type="hidden" id="userId" name="userId" th:value="${memberId}">
                     <div id='calendar'></div>

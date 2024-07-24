@@ -46,6 +46,7 @@ public class RecruitServiceImpl implements RecruitService {
     private final RecruitDetailJPARepository recruitDetailJPA;
     private final ContractJPARepository contractJPA;
     private final ConfirmJPARepository confirmJPA;
+    private final SatisfactionServiceImpl satisfactionService;
 
     @Override
     public void AllPosts(Model model, int pageNum,int checkType) {
@@ -87,6 +88,7 @@ public class RecruitServiceImpl implements RecruitService {
         model.addAttribute("startPage", startPage);
         model.addAttribute("pageBlock", pageBlock);
         model.addAttribute("endPage", endPage);
+
     }
 
     @Override
@@ -116,6 +118,8 @@ public class RecruitServiceImpl implements RecruitService {
         model.addAttribute("startPage", startPage);
         model.addAttribute("pageBlock", pageBlock);
         model.addAttribute("endPage", endPage);
+        satisfactionService.myScore(model,id,2);
+
     }
 
     @Override

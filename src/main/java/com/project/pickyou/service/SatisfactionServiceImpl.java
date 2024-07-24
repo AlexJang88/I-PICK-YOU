@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -51,6 +52,7 @@ public class SatisfactionServiceImpl implements SatisfactionService {
                         result = 2;
                     } else {
                         Optional<MemberEntity> mem = memberJPA.findById(target);
+                        member=mem.get();
                         model.addAttribute("member", member);
                         model.addAttribute("company", company);
                         result = 1;
@@ -82,7 +84,7 @@ public class SatisfactionServiceImpl implements SatisfactionService {
     }
 
     @Override
-    public void myScore(Model model, String id) {
+    public void myScore(Model model, String id,int type) {
         int sum = 0;
         double davg = 0.0;
         int avg = 0;
@@ -115,7 +117,9 @@ public class SatisfactionServiceImpl implements SatisfactionService {
             contentList = satisfactionJPA.findByTargetAndContentNotNull(id);
         }
         model.addAttribute("avg", avg);
-        model.addAttribute("posts", contentList);
+        if(type==1) {
+            model.addAttribute("posts", contentList);
+        }
 
 
     }
@@ -140,6 +144,47 @@ public class SatisfactionServiceImpl implements SatisfactionService {
         Optional<MemberEntity> member = memberJPA.findById(sid);
         Page<ConfirmEntity> page = Page.empty();
         List<ConfirmEntity> posts = Collections.emptyList();
+
+
+        List<SatisfactionEntity> sfList = Collections.emptyList();
+                sfList=satisfactionJPA.findByWriter(sid);
+
+        List<String> targetList=new ArrayList<>();
+        if(!sfList.isEmpty()) {
+            for (SatisfactionEntity sfe : sfList) {
+                targetList.add(sfe.getTarget());
+
+            }
+        }
+            if(member.isPresent()) {
+                if(member.get().getAuth().contains("USER")) {
+                    if(!targetList.isEmpty()) {
+                        Long longcount = confirmJPA.countByMemberIdAndCompanyIdNotIn(sid, targetList);
+                    count = longcount.intValue();
+                    page = confirmJPA.findByMemberIdAndCompanyIdNotIn(sid,targetList,PageRequest.of(pageNum - 1, pageSize, sort));
+                    posts=page.getContent();
+                    }else{
+                        count=confirmJPA.countByMemberId(sid);
+                        page = confirmJPA.findByMemberId(sid,PageRequest.of(pageNum - 1, pageSize, sort));
+                        posts=page.getContent();
+                    }
+                    auth=1;
+                }
+                else if (member.get().getAuth().contains("COMPANY")) {
+                    if(!targetList.isEmpty()) {
+                        Long longcount = confirmJPA.countByCompanyIdAndMemberIdNotIn(sid, targetList);
+                        count = longcount.intValue();
+                        page = confirmJPA.findByCompanyIdAndMemberIdNotIn(sid, targetList, PageRequest.of(pageNum - 1, pageSize, sort));
+                        posts = page.getContent();
+                    }else{
+                        Long longcount = confirmJPA.countByCompanyId(sid);
+                        count = longcount.intValue();
+                        page= confirmJPA.findByCompanyId(sid,PageRequest.of(pageNum - 1, pageSize, sort));
+                        posts=page.getContent();
+                    }
+                    auth=2;
+                }
+            }
         int pageCount = count / pageSize + (count % pageSize == 0 ? 0 : 1);
         int startPage = (pageNum / 10) * 10 + 1;
         int pageBlock = 10;   //페이징(이전/다음)을 몇개단위로 끊을지
@@ -148,28 +193,6 @@ public class SatisfactionServiceImpl implements SatisfactionService {
             endPage = pageCount;
         }
 
-        List<SatisfactionEntity> sfList = satisfactionJPA.findByWriter(sid);
-        List<String> targetList=Collections.emptyList();
-        if(!sfList.isEmpty()){
-            for(SatisfactionEntity sfe:sfList){
-                targetList.add(sfe.getTarget());
-            }
-            if(member.isPresent()) {
-                if(member.get().getAuth().contains("USER")) {
-                    Long longcount = confirmJPA.countByMemberIdAndCompanyIdNotIn(sid, targetList);
-                    count = longcount.intValue();
-                    page = confirmJPA.findByMemberIdAndCompanyIdNotIn(sid,targetList,PageRequest.of(pageNum - 1, pageSize, sort));
-                    posts=page.getContent();
-                    auth=1;
-                } else if (member.get().getAuth().contains("COMPANY")) {
-                    Long longcount = confirmJPA.countByCompanyIdAndMemberIdNotIn(sid,targetList);
-                    count= longcount.intValue();
-                    page=confirmJPA.findByCompanyIdAndMemberIdNotIn(sid,targetList,PageRequest.of(pageNum - 1, pageSize, sort));
-                    posts=page.getContent();
-                    auth=2;
-                }
-            }
-        }
         model.addAttribute("auth",auth);
         model.addAttribute("posts", posts);
         model.addAttribute("count", count);

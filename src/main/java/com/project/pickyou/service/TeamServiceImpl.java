@@ -90,9 +90,6 @@ public class TeamServiceImpl implements TeamService{
             } else if (member.get().getAuth().contains("ADMIN")) {
                 auth = 99;
             }
-            if(member.get().getId().equals(sid)){
-                check=1;
-            }
         }
         if (post.isPresent()) {
             if(post.get().getMemberId().equals(sid)){

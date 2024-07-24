@@ -63,6 +63,18 @@
             <div class="content-wrapper">
                 <!-- Content -->
                 <div class="container-fluid flex-grow-1 container-p-y">
+                    <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Chat</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <iframe id="roomFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Layout Demo -->
                     <div class="d-flex justify-content-end mb-3">
                         <a class="btn btn-primary" sec:authorize="isAnonymous()"
@@ -114,19 +126,19 @@
                             <ul th:if="${count>0}" class="pagination pagination-lg justify-content-center">
                                 <!-- Previous Button -->
                                 <li th:if="${startPage>10}" class="page-item" >
-                                    <a class="page-link" th:href="@{'/recruit/posts?pageNum=' + (${startPage} - 10)}" aria-label="Previous">
+                                    <a class="page-link" th:href="@{'/recruit/posts/my?pageNum=' + (${startPage} - 10)}" aria-label="Previous">
                                         <i class="tf-icon bx bx-chevrons-left"></i>
                                     </a>
                                 </li>
 
                                 <!-- Page Numbers -->
                                 <li class="page-item" th:each="i : ${#numbers.sequence(startPage, endPage)}" >
-                                    <a class="page-link" th:href="@{'/recruit/posts?pageNum=' + ${i}}" th:text="${i}"></a>
+                                    <a class="page-link" th:href="@{'/recruit/posts/my?pageNum=' + ${i}}" th:text="${i}"></a>
                                 </li>
 
                                 <!-- Next Button -->
                                 <li class="page-item" th:if="${endPage<pageCount}">
-                                    <a class="page-link" th:href="@{'/recruit/posts?pageNum=' + (${startPage} + 10)}" aria-label="Next">
+                                    <a class="page-link" th:href="@{'/recruit/posts/my?pageNum=' + (${startPage} + 10)}" aria-label="Next">
                                         <i class="tf-icon bx bx-chevrons-right"></i>
                                     </a>
                                 </li>
@@ -134,6 +146,16 @@
                         </nav>
                     </div>
                 </div>
+                <script>
+                    $(document).ready(function() {
+                    window.addEventListener('message', event => {
+                       if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
+                       if (event.data === 'modalClosed') {
+                           $('#myModal').modal('hide');
+                             $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                       }
+                   });
+                </script>
                 <!-- Footer -->
                 <div th:include="~{design/footer :: footer}"></div>
                 <!-- / Footer -->
