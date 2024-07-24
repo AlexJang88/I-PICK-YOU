@@ -206,17 +206,11 @@
                         </div>
                     </div>
                 </div>
+                <input type="hidden" id="sender" th:value="${to}">
+                <input type="hidden" id="receiver" th:value="${post.companyId}">
                 <!-- / Content -->
                 <script>
-                    $(document).ready(function() {
-                     window.addEventListener('message', event => {
-                        if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
-                        if (event.data === 'modalClosed') {
-                            $('#myModal').modal('hide');
-                              $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
-                        }
-                    });
-                        $('#openChatBtn').click(function() {
+                     $('#openChatBtn').click(function() {
                             var sender = $('#sender').val();
                             var receiver = $('#receiver').val();
                             var chatUrl = 'http://localhost:4000/chat/' + sender + '/' + receiver;
@@ -230,7 +224,6 @@
                             $('#myModal').modal('hide');
                               $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
                         }
-
                     });
                 </script>
 
@@ -268,16 +261,6 @@
 
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer th:src="@{https://buttons.github.io/buttons.js}"></script>
-            <script>
-                $(document).ready(function() {
-                    $('#openChatBtn').click(function() {
-                        var sender = $('#sender').val();
-                        var receiver = $('#receiver').val();
-                        var chatUrl = 'http://localhost:4000/chat/' + sender + '/' + receiver;
-                        $('#chatFrame').attr('src', chatUrl);
-                        $('#myModal').modal('show');
-                    });
-                });
-            </script>
+
 </body>
 </html>

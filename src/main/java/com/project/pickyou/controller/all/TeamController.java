@@ -23,14 +23,16 @@ public class TeamController {
 
     @GetMapping("/posts")
     public String list(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum,Principal principal){
+        String sid="";
         int mem=0;
         if(principal!=null){
             model.addAttribute("memberId",principal.getName());
             mem= educationService.authCheck(principal);
             model.addAttribute("id",principal.getName());
+            sid= principal.getName();
         }
         model.addAttribute("auth",mem);
-        service.AllPosts(model,pageNum);
+        service.AllPosts(model,pageNum,sid);
         return "team/list";
     }
     @GetMapping("/posts/my")

@@ -80,7 +80,7 @@
                         <a class="btn btn-primary" sec:authorize="isAnonymous()"
                            th:href="@{/login}">등록 하기</a>
                         <a class="btn btn-primary" sec:authorize="isAuthenticated()"
-                           th:href="@{/recruit/posts/write/new}">등록 하기</a>
+                           th:href="@{/recruit/posts/new}">등록 하기</a>
                         <!--로그인 활성화 이후 eight랑 바꿀것 {memberId}(memberId=${memberId})-->
                     </div>
                     <!--내용 -->
@@ -154,6 +154,7 @@
                            $('#myModal').modal('hide');
                              $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
                        }
+                       });
                    });
                 </script>
                 <!-- Footer -->

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -21,7 +22,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 import java.io.IOException;
@@ -57,6 +58,7 @@ public class RecruitServiceImpl implements RecruitService {
         Sort sort = Sort.by(Sort.Order.desc("reg"));
         Page<RecruitEntity> page =null;
         List<RecruitEntity> posts =null;
+
         if(checkType==1) {
             longCount = recruitJPA.count();
             count = longCount.intValue();
@@ -559,6 +561,18 @@ public class RecruitServiceImpl implements RecruitService {
                 }
             }
         }
+    }
+    @Scheduled(cron = "0 0 0/1 * * *")
+    public void overTimeCheck(){
+        String result="";
+       Date date = new Date();
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DATE,-1);
+        Date lastDate = cal.getTime();
+        recruitJPA.deleteByRegGreaterThanEqual(lastDate);
+
     }
 
 }

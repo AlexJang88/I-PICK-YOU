@@ -47,6 +47,7 @@ public class RecruitController {
             model.addAttribute("id",principal.getName());
         }
         model.addAttribute("auth",mem);
+        model.addAttribute("type",type);
         service.AllPosts(model,pageNum,type);
         return "recruit/list";
     }

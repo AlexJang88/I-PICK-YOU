@@ -42,18 +42,27 @@ public class TeamServiceImpl implements TeamService{
     private final MemberJPARepository memberJPA;
 
     @Override
-    public void AllPosts(Model model, int pageNum) {
+    public void AllPosts(Model model, int pageNum,String sid) {
+        int veil=0;
         int pageSize = 9;
-        Long longCount = teamJPA.count();
+        Long longCount = teamJPA.countByStatus(1);
         int count = longCount.intValue();
 
-        Sort sort = Sort.by(Sort.Order.desc("reg"));
+        int check = 0;
 
-        Page<TeamResumeEntity> page = teamJPA.findAll(PageRequest.of(pageNum - 1, pageSize, sort));
+        Long longcheck=teamJPA.countByMemberId(sid);
+        check= longcheck.intValue();
+
+        if(check>0){
+            veil=1;
+        }
+        System.out.println("---------------------------veil"+veil);
+        Sort sort = Sort.by(Sort.Order.desc("reg"));
+        Page<TeamResumeEntity> page = teamJPA.findAllByStatus(1,PageRequest.of(pageNum - 1, pageSize, sort));
         //  로그인 처리후 사용할 코드
         //   Page<TeamResumeEntity> page = teamJPA.findAllByStatus(1, PageRequest.of(pageNum - 1, pageSize, sort));
         List<TeamResumeEntity> posts = page.getContent();
-
+        model.addAttribute("veil",veil);
         model.addAttribute("posts", posts);
         model.addAttribute("count", count);
         model.addAttribute("pageNum", pageNum);
