@@ -62,7 +62,6 @@
                     <!-- Basic Bootstrap Table -->
                     <div class="card mb-4">
                         <div class="card-header d-flex justify-content-end align-items-center">
-
                             <!-- 사업자만 보이게 -->
                             <div sec:authorize="hasRole('ROLE_COMPANY')" class="d-flex" style="gap: 0.3cm;">
                                 <form id="hireForm" th:action="@{/recruit/contract/{memberId}/0(memberId=${resumeInfo.memberId})}" class="me-2" th:method="get">
@@ -87,11 +86,11 @@
                                     <button class="btn btn-primary" type="submit">글수정</button>
                                 </form>
 
-                                    <form th:action="@{/resume/posts/{num}(num=${resumeInfo.id})}" th:method="post" id="deleteForm1">
-                                        <input type="hidden" name="_method" value="delete"/>
-                                        <button type="button" class="btn btn-danger" onclick="confirmDelete1()">글삭제</button>
-                                    </form>
-                                </div>
+                                <form th:action="@{/resume/posts/{num}(num=${resumeInfo.id})}" th:method="post" id="deleteForm1">
+                                    <input type="hidden" name="_method" value="delete"/>
+                                    <button type="button" class="btn btn-danger" onclick="confirmDelete1()">글삭제</button>
+                                </form>
+                            </div>
 
                             <div sec:authorize="hasRole('ROLE_ADMIN')" class="d-flex" style="gap: 0.3cm;">
                                 <form th:action="@{/resume/posts/{num}(num=${resumeInfo.id})}" th:method="post" id="deleteForm2">
@@ -101,157 +100,165 @@
                             </div>
                         </div>
 
-                        <div class="card-body">
-                            <div class="row mb-3">
-                                <div class="col-md-3">
-                                    <!-- 이미지 삽입 -->
-                                    <img th:src="@{'/kjwupload/profile/' + ${resumeInfo.member.profile} }" class="img-fluid" alt="사진" style="width: 150px; height: 150px;" />
-                                </div>
-                                <div class="col-md-9 d-flex align-items-center">
-                                    <div style="width: 100%;">
-                                        <ul style="list-style-type: disc; padding-left: 20px; font-size: 1.2rem;">
-                                            <li style="margin-bottom: 10px;" th:text="${resumeInfo.member.memberInfo.name}"></li>
-                                            <li style="margin-bottom: 10px;" th:text="${genderAge}"></li>
-                                            <li style="margin-bottom: 10px;" th:text="${address}"></li>
-                                        </ul>
+                        <div class="col-md-12 mb-4">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <div class="mb-3">
+                                        <!-- 이미지 삽입 -->
+                                        <img th:src="@{'/kjwupload/profile/' + ${resumeInfo.member.profile} }" alt="사진" style="width: 150px; height: 150px;" />
+                                    </div>
+                                    <div class="row">
+                                        <!-- 이름 -->
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title fw-bold">
+                                                        <i class="bx bx-user text-muted"></i> 이름
+                                                    </h5>
+                                                    <p class="card-text" th:text="${resumeInfo.member.memberInfo.name}"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- 성별/나이 -->
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title fw-bold">
+                                                        <i class="bx bx-male-female text-muted"></i> 성별/나이
+                                                    </h5>
+                                                    <p class="card-text" th:text="${genderAge}"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- 키/체중 -->
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title fw-bold">
+                                                        <i class="bx bx-ruler text-muted"></i> 키 / 체중
+                                                    </h5>
+                                                    <p class="card-text">
+                                                        <span th:text="${resumeInfo.member.memberInfo.height}"></span> / <span th:text="${resumeInfo.member.memberInfo.weight}"></span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- 주소 -->
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title fw-bold">
+                                                        <i class="bx bx-home text-muted"></i> 주소
+                                                    </h5>
+                                                    <p class="card-text" th:text="${address}"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- 연락처 -->
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title fw-bold">
+                                                        <i class="bx bx-phone text-muted"></i> 연락처
+                                                    </h5>
+                                                    <p class="card-text" th:text="${resumeInfo.member.phone}"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- 희망 근무지 -->
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title fw-bold">
+                                                        <i class="bx bx-map text-muted"></i> 희망 근무지
+                                                    </h5>
+                                                    <p class="card-text" th:text="${resumeInfo.local}"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- 희망급여 -->
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title fw-bold">
+                                                        <i class="bx bx-money text-muted"></i> 희망급여
+                                                    </h5>
+                                                    <p class="card-text">
+                                                        <span class="fw-bold" th:text="${resumeInfo.wage}"></span> 원
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- 경력사항 -->
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title fw-bold">
+                                                        <i class="bx bx-briefcase text-muted"></i> 경력사항
+                                                    </h5>
+                                                    <ul class="list-unstyled mb-0" style="padding-left: 20px;">
+                                                        <li th:each="job : ${jobInfo}" th:text="${job.name}" style="margin-left: 20px;"></li>
+                                                        <li th:text="${careerInfo.name}" style="margin-left: 20px;"></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- 자격증 -->
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title fw-bold">
+                                                        <i class="bx bx-certification text-muted"></i> 자격증
+                                                    </h5>
+                                                    <ul class="list-unstyled mb-0" style="padding-left: 20px;">
+                                                        <li th:each="certification : ${certificationInfo}" th:text="${certification.name}" style="margin-left: 20px;"></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- 면허증 -->
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title fw-bold">
+                                                        <i class="bx bx-key text-muted"></i> 면허증
+                                                    </h5>
+                                                    <ul class="list-unstyled mb-0" style="padding-left: 20px;">
+                                                        <li th:each="licence : ${licenceInfo}" th:text="${licence.name}" style="margin-left: 20px;"></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- 보유장비 -->
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title fw-bold">
+                                                        <i class="bx bx-certification text-muted"></i> 보유장비
+                                                    </h5>
+                                                    <ul class="list-unstyled mb-0" style="padding-left: 20px;">
+                                                        <li th:each="equipment : ${equipmentInfo}" th:text="${equipment.name}" style="margin-left: 20px;"></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- 자기소개서 -->
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title fw-bold">
+                                                        <i class="bx bx-user-pin text-muted"></i> 자기소개서
+                                                    </h5>
+                                                    <p class="card-text" th:text="${resumeInfo.introduction}"></p>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <hr/>
-
-                            <h3 style="text-align: center;">경력사항</h3>
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <h5>직종</h5>
-                                    <ul class="list-unstyled mb-0" style="padding-left: 20px; list-style-type: disc;">
-                                        <li th:each="job : ${jobInfo}" th:text="${job.name}" style="margin-left: 20px;"></li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <h5>경력</h5>
-                                    <ul class="list-unstyled mb-0" style="padding-left: 20px; list-style-type: disc;">
-                                        <li th:text="${careerInfo.name}" style="margin-left: 20px;"></li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <h5>희망급여</h5>
-                                    <ul class="list-unstyled mb-0" style="padding-left: 20px; list-style-type: disc;">
-                                        <li style="margin-left: 20px;">
-                                            <span class="fw-bold" th:text="${resumeInfo.wage}"></span> 원
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <hr/>
-
-                            <h3 style="text-align: center;">개인정보</h3>
-
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <h5>연락처</h5>
-                                    <ul class="list-unstyled mb-0" style="padding-left: 20px; list-style-type: disc;">
-                                        <li style="margin-left: 20px;">
-                                            <span th:text="${resumeInfo.member.phone}"></span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <h5>키 / 체중</h5>
-                                    <ul class="list-unstyled mb-0" style="padding-left: 20px; list-style-type: disc;">
-                                        <li style="margin-left: 20px;">
-                                            <span th:text="${resumeInfo.member.memberInfo.height}"></span> / <span th:text="${resumeInfo.member.memberInfo.weight}"></span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <h5>건강정보</h5>
-                                    <ul class="list-unstyled mb-0" style="padding-left: 20px; list-style-type: disc;">
-                                        <li style="margin-left: 20px;">
-                                            <span th:text="${resumeInfo.member.memberInfo.health}"></span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <hr/>
-
-                            <h3 style="text-align: center;">희망 근무지</h3>
-
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <h5>희망지역</h5>
-                                    <ul class="list-unstyled mb-0" style="padding-left: 20px; list-style-type: disc;">
-                                        <li style="margin-left: 20px;">
-                                            <span th:text="${resumeInfo.local}"></span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <hr/>
-
-                            <h3 style="text-align: center;">자기소개서</h3>
-
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <h5>나의 각오</h5>
-                                    <ul class="list-unstyled mb-0" style="padding-left: 20px; list-style-type: disc;">
-                                        <li style="margin-left: 20px;">
-                                            <span th:text="${resumeInfo.introduction}"></span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <hr/>
-
-                            <h3 style="text-align: center;">자격증</h3>
-
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <h5>이수증</h5>
-                                    <ul class="list-unstyled mb-0" style="padding-left: 20px; list-style-type: disc;">
-                                        <li th:each="certification : ${certificationInfo}" th:text="${certification.name}" style="margin-left: 20px;"></li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <hr/>
-
-                            <h3 style="text-align: center;">면허증, 보유장비</h3>
-
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <h5>면허증</h5>
-                                    <ul class="list-unstyled mb-0" style="padding-left: 20px; list-style-type: disc;">
-                                        <li th:each="licence : ${licenceInfo}" th:text="${licence.name}" style="margin-left: 20px;"></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <h5>보유장비</h5>
-                                    <ul class="list-unstyled mb-0" style="padding-left: 20px; list-style-type: disc;">
-                                        <li th:each="equipment : ${equipmentInfo}" th:text="${equipment.name}" style="margin-left: 20px;"></li>
-                                    </ul>
-                                </div>
-                            </div>
-
                         </div>
+
+
                     </div>
 
                     <!--/ Basic Bootstrap Table -->

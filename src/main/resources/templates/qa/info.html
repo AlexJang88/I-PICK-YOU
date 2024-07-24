@@ -62,76 +62,48 @@
                         <span class="text-muted fw-light">QnA</span>
                     </h2>
 
-                    <!-- 관리자일 때 -->
                     <th:block sec:authorize="hasAuthority('ROLE_ADMIN')">
-                        <div class="row">
-                            <!-- Basic -->
-                            <div class="col-md-12 mb-4">
-                                <div class="card">
-                                    <h3 class="card-header" style="text-align: center;" th:text="${qaInformation.get(0).title}"></h3>
-                                    <div class="card-body">
-                                        <span th:text="${qaInformation.get(0).content}"></span>
-                                        <div class="divider text-end">
-                                            <div class="divider-text" th:text="${#dates.format(qaInformation.get(0).reg, 'yyyy-MM-dd')}">End</div>
-                                        </div>
-                                        <!-- count가 1일 때 답글 버튼을 표시 -->
-                                        <div th:if="${count == 1}">
-                                            <div class="divider text-end">
-                                                <form th:action="@{/qa/reply/{ref}(ref=${ref})}" method="post" target="popup">
-                                                    <textarea name="content"></textarea>
-                                                    <button type="submit" class="btn btn-primary">답글</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                        <!-- count가 2일 때 답글 보여줌 -->
-                                        <div th:if="${count == 2}">
-                                            <div class="col-md-12 mb-4">
-                                                <div class="card">
-                                                    <h3 class="card-header" style="text-align: center;">답글</h3>
-                                                    <div class="card-body">
-                                                        <span th:text="${qaInformation.get(1).content}"></span>
-                                                        <div class="divider text-end">
-                                                            <div class="divider-text" th:text="${#dates.format(qaInformation.get(1).reg, 'yyyy-MM-dd')}"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- /count가 2일 때 답글 -->
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- /Basic -->
+                        <div class="text-end">
+                            <form th:action="@{/qa/posts/{boardNum}(boardNum=${qaInformation.get(0).id})}" th:method="post" id="deleteForm">
+                                <input type="hidden" name="_method" value="delete"/>
+                                <button type="button" class="btn btn-primary" onclick="confirmDelete()">글삭제</button>
+                            </form>
                         </div>
                     </th:block>
-                    <!-- 관리자일 때 -->
 
-                    <!-- 유저일 때 -->
-                    <div th:if="${sid eq qaInformation.get(0).memberId}">
+
+
                         <div class="row">
                             <!-- Basic -->
                             <div class="col-md-12 mb-4">
                                 <div class="card">
-                                    <h3 class="card-header" style="text-align: center;" th:text="${qaInformation.get(0).title}"></h3>
+                                    <h3 class="card-header" style="text-align: center;">
+                                        제목 : <span th:text="${qaInformation.get(0).title}"></span>
+                                    </h3>
+
                                     <div class="card-body">
-                                        <span th:text="${qaInformation.get(0).content}"></span>
+                                        내용 : <span th:text="${qaInformation.get(0).content}"></span>
+
                                         <div class="divider text-end">
                                             <div class="divider-text" th:text="${#dates.format(qaInformation.get(0).reg, 'yyyy-MM-dd')}">End</div>
                                         </div>
 
-                                        <!-- count가 1일 때 답글 없음 메시지 보여줌 -->
-                                        <div th:if="${count == 1}">
-                                            <div class="col-md-12 mb-4">
-                                                <div class="card">
-                                                    <h1 class="card-header" style="text-align: center;">아직 답글이 없습니다 😅
-                                                    </h1>
+                                        <th:block sec:authorize="hasAuthority('ROLE_ADMIN')">
+                                            <div th:if="${qaInformation.get(0).status == 1}" class="divider text-end">
+                                                <div class="divider text-end">
+                                                    <form th:action="@{/qa/reply/{ref}(ref=${ref})}" method="post" target="popup">
+                                                        <input type="hidden" name="writer" th:value="${qaInformation.get(0).writer}">
+                                                        <input type="hidden" name="title" th:value="${qaInformation.get(0).title}">
+                                                        <input type="hidden" name="ref" th:value="${qaInformation.get(0).ref}">
+                                                        <input type="hidden" name="pw" th:value="${qaInformation.get(0).pw}">
+                                                        <textarea name="content"></textarea>
+                                                        <button type="submit" class="btn btn-primary">답글</button>
+                                                    </form>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <!-- /count가 1일 때 답글 없음 메시지 -->
+                                        </th:block>
 
-                                        <!-- /count가 2일 때 답글 -->
-                                        <div th:if="${count == 2}">
+                                        <div th:if="${qaInformation.get(0).status == 2}">
                                             <div class="col-md-12 mb-4">
                                                 <div class="card">
                                                     <h3 class="card-header" style="text-align: center;">답글</h3>
@@ -144,74 +116,11 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <!-- /count가 2일 때 답글 -->
                                     </div>
                                 </div>
                             </div>
                             <!-- /Basic -->
                         </div>
-                    </div>
-                    <!-- 유저일 때 -->
-
-                    <!-- NULL일 때 -->
-                    <div th:if="${sid eq NULL}">
-                        <div class="row">
-                            <!-- Basic -->
-                            <div class="col-md-12 mb-4">
-                                <div class="card">
-                                    <h3 class="card-header" style="text-align: center;" th:text="${qaInformation.get(0).title}"></h3>
-                                    <div class="card-body">
-                                        <span th:text="${qaInformation.get(0).content}"></span>
-                                        <div class="divider text-end">
-                                            <div class="divider-text" th:text="${#dates.format(qaInformation.get(0).reg, 'yyyy-MM-dd')}">End</div>
-                                        </div>
-
-                                        <!-- count가 1일 때 답글 없음 메시지 보여줌 -->
-                                        <div th:if="${count == 1}">
-                                            <div class="col-md-12 mb-4">
-                                                <div class="card">
-                                                    <h1 class="card-header" style="text-align: center;">아직 답글이 없습니다 😅
-                                                    </h1>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- /count가 1일 때 답글 없음 메시지 -->
-
-                                        <!-- /count가 2일 때 답글 -->
-                                        <div th:if="${count == 2}">
-                                            <div class="col-md-12 mb-4">
-                                                <div class="card">
-                                                    <h3 class="card-header" style="text-align: center;">답글</h3>
-                                                    <div class="card-body">
-                                                        <span th:text="${qaInformation.get(1).content}"></span>
-                                                        <div class="divider text-end">
-                                                            <div class="divider-text" th:text="${#dates.format(qaInformation.get(1).reg, 'yyyy-MM-dd')}"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- /count가 2일 때 답글 -->
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- /Basic -->
-                        </div>
-                    </div>
-                    <!-- NULL일 때 -->
-
-                    <!-- 사용자가 글의 작성자가 아닐 때 -->
-                    <div th:unless="${sid eq qaInformation.get(0).memberId}">
-                        <div class="row">
-                            <!-- Basic -->
-                            <div class="col-md-12 mb-4">
-                                <div class="card">
-                                    <h3 class="card-header" style="text-align: center;">비공개 처리된 글입니다 😉</h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /사용자가 글의 작성자가 아닐 때 -->
 
                 </div>
                 <!-- /Content -->
@@ -252,6 +161,14 @@
 
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+<script type="text/javascript">
+    function confirmDelete() {
+        if (confirm("글을 삭제하시겠습니까?")) {
+            document.getElementById('deleteForm').submit();
+        }
+    }
+</script>
 
 </body>
 </html>

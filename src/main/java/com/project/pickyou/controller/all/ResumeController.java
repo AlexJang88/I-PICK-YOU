@@ -2,14 +2,17 @@ package com.project.pickyou.controller.all;
 
 import com.project.pickyou.dto.ConfirmDTO;
 import com.project.pickyou.dto.ResumeDTO;
+import com.project.pickyou.entity.ResumeEntity;
 import com.project.pickyou.service.ResumeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -77,6 +80,17 @@ public class ResumeController {
         resumeService.selectResumeInfo(model, num);
 
         return "resume/info";
+    }
+
+    // 지원자 목록에서 이력서 볼 때
+    @GetMapping("/posts/{memberId}/info")
+    public String infoGO(@PathVariable String memberId, Model model, RedirectAttributes redirectAttributes) {
+        Optional<ResumeEntity> optional = resumeService.findBymemberId(memberId, 1);
+        if (optional.isPresent()) {
+            ResumeEntity entity = optional.get();
+            redirectAttributes.addAttribute("num", entity.getId());
+        }
+        return "redirect:/resume/posts/{num}";
     }
 
 

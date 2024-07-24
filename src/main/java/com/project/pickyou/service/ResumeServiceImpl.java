@@ -307,6 +307,12 @@ public class ResumeServiceImpl implements ResumeService {
         comfirmJPA.save(dto.toConfirmEntity());
     }
 
+    // 지원자 목록에서 memberId로 이력서 번호찾기
+    @Override
+    public Optional<ResumeEntity> findBymemberId(String memberId, int regType) {
+        return resumeJPA.findByRegTypeAndMemberId(regType, memberId);
+    }
+
     // 성별
     private String getGender(int genderNum) {
         if (genderNum == 1 || genderNum == 3) {

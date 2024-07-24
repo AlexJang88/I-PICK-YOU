@@ -89,9 +89,11 @@
                                     <td>
                                         <span th:text="${#dates.format(post.reg,'yyyy-MM-dd')}"></span>
                                     </td>
+                                    <!--정룡 수정-->
                                     <td>
-                                        <a href="#" class="btn btn-primary ">이력서 보기</a>
+                                        <a th:href="@{/resume/posts/{memberId}/info(memberId=${post.memberId})}" class="btn btn-primary ">이력서 보기</a>
                                     </td>
+                                    <!--정룡 수정-->
                                     <td>
                                         <!-- 채용확정 버튼 -->
                                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">

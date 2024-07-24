@@ -33,4 +33,5 @@ public interface ResumeJPARepository extends JpaRepository<ResumeEntity,Long> {
 
     // 이력서 공개인 것 카운트
     public int countByRegType(int regType);
+
 }

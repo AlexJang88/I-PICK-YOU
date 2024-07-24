@@ -244,27 +244,6 @@ public class FoodMapServiceImpl implements FoodMapService {
                         String ext = originalName.substring(originalName.lastIndexOf("."));
                         String saveName = folderPath + File.separator + uuid + ext;
 
-                        Date currentDate = new Date();
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-                        String formattedDate = dateFormat.format(currentDate);
-
-                        // 포맷팅된 문자열을 다시 Date 객체로 변환
-                        Date dateOnly = null;
-                        try {
-                            dateOnly = dateFormat.parse(formattedDate);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        // 포맷된 현재 날짜를 dto의 reg 속성에 설정
-
-                        dto.setReg(dateOnly);
-                        dto.setMemberId(foodMap.get().getMemberId());
-                        dto.setReadCount(foodMap.get().getReadCount());
-                        dto.setMap(foodMap.get().getMap());
-                        dto.setRef(foodMap.get().getRef());
-System.out.println("map-------------------------------------"+foodMap.get().getMap());
-System.out.println("memberId--------------------------------"+foodMap.get().getMemberId());
-
                         ImageDTO idto = new ImageDTO();
                         idto.setBoardNum(dto.getId());
                         idto.setBoardType(4);
@@ -278,11 +257,30 @@ System.out.println("memberId--------------------------------"+foodMap.get().getM
                         }
                     }
                 }
+
             }
         }
+        Date currentDate = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        String formattedDate = dateFormat.format(currentDate);
+
+        // 포맷팅된 문자열을 다시 Date 객체로 변환
+        Date dateOnly = null;
+        try {
+            dateOnly = dateFormat.parse(formattedDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        // 포맷된 현재 날짜를 dto의 reg 속성에 설정
+
+        dto.setReg(dateOnly);
+        dto.setMemberId(foodMap.get().getMemberId());
+        dto.setReadCount(foodMap.get().getReadCount());
+        dto.setMap(foodMap.get().getMap());
+        dto.setRef(foodMap.get().getRef());
+        dto.setStatus(foodMap.get().getStatus());
         foodMapJPA.save(dto.toFood_MapEntity());
     }
-
 
     // 푸드맵 조회수 증가
     @Override
