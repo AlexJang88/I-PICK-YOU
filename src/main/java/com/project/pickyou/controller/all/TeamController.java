@@ -5,6 +5,7 @@ import com.project.pickyou.dto.TeamResumeDTO;
 import com.project.pickyou.service.EducationService;
 import com.project.pickyou.service.TeamService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,7 @@ public class TeamController {
         service.AllPosts(model,pageNum,sid);
         return "team/list";
     }
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/posts/my")
     public String myList(Model model,Principal principal){
         String url ="redirect:/educations/posts";
@@ -61,6 +63,7 @@ public class TeamController {
         return "team/content";
     }
     //수정페이지 이동
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("posts/edit/{boardNum}")
     public String edit(Model model,@PathVariable Long boardNum,Principal principal){
         String sid = "";
@@ -73,6 +76,7 @@ public class TeamController {
         return "team/update";
     }
     //수정
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping("/posts")
     public String update(@RequestParam(name = "id")Long id, MultipartFile profileimg,ArrayList<MultipartFile> files, TeamResumeDTO dto){
         for(MultipartFile mf:files){
@@ -85,6 +89,7 @@ public class TeamController {
         return url;
     }
     //비공개
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PatchMapping("/posts")
     public String exposure(TeamResumeDTO dto){
         service.exposure(dto);
@@ -92,6 +97,7 @@ public class TeamController {
         return url;
     }
     //작성페이지이동
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/posts/new")
     public String write(Model model,Principal principal){
         boolean check=false;
@@ -108,6 +114,7 @@ public class TeamController {
         return url;
     }
     //작성
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/posts")
     public String insertpost(ArrayList<MultipartFile> files, TeamResumeDTO dto,MultipartFile profileimg,Principal principal){
         //사업자 아이디 = 로그인 구현후 session 받아와서 다시 처리
@@ -119,6 +126,7 @@ public class TeamController {
         service.writePost(profileimg,files,dto,5);
         return "redirect:/teams/posts";
     }
+    @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER','ROLE_ADMIN')")
     @GetMapping("/favorits/{boardNum}/{target}")
     public String checkFavorite(@PathVariable Long boardNum,@PathVariable String target,Principal principal){
         String sid = "";

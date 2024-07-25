@@ -6,6 +6,7 @@ import com.project.pickyou.service.EducationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +20,8 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 public class EducationController {
     private final EducationService service;
-
     private int type=2;
+
     @GetMapping("/posts")
     public String list(Model model,@RequestParam(value = "pageNum",defaultValue = "1") int pageNum,Principal principal){
         int mem = 0;
@@ -60,6 +61,7 @@ public class EducationController {
         return "education/content";
    }
    //수정페이지 이동
+   @PreAuthorize("hasRole('ROLE_COMPANY')")
    @GetMapping("posts/{boardNum}/edit")
    public String edit(Model model,@PathVariable Long boardNum,Principal principal){
        String sid="";
@@ -73,6 +75,7 @@ public class EducationController {
    }
 
    //수정
+   @PreAuthorize("hasRole('ROLE_COMPANY')")
    @PutMapping("/posts/{id}")
     public String update(@PathVariable(name = "id")Long id,@RequestParam(name = "files",required = false) ArrayList<MultipartFile> files, EducationDTO dto){
         for(MultipartFile mf:files){
@@ -86,12 +89,14 @@ public class EducationController {
         return url;
    }
    //삭제
+   @PreAuthorize("hasRole('ROLE_COMPANY')")
    @DeleteMapping("/posts/{id}")
    public String delete(@PathVariable(name = "id")Long id){
         service.deletePost(id,2);
         return "redirect:/educations/posts";
    }
    //작성페이지이동
+   @PreAuthorize("hasRole('ROLE_COMPANY')")
     @GetMapping("/posts/new")
     public String write(Model model,Principal principal){
         String sid="";
@@ -107,6 +112,7 @@ public class EducationController {
         return url;
     }
     //작성
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
     @PostMapping("/posts")
     public String insertpost(ArrayList<MultipartFile> files, EducationDTO dto,Principal principal){
         //사업자 아이디 = 로그인 구현후 session 받아와서 다시 처리
@@ -117,6 +123,7 @@ public class EducationController {
         service.writePost(files,dto,2);
         return "redirect:/educations/posts";
     }
+    @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER','ROLE_ADMIN')")
     @GetMapping("/favorits/{boardNum}/{target}")
     public String checkFavoritecheck(@PathVariable Long boardNum,@PathVariable String target,Principal principal){
         String sid="";
@@ -132,17 +139,6 @@ public class EducationController {
         String url = "redirect:/educations/posts/"+boardNum;
         return url;
     }
-    @GetMapping("/ct/{receiver}")
-    public String ct(Model model,@PathVariable String receiver,Principal principal){
-        String sender = "";
-        if(principal!=null){
-            sender= principal.getName();
-        }
-System.out.println("=================sender"+sender);
-        System.out.println("=================receiver"+receiver);
-        model.addAttribute("to",sender);
-                model.addAttribute("from",receiver);
-        return "list";
-    }
+
 
 }

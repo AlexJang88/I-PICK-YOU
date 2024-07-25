@@ -46,13 +46,20 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests((auth)->auth
 
-                        .requestMatchers("/","/login","/joinCompany","/forgot/**","/mail/**","/agency/**","/trainning/**","/posts/**","/join","/joinProc","/assets/**", "/img/**","/register","/css/**", "/js/**").permitAll()
-                        .requestMatchers("/login","/ajax/**","/forgotId/**","/forgotPw/**","/mypage/**","/notice/**","/payProcess/**").permitAll()
-                        .requestMatchers("/educations/**","/qa/**").permitAll()
-                        .requestMatchers("/recruit/**").permitAll()
-                        .requestMatchers("/admin").hasRole("ADMIN")
-                        .requestMatchers("/my/**").hasAnyRole("USER","ADMIN")
+
+
+                        .requestMatchers("/","/login","/joinCompany","/forgot/**","/mail/**","/posts/**","/join","/joinProc","/assets/**", "/img/**","/register","/css/**", "/js/**").permitAll()
+                        .requestMatchers("/login","/ajax/**","/forgotId/**","/forgotPw/**","/notice/**","/payProcess/**").permitAll()
+                        .requestMatchers("/qa/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/trainning/posts/new","/agency/posts/new","/agency/posts/*/edit","/trainning/posts/*/edit").hasRole("COMPANY")
+                        .requestMatchers("/agency/**","/trainning/**").permitAll()
+                        .requestMatchers("/mypage/**").hasAnyRole("USER","ADMIN","COMPANY")
+                        .requestMatchers("/pick/**").authenticated()
+                        .requestMatchers("/recruitState/**").authenticated()
+                        .requestMatchers("/satisfaction/**").authenticated()
                         .anyRequest().authenticated()
+
 
 
                         /*.anyRequest().permitAll()*/
