@@ -47,7 +47,9 @@
             <div th:insert="~{design/navi-bar :: navi}"></div>
             <!-- / Navbar -->
             <!-- Content wrapper -->
-            <div class="content-wrapper" th:if="${check}==0">
+
+                <div class="content-wrapper" >
+                <!-- Content -->
                 <div class="container-fluid flex-grow-1 container-p-y" >
                     <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
                         <div class="modal-dialog">
@@ -61,16 +63,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card mb-4" >
+                    <!-- Layout Demo -->
+                    <div class="card mb-4" th:if="${check}==0">
                         <a th:href="@{/teams/posts/new}" class="btn btn-primary">등록하러가기</a>
                     </div>
-                </div>
-            </div>
-                <div class="content-wrapper" th:if="${check}==1">
-                <!-- Content -->
-                <div class="container-fluid flex-grow-1 container-p-y" >
-                    <!-- Layout Demo -->
-                    <div class="card mb-4" >
+                    <div class="card mb-4" th:if="${check}==1">
                         <div class="d-flex align-items-start" >
                             <img th:src="@{'/upload/profile/'+${post.profile}}" width="300px" height="100px" class="mr-4" style="margin-right: 50px;">
                             <div>
@@ -98,7 +95,7 @@
                     <!--/ Layout Demo -->
                 </div>
                 <!-- / Content -->
-                <div class="d-flex justify-content-end mb-3">
+                <div class="d-flex justify-content-end mb-3" th:if="${check}==1">
                     <form th:action="@{/teams/posts/edit/{boardNum}(boardNum=${post.id})}" th:method="get">
                         <button class="btn btn-primary" type="submit">수정하기</button>
                     </form>
@@ -120,7 +117,7 @@
                 </div>
                 <!-- Footer -->
                     <script>
-                        $(document).ready(function() {
+
                      window.addEventListener('message', event => {
                         if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
                         if (event.data === 'modalClosed') {
@@ -128,7 +125,7 @@
                               $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
                         }
                         });
-                    });
+
                     </script>
                 <div th:include="~{design/footer :: footer}"></div>
                 <!-- / Footer -->
