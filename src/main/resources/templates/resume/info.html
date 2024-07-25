@@ -36,6 +36,7 @@
     <!-- Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script th:src="@{/assets/js/config.js}"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
 </head>
 
 <body>
@@ -56,6 +57,32 @@
             <div class="content-wrapper">
                 <!-- Content -->
                 <div class="container-xxl flex-grow-1 container-p-y">
+
+                    <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Chat</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <iframe id="roomFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal" id="chatModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Chat</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <iframe id="chatFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <h2 class="fw-bold py-3 mb-4">
                         <span class="text-muted fw-light">이력서</span>
                     </h2>
@@ -68,6 +95,12 @@
                                     <input type="hidden" id="typeInput" name="type" value="">
                                     <button class="btn btn-primary" type="button" onclick="showCustomModal()">채용하기</button>
                                 </form>
+                            </div>
+
+                            <div sec:authorize="isAuthenticated()">
+                                <div th:if="${sessionId != resumeInfo.memberId}">
+                                    <button th:if="${type!=1 and auth!=0}" id="openChatBtn" class="btn btn-primary">채팅</button>
+                                </div>
                             </div>
 
                             <!-- Custom Modal -->
@@ -97,6 +130,18 @@
                                     <input type="hidden" name="_method" value="delete"/>
                                     <button type="button" class="btn btn-danger" onclick="confirmDelete2()">글삭제</button>
                                 </form>
+                            </div>
+                        </div>
+
+                        <div sec:authorize="isAuthenticated()">
+                            <div th:if="${sessionId != resumeInfo.memberId}">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span th:text="${favoriteCheck}"></span>
+                                    <a class="page-link" th:href="@{/resume/favorits/{boardNum}/{target}(boardNum=${resumeInfo.id},target=${resumeInfo.memberId})}" >
+                                        <img th:if="${favoriteCheck==0}" th:src="@{/img/favoritenoncheck.png}" width="30px">
+                                        <img th:if="${favoriteCheck==1}" th:src="@{/img/favoriteCheck.png}" width="30px">
+                                    </a>
+                                </div>
                             </div>
                         </div>
 
@@ -328,6 +373,23 @@
         document.getElementById('typeInput').value = type;
         document.getElementById('hireForm').submit();
     }
+</script>
+
+<script>
+    window.addEventListener('message', event => {
+                        if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
+                        if (event.data === 'modalClosed') {
+                            $('#myModal').modal('hide');
+                              $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                        }
+                        });
+     $('#openChatBtn').click(function() {
+                            var sender = $('#sender').val();
+                            var receiver = $('#receiver').val();
+                            var chatUrl = 'http://localhost:4000/chat/' + sender + '/' + receiver;
+                            $('#chatFrame').attr('src', chatUrl);
+                            $('#chatModal').modal('show');
+                        });
 </script>
 
 <style>

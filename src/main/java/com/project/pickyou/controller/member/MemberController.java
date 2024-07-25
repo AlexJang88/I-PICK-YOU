@@ -1,9 +1,6 @@
 package com.project.pickyou.controller.member;
 
-import com.project.pickyou.dto.CompanyInfoDTO;
-import com.project.pickyou.dto.MemberDTO;
-import com.project.pickyou.dto.MemberInfoDTO;
-import com.project.pickyou.dto.PointDTO;
+import com.project.pickyou.dto.*;
 import com.project.pickyou.service.MemberService;
 import com.project.pickyou.service.PointService;
 import jakarta.servlet.http.HttpSession;
@@ -15,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+import java.sql.Date;
+import java.time.LocalDate;
 
 @Controller
 @RequestMapping("/mypage/*")
@@ -248,14 +247,36 @@ public class MemberController {
         return "mypage/ConfirmationList";
     }
 
+    // 유저 입장에서 지원받은내역
+    @GetMapping("user/receive/posts")
+    public String receiveList(Principal principal, Model model,
+                              @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
+
+        String id = "";
+        // @@
+        if(principal!=null) {
+            id = principal.getName();
+            model.addAttribute("id", principal.getName());
+        }
+        // @@
+
+        memberService.confirmList(id, pageNum, model);
+        return "mypage/userReceiveList";
+    }
 
 
+    // 채용대기 인거 채용확정으로 넘기기
+    @GetMapping("/user/receive/edit/{id}")
+    public String receiveUpdate(ConfirmDTO dto, @PathVariable Long id, @RequestParam("type") int type) {
 
+        LocalDate today = LocalDate.now();
+        Date sqlDate = Date.valueOf(today);
+        dto.setReg(sqlDate);
+        dto.setApply(type);
+        memberService.updateApply(dto);
 
-
-
-
-
+        return "redirect:/mypage/user/receive/posts";
+    }
 
 
 

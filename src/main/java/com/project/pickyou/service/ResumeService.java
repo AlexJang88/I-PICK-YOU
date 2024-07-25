@@ -19,7 +19,7 @@ public interface ResumeService {
                              List<String> licenceNames, List<String> equipmentNames, List<String> certificationNames);
 
     // 이력서 상세정보
-    public void selectResumeInfo(Model model, Long num);
+    public void selectResumeInfo(Model model, Long num, String sid);
 
     // 이력서 삭제
     public void deleteResume(Long num);

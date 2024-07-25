@@ -1,6 +1,7 @@
 package com.project.pickyou.service;
 
 import com.project.pickyou.dto.CompanyInfoDTO;
+import com.project.pickyou.dto.ConfirmDTO;
 import com.project.pickyou.dto.MemberDTO;
 import com.project.pickyou.dto.MemberInfoDTO;
 import com.project.pickyou.entity.ConfirmEntity;
@@ -37,4 +38,6 @@ public interface MemberService {
     // 채용 확정 내역 (사업자)
     public void findByCompanyIdAndApplyIn(String companyId, int pageNum, Model model);
 
+    // 유저 입장에서 출근 확정 업데이트
+    public void updateApply(ConfirmDTO dto);
 }
