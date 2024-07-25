@@ -48,11 +48,12 @@ public class SecurityConfig {
 
                         .requestMatchers("/","/login","/joinCompany","/forgot/**","/mail/**","/agency/**","/trainning/**","/posts/**","/join","/joinProc","/assets/**", "/img/**","/register","/css/**", "/js/**").permitAll()
                         .requestMatchers("/login","/ajax/**","/forgotId/**","/forgotPw/**","/mypage/**","/notice/**","/payProcess/**").permitAll()
-                        .requestMatchers("/educations/**","/qa/**").permitAll()
-                        .requestMatchers("/recruit/**").permitAll()
+                                .requestMatchers("/pick/**").authenticated()
+                                .requestMatchers("/recruitState/**").authenticated()
+                                .requestMatchers("/satisfaction/**").authenticated()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/my/**").hasAnyRole("USER","ADMIN")
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
 
 
                         /*.anyRequest().permitAll()*/

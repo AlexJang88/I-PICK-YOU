@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -51,6 +52,7 @@ public class RecruitController {
         service.AllPosts(model,pageNum,type);
         return "recruit/list";
     }
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
     @GetMapping("/posts/my")
     public  String mylist(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, Principal principal){
         String memberId="";
@@ -83,6 +85,7 @@ public class RecruitController {
         return "recruit/content";
     }
     //수정페이지 이동
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
     @GetMapping("posts/edit/{boardNum}")
     public String edit(Model model,@PathVariable Long boardNum,Principal principal){
         String sid = "";
@@ -95,6 +98,7 @@ public class RecruitController {
         return "recruit/update";
     }
     //수정
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
     @PutMapping("/posts")
     public String update(@RequestParam(name = "id")Long id, ArrayList<MultipartFile> files, RecruitDTO rdto,RecruitDetailDTO rddto
                         ,@RequestParam("startDateParam") @DateTimeFormat(pattern = "yyyy-MM-dd")Date startDateParam,
@@ -107,12 +111,14 @@ public class RecruitController {
         return url;
     }
     //삭제
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
     @DeleteMapping("/posts")
     public String delete(@RequestParam(name = "id")Long id){
         service.deletePost(id,6);
         return "redirect:/recruit/posts";
     }
     //작성페이지이동
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
     @GetMapping("/posts/new")
     public String write(Model model,Principal principal){
         if(principal!=null) {
@@ -122,6 +128,7 @@ public class RecruitController {
         return "recruit/write";
     }
     //작성
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
     @PostMapping("/posts")
     public String insertpost(ArrayList<MultipartFile> files, RecruitDTO rdto, RecruitDetailDTO rddto,
                              @RequestParam("startDateParam") @DateTimeFormat(pattern = "yyyy-MM-dd")Date startDateParam,
@@ -166,6 +173,7 @@ public class RecruitController {
         service.favoriteCheck(dto);
         return url;
     }
+    @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_ADMIN','ROLE_USER')")
     @PostMapping("/apply/{boardNum}")
     public String apply(@PathVariable Long boardNum,Principal principal){
         int check=0;
@@ -183,6 +191,7 @@ public class RecruitController {
         }
         return url;
     }
+    @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER')")
     @GetMapping("/contract/{memberId}/{stateId}")
     public String contract(Model model,Principal principal,@PathVariable String memberId,@RequestParam int type,@PathVariable Long stateId){
         String url="";
@@ -210,12 +219,14 @@ public class RecruitController {
 
         return url;
     }
+    @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER')")
     @PostMapping("/contract/company/{stateId}")
     public String signature(@ModelAttribute ContractDTO dto,@PathVariable Long stateId,@RequestParam int applyType){
         Long id=service.contract(dto,stateId,applyType);
         String url = "redirect:/recruit/contract/"+id;
         return url;
     }
+    @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER')")
     @GetMapping("/contract/{contractId}")
     public String signatureMem(HttpServletResponse response,@PathVariable Long contractId,Model model,Principal principal){
         String id = "";
@@ -227,7 +238,7 @@ public class RecruitController {
 
         return"recruit/contractSign";
     }
-
+    @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER')")
     @PostMapping("/saveSignature")
     public ResponseEntity<Map<String,String>> saveSignature(@RequestParam("signature") MultipartFile signature,@RequestParam("contractId") Long contractId,Principal principal) throws IOException{
 
@@ -239,6 +250,7 @@ public class RecruitController {
         Map<String,String> sign = service.saveSignature(signature,contractId,sid);
         return ResponseEntity.ok(sign);
     }
+    @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER')")
     @GetMapping("/pdf")
     public @ResponseBody String stest(HttpServletResponse response,Long id){
         service.contractPDF(response, id);
