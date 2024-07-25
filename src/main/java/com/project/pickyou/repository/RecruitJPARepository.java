@@ -23,6 +23,6 @@ public interface RecruitJPARepository extends JpaRepository<RecruitEntity,Long> 
     public Page<RecruitEntity> findById(String id,Pageable page);
     public List<RecruitEntity> findByMemberId(String memberId);
     @Transactional
-    public void deleteByRegGreaterThanEqual(Date date);
+    public void deleteByStatusAndRegGreaterThanEqual(int status,Date date);
 
 }

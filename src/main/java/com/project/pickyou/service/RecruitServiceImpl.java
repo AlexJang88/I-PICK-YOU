@@ -573,7 +573,7 @@ public class RecruitServiceImpl implements RecruitService {
         cal.setTime(date);
         cal.add(Calendar.DATE,-1);
         Date lastDate = cal.getTime();
-        recruitJPA.deleteByRegGreaterThanEqual(lastDate);
+        recruitJPA.deleteByStatusAndRegGreaterThanEqual(2,lastDate);
 
     }
 
