@@ -22,4 +22,6 @@ public interface LoginService {
     boolean checkIfEmailExists(String email);  //이메일 중복체크
 
     boolean checkIfcorpnocheck(String corpno);  //사업자 중복체크
+
+    boolean userCheckIFIdExists(String id); //알람보낼 시 존재하는 회원인지
 }

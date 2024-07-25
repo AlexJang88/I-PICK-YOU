@@ -101,12 +101,7 @@
                 </a>
             </li>
 
-            <li class="menu-item" sec:authorize="isAuthenticated()">
-                <a th:href="@{/payProcess/Pay/{user}(user=${#authentication.name})}" class="menu-link">
-                    <i class="menu-icon tf-icons bx bx-crown"></i>
-                    <div data-i18n="Boxicons">카카오페이</div>
-                </a>
-            </li>
+
 
 
             <li class="menu-item" sec:authorize="hasRole('ROLE_ADMIN')">

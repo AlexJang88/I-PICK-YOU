@@ -279,6 +279,9 @@ public class TrainningServiceImpl implements TrainningService{
                 }
             }
         }
+
+        TrainningEntity trainning = trainningUpdate.get();
+        trainning.setReadCount(trainningDTO.getReadCount());
         trainningJPARepository.save(trainningDTO.toTrainningEntity());  // 이건 내용새로 업데이트
     }
 
@@ -292,7 +295,10 @@ public class TrainningServiceImpl implements TrainningService{
 
         if(optional.isPresent()){
             TrainningEntity traing = optional.get();
-            traing.setReadCount(traing.getReadCount()+1);
+
+            traing.setReadCount(traing.getReadCount() + 1);
+
+
             trainningJPARepository.save(traing);
         }
 

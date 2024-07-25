@@ -128,7 +128,7 @@
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="#">
+                            <a class="dropdown-item" href="/qa/posts">
                                 <i class="bx bx-cog me-2"></i>
                                 <span class="align-middle">문의하기</span>
                             </a>
@@ -141,6 +141,61 @@
                                 </span>
                             </a>
                         </li>
+
+
+                        <!--여기서부터 관리자-->
+
+
+                        <li sec:authorize="hasRole('ROLE_ADMIN')">
+                            <a class="dropdown-item" th:href="@{/admin/management}">
+                                <i class="bx bx-user me-2"></i>
+                                <span class="align-middle">일반유저 정보</span>
+                            </a>
+                        </li>
+
+                        <li sec:authorize="hasRole('ROLE_ADMIN')">
+                            <a class="dropdown-item" th:href="@{/admin/companyManagement}">
+                                <i class="bx bx-user me-2"></i>
+                                <span class="align-middle">사업자 정보</span>
+                            </a>
+                        </li>
+
+                        <li sec:authorize="hasRole('ROLE_ADMIN')">
+                            <a class="dropdown-item" th:href="@{/admin/payment/totalRevenue}">
+                                <i class="bx bx-user me-2"></i>
+                                <span class="align-middle">매출 현황</span>
+                            </a>
+                        </li>
+
+                        <li sec:authorize="hasRole('ROLE_ADMIN')">
+                            <a class="dropdown-item" th:href="@{/admin/payment/posts}">
+                                <i class="bx bx-user me-2"></i>
+                                <span class="align-middle">결제 내역</span>
+                            </a>
+                        </li>
+
+                        <li sec:authorize="hasRole('ROLE_ADMIN')">
+                            <a class="dropdown-item" th:href="@{/admin/point/give}">
+                                <i class="bx bx-user me-2"></i>
+                                <span class="align-middle">포인트 지급 내역</span>
+                            </a>
+                        </li>
+
+                        <li sec:authorize="hasRole('ROLE_ADMIN')">
+                            <a class="dropdown-item" th:href="@{/admin/point/deduct}">
+                                <i class="bx bx-user me-2"></i>
+                                <span class="align-middle">포인트 사용 내역</span>
+                            </a>
+                        </li>
+
+                        <li sec:authorize="hasRole('ROLE_ADMIN')">
+                            <a class="dropdown-item" th:href="@{/admin/pointPayment}">
+                                <i class="bx bx-user me-2"></i>
+                                <span class="align-middle">포인트 지급 승인</span>
+                            </a>
+                        </li>
+
+
                         <li>
                             <div sec:authorize="isAuthenticated()" class="dropdown-divider"></div>
                         </li>
