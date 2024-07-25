@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -35,18 +36,16 @@ public class RecruitStateServiceImpl implements RecruitStateService {
     @Override
     public void confirmedMember(Model model, int pageNum, Long recruitId,Integer type) {
         int pageSize = 10;
-        Long longCount = confirmJPA.countByRecruitIdAndApplyNot(recruitId,type);
+        Long longCount = confirmJPA.countByRecruitIdAndApplyLessThanEqual(recruitId,type);
         int count = longCount.intValue();
         Sort sort = Sort.by(Sort.Order.desc("id"));
        Page<ConfirmEntity> page = null;
        List<ConfirmEntity> posts=Collections.emptyList();
-       System.out.println("=========count"+count);
         if (count > 0) {
-            page = confirmJPA.findByRecruitIdAndApplyNot(recruitId,type, PageRequest.of(pageNum - 1, pageSize, sort));
+            page = confirmJPA.findByRecruitIdAndApplyLessThanEqual(recruitId,type, PageRequest.of(pageNum - 1, pageSize, sort));
             if (page != null) {
                 posts = page.getContent();
             }
-            System.out.println("===========null" + posts);
         }
         //  로그인 처리후 사용할 코드
 
@@ -74,11 +73,11 @@ public class RecruitStateServiceImpl implements RecruitStateService {
         int pageSize = 10;
        List<RecruitStateEntity> posts = Collections.emptyList();
        List<ConfirmEntity> memberlist = Collections.emptyList();
-       List<String> members = Collections.emptyList();
+       List<String> members = new ArrayList<>();
        Long longCount =0L;
        int count=0;
         Sort sort = Sort.by(Sort.Order.desc("reg"));
-        memberlist = confirmJPA.findByRecruitIdAndApplyNot(recruitId,type);
+        memberlist = confirmJPA.findByRecruitIdAndApplyLessThanEqual(recruitId,type);
         Page<RecruitStateEntity> page = Page.empty();
        if(!CollectionUtils.isEmpty(memberlist)){
            for(ConfirmEntity ce:memberlist){
@@ -92,16 +91,12 @@ public class RecruitStateServiceImpl implements RecruitStateService {
            count= longCount.intValue();
            page=recruitStateJPA.findByRecruitId(recruitId,PageRequest.of(pageNum - 1, pageSize, sort));
        }
-        System.out.println("=====================count"+members);
-        System.out.println("=====================count"+count);
 
 
         //  로그인 처리후 사용할 코드
         if(!page.isEmpty()) {
             posts = page.getContent();
-            System.out.println("==============page check"+page);
         }
-        System.out.println("=============="+posts);
 
         model.addAttribute("posts", posts);
         model.addAttribute("count", count);
@@ -126,18 +121,14 @@ public class RecruitStateServiceImpl implements RecruitStateService {
     public int cancelConfirmed(String memberId,Long recruitId,int type) {
         int check=0;
         ConfirmDTO confirm = new ConfirmDTO();
-        Optional<ConfirmEntity> ce =confirmJPA.findByMemberIdAndRecruitIdAndApplyNot(memberId,recruitId,type);
+        Optional<ConfirmEntity> ce =confirmJPA.findByMemberIdAndRecruitIdAndApplyLessThanEqual(memberId,recruitId,type);
         if(ce.isEmpty()) {
-            System.out.println("---------------ce" + ce.get().getId());
         }
         Optional<MemberEntity> mem = memberJPA.findById(memberId);
-        System.out.println("---------------mem"+mem.get().getId());
         if(ce.isPresent()){
             confirm=ce.get().toConfirmDTO();
             confirm.setApply(3);
             confirm.setRecruitId(recruitId);
-            System.out.println("---------------dto"+confirm);
-            System.out.println("---------------check"+check);
             confirmJPA.save(confirm.toConfirmEntity());
         }
         return check;
@@ -154,7 +145,6 @@ public class RecruitStateServiceImpl implements RecruitStateService {
         //  로그인 처리후 사용할 코드
         if(!page.isEmpty()) {
             posts = page.getContent();
-            System.out.println("==============page check"+page);
         }
         model.addAttribute("posts", posts);
         model.addAttribute("count", count);
@@ -180,7 +170,6 @@ public class RecruitStateServiceImpl implements RecruitStateService {
         RecruitStateDTO dto = new RecruitStateDTO();
         dto.setMemberId(member);
         dto.setRecruitId(boardNum);
-        System.out.println("><><><><"+dto);
         recruitStateJPA.save(dto.toRecruitStateEntity());
     }
 
@@ -192,13 +181,10 @@ public class RecruitStateServiceImpl implements RecruitStateService {
         if(rse.isPresent()){
             if(mem.isPresent()){
                 if(mem.get().getAuth().contains("ADMIN")){
-                    System.out.println("---------------ADMIN"+mem.get().getAuth());
                     check=99;
                 } else if (mem.get().getAuth().contains("USER")) {
-                    System.out.println("---------------ADMIN"+mem.get().getAuth());
                     check=1;
                 } else if (mem.get().getAuth().contains("COMPANY")) {
-                    System.out.println("---------------ADMIN"+mem.get().getAuth());
                     check=2;
                 }
             }
@@ -207,4 +193,5 @@ public class RecruitStateServiceImpl implements RecruitStateService {
 
         return check;
     }
+
 }

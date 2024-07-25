@@ -12,4 +12,5 @@ public interface RecruitStateService {
     public void myApply(Model model,String member,int pageNum);
     public void Apply(String member,Long boardNum);
     public int cancelApply(String member,Long boardNum);
+
 }

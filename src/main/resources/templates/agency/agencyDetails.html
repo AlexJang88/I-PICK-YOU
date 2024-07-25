@@ -44,6 +44,7 @@
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script th:src="@{/assets/js/config.js}"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
 </head>
 
 <body>
@@ -66,23 +67,38 @@
 
 
                 <div class="col-md-12 mb-4">
-                    <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Chat</h4>
-                                </div>
-                                <div class="modal-body">
-                                    <iframe id="roomFrame" width="100%" height="500px" frameborder="0"></iframe>
+
+                    <div class="card shadow-lg">
+                        <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Chat</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <iframe id="roomFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="card shadow-lg"> <!-- 그림자를 진하게 하기 위해 shadow-lg 클래스 추가 -->
+                        <div class="modal" id="chatModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Chat</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <iframe id="chatFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- 그림자를 진하게 하기 위해 shadow-lg 클래스 추가 -->
+
                         <div class="card-body">
                             <!-- 제목 -->
                             <div class="text-center mb-4">
                                 <h2 class="fw-bold py-3" th:text="${AgencyList.get().companyName}"></h2>
+                                <button th:if="${type!=1 and auth!=0}" id="openChatBtn" class="btn btn-primary">채팅</button>
                             </div>
 
                             <!-- 정보 섹션 -->
@@ -256,6 +272,22 @@
             document.getElementById("AdmindeleteForm").submit();
         }
     }
+</script>
+<script>
+    window.addEventListener('message', event => {
+                        if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
+                        if (event.data === 'modalClosed') {
+                            $('#myModal').modal('hide');
+                              $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                        }
+                        });
+     $('#openChatBtn').click(function() {
+                            var sender = $('#sender').val();
+                            var receiver = $('#receiver').val();
+                            var chatUrl = 'http://localhost:4000/chat/' + sender + '/' + receiver;
+                            $('#chatFrame').attr('src', chatUrl);
+                            $('#chatModal').modal('show');
+                        });
 </script>
 
 

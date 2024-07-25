@@ -11,7 +11,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Fluid - Layouts | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>평점</title>
 
     <meta name="description" content="" />
 
@@ -80,6 +80,18 @@
             <div class="content-wrapper">
                 <!-- Content -->
                 <div class="container-fluid flex-grow-1 container-p-y">
+                    <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Chat</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <iframe id="roomFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Layout Demo -->
                     <div class="card mb-4">
                         <div class="col-md" >
@@ -117,6 +129,7 @@
                                     <textarea id="content" class="form-control" name="content" placeholder="자세한 내용을 작성해주세요"></textarea>
                                 </div>
                                 <input type="hidden" name="target" th:if=${member!=null} th:value="${member.id}">
+
                                 <input type="hidden" name="target" th:if=${company!=null} th:value="${company.id}">
                             </div>
                             <button class="btn btn-primary" type="submit">평점주기</button>
@@ -127,6 +140,15 @@
                 </div>
                 <!-- / Content -->
                 <script th:inline="javascript">
+                    $(document).ready(function() {
+                     window.addEventListener('message', event => {
+                        if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
+                        if (event.data === 'modalClosed') {
+                            $('#myModal').modal('hide');
+                              $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                        }
+                        });
+                    });
                     function rate(score) {
           document.getElementById('score').value = score;
           const stars = document.querySelectorAll('.star');

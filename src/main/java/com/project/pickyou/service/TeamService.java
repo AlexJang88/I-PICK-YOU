@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface TeamService {
-    public void AllPosts(Model model, int pageNum);
+    public void AllPosts(Model model, int pageNum,String sid);
     public void post(Model model,Long boardNum,String sid,int boardType);
     public void writePost(MultipartFile profile,List<MultipartFile> files, TeamResumeDTO dto,int boardType);
     public void update(MultipartFile profile,List<MultipartFile> files, TeamResumeDTO dto,int boardType);

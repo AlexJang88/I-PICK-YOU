@@ -7,7 +7,6 @@ import com.project.pickyou.entity.PaymentEntity;
 import com.project.pickyou.dto.PointDTO;
 import com.project.pickyou.service.AdminService;
 import lombok.RequiredArgsConstructor;
-import org.bouncycastle.math.raw.Mod;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

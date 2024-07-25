@@ -3,6 +3,7 @@ package com.project.pickyou.service;
 import com.project.pickyou.dto.*;
 import com.project.pickyou.entity.*;
 import com.project.pickyou.repository.ImageJPARepository;
+import com.project.pickyou.repository.MemberJPARepository;
 import com.project.pickyou.repository.PickJPARepository;
 import com.project.pickyou.repository.TeamResumeJPARepository;
 import lombok.RequiredArgsConstructor;
@@ -38,20 +39,30 @@ public class TeamServiceImpl implements TeamService{
     private final TeamResumeJPARepository teamJPA;
     private final ImageJPARepository imageJPA;
     private final PickJPARepository pickJPA;
+    private final MemberJPARepository memberJPA;
 
     @Override
-    public void AllPosts(Model model, int pageNum) {
+    public void AllPosts(Model model, int pageNum,String sid) {
+        int veil=0;
         int pageSize = 9;
-        Long longCount = teamJPA.count();
+        Long longCount = teamJPA.countByStatus(1);
         int count = longCount.intValue();
 
-        Sort sort = Sort.by(Sort.Order.desc("reg"));
+        int check = 0;
 
-        Page<TeamResumeEntity> page = teamJPA.findAll(PageRequest.of(pageNum - 1, pageSize, sort));
+        Long longcheck=teamJPA.countByMemberId(sid);
+        check= longcheck.intValue();
+
+        if(check>0){
+            veil=1;
+        }
+        System.out.println("---------------------------veil"+veil);
+        Sort sort = Sort.by(Sort.Order.desc("reg"));
+        Page<TeamResumeEntity> page = teamJPA.findAllByStatus(1,PageRequest.of(pageNum - 1, pageSize, sort));
         //  로그인 처리후 사용할 코드
         //   Page<TeamResumeEntity> page = teamJPA.findAllByStatus(1, PageRequest.of(pageNum - 1, pageSize, sort));
         List<TeamResumeEntity> posts = page.getContent();
-
+        model.addAttribute("veil",veil);
         model.addAttribute("posts", posts);
         model.addAttribute("count", count);
         model.addAttribute("pageNum", pageNum);
@@ -72,12 +83,23 @@ public class TeamServiceImpl implements TeamService{
     @Override
     public void post(Model model,Long num,String sid,int boardType) {
         int type=0;
+        int auth=0;
+        int check=0;
         Optional<TeamResumeEntity> post = teamJPA.findById(num);
+        Optional<MemberEntity> member =memberJPA.findById(sid);
         TeamResumeDTO tdto = new TeamResumeDTO();
         MemberDTO mdto = new MemberDTO();
         List<ImageEntity> imageList = Collections.emptyList();
         int favoritecheck = 0;
-
+        if(member.isPresent()) {
+            if (member.get().getAuth().contains("USER")) {
+                auth = 1;
+            } else if (member.get().getAuth().contains("COMPANY")) {
+                auth = 2;
+            } else if (member.get().getAuth().contains("ADMIN")) {
+                auth = 99;
+            }
+        }
         if (post.isPresent()) {
             if(post.get().getMemberId().equals(sid)){
                 type=1;
@@ -90,6 +112,10 @@ public class TeamServiceImpl implements TeamService{
             if (pickcheck.isPresent()) {
                 favoritecheck = 1;
             }
+            System.out.println("------------------------check"+check);
+            System.out.println("------------------------auth"+auth);
+            model.addAttribute("check",check);
+            model.addAttribute("auth",auth);
             model.addAttribute("type",type);
             model.addAttribute("favoritecheck", favoritecheck);
             model.addAttribute("member", mdto);
