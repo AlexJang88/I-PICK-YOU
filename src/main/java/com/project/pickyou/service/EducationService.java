@@ -17,4 +17,5 @@ public interface EducationService {
     public void update(List<MultipartFile> files,EducationDTO dto,int boardType);
     public int favoriteCheck(PickDTO dto);
     public void updateReadCount(Long boardNum);
+    public boolean authCheck(Long boardNum,String id,int type);
 }

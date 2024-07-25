@@ -91,7 +91,7 @@
                         <div class="card-header d-flex justify-content-end align-items-center">
                             <!-- 사업자만 보이게 -->
                             <div sec:authorize="hasRole('ROLE_COMPANY')" class="d-flex" style="gap: 0.3cm;">
-                                <form id="hireForm" th:action="@{/recruit/contract/{memberId}/0(memberId=${resumeInfo.memberId})}" class="me-2" th:method="get">
+                                <form id="hireForm" th:action="@{/recruit/contract/{memberId}/{companyId}/0(memberId=${resumeInfo.memberId},companyId=${id})}" class="me-2" th:method="get">
                                     <input type="hidden" id="typeInput" name="type" value="">
                                     <button class="btn btn-primary" type="button" onclick="showCustomModal()">채용하기</button>
                                 </form>

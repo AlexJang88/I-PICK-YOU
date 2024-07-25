@@ -170,7 +170,6 @@
                     console.log('Applies:', applies);
 
                     confirms.forEach(res => {
-                        let url ='mypage/confirm/posts';
                         if(res.auth==2){
                         url='/'
                         }
@@ -179,7 +178,7 @@
                             color: "#0000FF", // Blue color for confirm events
                             eventTextColor: "black", // Text color for confirm events
                             start: res.date,
-                            url: url // Add URL for confirm events
+                            url: res.url // Add URL for confirm events
                         });
                     });
                     applies.forEach(res => {
@@ -196,11 +195,9 @@
                         });
                     });
 
-                    console.log('Events:', events);
                     fetchWeather(city.engName, city.korName);
                 },
                 error: function() {
-                    console.log('Failed to fetch data from the server.');
                 }
             });
         }

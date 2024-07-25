@@ -74,6 +74,7 @@ public class RecruitController {
         if(principal!=null){
             sid= principal.getName();
             model.addAttribute("id",principal.getName());
+
         }else{
             sid = ip;
         }
@@ -89,13 +90,18 @@ public class RecruitController {
     @GetMapping("posts/edit/{boardNum}")
     public String edit(Model model,@PathVariable Long boardNum,Principal principal){
         String sid = "";
+        String url="redirect:/";
         if(principal!=null) {
-            principal.getName();
+            sid=principal.getName();
             model.addAttribute("id",principal.getName());
+            if(educationService.authCheck(boardNum,sid,type)){
+                service.post(model,boardNum,sid);
+                url="recruit/update";
+            }
         }
         //principal.getName();
-        service.post(model,boardNum,sid);
-        return "recruit/update";
+
+        return url;
     }
     //수정
     @PreAuthorize("hasRole('ROLE_COMPANY')")
@@ -162,15 +168,19 @@ public class RecruitController {
     @GetMapping("/favorits/{boardNum}/{target}")
     public String checkFavoritecheck(@PathVariable Long boardNum,@PathVariable String target,Principal principal){
         String sid = "";
+        String url="redirect:/";
         if(principal!=null) {
             sid=principal.getName();
+            if(!target.equals(sid)){
+                PickDTO dto = new PickDTO();
+                dto.setPicker(sid);
+                dto.setTarget(target);
+                url = "redirect:/recruit/posts/"+boardNum;
+                service.favoriteCheck(dto);
+            }
         }
         //principal.getName(); 로그인 적용후 번경
-        PickDTO dto = new PickDTO();
-        dto.setPicker(sid);
-        dto.setTarget(target);
-        String url = "redirect:/recruit/posts/"+boardNum;
-        service.favoriteCheck(dto);
+
         return url;
     }
     @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_ADMIN','ROLE_USER')")
@@ -192,51 +202,59 @@ public class RecruitController {
         return url;
     }
     @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER')")
-    @GetMapping("/contract/{memberId}/{stateId}")
-    public String contract(Model model,Principal principal,@PathVariable String memberId,@RequestParam int type,@PathVariable Long stateId){
-        String url="";
+    @GetMapping("/contract/{memberId}/{companyId}/{stateId}")
+    public String contract(Model model,Principal principal,@PathVariable String memberId,@PathVariable String companyId,@RequestParam int type,@PathVariable Long stateId){
         String name ="";
+        String url="redirect:/";
         //memberId=사용자 / principal=사업자
         if(principal!=null) {
              name=principal.getName();
             model.addAttribute("id",principal.getName());
-        }
-        if(type==1){
-                url="recruit/contractForm";
-            service.userInfo(model,memberId,name,stateId,1);
+            if(name.equals(companyId)||name.equals(memberId)) {
+                if(type==1){
+                    url="recruit/contractForm";
+                    service.userInfo(model,memberId,name,stateId,1);
+                }
+                else if(type==2){
+                    service.basicContract(memberId,name,1,stateId);
+                    url="redirect:/";
+                }
+                if (type == 3) {
+                    url = "recruit/contractForm";
+                    service.userInfo(model, memberId, name, stateId, 3);
+                } else if (type == 4) {
+                    url = "redirect:/recruit/posts";
+                    service.basicContract(memberId, name, 4, stateId);
+                }
             }
-        else if(type==2){
-            service.basicContract(memberId,name,1,stateId);
-            url="redirect:/";
-        }else if(type==3){
-            url="recruit/contractForm";
-            service.userInfo(model,memberId,name,stateId,4);
-        }else if(type==4){
-            url="redirect:/recruit/posts";
-            service.basicContract(memberId,name,4,stateId);
         }
-
-
         return url;
     }
     @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER')")
     @PostMapping("/contract/company/{stateId}")
     public String signature(@ModelAttribute ContractDTO dto,@PathVariable Long stateId,@RequestParam int applyType){
-        Long id=service.contract(dto,stateId,applyType);
-        String url = "redirect:/recruit/contract/"+id;
+        String url="";
+
+         Long id=service.contract(dto,stateId,applyType);
+        url="redirect:/recruit/contract/"+id;
         return url;
     }
     @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER')")
     @GetMapping("/contract/{contractId}")
     public String signatureMem(HttpServletResponse response,@PathVariable Long contractId,Model model,Principal principal){
         String id = "";
+        String url="redirect:/";
         if(principal!=null){
             id= principal.getName();
             model.addAttribute("id",principal.getName());
+            if(educationService.authCheck(contractId,id,7)){
+                service.getContract(response,model,contractId,id);
+                url="recruit/contractSign";
+            }
         }
-        service.getContract(response,model,contractId,id);
 
-        return"recruit/contractSign";
+
+        return url;
     }
     @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER')")
     @PostMapping("/saveSignature")

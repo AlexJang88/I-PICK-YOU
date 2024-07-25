@@ -1,7 +1,9 @@
 package com.project.pickyou.controller.all;
 
+import com.project.pickyou.service.EducationService;
 import com.project.pickyou.service.RecruitStateService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,18 +16,24 @@ import java.security.Principal;
 public class RecruitStateController {
 
     private final RecruitStateService service;
+    private final EducationService educationService;
 
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
     @GetMapping("/posts/apply/{recruitId}")
     public String statePosts(Principal principal,Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @PathVariable Long recruitId){
         String sid="";
+        String url="redirect:/";
         if(principal!=null) {
             sid= principal.getName();
             model.addAttribute("id",principal.getName());
-            service.onApply(model, pageNum, recruitId, 2);
+            if(educationService.authCheck(recruitId,sid,6)) {
+                service.onApply(model, pageNum, recruitId, 2);
+                url="recruitState/applyList";
+            }
         }
-        return "recruitState/applyList";
+        return url;
     }
-    @GetMapping("/posts/confirm/{recruitId}")
+   /* @GetMapping("/posts/confirm/{recruitId}")
     public String stateConfirm(Principal principal,Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @PathVariable Long recruitId){
         String sid="";
         if(principal!=null) {
@@ -34,7 +42,8 @@ public class RecruitStateController {
             model.addAttribute("id",principal.getName());
         }
         return "recruitState/confirmedList";
-    }
+    }*/
+   @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/posts/my")
     public String myList(Model model, Principal principal,@RequestParam(value = "pageNum",defaultValue = "1") int pageNum){
         String sid="";

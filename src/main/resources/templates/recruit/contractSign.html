@@ -327,9 +327,6 @@
                         var signCheck = $('#signCheck').val();
                         var comSign = $('#comSign').val();
                         var memSign = $('#memSign').val();
-                        console.log(signCheck);
-                        console.log(comSign);
-                        console.log(memSign);
 
                        if (signCheck == '11') {
                         $("#img01").attr('src', $('#comSign').val()).show();
@@ -382,7 +379,6 @@
                                processData: false,
                                contentType: false,
                                success: function (response) {
-                                   console.log(response.signName)
                                    $('.wrapper-custom').hide();
                                    $('#save-png').hide();
                                    $('#clear').hide();
@@ -390,7 +386,6 @@
                                    location.reload();
                                },
                                error: function (error) {
-                                   console.error("Error saving signature: ", error);
                                }
                            });
                        });

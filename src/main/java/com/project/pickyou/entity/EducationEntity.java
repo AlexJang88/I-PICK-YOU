@@ -32,7 +32,6 @@ public class EducationEntity {
     private String content;
     @Column(name = "read_count")
     private int readCount;
-    @UpdateTimestamp
     private Date reg;
 
 

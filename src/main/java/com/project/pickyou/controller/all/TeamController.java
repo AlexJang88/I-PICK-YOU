@@ -22,6 +22,8 @@ public class TeamController {
     private final TeamService service;
     private final EducationService educationService;
 
+    int type=5;
+
     @GetMapping("/posts")
     public String list(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum,Principal principal){
         String sid="";
@@ -44,7 +46,7 @@ public class TeamController {
         if(principal!=null){
             sid= principal.getName();
             url="team/myContent";
-            service.MyPosts(model,sid,5);
+            service.MyPosts(model,sid,type);
             model.addAttribute("id",principal.getName());
         }
         return url;
@@ -57,7 +59,7 @@ public class TeamController {
             model.addAttribute("id",principal.getName());
         }
         model.addAttribute("to",sid);
-        service.post(model,boardNum,sid,5);
+        service.post(model,boardNum,sid,type);
 
 
         return "team/content";
@@ -67,13 +69,18 @@ public class TeamController {
     @GetMapping("posts/edit/{boardNum}")
     public String edit(Model model,@PathVariable Long boardNum,Principal principal){
         String sid = "";
+        String url="redirect:/";
         if(principal!=null) {
          sid=principal.getName();
          model.addAttribute("id",principal.getName());
+         if(educationService.authCheck(boardNum,sid,type)){
+             service.post(model,boardNum,sid,type);
+             url="team/update";
+         }
         }
         //principal.getName();
-        service.post(model,boardNum,sid,5);
-        return "team/update";
+
+        return url;
     }
     //수정
     @PreAuthorize("hasRole('ROLE_USER')")
@@ -84,7 +91,7 @@ public class TeamController {
                 files = new ArrayList<>();
             }
         }
-         service.update(profileimg,files,dto,5);
+         service.update(profileimg,files,dto,type);
         String url = "redirect:/teams/posts/"+id;
         return url;
     }
@@ -123,7 +130,7 @@ public class TeamController {
         String content = dto.getIntroduction();
         content = content.replace("\r\n","<br>");
         dto.setIntroduction(content);
-        service.writePost(profileimg,files,dto,5);
+        service.writePost(profileimg,files,dto,type);
         return "redirect:/teams/posts";
     }
     @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER','ROLE_ADMIN')")

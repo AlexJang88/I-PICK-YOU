@@ -34,6 +34,7 @@ public class ContractDTO {
     private LocalDate contractDate;
 
 
+
     @Builder
     public ContractDTO( Long id,
             String companyId,

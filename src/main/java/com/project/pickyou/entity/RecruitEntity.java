@@ -29,7 +29,6 @@ public class RecruitEntity {
     private int readCount;
     @Column(name="member_id")
     private String memberId;
-    @UpdateTimestamp
     private Date reg;
     @Column(name="start_date")
     private Date startDate;

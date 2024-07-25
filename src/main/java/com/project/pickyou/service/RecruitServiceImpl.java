@@ -177,9 +177,6 @@ public class RecruitServiceImpl implements RecruitService {
             if (post.get().getStatus() == 2) {
                 type = "긴급";
             }
-            System.out.println("------------------applyCheck"+applyCheck);
-            System.out.println("------------------check"+check);
-            System.out.println("------------------auth"+auth);
             model.addAttribute("applyCheck",applyCheck);
             model.addAttribute("auth",auth);
             model.addAttribute("check",check);
@@ -361,25 +358,20 @@ public class RecruitServiceImpl implements RecruitService {
             dto.setId(null);
         }
         Long maxnum=contractJPA.getAutoIncrementValue("pickyou","contract");
-        System.out.println("========================maxnum"+maxnum);
         ConfirmDTO cdto = new ConfirmDTO();
         cdto.setMemberId(dto.getMemberId());
         cdto.setCompanyId(dto.getCompanyId());
         if(applyType==1) {
             cdto.setApply(1);
-        } else if (applyType==3) {
+        } else if (applyType==4) {
             cdto.setApply(4);
         }
         cdto.setContractId(maxnum);
         if(stateId!=0) {
             cdto.setRecruitId(stateId);
         }
-        System.out.println("========================cdto"+dto);
         contractJPA.save(dto.toContractEntity());
-        System.out.println("========================confirmsave"+maxnum);
         confirmJPA.save(cdto.toConfirmEntity());
-        System.out.println("========================contractsave"+maxnum);
-
         return maxnum;
     }
 
@@ -402,7 +394,6 @@ public class RecruitServiceImpl implements RecruitService {
             contractPdf =new File(contactUploadPath+File.separator+id+File.separator+s+".pdf");
             ContractEntity ce = con.get();
 
-            System.out.println("========================ce"+ce);
             model.addAttribute("contract",ce);
             Optional<MemberEntity> member = memberJPA.findById(ce.getMemberId());
             Optional<MemberEntity> company = memberJPA.findById(ce.getCompanyId());
@@ -412,23 +403,16 @@ public class RecruitServiceImpl implements RecruitService {
                 model.addAttribute("company",company.get());
             }
         }
-        System.out.println("==================userId" + con.get().getCompanyId());
-        System.out.println("==================userId" + con.get().getMemberId());
-        System.out.println("==================userId" + userId);
 
 
 
         if(con.get().getCompanyId().equals(userId) || con.get().getMemberId().equals(userId)) {
             Optional<MemberEntity> mem = memberJPA.findById(userId);
-            System.out.println("==================authCheck" + mem.get().getAuth());
             if (mem.get().getAuth().contains("COMPANY")) {
-                System.out.println("==================authCheck" + mem.get().getAuth());
                if (companySign.exists() && !memberSign.exists()) {
-                    System.out.println("==================authCheck" + mem.get().getAuth());
                     type = 11;
                     comSign = "/upload/contract/" + id + File.separator + con.get().getCompanyId() + "_signature.png";
                 }if (!companySign.exists() && memberSign.exists()) {
-                    System.out.println("==================authCheck" + mem.get().getAuth());
                     type = 12;
                     memSign = "/upload/contract/" + id + File.separator + con.get().getMemberId() + "_signature.png";
                 }
@@ -446,20 +430,16 @@ public class RecruitServiceImpl implements RecruitService {
                 if (memberSign.exists() && !companySign.exists()) {
                     type = 21;
                     memSign = "/upload/contract/" + id + File.separator + con.get().getMemberId() + "_signature.png";
-                    System.out.println("==================authCheck" + memSign);
                 }
                 if (!memberSign.exists() && companySign.exists()) {
                     type = 22;
                     comSign = "/upload/contract/" + id + File.separator + con.get().getCompanyId() + "_signature.png";
-                    System.out.println("==================authCheck" + comSign);
                 }
                 if (companySign.exists() && memberSign.exists()) {
                     comSign = "/upload/contract/" + id + File.separator + con.get().getCompanyId() + "_signature.png";
                     memSign = "/upload/contract/" + id + File.separator + con.get().getMemberId() + "_signature.png";
                     type = 100;
                     PDF=1;
-                    System.out.println("==================authCheck" + comSign);
-                    System.out.println("==================authCheck" + memSign);
                     if(!contractPdf.exists()){
                         contractPDF(response,id);
                     }
@@ -564,16 +544,16 @@ public class RecruitServiceImpl implements RecruitService {
             }
         }
     }
+    //0 * * * * ? -매분
+    //0 0 0/1 * * * -1시간마다
     @Scheduled(cron = "0 0 0/1 * * *")
     public void overTimeCheck(){
-        String result="";
        Date date = new Date();
-
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.add(Calendar.DATE,-1);
         Date lastDate = cal.getTime();
-        recruitJPA.deleteByStatusAndRegGreaterThanEqual(2,lastDate);
+        recruitJPA.deleteByStatusAndRegLessThanEqual(2,lastDate);
 
     }
 
