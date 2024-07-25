@@ -11,7 +11,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
 
-    <title>Fluid - Layouts | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>계약서</title>
 
     <meta name="description" content=""/>
 
@@ -230,132 +230,155 @@
                 </div>
                 <!-- / Content -->
                     <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            // 오늘 날짜를 YYYY-MM-DD 형식으로 가져오기
+                            const today = new Date().toISOString().split('T')[0];
 
-                       function validateForm() {
-    var isValid = true;
+                            // 근로개시일과 계약서 작성일의 min 속성을 오늘 날짜로 설정
+                            document.getElementById('startDate').setAttribute('min', today);
+                            const contractDateInput = document.getElementById('contractDate');
+                            contractDateInput.setAttribute('min', today);
+                            contractDateInput.value = today; // 초기값을 오늘 날짜로 설정
 
-    // Validate '근로개시일'
-    var startdate = document.getElementById('startDate').value.trim();
-    if (startdate === '') {
-        alert('근로개시일이 비었습니다.');
-        document.getElementById('startDate').focus();
-        return false;
-    }
+                            // 근로개시일 선택 시 근로마감일의 min 속성을 설정
+                            document.getElementById('startDate').addEventListener('change', function() {
+                                const startDate = this.value;
+                                document.getElementById('endDate').setAttribute('min', startDate);
+                            });
 
-    // Validate '근로마감일'
-    var enddate = document.getElementById('endDate').value.trim();
-    if (enddate === '') {
-        alert('근로마감일이 비었습니다.');
-        document.getElementById('endDate').focus();
-        return false;
-    }
+                            // 계약서 작성일의 min 속성을 오늘 날짜로 설정
+                            contractDateInput.addEventListener('change', function() {
+                                if (this.value < today) {
+                                    alert('계약서 작성일은 오늘 날짜 이후로 설정해야 합니다.');
+                                    this.value = today;
+                                }
+                            });
+                        });
+                                               function validateForm() {
+                            var isValid = true;
 
-    // Validate '근무장소'
-    var location = document.getElementById('location').value.trim();
-    if (location === '') {
-        alert('근무장소가 비었습니다.');
-        document.getElementById('location').focus();
-        return false;
-    }
+                            // Validate '근로개시일'
+                            var startdate = document.getElementById('startDate').value.trim();
+                            if (startdate === '') {
+                                alert('근로개시일이 비었습니다.');
+                                document.getElementById('startDate').focus();
+                                return false;
+                            }
 
-    // Validate '업무의 내용(직종)'
-    var job = document.getElementById('job').value.trim();
-    if (job === '') {
-        alert('업무의 내용(직종)이 비었습니다.');
-        document.getElementById('job').focus();
-        return false;
-    }
+                            // Validate '근로마감일'
+                            var enddate = document.getElementById('endDate').value.trim();
+                            if (enddate === '') {
+                                alert('근로마감일이 비었습니다.');
+                                document.getElementById('endDate').focus();
+                                return false;
+                            }
 
-    // Validate '근무시간'
-    var workStartTime = document.getElementById('workStartTime').value.trim();
-    if (workStartTime === '') {
-        alert('시작시간을 입력해주세요.');
-        document.getElementById('workStartTime').focus();
-        return false;
-    }
+                            // Validate '근무장소'
+                            var location = document.getElementById('location').value.trim();
+                            if (location === '') {
+                                alert('근무장소가 비었습니다.');
+                                document.getElementById('location').focus();
+                                return false;
+                            }
 
-    var workEndTime = document.getElementById('workEndTime').value.trim();
-    if (workEndTime === '') {
-        alert('종료시간을 입력해주세요.');
-        document.getElementById('workEndTime').focus();
-        return false;
-    }
+                            // Validate '업무의 내용(직종)'
+                            var job = document.getElementById('job').value.trim();
+                            if (job === '') {
+                                alert('업무의 내용(직종)이 비었습니다.');
+                                document.getElementById('job').focus();
+                                return false;
+                            }
 
-    // Validate '주당 근무일수'
-    var worksSchedule = document.getElementById('worksSchedule').value.trim();
-    if (worksSchedule === '') {
-        alert('주당 근무일수가 비었습니다.');
-        document.getElementById('worksSchedule').focus();
-        return false;
-    }
+                            // Validate '근무시간'
+                            var workStartTime = document.getElementById('workStartTime').value.trim();
+                            if (workStartTime === '') {
+                                alert('시작시간을 입력해주세요.');
+                                document.getElementById('workStartTime').focus();
+                                return false;
+                            }
 
-    // Validate '임금'
-    var money = document.getElementById('money').value.trim();
-    if (money === '') {
-        alert('금액이 비었습니다.');
-        document.getElementById('money').focus();
-        return false;
-    }
+                            var workEndTime = document.getElementById('workEndTime').value.trim();
+                            if (workEndTime === '') {
+                                alert('종료시간을 입력해주세요.');
+                                document.getElementById('workEndTime').focus();
+                                return false;
+                            }
 
-    // Set default value for '기타 제수당' if empty
-    var etc = document.getElementById('etc');
-    if (etc.value.trim() === '') {
-        etc.value = '없음';
-    }
+                            // Validate '주당 근무일수'
+                            var worksSchedule = document.getElementById('worksSchedule').value.trim();
+                            if (worksSchedule === '') {
+                                alert('주당 근무일수가 비었습니다.');
+                                document.getElementById('worksSchedule').focus();
+                                return false;
+                            }
 
-    var customPayDate = document.getElementById('customPayDate').value.trim();
-    var payDateType1 = document.getElementById('payDateType1').checked;
-    var payDateType2 = document.getElementById('payDateType2').checked;
-    var payDateType3 = document.getElementById('payDateType3').checked;
+                            // Validate '임금'
+                            var money = document.getElementById('money').value.trim();
+                            if (money === '') {
+                                alert('금액이 비었습니다.');
+                                document.getElementById('money').focus();
+                                return false;
+                            }
 
-    // Validate '임금 지급일' if '매주' or '매월' is selected
-    if (payDateType1 && customPayDate === '') {
-        document.getElementById('customPayDate').value = '0';
-        customPayDate = '0';
-    }
+                            // Set default value for '기타 제수당' if empty
+                            var etc = document.getElementById('etc');
+                            if (etc.value.trim() === '') {
+                                etc.value = '없음';
+                            }
 
-    if ((payDateType2 || payDateType3) && customPayDate === '') {
-        alert('매주나 매월을 선택했을 경우 일자를 입력해야 합니다.');
-        document.getElementById('customPayDate').focus();
-        return false;
-    }
+                            var customPayDate = document.getElementById('customPayDate').value.trim();
+                            var payDateType1 = document.getElementById('payDateType1').checked;
+                            var payDateType2 = document.getElementById('payDateType2').checked;
+                            var payDateType3 = document.getElementById('payDateType3').checked;
 
-    // Handle '사회보험 적용여부' checkboxes
-    var insurance1 = document.getElementById('insurance1');
-    var insurance2 = document.getElementById('insurance2');
-    var insurance3 = document.getElementById('insurance3');
-    var insurance4 = document.getElementById('insurance4');
+                            // Validate '임금 지급일' if '매주' or '매월' is selected
+                            if (payDateType1 && customPayDate === '') {
+                                document.getElementById('customPayDate').value = '0';
+                                customPayDate = '0';
+                            }
 
-    if (!insurance1.checked) {
-        insurance1.checked = true;
-        insurance1.value = '없음';
-    }
+                            if ((payDateType2 || payDateType3) && customPayDate === '') {
+                                alert('매주나 매월을 선택했을 경우 일자를 입력해야 합니다.');
+                                document.getElementById('customPayDate').focus();
+                                return false;
+                            }
 
-    if (!insurance2.checked) {
-        insurance2.checked = true;
-        insurance2.value = '없음';
-    }
+                            // Handle '사회보험 적용여부' checkboxes
+                            var insurance1 = document.getElementById('insurance1');
+                            var insurance2 = document.getElementById('insurance2');
+                            var insurance3 = document.getElementById('insurance3');
+                            var insurance4 = document.getElementById('insurance4');
 
-    if (!insurance3.checked) {
-        insurance3.checked = true;
-        insurance3.value = '없음';
-    }
+                            if (!insurance1.checked) {
+                                insurance1.checked = true;
+                                insurance1.value = '없음';
+                            }
 
-    if (!insurance4.checked) {
-        insurance4.checked = true;
-        insurance4.value = '없음';
-    }
+                            if (!insurance2.checked) {
+                                insurance2.checked = true;
+                                insurance2.value = '없음';
+                            }
 
-    // Validate '계약서 작성일'
-    var contractDate = document.getElementById('contractDate').value.trim();
-    if (contractDate === '') {
-        alert('계약서 작성일이 비었습니다.');
-        document.getElementById('contractDate').focus();
-        return false;
-    }
+                            if (!insurance3.checked) {
+                                insurance3.checked = true;
+                                insurance3.value = '없음';
+                            }
 
-    return isValid;
-}
+                            if (!insurance4.checked) {
+                                insurance4.checked = true;
+                                insurance4.value = '없음';
+                            }
+
+                            // Validate '계약서 작성일'
+                            var contractDate = document.getElementById('contractDate').value.trim();
+                            if (contractDate === '') {
+                                alert('계약서 작성일이 비었습니다.');
+                                document.getElementById('contractDate').focus();
+                                return false;
+                            }
+
+                            return isValid;
+                        }
 
                     </script>
                     <script>

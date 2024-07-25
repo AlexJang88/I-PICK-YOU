@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
 
-    <title>Fluid - Layouts | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>채용공고</title>
 
     <meta name="description" content=""/>
 
@@ -36,55 +36,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <style>
-        body {
-            font-size: 1rem;
-        }
-
-        .card {
-            padding: 20px;
-            margin: 20px;
-        }
-
-        .card h2 {
-            font-size: 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .badge {
-            font-size: 1rem;
-        }
-
-        .page-link img {
-            width: 20px;
-        }
-
-        .card h4 {
-            font-size: 1.5rem;
-        }
-
-        .card div {
-            font-size: 1rem;
-        }
-
-        .card hr {
-            margin: 20px 0;
-        }
-
-        .d-flex {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .btn {
-            margin: 0 5px;
-        }
-
-        .container-fluid {
-            padding: 20px;
-        }
         .star {
             width: 50px;
             height: 50px;
@@ -154,17 +105,16 @@
                         <div class="container-xxl flex-grow-1 container-p-y text-center">
                             <!-- 제목 -->
                             <div class="card-header">
-                                <h2 class="fw-bold py-3 mb-4">
-                                    <span th:text="${post.title}"></span>
-                                    <input type="hidden" id="score" th:value="${avg}">
-                                    <div id="star-container">
-                                        <img th:src="@{/upload/emptyScore.png}" class="star" onclick="rate(1)" id="star1" data-score="1" >
-                                        <img th:src="@{/upload/emptyScore.png}" class="star" onclick="rate(2)" id="star2" data-score="2">
-                                        <img th:src="@{/upload/emptyScore.png}" class="star" onclick="rate(3)" id="star3" data-score="3">
-                                        <img th:src="@{/upload/emptyScore.png}" class="star" onclick="rate(4)" id="star4" data-score="4">
-                                        <img th:src="@{/upload/emptyScore.png}" class="star" onclick="rate(5)" id="star5" data-score="5">
-                                    </div>
+                                <h2 class="fw-bold py-3 mb-4" th:text="${post.title}">
                                 </h2>
+                                <div id="star-container">
+                                    <input type="hidden" id="score" th:value="${avg}">
+                                    <img th:src="@{/upload/emptyScore.png}" class="star" onclick="rate(1)" id="star1" data-score="1" >
+                                    <img th:src="@{/upload/emptyScore.png}" class="star" onclick="rate(2)" id="star2" data-score="2">
+                                    <img th:src="@{/upload/emptyScore.png}" class="star" onclick="rate(3)" id="star3" data-score="3">
+                                    <img th:src="@{/upload/emptyScore.png}" class="star" onclick="rate(4)" id="star4" data-score="4">
+                                    <img th:src="@{/upload/emptyScore.png}" class="star" onclick="rate(5)" id="star5" data-score="5">
+                                </div>
                             </div>
                             <!-- 카드 본문 -->
                             <div class="card-body">

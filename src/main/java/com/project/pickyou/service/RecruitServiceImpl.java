@@ -371,7 +371,9 @@ public class RecruitServiceImpl implements RecruitService {
             cdto.setApply(4);
         }
         cdto.setContractId(maxnum);
-        cdto.setRecruitId(stateId);
+        if(stateId!=0) {
+            cdto.setRecruitId(stateId);
+        }
         System.out.println("========================cdto"+dto);
         contractJPA.save(dto.toContractEntity());
         System.out.println("========================confirmsave"+maxnum);
