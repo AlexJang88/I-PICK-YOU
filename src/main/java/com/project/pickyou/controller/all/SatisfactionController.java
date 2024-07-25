@@ -17,7 +17,21 @@ public class SatisfactionController {
 
         private final SatisfactionService service;
 
-    @GetMapping("/score/{target}")
+
+        @GetMapping("/score")
+        public String newList(Model model,Principal principal,@RequestParam(value = "pageNum",defaultValue = "1") int pageNum){
+            String sid="";
+            if(principal!=null){
+                sid= principal.getName();
+                model.addAttribute("id",principal.getName());
+                service.scoreList(model,sid,pageNum);
+            }
+            return "satisfaction/list";
+        }
+
+
+
+        @GetMapping("/score/{target}")
     public String score(Model model, @PathVariable String target, Principal principal, HttpServletRequest request){
         int check=0;
         System.out.println("===========target"+target);
@@ -66,7 +80,7 @@ public class SatisfactionController {
             id= principal.getName();
             model.addAttribute("id",principal.getName());
         }
-        service.myScore(model,id);
+        service.myScore(model,id,1);
         return "satisfaction/myScore";
     }
 }

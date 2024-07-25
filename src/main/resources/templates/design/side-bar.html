@@ -101,12 +101,7 @@
                 </a>
             </li>
 
-            <li class="menu-item" sec:authorize="isAuthenticated()">
-                <a th:href="@{/payProcess/Pay/{user}(user=${#authentication.name})}" class="menu-link">
-                    <i class="menu-icon tf-icons bx bx-crown"></i>
-                    <div data-i18n="Boxicons">카카오페이</div>
-                </a>
-            </li>
+
 
 
             <li class="menu-item" sec:authorize="hasRole('ROLE_ADMIN')">
@@ -127,6 +122,11 @@
                     <li class="menu-item">
                         <a th:href="@{/mypage/information/{id}(id=${#authentication.name})}" class="menu-link">
                             <div data-i18n="Account">내 정보보기</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a th:href="@{/calendar}" class="menu-link">
+                            <div data-i18n="Account">스케쥴보기</div>
                         </a>
                     </li>
                     <li class="menu-item">
@@ -167,7 +167,7 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a th:href="@{/satisfaction/score/my}" class="menu-link">
+                        <a th:href="@{/satisfaction/score}" class="menu-link">
                             <div data-i18n="Account">평점주기</div>
                         </a>
                     </li>
@@ -211,21 +211,16 @@
                             <div data-i18n="Account">내 공고</div>
                         </a>
                     </li>
-                    <!--<li class="menu-item">
-                        <a th:href="@{/educations/posts}" class="menu-link">
-                            <div data-i18n="Account">요청받은 공고</div>
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a th:href="@{/educations/posts}" class="menu-link">
-                            <div data-i18n="Account">고용현황</div>
-                        </a>
-                    </li>-->
+                    
                     <li class="menu-item">
                         <a th:href="@{/educations/posts}" class="menu-link">
                             <div data-i18n="Account">계약서 관리</div>
+
+                        <a th:href="@{/calendar}" class="menu-link">
+                            <div data-i18n="Account">스케쥴보기</div>
                         </a>
                     </li>
+                    
                     <li class="menu-item">
                         <a th:href="@{/mypage/company/employment/posts}" class="menu-link">
                             <div data-i18n="Account">고용 요청 내역</div>
@@ -237,7 +232,7 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a th:href="@{/educations/posts}" class="menu-link">
+                        <a th:href="@{/satisfaction/score}" class="menu-link">
                             <div data-i18n="Account">평점주기</div>
                         </a>
                     </li>

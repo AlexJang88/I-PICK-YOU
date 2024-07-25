@@ -121,18 +121,18 @@ public class MemberServiceImpl implements MemberService {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
-                    user.setPw(bCryptPasswordEncoder.encode(memberDTO.getPw()));
-                    user.setAddress(memberDTO.getAddress());
-                    user.setPhone(memberDTO.getPhone());
-                    user.setEmail(memberDTO.getEmail());
-
-                    //해당 자료들은 변경된 내용을 넣는다
-                    memberJPARepository.save(user);
-
                 }else {
                     //오류없음
                 }
+
+                user.setPw(bCryptPasswordEncoder.encode(memberDTO.getPw()));
+                user.setAddress(memberDTO.getAddress());
+                user.setPhone(memberDTO.getPhone());
+                user.setEmail(memberDTO.getEmail());
+
+                //해당 자료들은 변경된 내용을 넣는다
+                memberJPARepository.save(user);
+
             }
         }
 
@@ -189,18 +189,17 @@ public class MemberServiceImpl implements MemberService {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-                user.setPw(bCryptPasswordEncoder.encode(memberDTO.getPw()));
-                user.setAddress(memberDTO.getAddress());
-                user.setPhone(memberDTO.getPhone());
-                user.setEmail(memberDTO.getEmail());
-
-                //해당 자료들은 변경된 내용을 넣는다
-                memberJPARepository.save(user);
-
             } else {
                 //오류없음
             }
+            user.setPw(bCryptPasswordEncoder.encode(memberDTO.getPw()));
+            user.setAddress(memberDTO.getAddress());
+            user.setPhone(memberDTO.getPhone());
+            user.setEmail(memberDTO.getEmail());
+
+            //해당 자료들은 변경된 내용을 넣는다
+            memberJPARepository.save(user);
+
         }
     }
 

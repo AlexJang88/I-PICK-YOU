@@ -21,7 +21,7 @@ public class RecruitStateController {
         if(principal!=null) {
             sid= principal.getName();
             model.addAttribute("id",principal.getName());
-            service.onApply(model, pageNum, recruitId, 3);
+            service.onApply(model, pageNum, recruitId, 2);
         }
         return "recruitState/applyList";
     }
@@ -30,7 +30,7 @@ public class RecruitStateController {
         String sid="";
         if(principal!=null) {
             sid= principal.getName();
-            service.confirmedMember(model, pageNum, recruitId, 3);
+            service.confirmedMember(model, pageNum, recruitId, 2);
             model.addAttribute("id",principal.getName());
         }
         return "recruitState/confirmedList";
@@ -56,7 +56,7 @@ public class RecruitStateController {
     }
     @PatchMapping("/posts")
     public  String patch(@RequestParam String memberId,@RequestParam Long recruitId){
-                service.cancelConfirmed(memberId,recruitId,3);
+                service.cancelConfirmed(memberId,recruitId,2);
 
 
     return "redirect:/recruitState/posts/confirm/"+recruitId;

@@ -24,4 +24,5 @@ public interface RecruitService {
     public Map<String,String> saveSignature(MultipartFile multipartFile,Long contractId,String userId);
     public void basicContract(String memberId,String companyId,int type,Long stateId);
     public void updateReadCount(Long boardNum);
+    public void mainList(Model model);
 }

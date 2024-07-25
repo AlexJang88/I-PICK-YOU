@@ -65,6 +65,18 @@
             <div class="content-wrapper">
                 <!-- Content -->
                 <div class="container-xxl flex-grow-1 container-p-y">
+                    <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Chat</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <iframe id="roomFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <h4 class="fw-bold py-3 mb-4">소개소 상세내용 작성</h4>
 
                     <!-- Basic Layout & Basic with Icons -->
@@ -109,8 +121,10 @@
                                                         id="contact"
                                                         class="form-control phone-mask"
                                                         placeholder="02-1111-1111"
+                                                        maxlength="13"
                                                         name="contact"
                                                         required
+                                                        oninput="autoFormatPhone(this)"
                                                 />
                                             </div>
                                         </div>
@@ -125,6 +139,7 @@
                                                         class="form-control phone-mask"
                                                         placeholder="주소를 입력하세요"
                                                         name="address"
+                                                        readonly
                                                         required
                                                 />
                                                 <button type="button" id="addressButton">주소 검색</button>
@@ -221,6 +236,37 @@
             });
         });
     </script>
+
+    <script>
+        function autoFormatPhone(input) {
+            // 입력된 내용에서 숫자만 추출하여 연결
+            let phoneNumber = input.value.replace(/\D/g, '');
+
+            // 길이에 따라서 특정 형식으로 변환
+            if (phoneNumber.length >= 4 && phoneNumber.length <= 7) {
+                phoneNumber = phoneNumber.replace(/(\d{3})(\d+)/, '$1-$2');
+            } else if (phoneNumber.length >= 8) {
+                phoneNumber = phoneNumber.replace(/(\d{3})(\d{4})(\d+)/, '$1-$2-$3');
+            }
+
+            // 입력 필드에 변환된 값 적용
+            input.value = phoneNumber;
+        }
+    </script>
+
+    <script>
+        $(document).ready(function() {
+                        window.addEventListener('message', event => {
+                           if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
+                           if (event.data === 'modalClosed') {
+                               $('#myModal').modal('hide');
+                                 $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                           }
+                       });
+
+    </script>
+
+
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>

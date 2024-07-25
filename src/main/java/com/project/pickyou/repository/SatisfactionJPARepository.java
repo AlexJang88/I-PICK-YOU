@@ -11,4 +11,5 @@ public interface SatisfactionJPARepository extends JpaRepository<SatisfactionEnt
     public Optional<SatisfactionEntity> findByWriterAndTarget(String writer,String Target);
     public List<SatisfactionEntity> findByTarget(String id);
     public List<SatisfactionEntity> findByTargetAndContentNotNull(String id);
+    public List<SatisfactionEntity> findByWriter(String writer);
 }

@@ -1,11 +1,12 @@
 package com.project.pickyou.controller.admin;
 
 
+import com.project.pickyou.dto.MemberDTO;
+import com.project.pickyou.dto.MemberInfoDTO;
 import com.project.pickyou.entity.PaymentEntity;
 import com.project.pickyou.dto.PointDTO;
 import com.project.pickyou.service.AdminService;
 import lombok.RequiredArgsConstructor;
-import org.bouncycastle.math.raw.Mod;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -210,11 +211,12 @@ public class AdminController {
     }
 
     @DeleteMapping("/userDelete")
-    public String userDelete(String id, Principal pc, Model model){ //일반유저삭제
+    public String userDelete(String memberId, Principal pc, Model model){ //일반유저삭제
         if(pc != null){
             model.addAttribute("id",pc.getName()) ;
         }
-        adminService.userDelete(id);
+
+        adminService.userDelete(memberId);
         return "redirect:/admin/management";
     }
 
@@ -229,11 +231,12 @@ public class AdminController {
     }
 
     @DeleteMapping("/companyDelete")
-    public String companyDelete(String id, Principal pc, Model model){ //사업자유저삭제
+    public String companyDelete(String memberId, Principal pc, Model model){ //사업자유저삭제
         if(pc != null){
             model.addAttribute("id",pc.getName()) ;
         }
-        adminService.userDelete(id);
+
+        adminService.userDelete(memberId);
         return "redirect:/admin/companyManagement";
     }
 

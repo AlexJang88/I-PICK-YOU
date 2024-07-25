@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -21,7 +22,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 import java.io.IOException;
@@ -46,6 +47,7 @@ public class RecruitServiceImpl implements RecruitService {
     private final RecruitDetailJPARepository recruitDetailJPA;
     private final ContractJPARepository contractJPA;
     private final ConfirmJPARepository confirmJPA;
+    private final SatisfactionServiceImpl satisfactionService;
 
     @Override
     public void AllPosts(Model model, int pageNum,int checkType) {
@@ -56,6 +58,7 @@ public class RecruitServiceImpl implements RecruitService {
         Sort sort = Sort.by(Sort.Order.desc("reg"));
         Page<RecruitEntity> page =null;
         List<RecruitEntity> posts =null;
+
         if(checkType==1) {
             longCount = recruitJPA.count();
             count = longCount.intValue();
@@ -87,6 +90,7 @@ public class RecruitServiceImpl implements RecruitService {
         model.addAttribute("startPage", startPage);
         model.addAttribute("pageBlock", pageBlock);
         model.addAttribute("endPage", endPage);
+
     }
 
     @Override
@@ -116,6 +120,8 @@ public class RecruitServiceImpl implements RecruitService {
         model.addAttribute("startPage", startPage);
         model.addAttribute("pageBlock", pageBlock);
         model.addAttribute("endPage", endPage);
+        satisfactionService.myScore(model,id,2);
+
     }
 
     @Override
@@ -365,7 +371,9 @@ public class RecruitServiceImpl implements RecruitService {
             cdto.setApply(4);
         }
         cdto.setContractId(maxnum);
-        cdto.setRecruitId(stateId);
+        if(stateId!=0) {
+            cdto.setRecruitId(stateId);
+        }
         System.out.println("========================cdto"+dto);
         contractJPA.save(dto.toContractEntity());
         System.out.println("========================confirmsave"+maxnum);
@@ -508,6 +516,19 @@ public class RecruitServiceImpl implements RecruitService {
         }
     }
 
+    @Override
+    public void mainList(Model model) {
+
+        List<RecruitEntity> argentPost =recruitJPA.findByStatus(2);
+        List<RecruitEntity> normalPost=recruitJPA.findByStatus(1);
+
+        model.addAttribute("argentPost",argentPost);
+        model.addAttribute("normalPost",normalPost);
+
+
+
+    }
+
 
     public String makeFolder(String uploadPath, int boardType, Long boardNum) {
         String folderPath = boardType + File.separator + boardNum;
@@ -542,6 +563,18 @@ public class RecruitServiceImpl implements RecruitService {
                 }
             }
         }
+    }
+    @Scheduled(cron = "0 0 0/1 * * *")
+    public void overTimeCheck(){
+        String result="";
+       Date date = new Date();
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DATE,-1);
+        Date lastDate = cal.getTime();
+        recruitJPA.deleteByRegGreaterThanEqual(lastDate);
+
     }
 
 }

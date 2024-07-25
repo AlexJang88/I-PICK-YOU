@@ -10,7 +10,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
-    <title>Fluid - Layouts | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>팀</title>
     <meta name="description" content=""/>
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon/favicon.ico}"/>
@@ -50,96 +50,207 @@
             <!-- Content wrapper -->
             <div class="content-wrapper">
                 <!-- Content -->
-                <div class="container-fluid flex-grow-1 container-p-y">
-                    <!-- Layout Demo -->
-                    <div class="card mb-4" th:if="${post}==null">
-                        팀 이력서가 없습니다 <a th:href="@{/teams/posts/write/{memberId}(memberId=${member.id})}" class="btn btn-primary">등록하러가기</a>
-                    </div>
-                    <div class="card mb-4" th:if="${post}!=null">
-                        <div class="d-flex align-items-start">
-                            <img th:src="@{'/upload/profile/'+${post.profile}}" width="300px" height="100px" class="mr-4" style="margin-right: 50px;">
-                            <div>
-                                <div class="d-flex align-items-center mb-2">
-                                    <span th:text="${post.job}" style="font-size: 1.5em; margin-right: 10px;">업종</span>
-                                    <a class="page-link" th:href="@{/teams/favorits/{boardNum}/{target}(boardNum=${post.id},target=${member.id})}" >
-                                    <img th:if="${favoritecheck==0}" th:src="@{/img/favoritenoncheck.png}" width="30px">
-                                    <img th:if="${favoritecheck==1}" th:src="@{/img/favoritecheck.png}" width="30px">
-                                    </a>
-                                    <input type="hidden" id="sender" th:value="${to}">
-                                    <input type="hidden" id="receiver" th:value="${post.memberId}">
-                                    <input type="hidden" id="ajaxId" th:value="${to}">
-                                    <button th:if="${type!=1}" id="openChatBtn" class="btn btn-primary">채팅</button>
-                                        <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h4 class="modal-title">Chat</h4>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <iframe id="chatFrame" width="100%" height="500px" frameborder="0"></iframe>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Chat</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <iframe id="roomFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                    </div>
                                 </div>
-                                <h2 th:text="${post.teamName}" style="font-size: 3em;">팀 이름</h2>
                             </div>
                         </div>
-                        <hr/>
-                        <div>
-                            팀원: <span th:text="${post.number}"></span><br/>
-                            연락처: <span th:text="${post.phone}"></span><br/>
-                            가능지역: <span th:text="${post.address}"></span><br/>
-                            팀 소개: <span th:utext="${post.introduction}"></span><br/>
-                            팀 장점 :<span th:text="${post.advantage}"></span>
-                            <hr/>
+                        <div class="modal" id="chatModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Chat</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <iframe id="chatFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                        <div class="container-xxl flex-grow-1 container-p-y text-center">
+                            <!-- 제목 -->
+                            <div class="card-header">
+                                <h2 class="fw-bold py-3 mb-4">
+                                    팀 이력서
+                                </h2>
+                                <button th:if="${type!=1 and auth!=0}" id="openChatBtn" class="btn btn-primary">채팅</button>
+                            </div>
+                            <!-- 카드 본문 -->
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- 학원이름 -->
+                                    <div class="col-md-12 mb-4">
+                                        <div class="card h-100 shadow-lg">
+                                            <div class="card-body">
+                                                <h5 class="card-title fw-bold">
+                                                    <i class="bx bx-buildings text-muted"></i> 팀 이름
+                                                </h5>
+                                                <p class="card-text" th:text="${post.teamName}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- 등록날짜, 조회수, 주소 -->
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card h-100 shadow-lg">
+                                            <div class="card-body">
+                                                <h5 class="card-title fw-bold">
+                                                    <i class="bx bx-calendar text-muted"></i> 등록날짜
+                                                </h5>
+                                                <p class="card-text" th:text="${#dates.format(post.reg, 'yyyy-MM-dd')}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card h-100 shadow-lg">
+                                            <div class="card-body">
+                                                <h5 class="card-title fw-bold">
+                                                    <i class="bx bx-show text-muted"></i> 연락처
+                                                </h5>
+                                                <p class="card-text" th:text="${post.phone}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card h-100 shadow-lg">
+                                            <div class="card-body">
+                                                <h5 class="card-title fw-bold">
+                                                    <i class="bx bx-map text-muted"></i> 주소
+                                                </h5>
+                                                <p class="card-text" th:text="${post.address}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- 전화번호, 모집분야, 모집인원 -->
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card h-100 shadow-lg">
+                                            <div class="card-body">
+                                                <h5 class="card-title fw-bold">
+                                                    <i class="bx bx-phone text-muted"></i> 모집분야
+                                                </h5>
+                                                <p class="card-text" th:text="${post.job}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                    <div class="card h-100 shadow-lg">
+                                        <div class="card-body">
+                                            <h5 class="card-title fw-bold">
+                                                <i class="bx bx-briefcase text-muted"></i> 모집인원
+                                            </h5>
+                                            <p class="card-text" th:text="${post.number}"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card h-100 shadow-lg">
+                                            <div class="card-body">
+                                                <h5 class="card-title fw-bold">
+                                                    <i class="bx bx-briefcase text-muted"></i> 강점
+                                                </h5>
+                                                <p class="card-text" th:text="${post.advantage}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                        <div th:each="img : ${imgList}">
-                            <img th:src="@{'/upload/image/'+${img.boardType}+'/'+${img.boardNum}+'/'+${img.name}}" style="max-width: 100%;">
+                                    <!-- 기타사항 -->
+                                </div>
+
+                                <br>
+
+                                <div class="card mb-4 shadow-lg"> <!-- shadow-lg 클래스를 추가 -->
+                                    <h5 class="card-header text-center">상세내용</h5>
+                                    <div class="card-body d-flex justify-content-center align-items-center">
+                                        <div class="divider text-center">
+                                            <span th:text="${post.introduction}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 사진 보기 카드 -->
+                                <div class="card mb-4 shadow-lg">
+                                    <div class="card-body d-flex justify-content-center align-items-center">
+                                        <div class="row justify-content-center" style="gap: 20px;"> <!-- gap 값을 조정 -->
+                                            <div th:each="image : ${images}" class="col-md-4 mb-3 d-flex justify-content-center">
+                                                <!-- 이미지 삽입 -->
+                                                <img th:src="@{'/upload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}" alt="사진" style="width: 250px; height: 250px;"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 수정하기/삭제하기 버튼 -->
+                                <div class="row">
+                                    <div class="col-md-6 text-center" th:if="${type==1}">
+                                        <form th:action="@{/teams/posts/edit/{boardNum}(boardNum=${post.id})}" th:method="get">
+                                            <button class="btn btn-primary" type="submit" th:if="${type==1}">수정하기</button>
+                                        </form>
+                                    </div>
+                                    <div class="col-md-6 text-center" th:if="${type==1 or auth==99}">
+                                        <form th:action="@{/teams/posts}" th:method="patch">
+                                            <input type="hidden" name="id" th:value="${post.id}">
+                                            <input type="hidden" name="memberId" th:value="${post.memberId}">
+                                            <input type="hidden" name="job" th:value="${post.job}">
+                                            <input type="hidden" name="teamName" th:value="${post.teamName}">
+                                            <input type="hidden" name="address" th:value="${post.address}">
+                                            <input type="hidden" name="number" th:value="${post.number}">
+                                            <input type="hidden" name="phone" th:value="${post.phone}">
+                                            <input type="hidden" name="introduction" th:value="${post.introduction}">
+                                            <input type="hidden" name="advantage" th:value="${post.advantage}">
+                                            <input type="hidden" name="profile" th:value="${post.profile}">
+                                            <input type="hidden" name="status" th:value="${post.status}">
+                                            <button th:if="${post.status==0 and type==1}" class="btn btn-primary" type="submit" >이력서 공개</button>
+                                            <button th:if="${post.status==1 and type==1}" class="btn btn-primary" type="submit" >이력서 비공개</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <br/>
                     </div>
-                    <!--/ Layout Demo -->
                 </div>
+                <input type="hidden" id="sender" th:value="${id}">
+                <input type="hidden" id="receiver" th:value="${post.memberId}">
+
                 <!-- / Content -->
-                <div class="d-flex justify-content-end mb-3">
-                    <form th:action="@{/teams/posts/edit/{boardNum}(boardNum=${post.id})}" th:method="get">
-                        <button class="btn btn-primary" type="submit" th:if="${type==1}">수정하기</button>
-                    </form>
-                    <form th:action="@{/teams/posts}" th:method="patch">
-                        <input type="hidden" name="id" th:value="${post.id}">
-                        <input type="hidden" name="memberId" th:value="${post.memberId}">
-                        <input type="hidden" name="job" th:value="${post.job}">
-                        <input type="hidden" name="teamName" th:value="${post.teamName}">
-                        <input type="hidden" name="address" th:value="${post.address}">
-                        <input type="hidden" name="number" th:value="${post.number}">
-                        <input type="hidden" name="phone" th:value="${post.phone}">
-                        <input type="hidden" name="introduction" th:value="${post.introduction}">
-                        <input type="hidden" name="advantage" th:value="${post.advantage}">
-                        <input type="hidden" name="profile" th:value="${post.profile}">
-                        <input type="hidden" name="status" th:value="${post.status}">
-                        <button th:if="${post.status==0 and check==1}" class="btn btn-primary" type="submit" >이력서 공개</button>
-                        <button th:if="${post.status==1 and check==1}" class="btn btn-primary" type="submit" >이력서 비공개</button>
-                    </form>
+
+
                 </div>
                 <script>
-                    $(document).ready(function() {
+
+                     window.addEventListener('message', event => {
+                        if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
+                        if (event.data === 'modalClosed') {
+                            $('#myModal').modal('hide');
+                              $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                        }
+                        });
+
                         $('#openChatBtn').click(function() {
                             var sender = $('#sender').val();
                             var receiver = $('#receiver').val();
                             var chatUrl = 'http://localhost:4000/chat/' + sender + '/' + receiver;
                             $('#chatFrame').attr('src', chatUrl);
-                            $('#myModal').modal('show');
+                            $('#chatModal').modal('show');
                         });
-                    });
+
                 </script>
                 <!-- Footer -->
                 <div th:include="~{design/footer :: footer}"></div>
                 <!-- / Footer -->
                 <div class="content-backdrop fade"></div>
-            </div>
-            <!-- Content wrapper -->
+        </div>
+        <!-- Content wrapper -->
+    </div>
+    <!-- / Layout page -->
+</div>
 
             <!-- Overlay -->
             <div class="layout-overlay layout-menu-toggle"></div>

@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum=1.0, maximum=1.0"/>
 
-    <title>Fluid - Layouts | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>채용공고</title>
 
     <meta name="description" content=""/>
 
@@ -51,6 +51,18 @@
             <div class="content-wrapper">
                 <!-- Content -->
                 <div class="container-fluid flex-grow-1 container-p-y">
+                    <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Chat</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <iframe id="roomFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Layout Demo -->
                     <div class="row">
                         <!-- Basic Layout -->
@@ -171,6 +183,17 @@
                         <!--/ Layout Demo -->
                     </div>
                     <!-- / Content -->
+                    <script>
+                        $(document).ready(function() {
+                    window.addEventListener('message', event => {
+                       if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
+                       if (event.data === 'modalClosed') {
+                           $('#myModal').modal('hide');
+                             $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                       }
+                       });
+                   });
+                    </script>
                     <!-- Footer -->
                     <div th:include="~{design/footer :: footer}"></div>
                     <!-- / Footer -->
@@ -207,43 +230,64 @@
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 <script>
-    function validateForm() {
-        const form = document.getElementById('recruitForm');
-        const wage = form.wage.value.trim();
-        const age = form.age.value.trim();
-        const gender = form.gender.value.trim();
-        const contact = form.contact.value.trim();
-        const worker = form.worker.value.trim();
-        const manager = form.manager.value.trim();
-        const qualification = form.qualification.value.trim();
-        const detail = form.detail.value.trim();
-        const content = form.content.value.trim();
-        const title = form.title.value.trim();
-        const startDate = form.startDateParam.value.trim();
-        const endDate = form.endDateParam.value.trim();
-        const files = form.files.files;
-        if (!wage || !age || !gender || !contact || !worker || !manager || !qualification|| !detail || !content || !title ||!startDate ||!endDate) {
-            alert('모두 입력해주세요');
-            return false;
-        }
-        for (let i = 0; i < files.length; i++) {
-            if (!files[i].type.startsWith('image/')) {
-                alert('이미지 파일만 등록할 수 있습니다.');
-                return false;
-            }
-        }
-        return true;
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+       // 오늘 날짜를 YYYY-MM-DD 형식으로 가져오기
+       const today = new Date().toISOString().split('T')[0];
 
-    function formatPhoneNumber(input) {
-        let value = input.value.replace(/\D/g, '');
-        if (value.length > 2 && value.startsWith('02')) {
-            value = value.replace(/^(\d{2})(\d{4})(\d{4})$/, '$1-$2-$3');
-        } else if (value.length > 3) {
-            value = value.replace(/^(\d{3})(\d{4})(\d{4})$/, '$1-$2-$3');
-        }
-        input.value = value;
-    }
+       // 모집 시작일의 min 속성을 오늘 날짜로 설정
+       const startDateInput = document.getElementById('startDateParam');
+       startDateInput.setAttribute('min', today);
+
+       // 모집 시작일 선택 시 모집 마감일의 min 속성 설정
+       startDateInput.addEventListener('change', function() {
+           const startDate = this.value;
+           const endDateInput = document.getElementById('endDateParam');
+           endDateInput.setAttribute('min', startDate);
+       });
+
+       // 초기 상태에서 모집 마감일의 min 속성을 모집 시작일로 설정
+       const endDateInput = document.getElementById('endDateParam');
+       if (startDateInput.value) {
+           endDateInput.setAttribute('min', startDateInput.value);
+       }
+   });
+   function validateForm() {
+       const form = document.getElementById('recruitForm');
+       const wage = form.wage.value.trim();
+       const age = form.age.value.trim();
+       const gender = form.gender.value.trim();
+       const contact = form.contact.value.trim();
+       const worker = form.worker.value.trim();
+       const manager = form.manager.value.trim();
+       const qualification = form.qualification.value.trim();
+       const detail = form.detail.value.trim();
+       const content = form.content.value.trim();
+       const title = form.title.value.trim();
+       const startDate = form.startDateParam.value.trim();
+       const endDate = form.endDateParam.value.trim();
+       const files = form.files.files;
+       if (!wage || !age || !gender || !contact || !worker || !manager || !qualification|| !detail || !content || !title ||!startDate ||!endDate) {
+           alert('모두 입력해주세요');
+           return false;
+       }
+       for (let i = 0; i < files.length; i++) {
+           if (!files[i].type.startsWith('image/')) {
+               alert('이미지 파일만 등록할 수 있습니다.');
+               return false;
+           }
+       }
+       return true;
+   }
+
+   function formatPhoneNumber(input) {
+       let value = input.value.replace(/\D/g, '');
+       if (value.length > 2 && value.startsWith('02')) {
+           value = value.replace(/^(\d{2})(\d{4})(\d{4})$/, '$1-$2-$3');
+       } else if (value.length > 3) {
+           value = value.replace(/^(\d{3})(\d{4})(\d{4})$/, '$1-$2-$3');
+       }
+       input.value = value;
+   }
 </script>
 
 </body>

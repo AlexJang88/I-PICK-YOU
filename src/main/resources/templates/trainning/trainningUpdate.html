@@ -65,6 +65,18 @@
             <div class="content-wrapper">
                 <!-- Content -->
                 <div class="container-xxl flex-grow-1 container-p-y">
+                    <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Chat</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <iframe id="roomFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <h4 class="fw-bold py-3 mb-4">훈련소 내용 수정하기</h4>
 
                     <!-- Basic Layout & Basic with Icons -->
@@ -81,6 +93,7 @@
                                  <form th:action="@{/trainning/posts/{trainnignum}(trainnignum=${DetailsList.get().id})}" th:method="patch" enctype="multipart/form-data">
                                      <input type="hidden" name="id" th:value="${DetailsList.get().id}">
                                      <input type="hidden" name="companyId" th:value="${DetailsList.get().companyId}">
+                                     <input type="hidden" name="readCount" th:value="${DetailsList.get().readCount}">
 
                                      <span th:text="${DetailsList.get().reg}"></span>
 
@@ -151,6 +164,8 @@
                                                         placeholder="02-1111-1111"
                                                         name="contact"
                                                         th:value="${DetailsList.get().contact}"
+                                                        maxlength="13"
+                                                        oninput="autoFormatPhone(this)"
                                                         required
                                                 />
                                             </div>
@@ -184,6 +199,7 @@
                                                         name="address"
                                                         th:value="${DetailsList.get().address}"
                                                         required
+                                                        readonly
                                                 />
                                                 <button type="button" id="addressButton">주소 검색</button>
                                             </div>
@@ -266,7 +282,17 @@
 <script th:src="@{/assets/js/main.js}"></script>
 
 <!-- Page JS -->
+<script>
+    $(document).ready(function() {
+                    window.addEventListener('message', event => {
+                       if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
+                       if (event.data === 'modalClosed') {
+                           $('#myModal').modal('hide');
+                             $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                       }
+                   });
 
+</script>
     <!--주소-->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -303,6 +329,23 @@
         }
 
         return true;
+    }
+</script>
+
+<script>
+    function autoFormatPhone(input) {
+        // 입력된 내용에서 숫자만 추출하여 연결
+        let phoneNumber = input.value.replace(/\D/g, '');
+
+        // 길이에 따라서 특정 형식으로 변환
+        if (phoneNumber.length >= 4 && phoneNumber.length <= 7) {
+            phoneNumber = phoneNumber.replace(/(\d{3})(\d+)/, '$1-$2');
+        } else if (phoneNumber.length >= 8) {
+            phoneNumber = phoneNumber.replace(/(\d{3})(\d{4})(\d+)/, '$1-$2-$3');
+        }
+
+        // 입력 필드에 변환된 값 적용
+        input.value = phoneNumber;
     }
 </script>
 

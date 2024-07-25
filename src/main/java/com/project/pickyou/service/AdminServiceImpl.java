@@ -5,6 +5,7 @@ import com.project.pickyou.entity.MemberEntity;
 import com.project.pickyou.entity.PaymentEntity;
 import com.project.pickyou.entity.PointEntity;
 import com.project.pickyou.entity.TrainningEntity;
+import com.project.pickyou.repository.MemberInfoJAPRepository;
 import com.project.pickyou.repository.MemberJPARepository;
 import com.project.pickyou.repository.PaymentJPARepository;
 import com.project.pickyou.repository.PointJPARepository;
@@ -32,6 +33,7 @@ public class AdminServiceImpl implements AdminService{
 
     private final PointJPARepository pointJPA;
     private final MemberJPARepository memberJPARepository;
+    private final MemberInfoJAPRepository memberInfoJAPRepository;
     private final PaymentJPARepository paymentJPA;
 
     @Override
@@ -67,9 +69,10 @@ public class AdminServiceImpl implements AdminService{
 
     }
 
-    @Override
-    public void userDelete(String id) { //일반, 사업자 유저 삭제
-        memberJPARepository.deleteById(id);
+    @Override  //유저삭제
+    public void userDelete(String memberId) { //일반, 사업자 유저 삭제
+
+        memberJPARepository.deleteById(memberId);
     }
 
     @Override

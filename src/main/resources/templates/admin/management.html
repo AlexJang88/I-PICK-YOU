@@ -66,7 +66,18 @@
             <div class="content-wrapper">
                 <!-- Content -->
                 <div class="container-fluid flex-grow-1 container-p-y">
-
+                    <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Chat</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <iframe id="roomFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
 
                     <!-- Layout Demo -->
@@ -91,21 +102,22 @@
                                     <tbody class="table-border-bottom-0">
                                     <tr th:each="list, iterStat : ${getUsrelist}">
                                         <td><span th:text="${iterStat.index + 1}"></span></td>
-                                        <th> <span th:text="${list.id}"></span></th>
-                                        <th> <span th:text="${list.memberInfo.name}"></span></th>
-                                        <th>
+                                        <td><span th:text="${list.id}"></span></td>
+                                        <td><span th:text="${list.memberInfo.name}"></span></td>
+                                        <td>
                                             <span th:switch="${list.memberInfo.gender}">
                                                 <span th:case="'1'">남자</span>
                                                 <span th:case="'2'">여자</span>
                                             </span>
-                                        </th>
-                                        <th> <span th:text="${list.phone}"></span></th>
-                                        <th>
-                                            <form id="deleteForm" th:action="@{/admin/userDelete}" th:method="delete">
-                                                <input type="hidden" name="id" th:value="${list.id}" />
-                                                <button type="button" class="btn btn-warning" onclick="confirmDeleteUser(event)">가입해지하기</button>
+                                        </td>
+                                        <td><span th:text="${list.phone}"></span></td>
+                                        <td>
+                                            <form id="deleteForm" th:action="@{/admin/userDelete}" th:method="post" style="display: inline;">
+                                                <input type="hidden" name="memberId" th:value="${list.id}" />
+                                                <input type="hidden" name="_method" value="delete">
+                                                <button type="button" class="btn btn-warning" onclick="confirmDeleteUser(this)">가입해지하기</button>
                                             </form>
-                                        </th>
+                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -166,7 +178,13 @@
     <div class="layout-overlay layout-menu-toggle"></div>
 </div>
 <!-- / Layout wrapper -->
-
+<script>
+    function confirmDeleteUser(button) {
+        if (confirm('정말로 가입해지 하시겠습니까?')) {
+            button.closest('form').submit();
+        }
+    }
+</script>
 
 <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->
@@ -179,14 +197,7 @@
 <!-- endbuild -->
 
 <!-- Vendors JS -->
-<script>
-    function confirmDeleteUser(event) {
-        event.preventDefault();
-        if (confirm("정말 삭제하시겠습니까?")) {
-            document.getElementById("deleteForm").submit();
-        }
-    }
-</script>
+
 <!-- Main JS -->
 <script th:src="@{/assets/js/main.js}"></script>
 
@@ -195,7 +206,17 @@
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 
+<script>
+    $(document).ready(function() {
+                    window.addEventListener('message', event => {
+                       if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
+                       if (event.data === 'modalClosed') {
+                           $('#myModal').modal('hide');
+                             $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                       }
+                   });
 
+</script>
 
 
 </body>
