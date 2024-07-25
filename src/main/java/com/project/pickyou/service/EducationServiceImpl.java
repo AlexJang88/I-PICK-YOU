@@ -83,17 +83,28 @@ public class EducationServiceImpl implements EducationService {
     @Override
     public void post(Model model, Long num, String sid,int boardType) {
         int type=0;
+        int auth=0;
         Optional<EducationEntity> post = educationJPA.findById(num);
+        Optional<MemberEntity> member =memberJPA.findById(sid);
         EducationDTO edto = new EducationDTO();
         CompanyInfoDTO cidto = new CompanyInfoDTO();
         MemberDTO mdto = new MemberDTO();
         List<ImageEntity> imageList = Collections.emptyList();
         int favoritecheck = 0;
+        if(member.isPresent()) {
+            if (member.get().getAuth().contains("USER")) {
+                auth = 1;
+            } else if (member.get().getAuth().contains("COMPANY")) {
+                auth = 2;
+            } else if (member.get().getAuth().contains("ADMIN")) {
+                auth = 99;
+            }
 
+        }
 
 
         if (post.isPresent()) {
-            if(post.get().getId().equals(sid)){
+            if(post.get().getCompanyId().equals(sid)){
                 type=1;
             }
             imageList = imageJPA.findByBoardTypeAndBoardNum(boardType, num);
@@ -102,6 +113,7 @@ public class EducationServiceImpl implements EducationService {
             mdto = post.get().getMember().toMemberDTO();
             favoritecheck=getfavoritStatus(sid,post.get().getCompanyId());
             edto.setContent(edto.getContent().replace("<br>", "\r\n"));
+            model.addAttribute("auth",auth);
             model.addAttribute("favoriteCheck", favoritecheck);
             model.addAttribute("member", mdto);
             model.addAttribute("company", cidto);

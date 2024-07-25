@@ -4,6 +4,7 @@ package com.project.pickyou.controller.all;
 import com.project.pickyou.dto.MemberDTO;
 import com.project.pickyou.service.LoginService;
 import com.project.pickyou.service.NoticeService;
+import com.project.pickyou.service.RecruitService;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -27,14 +28,12 @@ public class MainController {
 
     // 정룡 (메인에 공지사항)
     private final NoticeService noticeService;
+    private final RecruitService recruitService;
 
     @GetMapping("/")
     public String mainp(Model model){
-
-
         //아래 코드는 메인에서 로그인시 어떤 권한을가지고 있는지 확인하다
         String id = SecurityContextHolder.getContext().getAuthentication().getName();
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iter = authorities.iterator();
@@ -42,10 +41,9 @@ public class MainController {
         String role = auth.getAuthority();
         model.addAttribute("id",id);
         model.addAttribute("role",role);
-
         // 정룡 (메인에 공지사항)
         noticeService.mainNotice(model);
-
+        recruitService.mainList(model);
         return "main";
     }
 
@@ -59,8 +57,4 @@ public class MainController {
         }
         return "calendar/calendar";
     }
-
-
-
-
 }

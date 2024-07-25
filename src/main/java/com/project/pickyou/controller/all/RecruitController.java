@@ -47,6 +47,7 @@ public class RecruitController {
             model.addAttribute("id",principal.getName());
         }
         model.addAttribute("auth",mem);
+        model.addAttribute("type",type);
         service.AllPosts(model,pageNum,type);
         return "recruit/list";
     }
@@ -193,17 +194,16 @@ public class RecruitController {
         }
         if(type==1){
                 url="recruit/contractForm";
-            service.userInfo(model,memberId,name,stateId,type);
+            service.userInfo(model,memberId,name,stateId,1);
             }
         else if(type==2){
             service.basicContract(memberId,name,1,stateId);
             url="redirect:/";
         }else if(type==3){
             url="recruit/contractForm";
-            service.userInfo(model,memberId,name,stateId,type);
+            service.userInfo(model,memberId,name,stateId,4);
         }else if(type==4){
             url="redirect:/recruit/posts";
-
             service.basicContract(memberId,name,4,stateId);
         }
 

@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
 
-    <title>Fluid - Layouts | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>안전교육정보</title>
 
     <meta name="description" content=""/>
 
@@ -54,6 +54,18 @@
             <div class="content-wrapper">
                 <!-- Content -->
                 <div class="container-fluid flex-grow-1 container-p-y">
+                    <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Chat</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <iframe id="roomFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Layout Demo -->
                     <div class="row">
                         <!-- Basic Layout -->
@@ -76,7 +88,7 @@
                                         <div class="row mb-3">
                                             <label class="col-sm-2 col-form-label" for="contact">연락처</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control" id="contact" name="contact" placeholder="연락처를 작성해주세요." required/>
+                                                <input type="text" class="form-control" id="contact" name="contact" oninput="formatPhoneNumber(this)" maxlength="13" placeholder="연락처를 작성해주세요." required/>
                                             </div>
                                         </div>
                                         <div class="row mb-3">
@@ -122,7 +134,18 @@
                         <!--/ Layout Demo -->
                     </div>
                     <!-- / Content -->
+                    <script>
 
+                        $(document).ready(function() {
+                                            window.addEventListener('message', event => {
+                                               if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
+                                               if (event.data === 'modalClosed') {
+                                                   $('#myModal').modal('hide');
+                                                     $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                                               }
+                                               });
+                                           });
+                    </script>
                     <!-- Footer -->
                     <div th:include="~{design/footer :: footer}"></div>
                     <!-- / Footer -->
@@ -205,6 +228,15 @@
             }).open();
         });
     });
+    function formatPhoneNumber(input) {
+        let value = input.value.replace(/\D/g, '');
+        if (value.length > 2 && value.startsWith('02')) {
+            value = value.replace(/^(\d{2})(\d{4})(\d{4})$/, '$1-$2-$3');
+        } else if (value.length > 3) {
+            value = value.replace(/^(\d{3})(\d{4})(\d{4})$/, '$1-$2-$3');
+        }
+        input.value = value;
+    }
 </script>
 </body>
 </html>

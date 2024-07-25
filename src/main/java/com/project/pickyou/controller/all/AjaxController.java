@@ -19,6 +19,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -113,6 +116,20 @@ public class AjaxController {
 
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/test")
+    @ResponseBody
+    public String testasdf(){
+        String result="";
+        Date date = new Date();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DATE,-1);
+        result = sf.format(cal.getTime());
+
+    return result;
+            }
 
 
 }

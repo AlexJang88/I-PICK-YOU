@@ -11,7 +11,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Fluid - Layouts | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>찜목록</title>
 
     <meta name="description" content="" />
 
@@ -44,15 +44,35 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
     <script>
         $(document).ready(function() {
-            $('#openChatBtn').click(function() {
-                var sender = $('#sender').val();
-                var receiver = $('#receiver').val();
-                var chatUrl = 'http://localhost:4000/chat/' + sender + '/' + receiver;
-                $('#chatFrame').attr('src', chatUrl);
-                $('#myModal').modal('show');
-            });
+          // Attach click event to all chat buttons
+          $('.chatBtn').click(function() {
+            // Get the sender and receiver IDs
+            var sender = $('#sender').val();
+            var receiver = $(this).closest('tr').find('.receiver').val();
+
+            // Set the chat URL with sender and receiver
+            var chatUrl = 'http://localhost:4000/chat/' + sender + '/' + receiver;
+
+            // Set the iframe source to the chat URL
+            $('#chatFrame').attr('src', chatUrl);
+
+            // Show the chat modal
+            $('#chatModal').modal('show');
+          });
+
+          // Handle message events from the iframe
+          window.addEventListener('message', function(event) {
+            // Ensure the message comes from the expected origin
+            if (event.origin !== 'http://localhost:4000') return;
+
+            // Check if the message indicates the modal should be closed
+            if (event.data === 'modalClosed') {
+              $('#chatModal').modal('hide');
+            }
+          });
         });
     </script>
+
 </head>
 
 <body>
@@ -69,21 +89,39 @@
             <div th:include="~{design/navi-bar :: navi}"></div>
             <!-- / Navbar -->
 
-            <!-- Content wrapper for check == 0 -->
-            <div class="content-wrapper" th:if="${check == 0}">
-                <div class="container-fluid flex-grow-1 container-p-y">
-                    <div class="card mb-4">
-                        찜한사람이 없습니다
-                    </div>
-                </div>
-            </div>
+
 
             <!-- Content wrapper for type != 0 -->
-            <div class="content-wrapper" th:if="${type != 0}">
+            <div class="content-wrapper">
                 <!-- Content for type == 1 -->
-                <div class="container-fluid flex-grow-1 container-p-y" th:if="${type == 1}">
-                    <div class="d-flex justify-content-end mb-3"></div>
-                    <div class="card">
+                <div class="container-fluid flex-grow-1 container-p-y" >
+                    <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Chat</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <iframe id="roomFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal" id="chatModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Chat</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <iframe id="chatFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="sender" th:value="${to}">
+
+                    <div class="card" th:if="${type == 1}">
                         <div class="table-responsive text-nowrap">
                             <table class="table">
                                 <thead>
@@ -92,8 +130,8 @@
                                     <th>회사이름</th>
                                     <th>연락처</th>
                                     <th>채팅</th>
-                                    <input type="hidden" id="sender" th:value="${to}">
-                                    <input type="hidden" id="ajaxId" th:value="${id}">
+
+
                                 </tr>
                                 </thead>
                                 <tbody class="table-border-bottom-0" th:each="post : ${posts}">
@@ -101,20 +139,14 @@
                                     <td><span th:text="${post.member.id}"></span></td>
                                     <td><span th:text="${post.member.companyInfo.companyName}"></span></td>
                                     <td><span th:text="${post.member.phone}"></span></td>
-                                    <td><button id="openChatBtn" class="btn btn-primary">채팅</button></td>
-
-                                    <input type="hidden" id="receiver" th:value="${post.member.id}">
+                                    <td><button class="btn btn-primary chatBtn">채팅</button></td>
+                                    <input type="hidden" class="receiver" th:value="${post.member.id}">
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                </div>
-
-                <!-- Content for type == 2 -->
-                <div class="container-fluid flex-grow-1 container-p-y" th:if="${type == 2}">
-                    <div class="d-flex justify-content-end mb-3"></div>
-                    <div class="card">
+                    <div class="card" th:if="${type == 2}">
                         <div class="table-responsive text-nowrap">
                             <table class="table">
                                 <thead>
@@ -130,26 +162,19 @@
                                     <td><span th:text="${post.member.id}"></span></td>
                                     <td><span th:text="${post.member.memberInfo.name}"></span></td>
                                     <td><span th:text="${post.phone}"></span></td>
-                                    <td><button id="openChatBtn" class="btn btn-primary">채팅</button></td>
-                                    <input type="hidden" id="receiver" th:value="${post.member.id}">
+                                    <td><button class="btn btn-primary">채팅</button></td>
+                                    <input type="hidden" class="receiver" th:value="${post.member.id}">
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h4 class="modal-title">Chat</h4>
-                                    </div>
-                                    <div class="modal-body">
-                                        <iframe id="chatFrame" width="100%" height="500px" frameborder="0"></iframe>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
+
+
                 </div>
+
+                <!-- Content for type == 2 -->
+
 
                 <!-- Pagination -->
                 <div class="row">
@@ -157,15 +182,15 @@
                         <nav aria-label="Page navigation">
                             <ul th:if="${count > 0}" class="pagination pagination-lg justify-content-center">
                                 <li th:if="${startPage > 10}" class="page-item">
-                                    <a class="page-link" th:href="@{'/recruit/posts?pageNum=' + (${startPage} - 10)}" aria-label="Previous">
+                                    <a class="page-link" th:href="@{'/pick/posts/my?pageNum=' + (${startPage} - 10)}" aria-label="Previous">
                                         <i class="tf-icon bx bx-chevrons-left"></i>
                                     </a>
                                 </li>
                                 <li class="page-item" th:each="i : ${#numbers.sequence(startPage, endPage)}">
-                                    <a class="page-link" th:href="@{'/recruit/posts?pageNum=' + ${i}}" th:text="${i}"></a>
+                                    <a class="page-link" th:href="@{'/pick/posts/my?pageNum=' + ${i}}" th:text="${i}"></a>
                                 </li>
                                 <li class="page-item" th:if="${endPage < pageCount}">
-                                    <a class="page-link" th:href="@{'/recruit/posts?pageNum=' + (${startPage} + 10)}" aria-label="Next">
+                                    <a class="page-link" th:href="@{'/pick/posts/my?pageNum=' + (${startPage} + 10)}" aria-label="Next">
                                         <i class="tf-icon bx bx-chevrons-right"></i>
                                     </a>
                                 </li>
@@ -189,11 +214,6 @@
 </div>
 <!-- / Layout wrapper -->
 
-<div class="buy-now">
-    <a th:href="@{https://themeselection.com/products/sneat-bootstrap-html-admin-template/}"
-       target="_blank"
-       class="btn btn-danger btn-buy-now">Upgrade to Pro</a>
-</div>
 
 <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->

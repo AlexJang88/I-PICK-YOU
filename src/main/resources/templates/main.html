@@ -6,6 +6,7 @@
       data-assets-path="../assets/"
       data-template="vertical-menu-template-free"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
 <head>
     <meta charset="utf-8" />
@@ -147,7 +148,7 @@
                                 <h4 class="modal-title">Chat</h4>
                             </div>
                             <div class="modal-body">
-                                <iframe id="chatFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                <iframe id="roomFrame" width="100%" height="500px" frameborder="0"></iframe>
                             </div>
                         </div>
                     </div>
@@ -184,7 +185,6 @@
                     </div>
 
                     <br>
-
                     <div class="image-container">
                         <img src="/img/main1.png" alt="Main Image" class="custom-image" />
                         <img src="/img/main2.png" alt="Main Image" class="custom-image" />
@@ -202,6 +202,66 @@
                         </span>
                     </div>
                     <!-- 정룡 -->
+                    <div class="table-responsive text-nowrap">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>채용공고</th>
+                                <th> </th>
+                                <th>급여</th>
+                                <th>근무조건</th>
+                                <th>지역</th>
+                                <th>조회수</th>
+                                <th>등록일</th>
+                            </tr>
+                            </thead>
+                            <tbody class="table-border-bottom-0" th:each="post, iterStat : ${argentPost}">
+                            <tr th:if="${iterStat.count<6}">
+                                <td>
+
+                                    <i class="fab fa-angular fa-lg text-danger me-3"></i>
+                                    <span class="badge bg-label-danger me-1">긴급!</span>
+                                </td>
+                                <td><a th:href="@{/recruit/posts/{boardNum}(boardNum=${post.id})}"><span th:text="${post.title}"></span> </a></td>
+                                <td><span th:text="${post.recruitDetail.wage} + ' 원'"></span></td>
+                                <td><span th:text="${post.recruitDetail.detail}"></span></td>
+                                <td><span th:text="${post.member.address}"></span></td>
+                                <td><span th:text="${post.readCount}"></span></td>
+                                <td><span th:text="${#dates.format(post.reg, 'yyyy-MM-dd')}"></span></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-responsive text-nowrap">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>채용공고</th>
+                                <th> </th>
+                                <th>급여</th>
+                                <th>근무조건</th>
+                                <th>지역</th>
+                                <th>조회수</th>
+                                <th>등록일</th>
+                            </tr>
+                            </thead>
+                            <tbody class="table-border-bottom-0" th:each="post, iterStat : ${normalPost}">
+                            <tr th:if="${iterStat.count<6}">
+                                <td>
+                                    <i class="fab fa-angular fa-lg text-danger me-3"></i>
+                                    <span class="badge bg-label-secondary me-1">일반!</span>
+
+                                </td>
+                                <td><a th:href="@{/recruit/posts/{boardNum}(boardNum=${post.id})}"><span th:text="${post.title}"></span> </a></td>
+                                <td><span th:text="${post.recruitDetail.wage} + ' 원'"></span></td>
+                                <td><span th:text="${post.recruitDetail.detail}"></span></td>
+                                <td><span th:text="${post.member.address}"></span></td>
+                                <td><span th:text="${post.readCount}"></span></td>
+                                <td><span th:text="${#dates.format(post.reg, 'yyyy-MM-dd')}"></span></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
                 </div>
                 <!-- / Content -->

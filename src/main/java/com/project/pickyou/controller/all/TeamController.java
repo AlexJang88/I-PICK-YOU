@@ -23,14 +23,16 @@ public class TeamController {
 
     @GetMapping("/posts")
     public String list(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum,Principal principal){
+        String sid="";
         int mem=0;
         if(principal!=null){
             model.addAttribute("memberId",principal.getName());
             mem= educationService.authCheck(principal);
             model.addAttribute("id",principal.getName());
+            sid= principal.getName();
         }
         model.addAttribute("auth",mem);
-        service.AllPosts(model,pageNum);
+        service.AllPosts(model,pageNum,sid);
         return "team/list";
     }
     @GetMapping("/posts/my")
@@ -90,16 +92,17 @@ public class TeamController {
         return url;
     }
     //작성페이지이동
-    @GetMapping("/posts/write/{memberId}")
-    public String write(Model model,@PathVariable String memberId,Principal principal){
+    @GetMapping("/posts/new")
+    public String write(Model model,Principal principal){
         boolean check=false;
         String url="team/write";
-        model.addAttribute("memberId",memberId);
+
         if(principal!=null){
             check=service.checkMyPost(principal.getName());
             model.addAttribute("id",principal.getName());
+            model.addAttribute("memberId",principal.getName());
         }
-        if(!check){
+        if(check){
             url="redirect:/teams/posts/my";
         }
         return url;
