@@ -47,6 +47,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth)->auth
 
 
+
                         .requestMatchers("/","/login","/joinCompany","/forgot/**","/mail/**","/posts/**","/join","/joinProc","/assets/**", "/img/**","/register","/css/**", "/js/**").permitAll()
                         .requestMatchers("/login","/ajax/**","/forgotId/**","/forgotPw/**","/notice/**","/payProcess/**").permitAll()
                         .requestMatchers("/qa/**").permitAll()
