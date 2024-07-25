@@ -67,27 +67,33 @@ public class ResumeServiceImpl implements ResumeService {
         careerJPA.save(Cdto.toCareerEntity());
 
         // 이력서 면허증 인서트
-        for (String licenceName : licenceNames) {
-            LicenceDTO Ldto = new LicenceDTO();
-            Ldto.setResumeId(num);
-            Ldto.setName(licenceName);
-            licenceJPA.save(Ldto.toLicenceEntity());
+        if (licenceNames != null && !licenceNames.isEmpty()) {
+            for (String licenceName : licenceNames) {
+                LicenceDTO Ldto = new LicenceDTO();
+                Ldto.setResumeId(num);
+                Ldto.setName(licenceName);
+                licenceJPA.save(Ldto.toLicenceEntity());
+            }
         }
 
         // 이력서 보유장비 인서트
-        for (String equipmentName : equipmentNames) {
-            EquipmentDTO Edto = new EquipmentDTO();
-            Edto.setResumeId(num);
-            Edto.setName(equipmentName);
-            equipmentJPA.save(Edto.toEquipmentEntity());
+        if (equipmentNames != null && !equipmentNames.isEmpty()) {
+            for (String equipmentName : equipmentNames) {
+                EquipmentDTO Edto = new EquipmentDTO();
+                Edto.setResumeId(num);
+                Edto.setName(equipmentName);
+                equipmentJPA.save(Edto.toEquipmentEntity());
+            }
         }
 
         // 이력서 이수증 인서트
-        for (String certificationName : certificationNames) {
-            CertificationDTO dto = new CertificationDTO();
-            dto.setResumeId(num);
-            dto.setName(certificationName);
-            certificationJPA.save(dto.toCertificationEntity());
+        if (certificationNames != null && !certificationNames.isEmpty()) {
+            for (String certificationName : certificationNames) {
+                CertificationDTO dto = new CertificationDTO();
+                dto.setResumeId(num);
+                dto.setName(certificationName);
+                certificationJPA.save(dto.toCertificationEntity());
+            }
         }
     }
 
@@ -210,33 +216,39 @@ public class ResumeServiceImpl implements ResumeService {
         List<LicenceEntity> licenceEntityList = licenceJPA.findByResumeId(num);
         licenceJPA.deleteAll(licenceEntityList);
 
-        for (String licenceName : licenceNames) {
-            LicenceDTO Ldto = new LicenceDTO();
-            Ldto.setResumeId(num);
-            Ldto.setName(licenceName);
-            licenceJPA.save(Ldto.toLicenceEntity());
+        if (licenceNames != null && !licenceNames.isEmpty()) {
+            for (String licenceName : licenceNames) {
+                LicenceDTO Ldto = new LicenceDTO();
+                Ldto.setResumeId(num);
+                Ldto.setName(licenceName);
+                licenceJPA.save(Ldto.toLicenceEntity());
+            }
         }
 
         // 이력서 보유장비 업데이트
         List<EquipmentEntity> equipmentEntityList = equipmentJPA.findByResumeId(num);
         equipmentJPA.deleteAll(equipmentEntityList);
 
-        for (String equipmentName : equipmentNames) {
-            EquipmentDTO Edto = new EquipmentDTO();
-            Edto.setResumeId(num);
-            Edto.setName(equipmentName);
-            equipmentJPA.save(Edto.toEquipmentEntity());
+        if (equipmentNames != null && !equipmentNames.isEmpty()) {
+            for (String equipmentName : equipmentNames) {
+                EquipmentDTO Edto = new EquipmentDTO();
+                Edto.setResumeId(num);
+                Edto.setName(equipmentName);
+                equipmentJPA.save(Edto.toEquipmentEntity());
+            }
         }
 
         // 이력서 이수증 업데이트
         List<CertificationEntity> certificationEntityList = certificationJPA.findByResumeId(num);
         certificationJPA.deleteAll(certificationEntityList);
 
-        for (String certificationName : certificationNames) {
-            CertificationDTO dto = new CertificationDTO();
-            dto.setResumeId(num);
-            dto.setName(certificationName);
-            certificationJPA.save(dto.toCertificationEntity());
+        if (certificationNames != null && !certificationNames.isEmpty()) {
+            for (String certificationName : certificationNames) {
+                CertificationDTO dto = new CertificationDTO();
+                dto.setResumeId(num);
+                dto.setName(certificationName);
+                certificationJPA.save(dto.toCertificationEntity());
+            }
         }
     }
 

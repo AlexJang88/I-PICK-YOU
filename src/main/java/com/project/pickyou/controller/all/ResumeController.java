@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,10 +57,14 @@ public class ResumeController {
     @PostMapping("/posts")
     public String writePro(ResumeDTO Rdto, Principal principal, String careerName,
                            @RequestParam("jobName") List<String> jobNames,
-                           @RequestParam("licenceName") List<String> licenceNames,
-                           @RequestParam("equipmentName") List<String> equipmentNames,
-                           @RequestParam("certificationName") List<String> certificationNames,
+                           @RequestParam(value = "licenceName", required = false) List<String> licenceNames,
+                           @RequestParam(value = "equipmentName", required = false) List<String> equipmentNames,
+                           @RequestParam(value = "certificationName", required = false) List<String> certificationNames,
                            @RequestParam("address") String address) {
+
+        if (licenceNames == null) licenceNames = new ArrayList<>();
+        if (equipmentNames == null) equipmentNames = new ArrayList<>();
+        if (certificationNames == null) certificationNames = new ArrayList<>();
 
         // 이력서 인서트
         Rdto.setMemberId(principal.getName());
@@ -126,10 +131,14 @@ public class ResumeController {
     @PutMapping("/posts/{num}/update")
     public String updatePro(ResumeDTO Rdto, Principal principal, String careerName, @PathVariable Long num,
                             @RequestParam("jobName") List<String> jobNames,
-                            @RequestParam("licenceName") List<String> licenceNames,
-                            @RequestParam("equipmentName") List<String> equipmentNames,
-                            @RequestParam("certificationName") List<String> certificationNames,
+                            @RequestParam(value = "licenceName", required = false) List<String> licenceNames,
+                            @RequestParam(value = "equipmentName", required = false) List<String> equipmentNames,
+                            @RequestParam(value = "certificationName", required = false) List<String> certificationNames,
                             @RequestParam("address") String address) {
+
+        if (licenceNames == null) licenceNames = new ArrayList<>();
+        if (equipmentNames == null) equipmentNames = new ArrayList<>();
+        if (certificationNames == null) certificationNames = new ArrayList<>();
 
         Rdto.setMemberId(principal.getName());
         Rdto.setLocal(address);

@@ -548,13 +548,10 @@
         // 각 그룹별로 체크된 항목이 있는지 확인
         var careerChecked = document.querySelectorAll('input[name="careerName"]:checked').length > 0;
         var jobChecked = document.querySelectorAll('input[name="jobName"]:checked').length > 0;
-        var certificationChecked = document.querySelectorAll('input[name="certificationName"]:checked').length > 0;
-        var licenceChecked = document.querySelectorAll('input[name="licenceName"]:checked').length > 0;
-        var equipmentChecked = document.querySelectorAll('input[name="equipmentName"]:checked').length > 0;
 
-        if (!careerChecked || !jobChecked || !certificationChecked || !licenceChecked || !equipmentChecked) {
+        if (!careerChecked || !jobChecked) {
         event.preventDefault(); // 폼 제출을 막습니다
-        alert('모든 정보는 하나 이상 필수로 선택해야 합니다.'); // 알람 메시지를 표시합니다
+        alert('경력과 직종 선택은 하나 이상 필수로 선택해야 합니다.'); // 알람 메시지를 표시합니다
         }
     });
 </script>
