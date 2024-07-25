@@ -7,6 +7,7 @@ import com.project.pickyou.entity.ResumeEntity;
 import com.project.pickyou.service.EducationService;
 import com.project.pickyou.service.ResumeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ public class ResumeController {
     private final EducationService educationService;
 
     // 이력서 리스트
+    @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER')")
     @GetMapping("/posts")
     public String list(Principal principal, Model model) {
         String sid = "";
@@ -39,6 +41,7 @@ public class ResumeController {
     }
 
     // 이력서 작성
+    @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER')")
     @GetMapping("/posts/new")
     public String write(Principal principal, Model model) {
         // @@
@@ -104,6 +107,7 @@ public class ResumeController {
     }
 
     // 이력서 업데이트
+    @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER')")
     @GetMapping("/posts/{num}/edit")
     public String update(@PathVariable Long num, Model model, Principal principal) {
         // @@

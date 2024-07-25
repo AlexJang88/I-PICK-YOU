@@ -6,6 +6,7 @@ import com.project.pickyou.service.PointService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -149,6 +150,7 @@ public class MemberController {
     }
 
     // 포인트 적립 내역
+    @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER')")
     @GetMapping("/point/plus/posts")
     public String pointPlusList(Principal principal, Model model,
                             @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
@@ -162,6 +164,7 @@ public class MemberController {
     }
 
     // 포인트 차감 내역
+    @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER')")
     @GetMapping("/point/minus/posts")
     public String pointMinusList(Principal principal, Model model,
                             @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
@@ -197,6 +200,7 @@ public class MemberController {
 
 
     // 일반회원의 지원현황
+    @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER')")
     @GetMapping("recruit/posts")
     public String recruitStateList(Principal principal, Model model,
                                    @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
@@ -206,6 +210,7 @@ public class MemberController {
     }
 
     // 유저입장에서 채용현황
+    @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER')")
     @GetMapping("confirm/posts")
     public String userConfirmList(Principal principal, Model model,
                                    @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
@@ -215,6 +220,7 @@ public class MemberController {
     }
 
     // 고용 요청 내역(사업자가 요청한것)
+    @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER')")
     @GetMapping("company/employment/posts")
     public String findByCompanyIdAndApply(Principal principal, Model model,
                                           @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
@@ -231,6 +237,7 @@ public class MemberController {
     }
 
     // 채용 확정된 리스트
+    @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER')")
     @GetMapping("company/confirmation/posts")
     public String comfirnmationList(Principal principal, Model model,
                                     @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
@@ -248,6 +255,7 @@ public class MemberController {
     }
 
     // 유저 입장에서 지원받은내역
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
     @GetMapping("user/receive/posts")
     public String receiveList(Principal principal, Model model,
                               @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
@@ -264,7 +272,7 @@ public class MemberController {
         return "mypage/userReceiveList";
     }
 
-
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
     // 채용대기 인거 채용확정으로 넘기기
     @GetMapping("/user/receive/edit/{id}")
     public String receiveUpdate(ConfirmDTO dto, @PathVariable Long id, @RequestParam("type") int type) {

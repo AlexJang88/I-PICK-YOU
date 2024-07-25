@@ -9,6 +9,7 @@ import com.project.pickyou.service.FoodMapService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -46,6 +47,7 @@ public class FoodMapController {
     }
 
     // 글쓰기
+    @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER')")
     @GetMapping("posts/new")
     public String write(Principal principal, Model model) {
 
@@ -120,8 +122,10 @@ public class FoodMapController {
     }
 
     // 푸드맵 글 수정
+    @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER')")
     @GetMapping("/posts/{boardNum}/edit")
-    public String update(Model model, @PathVariable Long boardNum, Principal principal) {
+    public String update(Model model, @PathVariable Long boardNum, Principal principal,
+                         @RequestParam("id") String id) {
         // @@
         if (principal != null) {
             model.addAttribute("id", principal.getName());

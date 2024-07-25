@@ -2,6 +2,7 @@ package com.project.pickyou.controller.company;
 
 import com.project.pickyou.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import java.security.Principal;
 public class CompanyController {
     private final MemberService memberService;
 
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
     @GetMapping("/payment/posts")
     public String posts(Model model, Principal principal,
                         @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {

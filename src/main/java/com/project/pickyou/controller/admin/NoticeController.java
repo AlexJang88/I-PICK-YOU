@@ -7,6 +7,7 @@ import com.project.pickyou.service.NoticeService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +42,7 @@ public class NoticeController {
     }
 
     // 공지사항 글쓰기
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("posts/new")
     public String noticeWrite(Principal principal, Model model) {
         // @@
@@ -111,6 +113,7 @@ public class NoticeController {
     }
 
     // 공지사항 글 수정
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/posts/{boardNum}/edit")
     public String noticeUpdate(Model model, @PathVariable Long boardNum, Principal principal) {
         // @@
