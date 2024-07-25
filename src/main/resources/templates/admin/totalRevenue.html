@@ -41,7 +41,7 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script th:src="@{/assets/js/config.js}"></script>
-    <script type="text/javascript" src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
@@ -76,6 +76,16 @@
                             <form th:action="@{/admin/payment/month/totalRevenue}" method="get">
                                 <div class="row mb-3 justify-content-center">
                                     <div class="col-auto">
+                                        <!-- 연도 선택 드롭다운 -->
+                                        <select id="yearSelect" name="year" class="form-select">
+                                            <option th:each="yr : ${years}"
+                                                    th:value="${yr}"
+                                                    th:text="${yr} + '년'"
+                                                    th:selected="${yr == year}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-auto">
+                                        <!-- 월 선택 드롭다운 -->
                                         <select id="month" name="month" class="form-select">
                                             <option value="1" th:selected="${month == 1}">1월</option>
                                             <option value="2" th:selected="${month == 2}">2월</option>
@@ -92,6 +102,7 @@
                                         </select>
                                     </div>
                                     <div class="col-auto">
+                                        <!-- 차트 타입 선택 드롭다운 -->
                                         <select id="chartType" name="chartType" class="form-select">
                                             <option value="both" th:selected="${chartType == 'both'}">총매출</option>
                                             <option value="difference" th:selected="${chartType == 'difference'}">순매출</option>
@@ -156,6 +167,8 @@
 </div>
 <!-- / Layout wrapper -->
 
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
 
 <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->
@@ -163,21 +176,115 @@
 <script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
 <script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
 <script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
-
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <!-- endbuild -->
-
-<!-- Vendors JS -->
 
 <!-- Main JS -->
 <script th:src="@{/assets/js/main.js}"></script>
 
-<!-- Page JS -->
-
-<!-- Place this tag in your head or just before your close body tag. -->
-<script async defer src="https://buttons.github.io/buttons.js"></script>
+<!-- CanvasJS -->
+<script type="text/javascript" src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 
 <script th:inline="javascript">
+    /*<![CDATA[*/
+    window.onload = function() {
+        // 데이터를 콘솔에 출력하여 확인
+        var chartDataMoney = /*[[${chartDataMoney}]]*/ [];
+        var chartDataPoint = /*[[${chartDataPoint}]]*/ [];
+        var chartDataDifference = /*[[${chartDataDifference}]]*/ [];
+
+        console.log('chartDataMoney:', chartDataMoney);
+        console.log('chartDataPoint:', chartDataPoint);
+        console.log('chartDataDifference:', chartDataDifference);
+
+        // 데이터 포인트 생성
+        var dataPointsMoney = chartDataMoney.map(function(point) {
+            return {
+                x: new Date(point.x), // 날짜 문자열을 Date 객체로 변환
+                y: point.y // 금액
+            };
+        });
+
+        var dataPointsPoint = chartDataPoint.map(function(point) {
+            return {
+                x: new Date(point.x), // 날짜 문자열을 Date 객체로 변환
+                y: point.y // 포인트
+            };
+        });
+
+        var dataPointsDifference = chartDataDifference.map(function(point) {
+            return {
+                x: new Date(point.x), // 날짜 문자열을 Date 객체로 변환
+                y: point.y // 차이 (money - point)
+            };
+        });
+
+        var chartType = /*[[${chartType}]]*/ "both"; // 기본값 설정
+
+        var dataSeries = [];
+
+        // 차트 타입에 따라 데이터 시리즈 구성
+        if (chartType === "both") {
+            dataSeries.push({
+                type: "line",
+                name: "결제 금액",
+                showInLegend: true,
+                xValueType: "dateTime",
+                yValueFormatString: "#,##0 원",
+                dataPoints: dataPointsMoney
+            });
+
+            dataSeries.push({
+                type: "line",
+                name: "사용 포인트",
+                showInLegend: true,
+                xValueType: "dateTime",
+                yValueFormatString: "#,##0 포인트",
+                dataPoints: dataPointsPoint
+            });
+        }
+
+        if (chartType === "difference") {
+            dataSeries.push({
+                type: "line",
+                name: "순매출",
+                showInLegend: true,
+                xValueType: "dateTime",
+                yValueFormatString: "#,##0 원",
+                dataPoints: dataPointsDifference
+            });
+        }
+
+        // 차트 생성 및 렌더링
+        var chart = new CanvasJS.Chart("chartContainer", {
+            theme: "light2",
+            animationEnabled: true,
+            title: {
+                text: "매출 현황"
+            },
+            axisX: {
+                valueFormatString: "MM-DD", // X축 날짜 형식 설정
+                intervalType: "day", // X축 간격 설정
+                interval: 1 // X축에 표시할 날짜 간격 설정
+            },
+            axisY: {
+                title: "",
+                includeZero: true,
+                suffix: chartType === "difference" ? "" : "원" // 단위 설정
+            },
+            data: dataSeries
+        });
+
+        chart.render();
+    }
+    /*]]>*/
+</script>
+
+
+
+
+
+<!--<script th:inline="javascript">
     /*<![CDATA[*/
     window.onload = function() {
         var chartDataMoney = /*[[${chartDataMoney}]]*/ [];
@@ -244,14 +351,13 @@
             theme: "light2",
             animationEnabled: true,
             title: {
-                text: "Monthly Payment Data"
+                text: "매출 현황"
             },
             axisX: {
                 valueFormatString: "MM-DD", // X축 날짜 형식 설정
-
             },
             axisY: {
-                title: chartType === "difference" ? "Difference" : "Amount",
+                title: "",
                 includeZero: true,
                 suffix: chartType === "difference" ? "" : "원" // 단위 설정
             },
@@ -261,7 +367,6 @@
         chart.render();
     }
     /*]]>*/
-</script>
-
+</script>-->
 </body>
 </html>

@@ -106,19 +106,25 @@
                                     <th>글번호</th>
                                     <th>제목</th>
                                     <th>조회수</th>
+                                    <th>상태</th>
                                     <th>작성일</th>
                                 </tr>
                                 </thead>
+
                                 <tbody class="table-border-bottom-0">
-                                <tr th:each="foodMap : ${posts}">
+                                <tr th:each="foodMap, iterStat : ${posts}">
                                     <td>
                                         <i class="fab fa-angular fa-lg text-danger me-3"></i>
-                                        <strong th:text="${foodMap.id}"></strong>
+                                        <strong th:text="${iterStat.index + 1}"></strong>
                                     </td>
                                     <td>
                                         <a th:href="@{/foodMap/posts/{ref}(ref=${foodMap.id})}" th:text="${foodMap.title}"></a>
                                     </td>
                                     <td th:text="${foodMap.readCount}"></td>
+                                    <td th:switch="${foodMap.status}">
+                                        <span th:case="1">인증글</span>
+                                        <span th:case="2">일반글</span>
+                                    </td>
                                     <td th:text="${#dates.format(foodMap.reg, 'yyyy-MM-dd')}"></td>
                                 </tr>
                                 </tbody>

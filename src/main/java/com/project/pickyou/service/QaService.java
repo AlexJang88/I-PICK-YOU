@@ -19,4 +19,7 @@ public interface QaService {
 
     // qa 댓글 유무
     public void qaReplyCount(int ref, Model model);
+
+    // qa 글삭제
+    public void qaDelete(long boardNum);
 }

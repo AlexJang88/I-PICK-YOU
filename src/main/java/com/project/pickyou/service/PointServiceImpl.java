@@ -26,16 +26,16 @@ public class PointServiceImpl implements PointService {
         pointJPA.save(dto.toPointEntity());
     }
 
-    // 포인트 차감 내역 가져오기
+    // 포인트 내역 가져오기
     @Override
-    public void AllPosts(Model model, int pageNum, String memberId) {
+    public void AllPosts(Model model, int pageNum, int status, String memberId) {
         int pageSize = 10;
-        int count = pointJPA.countByMemberId(memberId);
+        int count = pointJPA.countByMemberIdAndStatus(memberId, status);
         //int count = longCount.intValue();
 
         Sort sort = Sort.by(Sort.Order.desc("reg"));
 
-        Page<PointEntity> page = pointJPA.findByMemberId(memberId, (Pageable) PageRequest.of(pageNum - 1, pageSize, sort));
+        Page<PointEntity> page = pointJPA.findByMemberIdAndStatus(memberId, status, (Pageable) PageRequest.of(pageNum - 1, pageSize, sort));
 
         List<PointEntity> posts = page.getContent();
 

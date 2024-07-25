@@ -256,22 +256,6 @@ public class NoticeServiceImpl implements NoticeService {
                         String ext = originalName.substring(originalName.lastIndexOf("."));
                         String saveName = folderPath + File.separator + uuid + ext;
 
-                        Date currentDate = new Date();
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-                        String formattedDate = dateFormat.format(currentDate);
-
-                        // 포맷팅된 문자열을 다시 Date 객체로 변환
-                        Date dateOnly = null;
-                        try {
-                            dateOnly = dateFormat.parse(formattedDate);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        // 포맷된 현재 날짜를 dto의 reg 속성에 설정
-
-                        dto.setReg(dateOnly);
-                        dto.setMemberId(notice.get().getMemberId());
-                        dto.setReadCount(notice.get().getReadCount());
 
                         ImageDTO idto = new ImageDTO();
                         idto.setBoardNum(dto.getId());
@@ -288,6 +272,22 @@ public class NoticeServiceImpl implements NoticeService {
                 }
             }
         }
+        Date currentDate = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        String formattedDate = dateFormat.format(currentDate);
+
+        // 포맷팅된 문자열을 다시 Date 객체로 변환
+        Date dateOnly = null;
+        try {
+            dateOnly = dateFormat.parse(formattedDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        // 포맷된 현재 날짜를 dto의 reg 속성에 설정
+
+        dto.setReg(dateOnly);
+        dto.setMemberId(notice.get().getMemberId());
+        dto.setReadCount(notice.get().getReadCount());
         noticeJPA.save(dto.toNoticeEntity());
     }
 

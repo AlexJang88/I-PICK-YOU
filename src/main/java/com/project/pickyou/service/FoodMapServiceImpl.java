@@ -34,8 +34,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class FoodMapServiceImpl implements FoodMapService {
 
-    @Value("${FDimg.upload.path}")
-    private String imgUploadPath; // 프로퍼티스에서 정한 결로를, 웹 컨피그에서 해당 경로를 지정해서 클래스안에 설정
+    @Value("${fmimg.upload.path}")
+    private String imgUploadPath;  // 프로퍼티스에서 정한경로를, 웹 컨피그에서 해당 경로 지정 해서 클래스 안에 설정
 
 
     private final FoodMapJPARepository foodMapJPA;
@@ -213,11 +213,12 @@ public class FoodMapServiceImpl implements FoodMapService {
 
     // 푸드맵 글 수정
     @Override
+    @Transactional
     public void update(List<MultipartFile> files, FoodMapDTO dto) {
         Optional<FoodMapEntity> foodMap = foodMapJPA.findById(dto.getId());
         int check = 0;
 
-        if (foodMap.isPresent()) {
+        if (foodMap.isPresent()) { // 사진이 있으면 작동
             for (MultipartFile mf : files) {
                 if (!mf.isEmpty()) {
                     if(check==0) {
@@ -237,30 +238,11 @@ public class FoodMapServiceImpl implements FoodMapService {
                     }
                     if (mf.getContentType().startsWith("image")) {
                         String originalName = mf.getOriginalFilename();
-                        String fileName = originalName.substring(originalName.lastIndexOf("//") + 4);
+                        //String fileName = originalName.substring(originalName.lastIndexOf("//") + 4);
                         String folderPath = makeFolder(imgUploadPath, 4, dto.getId());
                         String uuid = UUID.randomUUID().toString();
                         String ext = originalName.substring(originalName.lastIndexOf("."));
                         String saveName = folderPath + File.separator + uuid + ext;
-
-                        Date currentDate = new Date();
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-                        String formattedDate = dateFormat.format(currentDate);
-
-                        // 포맷팅된 문자열을 다시 Date 객체로 변환
-                        Date dateOnly = null;
-                        try {
-                            dateOnly = dateFormat.parse(formattedDate);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        // 포맷된 현재 날짜를 dto의 reg 속성에 설정
-
-                        dto.setReg(dateOnly);
-                        dto.setMemberId(foodMap.get().getMemberId());
-                        dto.setReadCount(foodMap.get().getReadCount());
-                        dto.setMap(foodMap.get().getMap());
-                        dto.setRef(foodMap.get().getRef());
 
                         ImageDTO idto = new ImageDTO();
                         idto.setBoardNum(dto.getId());
@@ -275,8 +257,28 @@ public class FoodMapServiceImpl implements FoodMapService {
                         }
                     }
                 }
+
             }
         }
+        Date currentDate = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        String formattedDate = dateFormat.format(currentDate);
+
+        // 포맷팅된 문자열을 다시 Date 객체로 변환
+        Date dateOnly = null;
+        try {
+            dateOnly = dateFormat.parse(formattedDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        // 포맷된 현재 날짜를 dto의 reg 속성에 설정
+
+        dto.setReg(dateOnly);
+        dto.setMemberId(foodMap.get().getMemberId());
+        dto.setReadCount(foodMap.get().getReadCount());
+        dto.setMap(foodMap.get().getMap());
+        dto.setRef(foodMap.get().getRef());
+        dto.setStatus(foodMap.get().getStatus());
         foodMapJPA.save(dto.toFood_MapEntity());
     }
 
@@ -376,7 +378,7 @@ public class FoodMapServiceImpl implements FoodMapService {
     }
 
     private String getFileExtension(String fileName) { // 확장자 추출
-        return fileName.substring(fileName.lastIndexOf(".") + 4);
+        return fileName.substring(fileName.lastIndexOf(".") + 1);
     } // 이미지 넣기
 
 

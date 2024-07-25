@@ -76,11 +76,6 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th colspan="4" style="text-align: center;">
-                                        <h3>총 포인트: <span th:text="${totalPoints}"></span></h3>
-                                    </th>
-                                </tr>
-                                <tr>
                                     <th>이름</th>
                                     <th>사용한 포인트</th>
                                     <th>내역</th>
@@ -88,7 +83,7 @@
                                 </tr>
                                 </thead>
                                 <tbody class="table-border-bottom-0">
-                                <tr th:each="post, iterStat : ${posts}"  th:if="${post.status == 2}">
+                                <tr th:each="post, iterStat : ${posts}">
                                     <td th:text="${iterStat.index + 1}"></td>
                                     <td th:text="${post.point}"></td>
                                     <td th:text="'차감'"></td>

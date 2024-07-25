@@ -28,12 +28,12 @@ public class QaServiceImpl implements QaService {
     @Override
     public void AllPosts(Model model, int pageNum) {
         int pageSize = 10;
-        Long longCount = qaJPA.count();
+        Long longCount = qaJPA.qaCount();
         int count = longCount.intValue();
 
         Sort sort = Sort.by(Sort.Order.desc("reg"));
 
-        Page<QaEntity> page = qaJPA.findAll(PageRequest.of(pageNum - 1, pageSize, sort));
+        Page<QaEntity> page = qaJPA.qaList(PageRequest.of(pageNum - 1, pageSize, sort));
 
         List<QaEntity> posts = page.getContent();
 
@@ -76,25 +76,32 @@ public class QaServiceImpl implements QaService {
         // qa 상세정보 보기
         List<QaEntity> qaInformation = qaJPA.findByRef(ref);
         model.addAttribute("qaInformation", qaInformation);
-
     }
 
     // qa 댓글 인서트
     @Override
     public void qaReplyInsert(QaDTO dto, int ref) {
-        // qa 상세정보 보기
+        // ref 값을 가진 모든 QaEntity를 조회
         List<QaEntity> qaInformation = qaJPA.findByRef(ref);
-        // qa 첫번째 레코드값 가져오기
-        QaEntity firstQaEntity = qaInformation.get(0);
 
-        String memberId = firstQaEntity.getMemberId();
-        String title = firstQaEntity.getTitle();
+        if (qaInformation != null && !qaInformation.isEmpty()) {
+            // 첫 번째 QaEntity를 가져와서 상태를 2로 변경
+            QaEntity firstQaEntity = qaInformation.get(0);
+            firstQaEntity.setStatus(2);
 
-        dto.setMemberId(memberId);
-        dto.setTitle(title);
-        dto.setRef(ref);
-        // qa 댓글 인서트
-        qaJPA.save(dto.toQaEntity());
+            // 변경된 상태를 저장
+            qaJPA.save(firstQaEntity);
+
+            // 댓글을 삽입하기 위해 DTO를 QaEntity로 변환
+            QaEntity commentEntity = dto.toQaEntity();
+            // 댓글의 ref를 기존 qaInformation의 ref로 설정
+            commentEntity.setRef(ref);
+            // 댓글의 상태를 기존 상태와 동일하게 유지
+            commentEntity.setStatus(2); // 예를 들어, 댓글의 상태를 1로 설정
+
+            // 댓글을 저장
+            qaJPA.save(commentEntity);
+        }
     }
 
     // qa 댓글 유무
@@ -103,5 +110,11 @@ public class QaServiceImpl implements QaService {
         // qa 댓글 유무
         int count = qaJPA.countByRef(ref);
         model.addAttribute("count", count);
+    }
+
+    // qa 글삭제
+    @Override
+    public void qaDelete(long boardNum) {
+        qaJPA.deleteById(boardNum);
     }
 }

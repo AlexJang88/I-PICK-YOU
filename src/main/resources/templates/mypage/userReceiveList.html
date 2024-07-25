@@ -66,7 +66,7 @@
                 <!-- Content -->
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <h2 class="fw-bold py-3 mb-4">
-                        <span class="text-muted fw-light">채용 확정 내역</span>
+                        <span class="text-muted fw-light">지원 받은 내역</span>
                     </h2>
                     <!-- Basic Bootstrap Table -->
                     <div class="card">
@@ -78,33 +78,43 @@
                                     <th>글번호</th>
                                     <th>지원자</th>
                                     <th>상태</th>
+                                    <th>채용 상태</th>
                                 </tr>
                                 </thead>
                                 <tbody class="table-border-bottom-0">
                                 <tr th:each="post, iterStat : ${posts}">
-                                    <td th:text="${iterStat.index + 1}"></td>
-                                    <td th:text="${post.memberId}"></td>
-                                    <td>
-                                        <!-- Thymeleaf를 사용하여 contractId가 null이 아닐 때 링크를 표시 -->
-                                        <a class="btn btn-primary" th:if="${post.contractId != null}" th:href="@{/recruit/contract/{contractId}(contractId=${post.contractId})}">
-                                            계약서 보기
-                                        </a>
+                                    <div th:if="${post.apply == 4}">
+                                        <td th:text="${iterStat.index + 1}"></td>
+                                        <td th:text="${post.memberId}"></td>
+                                        <td th:text="'채용대기'"></td>
+                                        <td>
+                                            <form id="hireForm" th:action="@{/mypage/user/receive/edit/{id}(id=${post.id})}" class="me-2" th:method="get">
+                                                <input type="hidden" id="typeInput" name="type" value="">
 
-                                        <!-- Thymeleaf를 사용하여 contractId가 null일 때 클릭 시 알람창을 띄우는 처리 -->
-                                        <a class="btn btn-primary" th:if="${post.contractId == null}" href="#" onclick="showAlert()">
-                                            계약서 보기
-                                        </a>
-                                    </td>
-
-                                    <td>
-                                        <span th:if="${post.apply == 1}" th:text="'공고지원'"></span>
-                                        <span th:if="${post.apply == 2}" th:text="'이력서지원'"></span>
-                                        <span th:if="${post.apply == 3}" th:text="'확정취소'"></span>
-                                        <span th:if="${post.apply == 4}" th:text="'채용대기'"></span>
-                                    </td>
+                                                <input type="hidden" name="id" th:value="${post.id}">
+                                                <input type="hidden" name="memberId" th:value="${post.memberId}">
+                                                <input type="hidden" name="companyId" th:value="${post.companyId}">
+                                                <input type="hidden" name="recruitId" th:value="${post.recruitId}">
+                                                <input type="hidden" name="recruitId" th:value="${post.recruitId}">
+                                                <button class="btn btn-primary" type="button" onclick="showCustomModal()">출근 여부</button>
+                                            </form>
+                                        </td>
+                                    </div>
                                 </tr>
                                 </tbody>
                             </table>
+
+                            <!-- Custom Modal -->
+                            <div id="customModal" class="modal" style="display: none;">
+                                <div class="modal-content">
+                                    <p>출근 하시겠습니까?</p>
+                                    <button class="btn btn-primary" onclick="submitForm(2)">출근 확정</button>
+                                    <button class="btn btn-secondary" onclick="submitForm(3)">확정 취소</button>
+                                    <button class="btn btn-light" onclick="closeModal()">취소</button>
+                                </div>
+                            </div>
+
+
                         </div>
                     </div>
                     <!--/ Basic Bootstrap Table -->
@@ -122,7 +132,7 @@
                         <ul th:if="${count>0}" class="pagination pagination-lg justify-content-center">
                             <!-- Previous Button -->
                             <li th:if="${startPage>10}" class="page-item">
-                                <a class="page-link" th:href="@{'/mypage/company/confirmation/posts?pageNum=' + (${startPage} - 10)}"
+                                <a class="page-link" th:href="@{'/mypage/user/receive/posts?pageNum=' + (${startPage} - 10)}"
                                    aria-label="Previous">
                                     <i class="tf-icon bx bx-chevrons-left"></i>
                                 </a>
@@ -130,13 +140,13 @@
 
                             <!-- Page Numbers -->
                             <li class="page-item" th:each="i : ${#numbers.sequence(startPage, endPage)}">
-                                <a class="page-link" th:href="@{'/mypage/company/confirmation/posts?pageNum=' + ${i}}"
+                                <a class="page-link" th:href="@{'/mypage/user/receive/posts?pageNum=' + ${i}}"
                                    th:text="${i}"></a>
                             </li>
 
                             <!-- Next Button -->
                             <li class="page-item" th:if="${endPage<pageCount}">
-                                <a class="page-link" th:href="@{'/mypage/company/confirmation/posts?pageNum=' + (${startPage} + 10)}"
+                                <a class="page-link" th:href="@{'/mypage/user/receive/posts?pageNum=' + (${startPage} + 10)}"
                                    aria-label="Next">
                                     <i class="tf-icon bx bx-chevrons-right"></i>
                                 </a>
@@ -186,11 +196,51 @@
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 
-<script th:inline="javascript">
-    function showAlert() {
-        alert('계약서 작성 전입니다.');
+<script>
+    function showCustomModal() {
+        document.getElementById('customModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('customModal').style.display = 'none';
+    }
+
+    function submitForm(type) {
+        document.getElementById('typeInput').value = type;
+        document.getElementById('hireForm').submit();
     }
 </script>
+
+<style>
+    /* Modal styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4);
+        padding-top: 60px;
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 300px;
+        text-align: center;
+    }
+
+    .modal-content button {
+        margin: 5px;
+    }
+</style>
 
 </body>
 </html>

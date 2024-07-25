@@ -20,6 +20,7 @@ import org.springframework.ui.Model;
 
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -106,8 +107,62 @@ public class AdminServiceImpl implements AdminService{
         model.addAttribute("endPage", endPage);
     }
 
+    // 테스트 @@ ///////////////////////////
+    @Override
+    public List<Integer> generateYearList() {
+        List<Integer> years = new ArrayList<>();
+        int currentYear = Year.now().getValue();
 
-    // 포인트 지급, 사용내역
+        for (int year = 2020; year <= currentYear; year++) {
+            years.add(year);
+        }
+
+        return years;
+    }
+
+    @Override
+    public void AllPostsGIVE(Model model, int status, int pageNum, int year, int month) {
+        int pageSize = 10;
+        int count = pointJPA.countByStatus(status);
+
+        Sort sort = Sort.by(Sort.Order.desc("reg"));
+        Page<PointEntity> page = pointJPA.findByStatus(status, PageRequest.of(pageNum - 1, pageSize, sort));
+
+        List<PointEntity> allPosts = page.getContent();
+
+        // Filter posts by year and month
+        List<PointEntity> filteredPosts = allPosts.stream()
+                .filter(post -> {
+                    // Convert Date to LocalDate
+                    LocalDate regDate = post.getReg().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    // Compare year and month
+                    return regDate.getYear() == year && regDate.getMonthValue() == month;
+                })
+                .collect(Collectors.toList());
+
+        int filteredCount = filteredPosts.size();
+
+        model.addAttribute("posts", filteredPosts);
+        model.addAttribute("count", filteredCount);
+        model.addAttribute("pageNum", pageNum);
+        model.addAttribute("pageSize", pageSize);
+        int pageCount = filteredCount / pageSize + (filteredCount % pageSize == 0 ? 0 : 1);
+        int startPage = (pageNum / 10) * 10 + 1;
+        int pageBlock = 10;
+        int endPage = startPage + pageBlock - 1;
+        if (endPage > pageCount) {
+            endPage = pageCount;
+        }
+        model.addAttribute("pageCount", pageCount);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("pageBlock", pageBlock);
+        model.addAttribute("endPage", endPage);
+        model.addAttribute("month", month); // 추가: 현재 월을 모델에 추가
+        model.addAttribute("year", year); // 추가: 현재 연도를 모델에 추가
+    }
+    // 테스트
+
+    /*// 포인트 지급, 사용내역
     @Override
     public void AllPostsGIVE(Model model, int status, int pageNum, int month) {
         int pageSize = 10;
@@ -146,12 +201,12 @@ public class AdminServiceImpl implements AdminService{
         model.addAttribute("pageBlock", pageBlock);
         model.addAttribute("endPage", endPage);
         model.addAttribute("month", month); // 추가: 현재 월을 모델에 추가
-    }
+    }*/
 
 
     // 결제, 포인트 사용내역 가져오기
     @Override
-    public void AllpaymentANDpoint(Model model, int pointHistory, int pageNum, int month) {
+    public void AllpaymentANDpoint(Model model, int pointHistory, int pageNum, int year, int month) {
         int pageSize = 10;
         int count = paymentJPA.countByPointHistory(pointHistory);
 
@@ -160,13 +215,13 @@ public class AdminServiceImpl implements AdminService{
 
         List<PaymentEntity> allPosts = page.getContent();
 
-        // Filter posts by month
+        // Filter posts by year and month
         List<PaymentEntity> filteredPosts = allPosts.stream()
                 .filter(post -> {
                     // Convert Date to LocalDate
                     LocalDate regDate = post.getReg().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                    // Compare month values
-                    return regDate.getMonthValue() == month;
+                    // Compare year and month
+                    return regDate.getYear() == year && regDate.getMonthValue() == month;
                 })
                 .collect(Collectors.toList());
 
@@ -188,14 +243,16 @@ public class AdminServiceImpl implements AdminService{
         model.addAttribute("pageBlock", pageBlock);
         model.addAttribute("endPage", endPage);
         model.addAttribute("month", month); // 추가: 현재 월을 모델에 추가
+        model.addAttribute("year", year); // 추가: 현재 연도를 모델에 추가
     }
 
 
 
 
 
+
     // 결제, 포인트 사용내역 가져오기
-    public void TEST(Model model, int pointHistory, int month, String chartType) {
+    public void salesInfo(Model model, int pointHistory, int year, int month, String chartType) {
         // 페이지 크기 설정
         int pageSize = Integer.MAX_VALUE; // 페이지 크기를 매우 큰 값으로 설정
         Pageable pageable = PageRequest.of(0, pageSize, Sort.by(Sort.Order.desc("reg")));
@@ -206,12 +263,12 @@ public class AdminServiceImpl implements AdminService{
         // 페이지 내용 가져오기
         List<PaymentEntity> allPosts = page.getContent();
 
-        // 월별로 필터링
+        // 연도와 월로 필터링
         List<PaymentEntity> filteredPosts = allPosts.stream()
                 .filter(post -> {
                     // 날짜를 LocalDate로 변환
                     LocalDate regDate = post.getReg().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                    return regDate.getMonthValue() == month;
+                    return regDate.getYear() == year && regDate.getMonthValue() == month;
                 })
                 .collect(Collectors.toList());
 
@@ -237,7 +294,7 @@ public class AdminServiceImpl implements AdminService{
         Map<LocalDate, Integer> combinedData = new TreeMap<>(moneyAggregatedData); // 날짜 정렬을 위해 TreeMap 사용
 
         pointAggregatedData.forEach((date, pointValue) ->
-                combinedData.putIfAbsent(date, moneyAggregatedData.get(date) - pointValue));
+                combinedData.put(date, combinedData.getOrDefault(date, 0) - pointValue));
 
         // 차트 데이터 형식으로 변환
         List<Map<String, Object>> chartDataMoney = moneyAggregatedData.entrySet().stream()
@@ -274,10 +331,13 @@ public class AdminServiceImpl implements AdminService{
         model.addAttribute("chartDataDifference", chartDataDifference);
         model.addAttribute("chartType", chartType); // 현재 그래프 타입을 모델에 추가
         model.addAttribute("month", month); // 현재 월을 모델에 추가
+        model.addAttribute("year", year); // 현재 연도를 모델에 추가
         model.addAttribute("totalMoney", totalMoney); // 총 금액
         model.addAttribute("totalPoint", totalPoint); // 총 포인트
         model.addAttribute("totalDifference", totalDifference); // 총 차이
     }
+
+
 
 
 

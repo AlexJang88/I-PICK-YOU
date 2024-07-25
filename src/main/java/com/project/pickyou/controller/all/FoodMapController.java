@@ -135,7 +135,9 @@ public class FoodMapController {
     // 푸드맵 글 수정 pro
     @PutMapping("/posts/{id}")
     public String updatePro(@PathVariable Long id, ArrayList<MultipartFile> files, FoodMapDTO dto) {
+
         foodMapService.update(files, dto);
+
         return "redirect:/foodMap/posts/" + id;
     }
 
@@ -149,9 +151,13 @@ public class FoodMapController {
         FoodMapEntity saveFoodMap = foodMapService.refInsert(fmDTO, boardNum);
 
 
-        Long foodMapId = saveFoodMap.getId();
-        imageDTO.setBoardNum(foodMapId);
-        foodMapService.saveImage(imageDTO, files);
+        // 파일이 비어있지 않은 경우에만 이미지 저장
+        if (files != null && files.length > 0 && !files[0].isEmpty()) {
+            Long foodMapId = saveFoodMap.getId();
+            imageDTO.setBoardNum(foodMapId);
+            foodMapService.saveImage(imageDTO, files);
+        }
+
 
         return "redirect:/foodMap/posts/{boardNum}";
     }
@@ -170,9 +176,11 @@ public class FoodMapController {
         fmDTO.setContent(fullContent + fmDTO.getContent());
         FoodMapEntity saveFoodMap = foodMapService.replyInsert(fmDTO);
 
-        Long foodMapId = saveFoodMap.getId();
-        imageDTO.setBoardNum(foodMapId);
-        foodMapService.saveImage(imageDTO, files);
+        if (files != null && files.length > 0 && !files[0].isEmpty()) {
+            Long foodMapId = saveFoodMap.getId();
+            imageDTO.setBoardNum(foodMapId);
+            foodMapService.saveImage(imageDTO, files);
+        }
 
         return "redirect:/foodMap/posts/" + foodMapNum;
     }

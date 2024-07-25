@@ -173,7 +173,7 @@
                                     <tr>
                                         <th scope="row">File</th>
                                         <td>
-                                            <input type="file" name="files" class="form-control" multiple="multiple" required="required"/>
+                                            <input type="file" name="files" class="form-control" multiple="multiple" required="required">
                                         </td>
                                     </tr>
 
@@ -427,15 +427,44 @@
         paginationEl.appendChild(fragment);
     }
 
-    // 제출하기 버튼 클릭 시 호출되는 함수
+</script>
+
+<script>
     document.getElementById('submitButton').onclick = function() {
-        if (selectedAddress) {
-            document.getElementById('addressField').value = selectedAddress;
-            document.getElementById('addressForm').submit();
-        } else {
-            alert('주소를 선택해주세요.');
-        }
-    };
+    // 제목, 내용, 파일 입력 필드 가져오기
+    const titleField = document.querySelector('input[name="title"]');
+    const contentField = document.querySelector('textarea[name="content"]');
+    const fileField = document.querySelector('input[name="files"]');
+    const addressField = document.getElementById('addressField');
+
+    // 제목, 내용, 파일 유효성 검사
+    if (!titleField.value.trim()) {
+        alert('제목을 입력해주세요.');
+        titleField.focus();
+        return; // 폼 제출을 막음
+    }
+
+    if (!contentField.value.trim()) {
+        alert('내용을 입력해주세요.');
+        contentField.focus();
+        return; // 폼 제출을 막음
+    }
+
+    if (!fileField.files.length) {
+        alert('사진을 선택해주세요.');
+        fileField.focus();
+        return; // 폼 제출을 막음
+    }
+
+    // 주소가 선택되었는지 확인
+    if (selectedAddress) {
+        addressField.value = selectedAddress;
+        document.getElementById('addressForm').submit();
+    } else {
+        alert('주소를 선택해주세요.');
+    }
+};
+
 </script>
 
 </body>

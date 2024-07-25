@@ -28,6 +28,8 @@ public class ResumeServiceImpl implements ResumeService {
     private final EquipmentJPARepository equipmentJPA;
     private final CertificationJPARepository certificationJPA;
     private final ConfirmJPARepository comfirmJPA;
+    private final EducationServiceImpl educationService;
+
 
     // 이력서 리스트 가져오기
     @Override
@@ -91,13 +93,16 @@ public class ResumeServiceImpl implements ResumeService {
 
     // 이력서 상세정보
     @Override
-    public void selectResumeInfo(Model model, Long num) {
+    public void selectResumeInfo(Model model, Long num, String sid) {
         // 이력서 상세정보 가져오기
         Optional<ResumeEntity> resumeEntity = resumeJPA.findById(num);
         if (resumeEntity.isPresent()) {
             ResumeEntity resumeInfo = resumeEntity.get();
             model.addAttribute("resumeInfo", resumeInfo);
 
+            // 찜하기
+            int favoritecheck = 0;
+            favoritecheck=educationService.getfavoritStatus(sid,resumeEntity.get().getMemberId());
 
             // 생년월일에 맞게 나이로 바꾸는 코드
             String birthdayString = resumeInfo.getMember().getMemberInfo().getBirth();
@@ -305,6 +310,12 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public void confirmInsert(ConfirmDTO dto) {
         comfirmJPA.save(dto.toConfirmEntity());
+    }
+
+    // 지원자 목록에서 memberId로 이력서 번호찾기
+    @Override
+    public Optional<ResumeEntity> findBymemberId(String memberId, int regType) {
+        return resumeJPA.findByRegTypeAndMemberId(regType, memberId);
     }
 
     // 성별

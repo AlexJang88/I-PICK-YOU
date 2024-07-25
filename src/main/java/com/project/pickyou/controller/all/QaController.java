@@ -1,14 +1,18 @@
 package com.project.pickyou.controller.all;
 
 import com.project.pickyou.dto.QaDTO;
+import com.project.pickyou.entity.QaEntity;
 import com.project.pickyou.service.QaService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/qa/*")
@@ -51,11 +55,10 @@ public class QaController {
 
         if(principal!=null) {
             memberId = principal.getName();
-            dto.setMemberId(memberId);
         }
 
-
         // qa insert
+        dto.setStatus(1);
         qaService.qaInsert(dto);
         return "redirect:/qa/posts";
     }
@@ -72,11 +75,6 @@ public class QaController {
             model.addAttribute("sid", sid);
         }
 
-
-
-       // System.out.println(sid+" : ----------------------------------------------------------");
-        // qa 댓글 유무
-        qaService.qaReplyCount(ref, model);
         // qa 상세정보 가져오기
         qaService.qaInformation(model, ref);
         return "/qa/info";
@@ -88,5 +86,12 @@ public class QaController {
         // qa 댓글 인서트
         qaService.qaReplyInsert(dto, ref);
         return "redirect:/qa/posts/{ref}";
+    }
+
+    // qa 글삭제
+    @DeleteMapping("/posts/{boardNum}")
+    public String delete(@PathVariable long boardNum) {
+        qaService.qaDelete(boardNum);
+        return "redirect:/qa/posts";
     }
 }

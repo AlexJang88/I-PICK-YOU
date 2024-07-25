@@ -151,6 +151,12 @@
                         </a>
                     </li>
                     <li class="menu-item">
+
+                        <a th:href="@{/mypage/user/receive/posts}" class="menu-link">
+                            <div data-i18n="Account">지원받은내역</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
                         <a th:href="@{/mypage/confirm/posts}" class="menu-link">
                             <div data-i18n="Account">채용현황</div>
                         </a>
@@ -201,15 +207,20 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a th:href="@{/calendar}" class="menu-link">
-                            <div data-i18n="Account">스케쥴보기</div>
-                        </a>
-                    </li>
-                    <li class="menu-item">
                         <a th:href="@{/recruit/posts/my}" class="menu-link">
                             <div data-i18n="Account">내 공고</div>
                         </a>
                     </li>
+                    
+                    <li class="menu-item">
+                        <a th:href="@{/educations/posts}" class="menu-link">
+                            <div data-i18n="Account">계약서 관리</div>
+
+                        <a th:href="@{/calendar}" class="menu-link">
+                            <div data-i18n="Account">스케쥴보기</div>
+                        </a>
+                    </li>
+                    
                     <li class="menu-item">
                         <a th:href="@{/mypage/company/employment/posts}" class="menu-link">
                             <div data-i18n="Account">고용 요청 내역</div>
@@ -226,7 +237,7 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a th:href="@{/educations/posts}" class="menu-link">
+                        <a th:href="@{/company/payment/posts}" class="menu-link">
                             <div data-i18n="Account">결제내역</div>
                         </a>
                     </li>

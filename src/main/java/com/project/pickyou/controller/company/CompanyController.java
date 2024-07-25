@@ -24,7 +24,7 @@ public class CompanyController {
             model.addAttribute("id", principal.getName());
         }
         // @@
-        memberService.paymentList(model, pageNum, principal.getName());
+        memberService.paymentList(model, pageNum, principal.getName(), 1);
         return "mypage/paymentList";
     }
 }
