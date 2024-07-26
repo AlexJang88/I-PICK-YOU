@@ -35,8 +35,21 @@ public class AdminController {
     @GetMapping("/point/give")
     public String giveList(Model model, Principal principal,
                            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-                           @RequestParam(value = "month", defaultValue = "1") int month,
-                           @RequestParam(value = "year", defaultValue = "0") int year) {
+                           @RequestParam(value = "month", required = false) Integer month,
+                           @RequestParam(value = "year", required = false) Integer year) {
+
+        // 현재 연도와 월을 구합니다.
+        LocalDate now = LocalDate.now();
+        int currentYear = now.getYear();
+        int currentMonth = now.getMonthValue();
+
+        // 연도와 월이 null인 경우 현재 연도와 월로 설정합니다.
+        if (year == null) {
+            year = currentYear;
+        }
+        if (month == null) {
+            month = currentMonth;
+        }
 
         // @@
         if(principal!=null) {
@@ -70,8 +83,21 @@ public class AdminController {
     @GetMapping("/point/deduct")
     public String deductList(Model model, Principal principal,
                              @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-                             @RequestParam(value = "month", defaultValue = "1") int month,
-                             @RequestParam(value = "year", defaultValue = "0") int year) {
+                             @RequestParam(value = "month", required = false) Integer month,
+                             @RequestParam(value = "year", required = false) Integer year) {
+
+        // 현재 연도와 월을 구합니다.
+        LocalDate now = LocalDate.now();
+        int currentYear = now.getYear();
+        int currentMonth = now.getMonthValue();
+
+        // 연도와 월이 null인 경우 현재 연도와 월로 설정합니다.
+        if (year == null) {
+            year = currentYear;
+        }
+        if (month == null) {
+            month = currentMonth;
+        }
 
         if (principal != null) {
             model.addAttribute("id", principal.getName());
@@ -126,8 +152,25 @@ public class AdminController {
     @GetMapping("/payment/posts")
     public String paymentList(Model model, Principal principal,
                               @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-                              @RequestParam(value = "month", defaultValue = "1") int month,
-                              @RequestParam(value = "year", defaultValue = "0") int year) {
+                              @RequestParam(value = "month", required = false) Integer month,
+                              @RequestParam(value = "year", required = false) Integer year) {
+
+        // 현재 연도와 월을 구합니다.
+        LocalDate now = LocalDate.now();
+        int currentYear = now.getYear();
+        int currentMonth = now.getMonthValue();
+
+        // 연도와 월이 null인 경우 현재 연도와 월로 설정합니다.
+        if (year == null) {
+            year = currentYear;
+        }
+        if (month == null) {
+            month = currentMonth;
+        }
+
+        if (principal != null) {
+            model.addAttribute("id", principal.getName());
+        }
 
         // 사용자 정보 추가
         if (principal != null) {
@@ -175,9 +218,22 @@ public class AdminController {
     // 총 매출, 순이익 내역
     @GetMapping("/payment/totalRevenue")
     public String salesInfo(Model model, Principal principal,
-                            @RequestParam(value = "month", defaultValue = "1") int month,
-                            @RequestParam(value = "year", defaultValue = "0") int year, // 기본값을 0으로 설정
+                            @RequestParam(value = "month", required = false) Integer month,
+                            @RequestParam(value = "year", required = false) Integer year, // 기본값을 0으로 설정
                             @RequestParam(value = "chartType", defaultValue = "both") String chartType) {
+
+        // 현재 연도와 월을 구합니다.
+        LocalDate now = LocalDate.now();
+        int currentYear = now.getYear();
+        int currentMonth = now.getMonthValue();
+
+        // 연도와 월이 null인 경우 현재 연도와 월로 설정합니다.
+        if (year == null) {
+            year = currentYear;
+        }
+        if (month == null) {
+            month = currentMonth;
+        }
 
         if (principal != null) {
             model.addAttribute("id", principal.getName());

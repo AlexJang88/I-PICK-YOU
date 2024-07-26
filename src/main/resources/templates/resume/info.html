@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Fluid - Layouts | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>이력서 상세정보</title>
 
     <meta name="description" content="" />
 
@@ -28,6 +28,64 @@
 
     <!-- Vendors CSS -->
     <link th:href="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css}" rel="stylesheet" />
+
+    <style>
+        /* 채용하기 모달 스타일 */
+        #contractModal {
+            display: none;
+            position: fixed;
+            z-index: 1050; /* 채팅 모달보다 위에 표시 */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding-top: 60px;
+        }
+
+        #contractModal .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px; /* 채용하기 모달은 채팅보다 좁게 설정 */
+            text-align: center;
+        }
+
+        #contractModal .modal-content button {
+            margin: 5px;
+        }
+
+        /* 채팅 모달 스타일 */
+        .chat-modal {
+            display: none;
+            position: fixed;
+            z-index: 1040; /* 채용하기 모달보다 아래에 표시 */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding-top: 60px;
+        }
+
+        .chat-modal-dialog {
+            max-width: 100%;
+        }
+
+        .chat-modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px; /* 채팅 모달은 좀 더 넓게 설정 */
+            text-align: center;
+        }
+    </style>
 
     <!-- Helpers -->
     <script th:src="@{/assets/vendor/js/helpers.js}"></script>
@@ -93,7 +151,7 @@
                             <div sec:authorize="hasRole('ROLE_COMPANY')" class="d-flex" style="gap: 0.3cm;">
                                 <form id="hireForm" th:action="@{/recruit/contract/{memberId}/0(memberId=${resumeInfo.memberId})}" class="me-2" th:method="get">
                                     <input type="hidden" id="typeInput" name="type" value="">
-                                    <button class="btn btn-primary" type="button" onclick="showCustomModal()">채용하기</button>
+                                    <button class="btn btn-primary" type="button" onclick="showContractModal()">채용하기</button>
                                 </form>
                             </div>
 
@@ -104,12 +162,12 @@
                             </div>
 
                             <!-- Custom Modal -->
-                            <div id="customModal" class="modal" style="display: none;">
+                            <div id="contractModal" class="modal">
                                 <div class="modal-content">
                                     <p>계약서를 작성하시겠습니까?</p>
                                     <button class="btn btn-primary" onclick="submitForm(3)">계약서작성</button>
                                     <button class="btn btn-secondary" onclick="submitForm(4)">현장작성</button>
-                                    <button class="btn btn-light" onclick="closeModal()">취소</button>
+                                    <button class="btn btn-light" onclick="closeContractModal()">취소</button>
                                 </div>
                             </div>
 
@@ -310,6 +368,10 @@
                 </div>
                 <!-- /container-xxl -->
             </div>
+
+            <!-- Footer -->
+            <div th:include="~{design/footer :: footer}"></div>
+            <!-- / Footer -->
             <!-- /content-wrapper -->
         </div>
         <!-- /layout-page -->
@@ -318,9 +380,7 @@
 </div>
 <!-- /layout-wrapper -->
 
-<!-- Footer -->
-<div th:include="~{design/footer :: footer}"></div>
-<!-- / Footer -->
+
 
 <div class="content-backdrop fade"></div>
 
@@ -344,6 +404,9 @@
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 
+
+
+
 <script type="text/javascript">
     function confirmDelete1() {
         if (confirm("글을 삭제하시겠습니까?")) {
@@ -361,18 +424,18 @@
 </script>
 
 <script>
-    function showCustomModal() {
-        document.getElementById('customModal').style.display = 'block';
-    }
+    function showContractModal() {
+    document.getElementById('contractModal').style.display = 'block';
+}
 
-    function closeModal() {
-        document.getElementById('customModal').style.display = 'none';
-    }
+function closeContractModal() {
+    document.getElementById('contractModal').style.display = 'none';
+}
 
-    function submitForm(type) {
-        document.getElementById('typeInput').value = type;
-        document.getElementById('hireForm').submit();
-    }
+function submitForm(type) {
+    document.getElementById('typeInput').value = type;
+    document.getElementById('hireForm').submit();
+}
 </script>
 
 <script>
@@ -392,36 +455,6 @@
                         });
 </script>
 
-<style>
-    /* Modal styles */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgb(0,0,0);
-        background-color: rgba(0,0,0,0.4);
-        padding-top: 60px;
-    }
-
-    .modal-content {
-        background-color: #fefefe;
-        margin: 5% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
-        max-width: 300px;
-        text-align: center;
-    }
-
-    .modal-content button {
-        margin: 5px;
-    }
-</style>
 
 </body>
 </html>

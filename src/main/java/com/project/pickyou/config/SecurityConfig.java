@@ -60,11 +60,15 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/trainning/posts/new","/agency/posts/new","/agency/posts/*/edit","/trainning/posts/*/edit").hasRole("COMPANY")
                         .requestMatchers("/agency/**","/trainning/**").permitAll()
-                        .requestMatchers("/mypage/**").hasAnyRole("USER","ADMIN","COMPANY")
+                        .requestMatchers("/foodMap/new").hasAnyRole("USER","COMPANY")
+                        .requestMatchers("/resume/new","/mypage/user/receive/posts").hasAnyRole("USER")
+                                .requestMatchers("/mypage/**").hasAnyRole("USER","ADMIN","COMPANY")
+                                .requestMatchers("/foodMap/**","/resume/**").permitAll()
                         .requestMatchers("/pick/**").authenticated()
                         .requestMatchers("/recruitState/**").authenticated()
                         .requestMatchers("/satisfaction/**").authenticated()
                         .anyRequest().authenticated()
+
 
 
 

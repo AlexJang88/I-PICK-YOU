@@ -26,23 +26,10 @@ public interface QaJPARepository extends JpaRepository<QaEntity,Long> {
     public long qaCount();
 
 
-
-
-
-
     // qa 상세정보 보기
     public List<QaEntity> findByRef(int ref);
 
     // qa 댓글 유무
     public int countByRef(int ref);
 
-
-
-
-
-    // 중복값 제거하고 list 가져오기
-    //@Query("SELECT * FROM QaEntity GROUP BY ref")
-    //public Page<QaEntity> findAllByGroupByRef(Pageable pageable, Sort sort);
-    //public List<QaEntity> findByIdEqualsRef();
-   // public Page<QaEntity> qaList(Pageable pageable, Sort sort);
 }

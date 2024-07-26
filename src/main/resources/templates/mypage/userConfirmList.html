@@ -11,7 +11,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Fluid - Layouts | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>채용 현황</title>
 
     <meta name="description" content="" />
 
@@ -93,8 +93,8 @@
                                         </a>
 
                                         <!-- Thymeleaf를 사용하여 contractId가 null일 때 클릭 시 알람창을 띄우는 처리 -->
-                                        <a class="btn btn-primary" th:if="${post.contractId == null}" href="#" onclick="showAlert()">
-                                            계약서 보기
+                                        <a class="btn btn-primary" th:if="${post.contractId == null}" href="#">
+                                            현장 계약
                                         </a>
                                     </td>
                                     <td th:text="${post.companyId}"></td>
@@ -190,10 +190,20 @@
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 
-<script th:inline="javascript">
+<!--<script th:inline="javascript">
     function showAlert() {
         alert('계약서 작성 전입니다.');
     }
+</script>-->
+
+<script>
+    window.addEventListener('message', event => {
+                        if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
+                        if (event.data === 'modalClosed') {
+                            $('#myModal').modal('hide');
+                              $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                        }
+                        });
 </script>
 
 </body>

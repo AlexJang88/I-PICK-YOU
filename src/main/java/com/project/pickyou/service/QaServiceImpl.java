@@ -117,4 +117,5 @@ public class QaServiceImpl implements QaService {
     public void qaDelete(long boardNum) {
         qaJPA.deleteById(boardNum);
     }
+
 }

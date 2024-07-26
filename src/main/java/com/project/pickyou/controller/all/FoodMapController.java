@@ -124,9 +124,10 @@ public class FoodMapController {
     // 푸드맵 글 수정
     @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER')")
     @GetMapping("/posts/{boardNum}/edit")
-    public String update(Model model, @PathVariable Long boardNum, Principal principal,
-                         @RequestParam("id") String id) {
+    public String update(Model model, @PathVariable Long boardNum, Principal principal) {
+
         // @@
+        String id = "";
         if (principal != null) {
             model.addAttribute("id", principal.getName());
         }
