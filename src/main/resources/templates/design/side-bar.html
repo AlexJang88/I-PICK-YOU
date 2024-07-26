@@ -94,12 +94,41 @@
                 </a>
             </li>
 
-            <li class="menu-item">
+            <!--<li class="menu-item">
                 <a th:href="@{/qa/posts}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-crown"></i>
                     <div data-i18n="Boxicons">문의하기</div>
                 </a>
+            </li>-->
+
+
+
+            <li class="menu-item">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons bx bx-crown"></i>
+                    <div data-i18n="Account Settings">문의하기</div>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a th:href="@{/qa/posts/new}" class="menu-link">
+                            <div data-i18n="Account">문의 글쓰기</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a th:href="@{/qa/complete/posts}" class="menu-link">
+                            <div data-i18n="Account">답글 완료 내역</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a th:href="@{/qa/posts}" class="menu-link">
+                            <div data-i18n="Account">답글 미완료 내역</div>
+                        </a>
+                    </li>
+                </ul>
             </li>
+
+
+
 
 
 

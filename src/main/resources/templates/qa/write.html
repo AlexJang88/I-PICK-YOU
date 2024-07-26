@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
-    <title>Fluid - Layouts | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>문의 글쓰기</title>
     <meta name="description" content="" />
 
     <!-- Favicon -->
@@ -68,14 +68,7 @@
                                 </div>
                                 <div class="card-body">
                                     <form th:action="@{/qa/posts}" method="post">
-                                        <div class="form-group row mb-3">
-                                            <label class="col-sm-2 col-form-label" for="fullname1">작성자</label>
-                                            <div class="col-sm-10">
-                                                <div class="input-group">
-                                                    <input type="text" class="form-control" id="fullname1" aria-describedby="fullnameHelp" name="writer">
-                                                </div>
-                                            </div>
-                                        </div>
+
                                         <div class="form-group row mb-3">
                                             <label class="col-sm-2 col-form-label" for="fullname2">비밀번호</label>
                                             <div class="col-sm-10">
@@ -88,7 +81,7 @@
                                             <label class="col-sm-2 col-form-label" for="fullname">Title</label>
                                             <div class="col-sm-10">
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" id="fullname" aria-describedby="fullnameHelp" name="title">
+                                                    <input type="text" class="form-control" id="fullname" aria-describedby="fullnameHelp" name="title" placeholder="제목+닉네임을 같이 적어주세요.">
                                                 </div>
                                             </div>
                                         </div>
@@ -149,6 +142,17 @@
 
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer th:src="@{https://buttons.github.io/buttons.js}"></script>
+
+<script>
+    window.addEventListener('message', event => {
+                        if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
+                        if (event.data === 'modalClosed') {
+                            $('#myModal').modal('hide');
+                              $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                        }
+                        });
+</script>
+
 </body>
 
 </html>

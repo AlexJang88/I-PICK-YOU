@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
-    <title>Fluid - Layouts | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>주변 밥집 상세정보</title>
     <meta name="description" content="" />
     <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon/favicon.ico}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -310,6 +310,16 @@
         }
         return true; // 폼 서브밋을 진행합니다.
     }
+</script>
+
+<script>
+    window.addEventListener('message', event => {
+                        if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
+                        if (event.data === 'modalClosed') {
+                            $('#myModal').modal('hide');
+                              $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                        }
+                        });
 </script>
 
 <style>

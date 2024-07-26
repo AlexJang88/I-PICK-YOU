@@ -22,4 +22,5 @@ public interface QaService {
 
     // qa 글삭제
     public void qaDelete(long boardNum);
+
 }

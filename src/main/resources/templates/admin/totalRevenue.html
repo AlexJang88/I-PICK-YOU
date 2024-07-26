@@ -11,7 +11,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Fluid - Layouts | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>매출 정보</title>
 
     <meta name="description" content="" />
 
@@ -281,92 +281,15 @@
 </script>
 
 
+<script>
+    window.addEventListener('message', event => {
+                        if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
+                        if (event.data === 'modalClosed') {
+                            $('#myModal').modal('hide');
+                              $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                        }
+                        });
+</script>
 
-
-
-<!--<script th:inline="javascript">
-    /*<![CDATA[*/
-    window.onload = function() {
-        var chartDataMoney = /*[[${chartDataMoney}]]*/ [];
-        var chartDataPoint = /*[[${chartDataPoint}]]*/ [];
-        var chartDataDifference = /*[[${chartDataDifference}]]*/ [];
-
-        var dataPointsMoney = chartDataMoney.map(function(point) {
-            return {
-                x: new Date(point.x), // 날짜 문자열을 Date 객체로 변환
-                y: point.y // 금액
-            };
-        });
-
-        var dataPointsPoint = chartDataPoint.map(function(point) {
-            return {
-                x: new Date(point.x), // 날짜 문자열을 Date 객체로 변환
-                y: point.y // 포인트
-            };
-        });
-
-        var dataPointsDifference = chartDataDifference.map(function(point) {
-            return {
-                x: new Date(point.x), // 날짜 문자열을 Date 객체로 변환
-                y: point.y // 차이 (money - point)
-            };
-        });
-
-        var chartType = /*[[${chartType}]]*/ "both"; // 기본값 설정
-
-        var dataSeries = [];
-
-        if (chartType === "both") {
-            dataSeries.push({
-                type: "line",
-                name: "결제 금액",
-                showInLegend: true,
-                xValueType: "dateTime",
-                yValueFormatString: "#,##0 원",
-                dataPoints: dataPointsMoney
-            });
-
-            dataSeries.push({
-                type: "line",
-                name: "사용 포인트",
-                showInLegend: true,
-                xValueType: "dateTime",
-                yValueFormatString: "#,##0 포인트",
-                dataPoints: dataPointsPoint
-            });
-        }
-
-        if (chartType === "difference") {
-            dataSeries.push({
-                type: "line",
-                name: "순매출",
-                showInLegend: true,
-                xValueType: "dateTime",
-                yValueFormatString: "#,##0 원",
-                dataPoints: dataPointsDifference
-            });
-        }
-
-        var chart = new CanvasJS.Chart("chartContainer", {
-            theme: "light2",
-            animationEnabled: true,
-            title: {
-                text: "매출 현황"
-            },
-            axisX: {
-                valueFormatString: "MM-DD", // X축 날짜 형식 설정
-            },
-            axisY: {
-                title: "",
-                includeZero: true,
-                suffix: chartType === "difference" ? "" : "원" // 단위 설정
-            },
-            data: dataSeries
-        });
-
-        chart.render();
-    }
-    /*]]>*/
-</script>-->
 </body>
 </html>

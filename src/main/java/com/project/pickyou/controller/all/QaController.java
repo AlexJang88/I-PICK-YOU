@@ -21,7 +21,7 @@ public class QaController {
 
     private final QaService qaService;
 
-    // qa 리스트 가져오기, 페이징 처리
+    // qa 리스트 가져오기, 페이징 처리 / 답글 미완
     @GetMapping("/posts")
     public String qaList(Model model, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                          HttpSession session, Principal principal) {
@@ -35,6 +35,22 @@ public class QaController {
         // qa 리스트 가져오기
         qaService.AllPosts(model, pageNum);
         return "qa/list";
+    }
+
+    // qa 리스트 가져오기, 페이징 처리 / 답글 완
+    @GetMapping("complete/posts")
+    public String qaCompleteList(Model model, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                         HttpSession session, Principal principal) {
+        String memberId="";
+
+        if(principal!=null) {
+            model.addAttribute("id", principal.getName());
+            memberId = principal.getName();
+        }
+        String sid = (String) session.getAttribute(memberId);
+        // qa 리스트 가져오기
+        qaService.AllPosts(model, pageNum);
+        return "qa/completeList";
     }
 
     // qa 글쓰기
@@ -57,8 +73,15 @@ public class QaController {
             memberId = principal.getName();
         }
 
+        String notLogin = "비회원";
         // qa insert
         dto.setStatus(1);
+        if (principal==null) {
+            dto.setWriter(notLogin);
+        }else {
+            dto.setWriter(memberId);
+        }
+
         qaService.qaInsert(dto);
         return "redirect:/qa/posts";
     }

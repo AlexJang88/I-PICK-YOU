@@ -11,7 +11,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Fluid - Layouts | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>이력서 수정</title>
 
     <meta name="description" content="" />
 
@@ -473,7 +473,7 @@
                                                         <h4 class="text-light fw-semibold d-block">희망 지역</h4>
                                                         <div class="mb-3">
                                                             <div class="input-group">
-                                                                <input type="text" class="form-control" id="address" name="address" th:value="${resumeInfo.local}" required>
+                                                                <input type="text" class="form-control" id="address" name="address" th:value="${resumeInfo.local}" readonly required>
                                                                 <button type="button" id="addressButton" class="btn btn-primary">주소 검색</button>
                                                             </div>
                                                         </div>
@@ -678,6 +678,16 @@
         alert('경력과 직종 선택은 하나 이상 필수로 선택해야 합니다.'); // 알람 메시지를 표시합니다
         }
     });
+</script>
+
+<script>
+    window.addEventListener('message', event => {
+                        if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
+                        if (event.data === 'modalClosed') {
+                            $('#myModal').modal('hide');
+                              $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                        }
+                        });
 </script>
 
 </body>
