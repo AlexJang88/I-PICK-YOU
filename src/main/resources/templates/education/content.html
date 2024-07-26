@@ -180,9 +180,9 @@
                                 <div class="card mb-4 shadow-lg">
                                     <div class="card-body d-flex justify-content-center align-items-center">
                                         <div class="row justify-content-center" style="gap: 20px;"> <!-- gap 값을 조정 -->
-                                            <div th:each="image : ${images}" class="col-md-4 mb-3 d-flex justify-content-center">
+                                            <div th:each="image : ${imgList}" class="col-md-4 mb-3 d-flex justify-content-center">
                                                 <!-- 이미지 삽입 -->
-                                                <img th:src="@{'/upload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}" alt="사진" style="width: 250px; height: 250px;"/>
+                                                <img th:src="@{'https://'+ ${bucketName}+'.s3.' + ${regionName} + '.amazonaws.com/image/' +${image.boardType}+'/'+${image.boardNum}+'/'+${image.name}}" style="width: 250px; height: 250px;" >
                                             </div>
                                         </div>
                                     </div>

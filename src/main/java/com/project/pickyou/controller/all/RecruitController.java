@@ -82,7 +82,7 @@ public class RecruitController {
             service.updateReadCount(boardNum);
             session.setAttribute(sid+"_"+type+"_"+boardNum,"true");
         }
-        service.post(model,boardNum,sid);
+        service.post(model,boardNum,sid,type);
         return "recruit/content";
     }
     //수정페이지 이동
@@ -95,7 +95,7 @@ public class RecruitController {
             sid=principal.getName();
             model.addAttribute("id",principal.getName());
             if(educationService.authCheck(boardNum,sid,type)){
-                service.post(model,boardNum,sid);
+                service.post(model,boardNum,sid,type);
                 url="recruit/update";
             }
         }

@@ -125,7 +125,7 @@ public class RecruitServiceImpl implements RecruitService {
     }
 
     @Override
-    public void post(Model model, Long num, String sid) {
+    public void post(Model model, Long num, String sid,int boardType) {
         int check=0;
         int auth=0;
         int applyCheck=0;
@@ -159,7 +159,7 @@ public class RecruitServiceImpl implements RecruitService {
                 }
             }
 
-            imageList = imageJPA.findByBoardTypeAndBoardNum(2, num);
+            imageList = imageJPA.findByBoardTypeAndBoardNum(boardType, num);
             edto = post.get().toRecruitDTO();
             cidto = post.get().getMember().getCompanyInfo().toCompanyInfoDTO();
             mdto = post.get().getMember().toMemberDTO();
