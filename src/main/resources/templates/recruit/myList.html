@@ -12,7 +12,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>채용공고</title>
+    <title>내공고</title>
 
     <meta name="description" content="" />
 
@@ -42,6 +42,7 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script th:src="@{/assets/js/config.js}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 </head>
 
@@ -147,7 +148,7 @@
                     </div>
                 </div>
                 <script>
-                    $(document).ready(function() {
+
                     window.addEventListener('message', event => {
                        if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
                        if (event.data === 'modalClosed') {
@@ -155,7 +156,7 @@
                              $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
                        }
                        });
-                   });
+
                 </script>
                 <!-- Footer -->
                 <div th:include="~{design/footer :: footer}"></div>
@@ -178,7 +179,6 @@
 <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->
 <script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
 <script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
 <script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>

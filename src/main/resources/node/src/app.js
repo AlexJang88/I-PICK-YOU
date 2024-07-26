@@ -76,7 +76,6 @@ app.get('/api/unread/:user', (req, res) => {
 
 // Socket.IO 연결 관리
 io.on('connection', (socket) => {
-    console.log('User connected');
 
     // 방에 조인하는 이벤트
     socket.on('joinRoom', ({ sender, receiver }) => {
@@ -124,14 +123,11 @@ io.on('connection', (socket) => {
         if (socket.roomId) {
 
             const roomId = socket.roomId;
-             console.log(roomId);
             const sender = Object.keys(activeRooms[roomId]).find(user => user !== 'history');
-             console.log(unreadMessages[roomId][sender]);
             // 채팅방을 나갈 때, 채팅 기록 저장
             saveChatHistory();
             unreadMessages[roomId][sender] = 0;
             // 상대방이 보낸 메시지 수를 사용자에게 안 읽은 메시지로 추가
-            console.log(unreadMessages[roomId][sender]);
             // 방 데이터 초기화
 
         }

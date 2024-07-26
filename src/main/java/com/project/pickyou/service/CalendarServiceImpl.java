@@ -53,7 +53,6 @@ public class CalendarServiceImpl implements CalendarService{
                     obj.addProperty("title", "공고 지원(" + rse.getRecruit().getTitle() + ")");
                     obj.addProperty("date", date);
                     applyList.add(obj);
-                    System.out.println("----------------applyobj" + obj);
                 }
             }
             List<ConfirmEntity> conList = confirmJPA.findByMemberId(id);
@@ -62,10 +61,10 @@ public class CalendarServiceImpl implements CalendarService{
                     JsonObject obj = new JsonObject();
                     String date = ce.getReg().toString();
                     obj.addProperty("auth",auth);
-                    obj.addProperty("title", "채용 확정");
+                    obj.addProperty("title", "채용 확정("+ce.getCompanyId()+")");
                     obj.addProperty("date", date);
+                    obj.addProperty("url","mypage/confirm/posts");
                     confirmList.add(obj);
-                    System.out.println("----------------confirmobj" + obj);
                 }
             }
 
@@ -87,10 +86,10 @@ public class CalendarServiceImpl implements CalendarService{
                     JsonObject obj = new JsonObject();
                     String date = ce.getReg().toString();
                     obj.addProperty("auth",auth);
-                    obj.addProperty("title", "채용 확정");
+                    obj.addProperty("title", "채용 확정("+ce.getMemberId()+")");
                     obj.addProperty("date", date);
+                    obj.addProperty("url","mypage/company/confirmation/posts");
                     confirmList.add(obj);
-                    System.out.println("----------------confirmobj" + obj);
                 }
             }
         }

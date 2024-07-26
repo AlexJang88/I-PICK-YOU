@@ -40,7 +40,6 @@ public class PickServiceImpl implements PickService{
                 }else if(mem.get().getAuth().contains("COMPANY")){
                     type=2;
                 }
-                System.out.println("---------------------------type"+type);
             }
             model.addAttribute("posts", posts);
             model.addAttribute("count", count);

@@ -65,13 +65,16 @@ public class EducationController {
    @GetMapping("posts/{boardNum}/edit")
    public String edit(Model model,@PathVariable Long boardNum,Principal principal){
        String sid="";
+       String url="redirect:/";
        if(principal!=null){
            sid= principal.getName();
            model.addAttribute("id",principal.getName());
+            if(service.authCheck(boardNum,sid,type)){
+                url="education/update";
+                service.post(model,boardNum,sid,2);
+            }
        }
-       //principal.getName();
-       service.post(model,boardNum,sid,2);
-        return "education/update";
+        return url;
    }
 
    //수정
@@ -108,7 +111,6 @@ public class EducationController {
             url="redirect:/educations/posts";
         }
         model.addAttribute("memberId",sid);
-        System.out.println("================mem"+sid);
         return url;
     }
     //작성
@@ -129,13 +131,15 @@ public class EducationController {
         String sid="";
         if(principal!=null){
             sid= principal.getName();
+            if(!sid.equals(target)){
+                PickDTO dto = new PickDTO();
+                dto.setPicker(sid);
+                dto.setTarget(target);
+                service.favoriteCheck(dto);
+            }
         }
         //principal.getName(); 로그인 적용후 번경
-        PickDTO dto = new PickDTO();
-            dto.setPicker(sid);
-            dto.setTarget(target);
-            System.out.println("----------------"+dto);
-            service.favoriteCheck(dto);
+
         String url = "redirect:/educations/posts/"+boardNum;
         return url;
     }

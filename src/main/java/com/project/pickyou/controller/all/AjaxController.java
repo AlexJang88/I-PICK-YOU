@@ -13,11 +13,13 @@ import com.project.pickyou.service.AlarmService;
 import com.project.pickyou.service.CalendarService;
 import com.project.pickyou.service.LoginService;
 import com.project.pickyou.service.RecruitStateService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -54,7 +56,6 @@ public class AjaxController {
    @ResponseBody
     public ResponseEntity<Map<String, String>> idcheck(@RequestBody MemberDTO dto){
 
-        System.out.println("받은 아이디: " + dto.getId());
         /*제이슨 객체생성*/
 
         boolean isExist = loginService.checkIfIdExists(dto.getId());
@@ -74,7 +75,6 @@ public class AjaxController {
     @ResponseBody
     public ResponseEntity<Map<String, String>> usercheck(@RequestBody MemberDTO dto){
 
-        System.out.println("받은 아이디: " + dto.getId());
         /*제이슨 객체생성*/
 
         boolean isExist = loginService.userCheckIFIdExists(dto.getId());
@@ -95,7 +95,6 @@ public class AjaxController {
     @ResponseBody
     public ResponseEntity<Map<String, String>> emailcheck(@RequestBody MemberDTO dto){
 
-        System.out.println("받은 아이디: " + dto.getEmail());
         /*제이슨 객체생성*/
 
         boolean isExist = loginService.checkIfEmailExists(dto.getEmail());
@@ -115,7 +114,6 @@ public class AjaxController {
     @ResponseBody
     public ResponseEntity<Map<String, String>> corpnocheck(@RequestBody CompanyInfoDTO dto){
 
-        System.out.println("받은 사업자번호: " + dto.getCorpno());
         /*제이슨 객체생성*/
 
         boolean isExist = loginService.checkIfcorpnocheck(dto.getCorpno());
@@ -133,27 +131,12 @@ public class AjaxController {
     @PostMapping("/calendar")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> calendar(@RequestParam("memberId") String memberId ){
-        System.out.println("-------------------------memberId"+memberId);
         JsonObject list = calendarService.getCalendarData(memberId);
-        System.out.println("-------------------------list"+list);
         Map<String,Object> result = new Gson().fromJson(list,Map.class);
 
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/test")
-    @ResponseBody
-    public String testasdf(){
-        String result="";
-        Date date = new Date();
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.add(Calendar.DATE,-1);
-        result = sf.format(cal.getTime());
-
-    return result;
-            }
 
 
 }

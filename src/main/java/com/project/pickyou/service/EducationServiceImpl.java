@@ -2,10 +2,7 @@ package com.project.pickyou.service;
 
 import com.project.pickyou.dto.*;
 import com.project.pickyou.entity.*;
-import com.project.pickyou.repository.EducationJPARepository;
-import com.project.pickyou.repository.ImageJPARepository;
-import com.project.pickyou.repository.MemberJPARepository;
-import com.project.pickyou.repository.PickJPARepository;
+import com.project.pickyou.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +35,10 @@ public class EducationServiceImpl implements EducationService {
     private final ImageJPARepository imageJPA;
     private final PickJPARepository pickJPA;
     private final MemberJPARepository memberJPA;
+    private final TeamResumeJPARepository teamResumeJPA;
+    private final RecruitJPARepository recruitJPA;
+    private final ContractJPARepository contractJPA;
+
 
     @Override
     public void AllPosts(Model model, int pageNum) {
@@ -73,9 +74,7 @@ public class EducationServiceImpl implements EducationService {
         key.setPicker(picker);
         key.setTarget(target);
         Optional<PickEntity> pickcheck = pickJPA.findById(key);
-        System.out.println("-------------key"+key);
         if (pickcheck.isPresent()) {
-            System.out.println("-------------key"+pickcheck.get().getPicker());
             result = 1;
         }
         return result;
@@ -207,11 +206,9 @@ public int favoriteCheck(PickDTO dto) {
     key.setTarget(dto.getTarget());
     Optional<PickEntity> pickcheck = pickJPA.findById(key);
     if (pickcheck.isPresent()) {
-        System.out.println("--------------notempty"+key);
         pickJPA.deleteById(key);
     } else {
         pickJPA.save(dto.toPickEntity());
-        System.out.println("--------------empty"+dto);
         favoritecheck = 1;
     }
     return favoritecheck;
@@ -225,6 +222,43 @@ public int favoriteCheck(PickDTO dto) {
             ee.setReadCount(ee.getReadCount()+1);
             educationJPA.save(ee);
         }
+    }
+
+    @Override
+    public boolean authCheck(Long boardNum, String id,int type) {
+        boolean result = false;
+        if(type==2) {
+            Optional<EducationEntity> oee=educationJPA.findById(boardNum);
+            if(oee.isPresent()){
+                if(oee.get().getMember().equals(id)){
+                    result=true;
+                }
+            }
+        } else if (type==5) {
+            Optional<TeamResumeEntity> ote = teamResumeJPA.findById(boardNum);
+                    if(ote.isPresent()){
+                        if(ote.get().getMemberId().equals(id)){
+                            result=true;
+                        }
+                    }
+        } else if (type==6) {
+            Optional<RecruitEntity> ore = recruitJPA.findById(boardNum);
+            if(ore.isPresent()){
+                if(ore.get().getMemberId().equals(id)){
+                    result=true;
+                }
+            }
+        } else if (type==7) {
+            Optional<ContractEntity> oce = contractJPA.findById(boardNum);
+            if(oce.isPresent()){
+                if(oce.get().getMemberId().equals(id)){
+                    result=true;
+                } else if (oce.get().getCompanyId().equals(id)) {
+                    result=true;
+                }
+            }
+        }
+        return result;
     }
 
     public String makeFolder(String uploadPath, int boardType, Long boardNum) {

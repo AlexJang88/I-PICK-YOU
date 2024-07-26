@@ -56,7 +56,6 @@ public class TeamServiceImpl implements TeamService{
         if(check>0){
             veil=1;
         }
-        System.out.println("---------------------------veil"+veil);
         Sort sort = Sort.by(Sort.Order.desc("reg"));
         Page<TeamResumeEntity> page = teamJPA.findAllByStatus(1,PageRequest.of(pageNum - 1, pageSize, sort));
         //  로그인 처리후 사용할 코드
@@ -112,8 +111,6 @@ public class TeamServiceImpl implements TeamService{
             if (pickcheck.isPresent()) {
                 favoritecheck = 1;
             }
-            System.out.println("------------------------check"+check);
-            System.out.println("------------------------auth"+auth);
             model.addAttribute("check",check);
             model.addAttribute("auth",auth);
             model.addAttribute("type",type);
@@ -270,7 +267,6 @@ public class TeamServiceImpl implements TeamService{
 
             tdto = post.get().toTeam_ResumeDTO();
             mdto = post.get().getMember().toMemberDTO();
-            System.out.println("========id"+post.get().getMemberId());
             model.addAttribute("member", mdto);
             model.addAttribute("post", post.get());
             model.addAttribute("imgList", imageList);
@@ -278,7 +274,6 @@ public class TeamServiceImpl implements TeamService{
         }else{
             model.addAttribute("check", 0);
             model.addAttribute("memberId",id);
-            System.out.println("================id"+id);
         }
 
 
