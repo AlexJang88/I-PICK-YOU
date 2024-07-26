@@ -11,7 +11,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Fluid - Layouts | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>사이트소개</title>
 
     <meta name="description" content="" />
 
@@ -67,7 +67,22 @@
             <!-- Content wrapper -->
             <div class="content-wrapper">
                 <!-- Content -->
+
                 <div class="container-xxl flex-grow-1 container-p-y">
+
+                    <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Chat</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <iframe id="roomFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
                         <ol class="carousel-indicators">
                             <li data-bs-target="#carouselExample" data-bs-slide-to="0" class="active"></li>

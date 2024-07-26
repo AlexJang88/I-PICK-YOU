@@ -44,7 +44,7 @@
 
     <!-- Helpers -->
     <script th:src="@{/assets/vendor/js/helpers.js}"></script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script th:src="@{/assets/js/config.js}"></script>
@@ -520,7 +520,7 @@
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
 <script>
     function updateAgreePrivacyCheckbox() {
@@ -534,6 +534,16 @@
     }
 }
 
+</script>
+
+<script>
+    window.addEventListener('message', event => {
+                           if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
+                           if (event.data === 'modalClosed') {
+                               $('#myModal').modal('hide');
+                                 $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                           }
+                           });
 </script>
 
 
@@ -617,6 +627,16 @@
     document.getElementById("password2").addEventListener("input", checkPasswordMatch);
 </script>
 
+
+<script>
+    window.addEventListener('message', event => {
+                           if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
+                           if (event.data === 'modalClosed') {
+                               $('#myModal').modal('hide');
+                                 $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                           }
+                           });
+</script>
 
 <script>
     function autoFormatPhone(input) {

@@ -94,11 +94,14 @@
                             </div>
                         </div><!-- 그림자를 진하게 하기 위해 shadow-lg 클래스 추가 -->
 
+
                         <div class="card-body">
                             <!-- 제목 -->
                             <div class="text-center mb-4">
                                 <h2 class="fw-bold py-3" th:text="${AgencyList.get().companyName}"></h2>
-                                <button th:if="${type!=1 and auth!=0}" id="openChatBtn" class="btn btn-primary">채팅</button>
+                                <div th:if="${id != AgencyList.get().companyId}">
+                                    <button th:if="${type!=1 and auth!=0}" id="openChatBtn" class="btn btn-primary">채팅</button>
+                                </div>
                             </div>
 
                             <!-- 정보 섹션 -->
@@ -246,15 +249,13 @@
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 
 <script>
-    $(document).ready(function() {
-                    window.addEventListener('message', event => {
-                       if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
-                       if (event.data === 'modalClosed') {
-                           $('#myModal').modal('hide');
-                             $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
-                       }
-                   });
-
+    window.addEventListener('message', event => {
+                           if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
+                           if (event.data === 'modalClosed') {
+                               $('#myModal').modal('hide');
+                                 $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                           }
+                           });
 </script>
 
 <script>

@@ -434,61 +434,6 @@
             <!-- 관리자 페이지 -->
             <li class="menu-header small text-uppercase"><span class="menu-header-text">고객센터</span></li>
 
-            <li class="menu-item" sec:authorize="hasRole('ROLE_ADMIN')">
-                <a href="javascript:void(0);" class="menu-link menu-toggle">
-                    <i class="menu-icon tf-icons bx bx-cube-alt"></i>
-                    <div data-i18n="Misc">관리자 페이지</div>
-                </a>
-                <ul class="menu-sub">
-                    <li class="menu-item">
-                        <a th:href="@{/admin/management}" class="menu-link">
-                            <div data-i18n="Error">일반유저 정보</div>
-                        </a>
-                    </li>
-                </ul>
-                <ul class="menu-sub">
-                    <li class="menu-item">
-                        <a th:href="@{/admin/companyManagement}" class="menu-link">
-                            <div data-i18n="Error">사업자 정보</div>
-                        </a>
-                    </li>
-                </ul>
-                <ul class="menu-sub">
-                    <li class="menu-item">
-
-                        <a th:href="@{/admin/payment/totalRevenue}" class="menu-link">
-                            <div data-i18n="Error">매출 현황</div>
-                        </a>
-                    </li>
-                </ul>
-                <ul class="menu-sub">
-                    <li class="menu-item">
-                        <a th:href="@{/admin/payment/posts}" class="menu-link">
-                            <div data-i18n="Error">결제 내역</div>
-                        </a>
-                    </li>
-                </ul>
-                <ul class="menu-sub">
-                    <li class="menu-item">
-                        <a th:href="@{/admin/point/give}" class="menu-link">
-                            <div data-i18n="Error">포인트 지급 내역</div>
-                        </a>
-                    </li>
-                </ul>
-                <ul class="menu-sub">
-                    <li class="menu-item">
-                        <a th:href="@{/admin/point/deduct}" class="menu-link">
-                            <div data-i18n="Error">포인트 사용 내역</div>
-
-                        <a th:href="@{/admin/pointPayment}" class="menu-link">
-                            <div data-i18n="Error">포인트 지급 승인</div>
-
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-
             <li class="menu-item">
                   <ul>
                      <i class="menu-icon tf-icons bx bx-support"></i>
