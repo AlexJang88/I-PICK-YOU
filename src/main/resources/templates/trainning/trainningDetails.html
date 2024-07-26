@@ -198,7 +198,7 @@
                                         <div class="row justify-content-center" style="gap: 20px;"> <!-- gap 값을 조정 -->
                                             <div th:each="image : ${images}" class="col-md-4 mb-3 d-flex justify-content-center">
                                                 <!-- 이미지 삽입 -->
-                                                <img th:src="@{'/kjwupload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}" alt="사진" style="width: 250px; height: 250px;"/>
+                                                <img th:src="@{'/upload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}" alt="사진" style="width: 250px; height: 250px;"/>
                                             </div>
                                         </div>
                                     </div>
