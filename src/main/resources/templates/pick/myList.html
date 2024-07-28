@@ -51,7 +51,7 @@
             var receiver = $(this).closest('tr').find('.receiver').val();
 
             // Set the chat URL with sender and receiver
-            var chatUrl = 'http://localhost:4000/chat/' + sender + '/' + receiver;
+            var chatUrl = 'http://3.39.50.114:4000/chat/' + sender + '/' + receiver;
 
             // Set the iframe source to the chat URL
             $('#chatFrame').attr('src', chatUrl);
@@ -63,7 +63,7 @@
           // Handle message events from the iframe
           window.addEventListener('message', function(event) {
             // Ensure the message comes from the expected origin
-            if (event.origin !== 'http://localhost:4000') return;
+            if (event.origin !== 'http://3.39.50.114:4000') return;
 
             // Check if the message indicates the modal should be closed
             if (event.data === 'modalClosed') {
