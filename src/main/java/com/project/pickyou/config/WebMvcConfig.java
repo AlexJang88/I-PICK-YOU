@@ -11,7 +11,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Value("${img.upload.path}")
     private String imgUploadPath;
 
-    @Value("${contract.upload.path}")
+    @Value("${contracts.upload.path}")
     private String contractUploadPath;
 
     @Value("${profile.upload.path}")

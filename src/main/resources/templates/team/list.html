@@ -111,17 +111,19 @@
                         <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
                             <div class="col-md-4" th:each="post : ${posts}">
                                 <div class="card h-100">
-                                    <img class="card-img-top" src="../assets/img/elements/2.jpg" alt="Card image cap"/>
+                                    <img class="card-img-top" th:src="@{'https://'+ ${bucketName}+'.s3.' + ${regionName} + '.amazonaws.com/profile/' +${post.profile}}" alt="Card image cap"/>
+                                    <a th:href="@{/teams/posts/{id}(id=${post.id})}">
                                     <div class="card-body">
                                         <h5 class="card-title"><span th:text="${post.teamName}"></span></h5>
-                                        <a th:href="@{/teams/posts/{id}(id=${post.id})}">
+
                                             <p class="card-text">
                                                 <span th:text="${post.teamName}"></span>
                                                 인원 : <span th:text="${post.number}"></span> 명<br/>
                                                 지역 : <span th:text="${post.address}"></span>
                                             </p>
-                                        </a>
+
                                     </div>
+                                    </a>
                                 </div>
                             </div>
                         </div>

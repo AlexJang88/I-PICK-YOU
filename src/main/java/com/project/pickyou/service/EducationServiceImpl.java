@@ -22,10 +22,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -144,13 +142,12 @@ public class EducationServiceImpl implements EducationService {
     @Transactional
     public void writePost(List<MultipartFile> files, EducationDTO dto, int boardType) {
         Long eduNum = educationJPA.getAutoIncrementValue("pickyou", "education");
-        educationJPA.save(dto.toEducationEntity());
+
         if (!CollectionUtils.isEmpty(files)) {
             for (MultipartFile file : files) {
                 if (file.getContentType().startsWith("image")) {
                     try {
                         String filePath = s3Service.uploadFile(file, "image/" + boardType + "/" + eduNum);
-                        System.out.println("---------------------------filePath"+filePath);
                         ImageDTO idto = new ImageDTO();
                         idto.setBoardNum(eduNum);
                         idto.setBoardType(boardType);
@@ -162,6 +159,7 @@ public class EducationServiceImpl implements EducationService {
                 }
             }
         }
+        educationJPA.save(dto.toEducationEntity());
     }
 
     @Override
@@ -211,12 +209,19 @@ public class EducationServiceImpl implements EducationService {
                     if (file.getContentType().startsWith("image")) {
                         try {
                             String filePath = s3Service.uploadFile(file, "image/" + boardType + "/" + dto.getId());
+                            ImageDTO idto = new ImageDTO();
+                            idto.setBoardNum(dto.getId());
+                            idto.setBoardType(boardType);
+                            idto.setName(filePath);
+                            imageJPA.save(idto.toImageEntity());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                 }
             }
+            Date date = new Date();
+            dto.setReg(date);
             educationJPA.save(dto.toEducationEntity());
         }
     }
@@ -256,7 +261,7 @@ public int favoriteCheck(PickDTO dto) {
         if(type==2) {
             Optional<EducationEntity> oee=educationJPA.findById(boardNum);
             if(oee.isPresent()){
-                if(oee.get().getMember().equals(id)){
+                if(oee.get().getCompanyId().equals(id)){
                     result=true;
                 }
             }

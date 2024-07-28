@@ -253,12 +253,9 @@
                                     <h5 class="card-header text-center">사진 보기</h5>
                                     <div class="card-body d-flex justify-content-center align-items-center">
                                         <div class="row justify-content-center" style="gap: 20px;"> <!-- gap 값을 조정 -->
-                                            <img th:src="@{/images/profile/fecf6404-d324-492c-b366-cdcdf4c5e84c.png}"/>
-                                            <div th:each="img : ${imgList}" class="col-md-4 mb-3 d-flex justify-content-center">
+                                            <div th:each="image : ${imgList}" class="col-md-4 mb-3 d-flex justify-content-center">
                                                 <!-- 이미지 삽입 -->
-                                                <img th:src="@{/img/fecf6404-d324-492c-b366-cdcdf4c5e84c.png}" >
-                                                <img th:src="@{/images/profile/fecf6404-d324-492c-b366-cdcdf4c5e84c.png}"/>
-                                                <img th:src="@{'/images/image/'+${img.boardType}+'/'+${img.boardNum}+'/'+${img.name}}"  style="width: 250px; height: 250px;"/>
+                                                <img th:src="@{'https://'+ ${bucketName}+'.s3.' + ${regionName} + '.amazonaws.com/image/' +${image.boardType}+'/'+${image.boardNum}+'/'+${image.name}}" style="width: 250px; height: 250px;" >
                                             </div>
                                         </div>
                                     </div>

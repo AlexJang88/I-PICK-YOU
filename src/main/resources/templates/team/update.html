@@ -73,7 +73,7 @@
                         <div class="col-xxl">
                             <div class="card mb-4">
                                 <div class="card-body">
-                                    <form id="teamsForm" th:method="post" th:action="@{/teams/posts}" enctype="multipart/form-data" novalidate onsubmit="return validateForm()">
+                                    <form id="teamsForm" th:method="put" th:action="@{/teams/posts}" enctype="multipart/form-data" novalidate onsubmit="return validateForm()">
                                         <div class="row mb-3">
                                             <label class="col-sm-2 col-form-label" for="teamName">팀 이름</label>
                                             <div class="col-sm-10">
@@ -141,6 +141,7 @@
                                             <div class="col-sm-10">
                                                 <input type="hidden" name="profile" th:value="${post.profile}">
                                                 <input type="hidden" name="id" th:value="${post.id}">
+                                                <input type="hidden" name="memberId" th:value="${post.memberId}">
                                                 <button type="submit" class="btn btn-primary">Send</button>
                                             </div>
                                         </div>
