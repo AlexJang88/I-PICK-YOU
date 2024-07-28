@@ -259,7 +259,7 @@
 
             $(document).ready(function() {
               window.addEventListener('message', event => {
-                        if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
+                        if (event.origin !== 'http://3.39.50.114:4000') return;  // 보안 검사
                         if (event.data === 'modalClosed') {
                             $('#myModal').modal('hide');
                             $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
@@ -270,7 +270,7 @@
                     fetchUnreadMessages();
                     $('#openChatRoomBtn').click(function() {
                         var sender = $('#ajaxId').val();
-                        var chatUrl = 'http://localhost:4000/rooms/' + sender
+                        var chatUrl = 'http://3.39.50.114:4000/rooms/' + sender
                         $('#roomFrame').attr('src', chatUrl);
                         $('#myModal').modal('show');
                     });
@@ -286,7 +286,7 @@
                 if (!userId) return; // 로그인되지 않은 경우 함수 종료
 
                 $.ajax({
-                    url: 'http://localhost:4000/api/unread/' + userId,
+                    url: 'http://3.39.50.114:4000/api/unread/' + userId,
                     method: 'GET',
                     success: function(response) {
                         $('#chatCount').text(response.unreadCount);
