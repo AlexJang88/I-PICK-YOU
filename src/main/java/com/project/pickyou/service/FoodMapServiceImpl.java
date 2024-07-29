@@ -3,6 +3,7 @@ package com.project.pickyou.service;
 import com.project.pickyou.dto.FoodMapDTO;
 import com.project.pickyou.dto.ImageDTO;
 import com.project.pickyou.dto.PointDTO;
+import com.project.pickyou.entity.EducationEntity;
 import com.project.pickyou.entity.FoodMapEntity;
 import com.project.pickyou.entity.ImageEntity;
 import com.project.pickyou.entity.NoticeEntity;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -34,9 +36,14 @@ import java.util.*;
 @RequiredArgsConstructor
 public class FoodMapServiceImpl implements FoodMapService {
 
-    @Value("${img.upload.path}")
-    private String imgUploadPath;  // 프로퍼티스에서 정한경로를, 웹 컨피그에서 해당 경로 지정 해서 클래스 안에 설정
 
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    @Value("${cloud.aws.region.static}")
+    private String region;
+
+    private final S3Service s3Service;
 
     private final FoodMapJPARepository foodMapJPA;
     private final ImageJPARepository imageJPA;
@@ -85,45 +92,29 @@ public class FoodMapServiceImpl implements FoodMapService {
     }
 
     @Override
-    public void saveImage(ImageDTO imageDTO, MultipartFile[] files) {
-        if (files != null && files.length > 0) {
+    public void saveImage(FoodMapDTO dto, List<MultipartFile> files) {
+        Long foodMapNum = foodMapJPA.getAutoIncrementValue("pickyou", "food_map");
+
+        if (!CollectionUtils.isEmpty(files)) {
             for (MultipartFile file : files) {
-                String originalFileName = file.getOriginalFilename(); // 원래 사진이름
-                String fileName = generateUniqueFileName(originalFileName); // 아래에서 고유한 파일 이름 생성
-
-                try {
-                    // 파일 저장할 기본 경로
-                    String baseDir = imgUploadPath;
-                    // 공지사항 ID 설정과 타입 설정예정
-                    int numtype = 4; // 푸드맵 4번
-                    String num = "4";
-                    // 공지사항 ID를 기반으로 서브 폴더 생성
-                    String subFolder = num + File.separator + imageDTO.getBoardNum(); // 파일 이름 설정하는것_번호 // num = 타입 1번이고 File.separator는 안에 파일 + 파일번호
-                    Path directory = Paths.get(baseDir, subFolder); // 프로퍼티스 경로와 + 파일생성된 경로 합치기
-
-                    // 서브 폴더가 존재하지 않으면 생성
-                    if (!Files.exists(directory)) { // 해당 폴더를 확인하고 없으면 생성 확인
-                        Files.createDirectories(directory);
+                if (file.getContentType().startsWith("image")) {
+                    try {
+                        String filePath = s3Service.uploadFile(file, "image/" + 4 + "/" + foodMapNum);
+                        ImageDTO idto = new ImageDTO();
+                        idto.setBoardNum(foodMapNum);
+                        idto.setBoardType(4);
+                        idto.setName(filePath);
+                        imageJPA.save(idto.toImageEntity());
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-
-                    // 파일 경로 설정
-                    Path filePath = directory.resolve(fileName); // 경로속 uu아이디 이름 넣기
-                    Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-                    // 아래 5개는 사진 파일 DB에 저장하는것
-                    // 파일 정보를 DB에 저장하거나 필요한 작업 수행
-                    ImageEntity imageEntity = new ImageEntity();     // new 객체생성
-                    imageEntity.setName(fileName);                   // 이름 설정
-                    imageEntity.setBoardNum(imageDTO.getBoardNum()); // 이미지 DTO에서 boardNum을 가져와 설정
-                    imageEntity.setBoardType(numtype);               // DB타입설정
-                    imageJPA.save(imageEntity);            // 이미지 엔티티 저장
-
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }
         }
+        dto.setRef(foodMapNum.intValue());
+        foodMapJPA.save(dto.toFood_MapEntity());
     }
+
 
     // 푸드맵 상세정보
     @Override
@@ -135,13 +126,6 @@ public class FoodMapServiceImpl implements FoodMapService {
             FoodMapEntity entity = optional.get();
             model.addAttribute("foodMapInfo", entity);
         }
-
-
-/*
-        if (!fmInfoList.isEmpty()) {
-            FoodMapEntity firstItem = fmInfoList.get(0);
-            model.addAttribute("fmInfoGet0", firstItem);
-        }*/
 
         List<FoodMapEntity> fmInfoList = foodMapJPA.findByRef(ref);
         model.addAttribute("fmInfo", fmInfoList);
@@ -160,6 +144,8 @@ public class FoodMapServiceImpl implements FoodMapService {
             }
             model.addAttribute("imagesRef", allImagesRef); // 모델에 모든 이미지를 추가합니다.
         }
+        model.addAttribute("bucketName",bucket);
+        model.addAttribute("regionName",region);
 
     }
 
@@ -177,16 +163,9 @@ public class FoodMapServiceImpl implements FoodMapService {
     public void foodMapDelete(Long boardNum) {
         Optional<FoodMapEntity> foodMap = foodMapJPA.findById(boardNum);
         if (foodMap.isPresent()) {
-            File folder = new File(imgUploadPath + File.separator + 4 + File.separator + boardNum);
-            try {
-                if (folder.exists()) {
-                    FileUtils.cleanDirectory(folder);
-                }
-                if (folder.isDirectory()) {
-                    folder.delete();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            List<ImageEntity> images = imageJPA.findByBoardTypeAndBoardNum(4, boardNum);
+            for (ImageEntity image : images) {
+                s3Service.deleteFile("image/"+4+"/"+boardNum+"/"+image.getName());
             }
             imageJPA.deleteAllByBoardTypeAndBoardNum(4, boardNum);
             foodMapJPA.deleteById(boardNum);
@@ -216,70 +195,33 @@ public class FoodMapServiceImpl implements FoodMapService {
     @Transactional
     public void update(List<MultipartFile> files, FoodMapDTO dto) {
         Optional<FoodMapEntity> foodMap = foodMapJPA.findById(dto.getId());
-        int check = 0;
-
-        if (foodMap.isPresent()) { // 사진이 있으면 작동
-            for (MultipartFile mf : files) {
-                if (!mf.isEmpty()) {
-                    if(check==0) {
-                        File folder = new File(imgUploadPath + File.separator + 4 + File.separator + dto.getId());
+        if (foodMap.isPresent()) {
+            if (!CollectionUtils.isEmpty(files)) {
+                List<ImageEntity> images = imageJPA.findByBoardTypeAndBoardNum(4, dto.getId());
+                for (ImageEntity image : images) {
+                    s3Service.deleteFile("image/" + 4 + "/" + dto.getId() + "/" + image.getName());
+                }
+                imageJPA.deleteAllByBoardTypeAndBoardNum(4, dto.getId());
+                for (MultipartFile file : files) {
+                    if (file.getContentType().startsWith("image")) {
                         try {
-                            if (folder.exists()) {
-                                FileUtils.cleanDirectory(folder);
-                            }
-                            if (folder.isDirectory()) {
-                                folder.delete();
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        imageJPA.deleteAllByBoardTypeAndBoardNum(4, dto.getId());
-                        check++;
-                    }
-                    if (mf.getContentType().startsWith("image")) {
-                        String originalName = mf.getOriginalFilename();
-                        //String fileName = originalName.substring(originalName.lastIndexOf("//") + 4);
-                        String folderPath = makeFolder(imgUploadPath, 4, dto.getId());
-                        String uuid = UUID.randomUUID().toString();
-                        String ext = originalName.substring(originalName.lastIndexOf("."));
-                        String saveName = folderPath + File.separator + uuid + ext;
-
-                        ImageDTO idto = new ImageDTO();
-                        idto.setBoardNum(dto.getId());
-                        idto.setBoardType(4);
-                        idto.setName(uuid + ext);
-                        imageJPA.save(idto.toImageEntity());
-                        Path savePath = Paths.get(imgUploadPath, saveName);
-                        try {
-                            mf.transferTo(savePath);
+                            String filePath = s3Service.uploadFile(file, "image/" + 4 + "/" + dto.getId());
+                            ImageDTO idto = new ImageDTO();
+                            idto.setBoardNum(dto.getId());
+                            idto.setBoardType(4);
+                            idto.setName(filePath);
+                            imageJPA.save(idto.toImageEntity());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                 }
-
             }
+            Date date = new Date();
+            dto.setReg(date);
+            foodMapJPA.save(dto.toFood_MapEntity());
         }
-        Date currentDate = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-        String formattedDate = dateFormat.format(currentDate);
 
-        // 포맷팅된 문자열을 다시 Date 객체로 변환
-        Date dateOnly = null;
-        try {
-            dateOnly = dateFormat.parse(formattedDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        // 포맷된 현재 날짜를 dto의 reg 속성에 설정
-
-        dto.setReg(dateOnly);
-        dto.setMemberId(foodMap.get().getMemberId());
-        dto.setReadCount(foodMap.get().getReadCount());
-        dto.setMap(foodMap.get().getMap());
-        dto.setRef(foodMap.get().getRef());
-        dto.setStatus(foodMap.get().getStatus());
-        foodMapJPA.save(dto.toFood_MapEntity());
     }
 
     // 푸드맵 조회수 증가
@@ -309,35 +251,55 @@ public class FoodMapServiceImpl implements FoodMapService {
 
     // 푸드맵 댓글 인서트
     @Override
-    public FoodMapEntity refInsert(FoodMapDTO dto, int ref) {
-        Long findId = foodMapJPA.getAutoIncrementValue("pickyou", "food_map");
-        findId.intValue();
+    public void refInsert(FoodMapDTO dto, List<MultipartFile> files) {
+        Long foodMapNum = foodMapJPA.getAutoIncrementValue("pickyou", "food_map");
 
-        List<FoodMapEntity> FoodMapEntityList = foodMapJPA.findByRef(ref);
-
-        FoodMapEntity foodMapEntity = FoodMapEntityList.get(0);
-
-        dto.setTitle(foodMapEntity.getTitle());
-        dto.setMap(foodMapEntity.getMap());
-        dto.setRef(foodMapEntity.getRef());
-        dto.setReply(findId.intValue());
-
-        return foodMapJPA.save(dto.toFood_MapEntity());
+        if (!CollectionUtils.isEmpty(files)) {
+            for (MultipartFile file : files) {
+                if (file.getContentType().startsWith("image")) {
+                    try {
+                        String filePath = s3Service.uploadFile(file, "image/" + 4 + "/" + foodMapNum);
+                        ImageDTO idto = new ImageDTO();
+                        idto.setBoardNum(foodMapNum);
+                        idto.setBoardType(4);
+                        idto.setName(filePath);
+                        imageJPA.save(idto.toImageEntity());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        dto.setReply(foodMapNum.intValue());
+        foodMapJPA.save(dto.toFood_MapEntity());
     }
 
     // 푸드맵 대댓글 인서트
     @Override
-    public FoodMapEntity replyInsert(FoodMapDTO dto) {
-        /*List<FoodMapEntity> FoodMapEntityList = foodMapJPA.findByRef(ref);
+    public void replyInsert(FoodMapDTO dto, List<MultipartFile> files) {
+        int reply = dto.getReply();
+        Long foodMapNum = foodMapJPA.getAutoIncrementValue("pickyou", "food_map");
 
-        FoodMapEntity foodMapEntity = FoodMapEntityList.get(0);*/
-
-        /*dto.setRef(dto.getRef());
-        dto.setTitle(dto.getTitle());
-        dto.setMap(dto.getMap());*/
-
-        return foodMapJPA.save(dto.toFood_MapEntity());
+        if (!CollectionUtils.isEmpty(files)) {
+            for (MultipartFile file : files) {
+                if (file.getContentType().startsWith("image")) {
+                    try {
+                        String filePath = s3Service.uploadFile(file, "image/" + 4 + "/" + foodMapNum);
+                        ImageDTO idto = new ImageDTO();
+                        idto.setBoardNum(foodMapNum);
+                        idto.setBoardType(4);
+                        idto.setName(filePath);
+                        imageJPA.save(idto.toImageEntity());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        dto.setReply(reply);
+        foodMapJPA.save(dto.toFood_MapEntity());
     }
+
 
     // 푸드맵 인증글 포인트 인서트
     @Override

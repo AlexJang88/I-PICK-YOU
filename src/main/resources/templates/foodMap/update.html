@@ -96,7 +96,12 @@
                                     </tbody>
                                 </table>
                                 <br/>
-                                <!--<input type="hidden" name="id" th:value="${Ndto.id}" />-->
+
+                                <input type="hidden" name="memberId" th:value="${Fdto.memberId}">
+                                <input type="hidden" name="readCount" th:value="${Fdto.readCount}">
+                                <input type="hidden" name="ref" th:value="${Fdto.ref}">
+                                <input type="hidden" name="map" th:value="${Fdto.map}">
+                                <input type="hidden" name="status" th:value="${Fdto.status}">
                                 <button type="submit" class="btn btn-primary float-end">수정하기</button>
                             </form>
                         </div>

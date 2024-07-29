@@ -55,20 +55,18 @@ public class NoticeController {
 
     // 공지사항 글쓰기 pro
     @PostMapping("posts")
-    public String noticeWritePro(NoticeDTO dto, ImageDTO imageDTO, Principal principal,
-                                 @RequestParam("files") MultipartFile[] files) {
+    public String noticeWritePro(NoticeDTO dto, Principal principal,
+                                 ArrayList<MultipartFile> files) {
 
-        String memberId = principal.getName();
-        dto.setMemberId(memberId);
-        // 공지사항 정보 저장 및 인서트
-        NoticeEntity saveNotice = noticeService.noticeInsert(dto);
+        if (principal != null) {
+            dto.setMemberId(principal.getName());
+        }
+        String content = dto.getContent();
+        content = content.replace("\r\n","<br>");
+        dto.setContent(content);
 
-        // 위에서 이미지 파일에 등록된 훈련소 번호의 숫자를 가져옴
-        Long noticeId = saveNotice.getId();
-
-        imageDTO.setBoardNum(noticeId);
         // 공지사항 이미지 인서트
-        noticeService.saveImage(imageDTO, files);
+        noticeService.saveImage(dto, files);
 
         return "redirect:/notice/posts";
     }
@@ -128,8 +126,16 @@ public class NoticeController {
 
     // 공지사항 글 수정 pro
     @PutMapping("/posts/{id}")
-    public String noticeUpdatePro(@PathVariable Long id, ArrayList<MultipartFile> files, NoticeDTO dto) {
+    public String noticeUpdatePro(@PathVariable Long id, NoticeDTO dto,
+                                  @RequestParam(name = "files",required = false) ArrayList<MultipartFile> files) {
+
+        for(MultipartFile mf:files){
+            if(mf.getOriginalFilename().isEmpty()){
+                files = new ArrayList<>();
+            }
+        }
         noticeService.update(files, dto);
+
         return "redirect:/notice/posts/"+id;
     }
 
