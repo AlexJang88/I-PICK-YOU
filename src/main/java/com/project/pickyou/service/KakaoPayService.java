@@ -65,9 +65,9 @@ public class KakaoPayService {
         params.add("quantity", String.valueOf(kakaoPayDTO.getQuantity()));    //상품수량
         params.add("total_amount", String.valueOf(kakaoPayDTO.getTotalAmount()));  //상품가격
         params.add("tax_free_amount", String.valueOf(kakaoPayDTO.getTaxFreeAmount()));   //비과세 금액
-        params.add("approval_url", "http://localhost:8080/payProcess/PaySuccess"); // 성공시 url
-        params.add("cancel_url", "http://localhost:8080/payProcess/PayCancle"); // 실패시 url
-        params.add("fail_url", "http://localhost:8080/payProcess/PayFail");
+        params.add("approval_url", "http://3.39.50.114:8080/payProcess/PaySuccess"); // 성공시 url
+        params.add("cancel_url", "http://3.39.50.114:8080/payProcess/PayCancle"); // 실패시 url
+        params.add("fail_url", "http://3.39.50.114:8080/payProcess/PayFail");
 
         // 헤더와 바디 붙이기
         HttpEntity<MultiValueMap<String, String>> body = new HttpEntity<>(params, headers);

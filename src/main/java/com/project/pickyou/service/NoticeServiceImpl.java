@@ -31,8 +31,6 @@ import java.util.*;
 @Service
 public class NoticeServiceImpl implements NoticeService {
 
-    @Value("${img.upload.path}")
-    private String imgUploadPath; // 프로퍼티스에서 정한 결로를, 웹 컨피그에서 해당 경로를 지정해서 클래스안에 설정
 
     private final NoticeJPARepository noticeJPA;
     private final ImageJPARepository imageJPA;

@@ -8,6 +8,7 @@ import com.project.pickyou.entity.TrainningEntity;
 import com.project.pickyou.repository.ImageJPARepository;
 import com.project.pickyou.repository.TrainningJPARepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -28,20 +29,21 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-
+@RequiredArgsConstructor
 public class TrainningServiceImpl implements TrainningService{
 
-    @Value("${img.upload.path}")
-    private String imgUploadPath;  // 프로퍼티스에서 정한경로를, 웹 컨피그에서 해당 경로 지정 해서 클래스 안에 설정
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    @Value("${cloud.aws.region.static}")
+    private String region;
+
 
 
     private final TrainningJPARepository trainningJPARepository;
     private final ImageJPARepository imageJPARepository;
-
-    public TrainningServiceImpl (TrainningJPARepository trainningJPARepository, ImageJPARepository imageJPARepository){
-        this.trainningJPARepository = trainningJPARepository;
-        this.imageJPARepository = imageJPARepository;
-    }
+    private final S3Service s3Service;
 
 
 
@@ -95,24 +97,19 @@ public class TrainningServiceImpl implements TrainningService{
 
         model.addAttribute("images", images);
         model.addAttribute("DetailsList",DetailsList);
+        model.addAttribute("bucketName",bucket);  //아마존 경로
+        model.addAttribute("regionName",region); //아마존 경로
+
     }
     //훈련내용 상세보기
 
 
-    //훈련정보 저장하기
+    //훈련정보 신규내용  저장하기
     @Override
-    public TrainningEntity savetrainning(TrainningDTO trainningDTO) {  //훈련정보넣기
-        TrainningEntity trainningEntity = trainningJPARepository.save(trainningDTO.toTrainningEntity());
+    @Transactional
+    public void savetrainning(TrainningDTO trainningDTO, MultipartFile[] files) {  //훈련정보넣기
 
-        return trainningEntity;
-    }
-    //훈련정보 저장하기
-
-
-
-    /*아래는 이미지 넣기*/
-    @Override
-    public void saveImage(ImageDTO imageDTO, MultipartFile[] files) {
+        Long trainngNum = trainningJPARepository.getAutoIncrementValue("pickyou", "trainning");
 
         if (files != null && files.length > 0) {
             for (MultipartFile file : files) {
@@ -120,41 +117,30 @@ public class TrainningServiceImpl implements TrainningService{
                 String fileName = generateUniqueFileName(originalFileName); // 아래에서 고유한 파일 이름 생성
 
                 try {
-                    // 파일 저장할 기본 경로
-                    String baseDir = imgUploadPath;
+
                     // 훈련소 ID 설정 과 타입 설정예정
                     int numtype = 3;  //훈련소는 3임
-                    String num = "3";
-                    // 훈련소 ID를 기반으로 서브 폴더 생성
-                    String subFolder = num + File.separator+ imageDTO.getBoardNum();  //파일 이름 설정하는것_번호 //num = 타입 3번이고 File.separator는 안에 파일+ 파일번호
-                    Path directory = Paths.get(baseDir, subFolder);   //프로퍼티스 경로와 + 파일생성된 경로 합치기
-
-                    // 서브 폴더가 존재하지 않으면 생성
-                    if (!Files.exists(directory)) {  //해당 폴더를 확인하고 없으면 생성 확인
-                        Files.createDirectories(directory);
-                    }
-
-                    // 파일 경로 설정
-                    Path filePath = directory.resolve(fileName);    //경로속 uu아이디 이름 넣기
-                    Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-
+                    // 파일 저장할 기본 경로
+                    String baseDir = s3Service.uploadFile(file, "image/" + numtype + "/" + trainngNum); //아마존
+/*
                     /*아래5개는 사진 파일 db에 저장하는것*/
                     // 파일 정보를 DB에 저장하거나 필요한 작업 수행
                     ImageEntity imageEntity = new ImageEntity();  //new객체생성
-                    imageEntity.setName(fileName);                   //이름설정
-                    imageEntity.setBoardNum(imageDTO.getBoardNum()); // 이미지 DTO에서 boardNum을 가져와 설정
+                    imageEntity.setName(baseDir);                   //이름설정
+                    imageEntity.setBoardNum(trainngNum); // 이미지 DTO에서 boardNum을 가져와 설정
                     imageEntity.setBoardType(numtype);           //db타입설정
                     imageJPARepository.save(imageEntity); // 이미지 엔티티 저장
-
-
                 } catch (IOException e) {
                     e.printStackTrace();
                     // 파일 저장 실패 시 예외 처리
                 }
             }
         }
+        //훈련소 내용
+        trainningJPARepository.save(trainningDTO.toTrainningEntity());
     }
+    //훈련정보 저장하기
+
 
     private String generateUniqueFileName(String originalFileName) {   //저장된 이미지 이름 변경
         String uuid = UUID.randomUUID().toString();
@@ -168,46 +154,23 @@ public class TrainningServiceImpl implements TrainningService{
     /*위에는 이미지 넣기*/
 
 
-
-
-
-
-    //훈련소 내용 지우기
-    @Override
-    @Transactional
-    public void deleteDetails(Long trainnignum) {
-
-        trainningJPARepository.deleteById(trainnignum); //훈련소 정보 날리는 방법
-
-    }
-
-    /*훈련소 내용속 이미지 지우기*/
+    /*훈련소 내용 및 이미지 지우기*/
     @Override
     @Transactional
     public void deleteDetailsImg(Long trainnignum) {
-
+        int boardType= 3;
         Optional<TrainningEntity> trainning = trainningJPARepository.findById(trainnignum);
+
         if (trainning.isPresent()) {
-            File folder = new File(imgUploadPath + File.separator + 3 + File.separator + trainnignum);
-            try {
-                if (folder.exists()) {
-                    FileUtils.cleanDirectory(folder);
-                }
-                if (folder.isDirectory()) {
-                    folder.delete();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            List<ImageEntity> images = imageJPARepository.findByBoardTypeAndBoardNum(boardType, trainnignum);
+            for (ImageEntity image : images) {
+                s3Service.deleteFile("image/"+boardType+"/"+trainnignum+"/"+image.getName());
             }
+            imageJPARepository.deleteAllByBoardTypeAndBoardNum(boardType, trainnignum);
+            trainningJPARepository.deleteById(trainnignum);
         }
-
-        imageJPARepository.deleteAllByBoardTypeAndBoardNum( 3,trainnignum);
-
     }
     /*훈련소 내용속 이미지 지우기*/
-
-
-
 
 
 
@@ -227,53 +190,33 @@ public class TrainningServiceImpl implements TrainningService{
     @Transactional
     public void trainningUpdate(Long trainnignum, TrainningDTO trainningDTO, MultipartFile[] files) {  //사진 및 내용 업데이트
         Optional<TrainningEntity> trainningUpdate =  trainningJPARepository.findById(trainnignum);
-            int check = 0;
+        int boardType= 3;
 
             //기존이미지가 남아있다면
         if (trainningUpdate.isPresent()) {  //해당 번호의 값이 있다면 (위에서 댕겨옴)
             for (MultipartFile mf : files) {    //mf으로 해서 반복문을 돌림
                 if(!mf.isEmpty()) {   //파일이 비어있지 않다면  삭제하기 위해
-                    if(check==0) {
-                        File folder = new File(imgUploadPath + File.separator + 3 + File.separator + trainnignum);  //해당 경로의 파일을삭제하기위해
-                        try {
-                            if (folder.exists()) {
-                                FileUtils.cleanDirectory(folder);    //실제폴더내용삭제
-                            }
-                            if (folder.isDirectory()) {
-                                folder.delete();                    //실제폴더삭제
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                    List<ImageEntity> images = imageJPARepository.findByBoardTypeAndBoardNum( boardType,trainnignum);
 
-                        imageJPARepository.deleteAllByBoardTypeAndBoardNum( 3,trainnignum); //데이터베이스 속 이미지 테이블 내용삭제
-                        check++;
+                    for (ImageEntity image : images) {  //아마존 파일삭제
+                        s3Service.deleteFile("image/" + boardType + "/" + trainningDTO.getId() + "/" + image.getName());
                     }
+                    imageJPARepository.deleteAllByBoardTypeAndBoardNum(boardType, trainningDTO.getId());  //이미지 디비에 내용삭제
 
 
                     //새로운 이미지 설정하기
-                    if (mf.getContentType().startsWith("image")) {
-                        String originalName = mf.getOriginalFilename();
-
-                        String folderPath = makeFolder(imgUploadPath, 3, trainnignum);  //폴더경로
-
-
-                        String uuid = UUID.randomUUID().toString();                              //이름값 설정
-                        String ext = originalName.substring(originalName.lastIndexOf("."));  //확장자 가져오기
-                        String saveName = folderPath + File.separator + uuid + ext;            //파일 이름 만들기
-
-
-                        ImageDTO imageDTO = new ImageDTO();
-                        imageDTO.setBoardNum(trainnignum);
-                        imageDTO.setBoardType(3);
-                        imageDTO.setName(uuid + ext);
-                        imageJPARepository.save(imageDTO.toImageEntity());  //데이터베이스에 정보 저장
-                        Path savePath = Paths.get(imgUploadPath, saveName);
-
-                        try {
-                            mf.transferTo(savePath);
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                    for(MultipartFile file : files){
+                        if (mf.getContentType().startsWith("image")) {
+                            try {
+                            String filePath = s3Service.uploadFile(file, "image/" + boardType + "/" + trainningDTO.getId());
+                            ImageDTO imageDTO = new ImageDTO();
+                            imageDTO.setBoardNum(trainningDTO.getId());
+                            imageDTO.setBoardType(boardType);
+                            imageDTO.setName(filePath);
+                            imageJPARepository.save(imageDTO.toImageEntity());  //데이터베이스에 정보 저장
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
