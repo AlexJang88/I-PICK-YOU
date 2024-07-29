@@ -92,8 +92,8 @@
                                         </a>
 
                                         <!-- Thymeleaf를 사용하여 contractId가 null일 때 클릭 시 알람창을 띄우는 처리 -->
-                                        <a class="btn btn-primary" th:if="${post.contractId == null}" href="#" onclick="showAlert()">
-                                            계약서 보기
+                                        <a class="btn btn-primary" th:if="${post.contractId == null}" href="#">
+                                            현장 계약
                                         </a>
                                     </td>
 
@@ -187,11 +187,11 @@
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 
-<script th:inline="javascript">
+<!--<script th:inline="javascript">
     function showAlert() {
         alert('계약서 작성 전입니다.');
     }
-</script>
+</script>-->
 
 <script>
     window.addEventListener('message', event => {
