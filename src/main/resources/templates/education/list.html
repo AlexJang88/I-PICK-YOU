@@ -107,60 +107,55 @@
                     </div>
                     <!-- Layout Demo -->
                     <div class="d-flex justify-content-end mb-3">
-                        <a class="btn btn-primary" href="javascript:void(0);"
-                           th:onclick="'checkAuth(' + ${auth} + ');'">등록 하기</a>
+                        <a class="btn btn-primary" href="javascript:void(0);" th:onclick="'checkAuth(' + ${auth} + ');'">등록 하기</a>
                     </div>
                     <div class="layout-demo-wrapper">
-
                         <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
                             <div class="col-md-4" th:each="post : ${posts}">
                                 <div class="card h-100">
-                                    <img th:src="@{'https://'+ ${bucketName}+'.s3.' + ${regionName} + '.amazonaws.com/profile/' +${post.member.profile}}"  style="width: 250px; height: 180px; display: block; margin: auto;" />
-                                    <div class="card-body">
-                                        <h5 class="card-title"><span th:text="${post.title}"></span></h5>
-                                        <a th:href="@{/educations/posts/{id}(id=${post.id})}">
+                                    <img class="card-img-top" th:src="@{'https://'+ ${bucketName}+'.s3.' + ${regionName} + '.amazonaws.com/profile/' +${post.member.profile}}" alt="Card image cap"/>
+                                    <a th:href="@{/educations/posts/{id}(id=${post.id})}">
+                                        <div class="card-body">
+                                            <h5 class="card-title"><span th:text="${post.title}"></span></h5>
                                             <p class="card-text">
                                                 <span th:text="${post.getMember().getCompanyInfo().getJob}"></span>
-                                                <span th:text="${post.getMember().getCompanyInfo().getCompanyName}"></span><br/>
+                                                <span th:text="${post.getMember().getCompanyInfo().getCompanyName}"></span>
                                             </p>
-                                        </a>
-                                    </div>
+                                        </div>
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                    <!--/ Layout Demo -->
+                <!--/ Layout Demo -->
+                <div class="row">
+                    <div class="demo-inline-spacing">
+                        <!--pagination -->
+                        <nav aria-label="Page navigation">
+                            <ul th:if="${count>0}" class="pagination pagination-lg justify-content-center">
+                                <!-- Previous Button -->
+                                <li th:if="${startPage>10}" class="page-item">
+                                    <a class="page-link" th:href="@{'/educations/posts?pageNum=' + (${startPage} - 10)}" aria-label="Previous">
+                                        <i class="tf-icon bx bx-chevrons-left"></i>
+                                    </a>
+                                </li>
 
-                    <div class="row">
-                        <div class="demo-inline-spacing">
-                            <!--pagination -->
-                            <nav aria-label="Page navigation">
-                                <ul th:if="${count>0}" class="pagination pagination-lg justify-content-center">
-                                    <!-- Previous Button -->
-                                    <li th:if="${startPage>10}" class="page-item" >
-                                        <a class="page-link" th:href="@{'/educations/posts?pageNum=' + (${startPage} - 10)}" aria-label="Previous">
-                                            <i class="tf-icon bx bx-chevrons-left"></i>
-                                        </a>
-                                    </li>
+                                <!-- Page Numbers -->
+                                <li class="page-item" th:each="i : ${#numbers.sequence(startPage, endPage)}">
+                                    <a class="page-link" th:href="@{'/educations/posts?pageNum=' + ${i}}" th:text="${i}"></a>
+                                </li>
 
-                                    <!-- Page Numbers -->
-                                    <li class="page-item" th:each="i : ${#numbers.sequence(startPage, endPage)}" >
-                                        <a class="page-link" th:href="@{'/educations/posts?pageNum=' + ${i}}" th:text="${i}"></a>
-                                    </li>
-
-                                    <!-- Next Button -->
-                                    <li class="page-item" th:if="${endPage<pageCount}">
-                                        <a class="page-link" th:href="@{'/educations/posts?pageNum=' + (${startPage} + 10)}" aria-label="Next">
-                                            <i class="tf-icon bx bx-chevrons-right"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
+                                <!-- Next Button -->
+                                <li class="page-item" th:if="${endPage<pageCount}">
+                                    <a class="page-link" th:href="@{'/educations/posts?pageNum=' + (${startPage} + 10)}" aria-label="Next">
+                                        <i class="tf-icon bx bx-chevrons-right"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
-
-
+                </div>
                 <!-- / Content -->
                 <!-- Footer -->
                 <div th:include="~{design/footer :: footer}"></div>
@@ -168,6 +163,7 @@
 
                 <div class="content-backdrop fade"></div>
             </div>
+
             <!-- Content wrapper -->
         </div>
         <!-- / Layout page -->
