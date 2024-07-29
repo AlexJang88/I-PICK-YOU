@@ -34,9 +34,6 @@ import java.util.*;
 @Service
 public class NoticeServiceImpl implements NoticeService {
 
-    @Value("${img.upload.path}")
-    private String imgUploadPath; // 프로퍼티스에서 정한 결로를, 웹 컨피그에서 해당 경로를 지정해서 클래스안에 설정
-
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
@@ -249,40 +246,7 @@ public class NoticeServiceImpl implements NoticeService {
             noticeJPA.save(dto.toNoticeEntity());
         }
     }
-    /*@Override
-    public void update(List<MultipartFile> files, NoticeDTO dto) {
-        Optional<NoticeEntity> notice = noticeJPA.findById(dto.getId());
 
-        if (notice.isPresent()) {
-            if (!CollectionUtils.isEmpty(files)) {
-                List<ImageEntity> images = imageJPA.findByBoardTypeAndBoardNum(1, dto.getId());
-
-                for (ImageEntity image : images) {
-                    s3Service.deleteFile("image/" + 1 + "/" + dto.getId() + "/" + image.getName());
-                }
-
-                imageJPA.deleteAllByBoardTypeAndBoardNum(1, dto.getId());
-
-                for (MultipartFile file : files) {
-                    if (file.getContentType().startsWith("image")) {
-                        try {
-                            String filePath = s3Service.uploadFile(file, "image/" + 1 + "/" + dto.getId());
-                            ImageDTO idto = new ImageDTO();
-                            idto.setBoardNum(dto.getId());
-                            idto.setBoardType(1);
-                            idto.setName(filePath);
-                            imageJPA.save(idto.toImageEntity());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-            Date date = new Date();
-            dto.setReg(date);
-            noticeJPA.save(dto.toNoticeEntity());
-        }
-    }*/
 
     public String makeFolder(String uploadPath, int boardType, Long boardNum) {
         String folderPath = boardType + File.separator + boardNum;
