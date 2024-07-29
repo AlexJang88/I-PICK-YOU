@@ -36,13 +36,6 @@ public class AgencyController {
 
 
 
-
-
-
-
-
-
-
     //소개소 메인페이지
     @GetMapping("/posts")
     public String agencymain(Model model, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, Principal pc){
@@ -65,7 +58,6 @@ public class AgencyController {
         if(ip==null){
             ip=request.getRemoteAddr();
         }
-
 
         if(principal != null){  //로그인 되어잇을때 조회수 올리기
 
@@ -110,11 +102,8 @@ public class AgencyController {
         String companyId = principal.getName();  //세션아이디설정
         agencyDTO.setCompanyId(companyId); // 디티오넣기
 
-        AgencyEntity saveAgency = agencyService.saveAgency(agencyDTO);  //값 저장하기
-        Long agencyId =  saveAgency.getId(); // 이미지 넣기 위해 번호 갑 가져오기
 
-        imageDTO.setBoardNum(agencyId);
-        agencyService.saveImage(imageDTO, files);
+        agencyService.saveImage(agencyDTO, files);//값 저장하기
         return "redirect:/agency/posts";
     }
 
@@ -122,9 +111,7 @@ public class AgencyController {
     @DeleteMapping("/posts/{agencynum}")
     public String agencyDelete(@PathVariable Long agencynum) {
 
-
-        agencyService.deleteAgencyImg(agencynum);  //소개소 이미지 지우기
-        agencyService.deleteAgencyNum(agencynum);  //소개소 한개 지우기
+        agencyService.deleteAgencyImg(agencynum);  //소개소 및 이미지 지우기
 
         return "redirect:/agency/posts";
     }

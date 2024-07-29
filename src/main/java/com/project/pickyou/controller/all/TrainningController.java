@@ -88,7 +88,6 @@ public class TrainningController {
 
         trainningService.deleteDetailsImg(trainnignum); //이미지 지우기
 
-        trainningService.deleteDetails(trainnignum); //우선 내용먼저지우기
         // 삭제 후에는 다시 상세 페이지로 리다이렉트
         return "redirect:/trainning/posts";
     }
@@ -107,6 +106,7 @@ public class TrainningController {
         return "trainning/trainningUpdate";
     }
 
+    //업데이트 프로
     @PatchMapping("/posts/{trainnignum}")
     public String trainningUpdatePro(@PathVariable Long trainnignum,TrainningDTO trainningDTO, @RequestParam("files") MultipartFile[] files){ //사진, dto, 글번호 가져오기
 
@@ -116,11 +116,7 @@ public class TrainningController {
 
 
 
-
-
-
-
-        /*아래는 훈련소 추가하기 페이지  / 사진넣기페이지*/
+        /*아래는 훈련소 신규 내용 추가하기 페이지  / 사진넣기페이지*/
         @GetMapping("/posts/new")
         public String trainninginput(Principal pc, Model model){
 
@@ -132,19 +128,12 @@ public class TrainningController {
         }
 
         @PostMapping("/posts")
-        public String trainninginputPro(TrainningDTO trainningDTO, ImageDTO imageDTO, @RequestParam("files") MultipartFile[] files, Principal principal){
+        public String trainninginputPro(TrainningDTO trainningDTO, @RequestParam("files") MultipartFile[] files, Principal principal){
 
             String companyId = principal.getName();
             trainningDTO.setCompanyId(companyId);
 
-            // 훈련소 정보 저장
-            TrainningEntity savedTrainning = trainningService.savetrainning(trainningDTO);
-
-            // 위에서 이미지 파일에 등록된 훈련소 번호의 숫자를 가져옴
-            Long trainningId = savedTrainning.getId();
-
-            imageDTO.setBoardNum(trainningId);  // 이미지에 번호 설정하기
-            trainningService.saveImage(imageDTO,files);  // 신규 사진값 넣기 실행
+            trainningService.savetrainning(trainningDTO, files);
 
         return "redirect:/trainning/posts";
         }

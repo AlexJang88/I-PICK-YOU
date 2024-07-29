@@ -32,13 +32,18 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class LoginServiceImpl implements LoginService, UserDetailsService {
 
-    @Value("${profile.upload.path}")
-    private String profileUploadPath;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    @Value("${cloud.aws.region.static}")
+    private String region;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final MemberJPARepository memberJPARepository;
     private final MemberInfoJAPRepository memberInfoJAPRepository;
     private final CompanyInfoJPARepository companyInfoJPARepository;
+    private final S3Service s3Service;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -56,24 +61,16 @@ public class LoginServiceImpl implements LoginService, UserDetailsService {
         memberDTO.setPw(bCryptPasswordEncoder.encode(memberDTO.getPw()));
 
         /*프로필 사진 넣기*/
-
-        if(file.getContentType().startsWith("image")){  //이미지라면
-            String originalName = file.getOriginalFilename();
-            String uuid = UUID.randomUUID().toString();
-            String ext = originalName.substring(originalName.lastIndexOf("."));
-            String profileName =uuid+ext;
-           // profileImgUploadPath;  //경로 (프로파일까지 만들어져있음/ lprofile.upload.path=C:/Users/upload/profile)
-            String saveName = profileUploadPath + File.separator + uuid + ext;
-            Path savePath = Paths.get(saveName);
-            try {
-                file.transferTo(savePath); //경로에 저장한다
-            } catch (IOException e) {
-                e.printStackTrace();
+        if(!file.isEmpty()) {
+            if(file.getContentType().startsWith("image")){
+                try {
+                    String filePath = s3Service.uploadFile(file, "profile");
+                    memberDTO.setProfile(filePath);
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
             }
-            memberDTO.setProfile(profileName);
         }
-        /*프로필 사진 넣기*/
-
 
         memberJPARepository.save(memberDTO.toMemberEntity());
         memberInfoJAPRepository.save(memberInfoDTO.toMemberInfoEntity());
@@ -94,9 +91,7 @@ public class LoginServiceImpl implements LoginService, UserDetailsService {
     //쪽지 보낼때 존재하는 회원인지 확인
     @Override
     public boolean userCheckIFIdExists(String id) {
-
         Boolean trueUser = memberJPARepository.existsById(id); //아이디가 실존 하는지
-
         return trueUser;
     }
 
@@ -105,10 +100,7 @@ public class LoginServiceImpl implements LoginService, UserDetailsService {
     //이메일 중복체크용  ajax, 제이슨   <맞다, 아니다 결과값 반환>
     @Override
     public boolean  checkIfEmailExists(String email) {
-
-
         Boolean isExist = memberJPARepository.existsByEmail(email);   //중복된 이메일이 있는지 확인하기
-
         return isExist;
     }
 
@@ -116,10 +108,7 @@ public class LoginServiceImpl implements LoginService, UserDetailsService {
     //사업자 중복체크용  ajax, 제이슨   <맞다, 아니다 결과값 반환>
     @Override
     public boolean  checkIfcorpnocheck(String corpno) {
-
-
         Boolean isExist = companyInfoJPARepository.existsByCorpno(corpno);  //중복된 사업자 체크
-
         return isExist;
     }
 
@@ -130,7 +119,6 @@ public class LoginServiceImpl implements LoginService, UserDetailsService {
     @Override
     public void joinCompanyProcess(MemberDTO memberDTO, CompanyInfoDTO companyInfoDTO, MultipartFile file) {
         String id = memberDTO.getId();
-
         Boolean isExist = memberJPARepository.existsById(id);   //중복된 아이디가 있는지 확인하기
         if(isExist){   //중복된값이 있다면 그냥 내보내기
             return;   //로그인화면으로
@@ -138,32 +126,19 @@ public class LoginServiceImpl implements LoginService, UserDetailsService {
         //중복된 값이 없다면 회원가입 후 로그인 화면으로
         memberDTO.setAuth("ROLE_COMPANY");
         memberDTO.setPw(bCryptPasswordEncoder.encode(memberDTO.getPw()));
-
-
-        /*프로필 사진 넣기*/
-
-        if(file.getContentType().startsWith("image")){  //이미지라면
-            String originalName = file.getOriginalFilename();
-            String uuid = UUID.randomUUID().toString();
-            String ext = originalName.substring(originalName.lastIndexOf("."));
-            String profileName =uuid+ext;
-            // profileImgUploadPath;  //경로 (프로파일까지 만들어져있음/ lprofile.upload.path=C:/Users/upload/profile)
-            String saveName = profileUploadPath + File.separator + uuid + ext;
-            Path savePath = Paths.get(saveName);
-            try {
-                file.transferTo(savePath); //경로에 저장한다
-            } catch (IOException e) {
-                e.printStackTrace();
+        //사업자 프로필 넣기
+        if(!file.isEmpty()) {
+            if(file.getContentType().startsWith("image")){
+                try {
+                    String filePath = s3Service.uploadFile(file, "profile");
+                    memberDTO.setProfile(filePath);
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
             }
-            memberDTO.setProfile(profileName);
         }
-        /*프로필 사진 넣기*/
-
-
         memberJPARepository.save(memberDTO.toMemberEntity());
         companyInfoJPARepository.save(companyInfoDTO.toCompanyInfoEntity());
-
-
     }
 
 
@@ -177,7 +152,6 @@ public class LoginServiceImpl implements LoginService, UserDetailsService {
         } else {
             return "아이디를 찾을 수 없습니다.";
         }
-
     }
 
 

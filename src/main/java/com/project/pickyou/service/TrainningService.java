@@ -13,13 +13,10 @@ public interface TrainningService {
 
     public void Details(Model model, Long trainnignum); //훈련소 내용 상세보기
 
-    public TrainningEntity savetrainning(TrainningDTO trainningDTO);  //훈련소 추가하기
+    public void savetrainning(TrainningDTO trainningDTO, MultipartFile[] files);  //훈련소 추가하기
 
-    public void saveImage(ImageDTO imageDTO, MultipartFile[] files); //이미지 넣기 번호랑 사진 가져가기
 
-    public void deleteDetails(Long trainnignum);  //훈련소 내용 지우기
-
-    public void deleteDetailsImg(Long trainnignum);  //이미지 지우기
+    public void deleteDetailsImg(Long trainnignum);  //훈련소 내용지우기
 
     public void trainningUpdate(Long trainnignum, TrainningDTO trainningDTO, MultipartFile[] files); //사진, 내용 업데이트
 
