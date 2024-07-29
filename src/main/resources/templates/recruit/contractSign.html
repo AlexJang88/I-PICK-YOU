@@ -207,7 +207,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="title-custom">건설일용근로자 표준근로계약서</div><div class="text-right"><a th:if="${PDF==1}" th:href="'/upload/contract/' + ${contract.id} + '/' + ${#temporals.format(contract.contractDate, 'yyyy-MM-dd') + '.pdf'}">계약서 PDF로 보기</a></div>
+                        <div class="title-custom">건설일용근로자 표준근로계약서</div><div class="text-right">
+                        <a th:if="${PDF==1}" th:href="@{'https://'+ ${bucketName}+'.s3.' + ${regionName} + '.amazonaws.com/' +${pdfFileName}}" style="width: 250px; height: 250px;">계약서 PDF로 보기</a>
+                    </div>
                         <div class="content-custom">
                             <p> <span th:text="${company.companyInfo.name}"></span> (이하 "사업주"라 함)과(와) <span th:text="${member.memberInfo.name}"></span> (이하 "근로자"라 함)는 다음과 같이 근로계약을 체결한다.</p>
                             <table>
@@ -312,7 +314,7 @@
                 <script>
                     $(function () {
                      window.addEventListener('message', event => {
-                                       if (event.origin !== 'http://localhost:4000') return;  // 보안 검사
+                                       if (event.origin !== 'http://3.39.50.114:4000') return;  // 보안 검사
                                        if (event.data === 'modalClosed') {
                                            $('#myModal').modal('hide');
                                              $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
@@ -327,7 +329,7 @@
                         var signCheck = $('#signCheck').val();
                         var comSign = $('#comSign').val();
                         var memSign = $('#memSign').val();
-
+                        console.log(signCheck)
                        if (signCheck == '11') {
                         $("#img01").attr('src', $('#comSign').val()).show();
                         $('#signButton').hide();

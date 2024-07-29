@@ -32,11 +32,16 @@ import java.nio.file.Paths;
 @Service
 @RequiredArgsConstructor
 public class RecruitServiceImpl implements RecruitService {
-    @Value("${img.upload.path}")
-    private String imgUploadPath;
-    @Value("${contract.upload.path}")
-    private String contactUploadPath;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
 
+    @Value("${cloud.aws.region.static}")
+    private String region;
+
+    @Value("${contracts.upload.path}")
+    private String contractsPath;
+
+    private final S3Service s3Service;
     private final MemberJPARepository memberJPA;
     private final ItextPdfUtil itextPdfUtil;
     private final RecruitJPARepository recruitJPA;
@@ -120,12 +125,14 @@ public class RecruitServiceImpl implements RecruitService {
         model.addAttribute("startPage", startPage);
         model.addAttribute("pageBlock", pageBlock);
         model.addAttribute("endPage", endPage);
+        model.addAttribute("bucketName",bucket);
+        model.addAttribute("regionName",region);
         satisfactionService.myScore(model,id,2);
 
     }
 
     @Override
-    public void post(Model model, Long num, String sid) {
+    public void post(Model model, Long num, String sid,int boardType) {
         int check=0;
         int auth=0;
         int applyCheck=0;
@@ -159,7 +166,7 @@ public class RecruitServiceImpl implements RecruitService {
                 }
             }
 
-            imageList = imageJPA.findByBoardTypeAndBoardNum(2, num);
+            imageList = imageJPA.findByBoardTypeAndBoardNum(boardType, num);
             edto = post.get().toRecruitDTO();
             cidto = post.get().getMember().getCompanyInfo().toCompanyInfoDTO();
             mdto = post.get().getMember().toMemberDTO();
@@ -187,6 +194,8 @@ public class RecruitServiceImpl implements RecruitService {
             model.addAttribute("company", cidto);
             model.addAttribute("post", post.get());
             model.addAttribute("imgList", imageList);
+            model.addAttribute("bucketName",bucket);
+            model.addAttribute("regionName",region);
         }
 
     }
@@ -199,30 +208,37 @@ public class RecruitServiceImpl implements RecruitService {
         Long recruitNum = recruitJPA.getAutoIncrementValue("pickyou", "recruit");
         rddto.setRecruitId(recruitNum);
 
-        recruitJPA.save(rdto.toRecruitEntity());
-        recruitDetailJPA.save(rddto.toRecruitDetailEntity());
+
 
         if (!CollectionUtils.isEmpty(files)) {
-            filesUpload(files, BoardType, recruitNum, imgUploadPath);
+            for (MultipartFile file : files) {
+                if (file.getContentType().startsWith("image")) {
+                    try {
+                        String filePath = s3Service.uploadFile(file, "image/" + BoardType + "/" + recruitNum);
+                        ImageDTO idto = new ImageDTO();
+                        idto.setBoardNum(recruitNum);
+                        idto.setBoardType(BoardType);
+                        idto.setName(filePath);
+                        imageJPA.save(idto.toImageEntity());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
+        recruitJPA.save(rdto.toRecruitEntity());
+        recruitDetailJPA.save(rddto.toRecruitDetailEntity());
 
     }
 
     @Override
     @Transactional
     public void deletePost(Long boardNum,int boardType) {
-        Optional<RecruitEntity> education = recruitJPA.findById(boardNum);
-        if (education.isPresent()) {
-            File folder = new File(imgUploadPath + File.separator + 2 + File.separator + boardNum);
-            try {
-                if (folder.exists()) {
-                    FileUtils.cleanDirectory(folder);
-                }
-                if (folder.isDirectory()) {
-                    folder.delete();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+        Optional<RecruitEntity> recruit = recruitJPA.findById(boardNum);
+        if (recruit.isPresent()) {
+            List<ImageEntity> images = imageJPA.findByBoardTypeAndBoardNum(boardType, boardNum);
+            for (ImageEntity image : images) {
+                s3Service.deleteFile("image/"+boardType+"/"+boardNum+"/"+image.getName());
             }
             imageJPA.deleteAllByBoardTypeAndBoardNum(boardType, boardNum);
             recruitJPA.deleteById(boardNum);
@@ -236,22 +252,30 @@ public class RecruitServiceImpl implements RecruitService {
         if (recruit.isPresent()) {
             if (!CollectionUtils.isEmpty(files)) {
                 for (MultipartFile mf : files) {
-                    File folder = new File(imgUploadPath + File.separator + 2 + File.separator + rdto.getId());
-                    try {
-                        if (folder.exists()) {
-                            FileUtils.cleanDirectory(folder);
-                        }
-                        if (folder.isDirectory()) {
-                            folder.delete();
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    List<ImageEntity> images = imageJPA.findByBoardTypeAndBoardNum(boardType, rdto.getId());
+                    for (ImageEntity image : images) {
+                        s3Service.deleteFile("image/" + boardType + "/" + rdto.getId() + "/" + image.getName());
                     }
                     imageJPA.deleteAllByBoardTypeAndBoardNum(boardType, rdto.getId());
-                   filesUpload(files,boardType,rdto.getId(),imgUploadPath);
+                    for (MultipartFile file : files) {
+                        if (file.getContentType().startsWith("image")) {
+                            try {
+                                String filePath = s3Service.uploadFile(file, "image/" + boardType + "/" + rdto.getId());
+                                ImageDTO idto = new ImageDTO();
+                                idto.setBoardNum(rdto.getId());
+                                idto.setBoardType(boardType);
+                                idto.setName(filePath);
+                                imageJPA.save(idto.toImageEntity());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
                 }
             }
         }
+        Date date = new Date();
+        rdto.setReg(date);
         recruitJPA.save(rdto.toRecruitEntity());
         recruitDetailJPA.save(rddto.toRecruitDetailEntity());
     }
@@ -294,44 +318,37 @@ public class RecruitServiceImpl implements RecruitService {
     public void contractPDF(HttpServletResponse response, Long id) {
         Optional<ContractEntity> con = contractJPA.findById(id);
 
-        // 미리 준비한 DTO 선언
-        ItextPdfDto itextPdfDto = new ItextPdfDto();
+        if (con.isPresent()) {
+            LocalDate contractDate = con.get().getContractDate();
+            String pdfFileName = contractDate + ".pdf";
+            String s3FilePath =  "contract/"+id + "/" + pdfFileName;
 
-        // pdf 파일이 저장될 경로
-        itextPdfDto.setPdfFilePath(contactUploadPath + File.separator + id + File.separator);
 
-        // pdf 파일명 ( 계약날짜로 생성 )
-        itextPdfDto.setPdfFileName(con.get().getContractDate() + ".pdf");
+            // Check if PDF already exists in S3
+            if (!s3Service.fileExists(s3FilePath)) {
+                // Generate PDF file and upload to S3
+                ItextPdfDto itextPdfDto = new ItextPdfDto();
+                itextPdfDto.setPdfFilePath("contract/"+id + "/");
+                System.out.println("--------------------------------path"+itextPdfDto.getPdfFileName());
+                itextPdfDto.setPdfFileName(pdfFileName);
+                System.out.println("--------------------------------path"+itextPdfDto.getPdfFileName());
+                itextPdfDto.setContractId(id);
 
-        // getHtml 에서 호출될 코드명
-        itextPdfDto.setContractId(id);
-
-        // PDF 존재 유무 체크, 없다면 PDF 파일 만들기
-        File file = itextPdfUtil.checkPDF(itextPdfDto);
-        int fileSize = (int) file.length();
-
-        // 파일 다운로드를 위한 header 설정
-        response.setContentType("application/octet-stream");
-        response.setHeader("Content-Disposition", "attachment; filename=" + itextPdfDto.getPdfFileName() + ";");
-        response.setContentLengthLong(fileSize);
-        response.setStatus(HttpServletResponse.SC_OK);
-
-        // 파일 다운로드
-        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
-             BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream())) {
-            byte[] buffer = new byte[4096];
-            int read;
-            while ((read = in.read(buffer)) != -1) {
-                out.write(buffer, 0, read);
+                itextPdfUtil.checkPDF(itextPdfDto);
+                // Remove local PDF file after uploading to S3
             }
-            out.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
+            // Serve the PDF file to the client
+           /* try {
+                s3Service.downloadFileToResponse(s3FilePath,response, pdfFileName );
+            } catch (IOException e) {
+                e.printStackTrace();
+            }*/
         }
+
     }
 
     @Override
-    public void userInfo(Model model, String memberId, String companyId,Long stateId,int type) {
+    public void userInfo(Model model, String memberId, String companyId,Long recruitId,int type) {
 
         Optional<MemberEntity> mem = memberJPA.findById(memberId);
         Optional<MemberEntity> com = memberJPA.findById(companyId);
@@ -346,7 +363,7 @@ public class RecruitServiceImpl implements RecruitService {
         if(com.isPresent()){
             model.addAttribute("com",com.get());
         }
-        //model.addAttribute("stateId",stateId);
+        model.addAttribute("stateId",recruitId);
 
 
 
@@ -379,21 +396,21 @@ public class RecruitServiceImpl implements RecruitService {
     public void getContract(HttpServletResponse response, Model model, Long id,String userId) {
         int type=10;
         int PDF=0;
+        String pdfFileName="";
+        String PDFUrl="";
         String comSign="없음";
         String memSign="없음";
-        File companySign =null;
-        File memberSign = null;
-        File contractPdf =null;
+        String companySignPath  =null;
+        String memberSignPath = null;
+        String contractPdfPath =null;
         Optional<ContractEntity>  con = contractJPA.findById(id);
         if(con.isPresent()){
-            LocalDate conDate= con.get().getContractDate();
-            String s = conDate.toString();
-            s=s.substring(0,10);
-            companySign= new File(contactUploadPath+File.separator+id+File.separator+con.get().getCompanyId()+"_signature.png");
-            memberSign= new File(contactUploadPath+File.separator+id+File.separator+con.get().getMemberId()+"_signature.png");
-            contractPdf =new File(contactUploadPath+File.separator+id+File.separator+s+".pdf");
             ContractEntity ce = con.get();
-
+            LocalDate conDate = ce.getContractDate();
+            pdfFileName = conDate.toString().substring(0, 10) + ".pdf";
+            companySignPath = "contract/" + id + "/" + ce.getCompanyId() + "_signature.png";
+            memberSignPath= "contract/" + id + "/" + ce.getMemberId() + "_signature.png";
+            contractPdfPath ="contract/" + id + "/" + pdfFileName;
             model.addAttribute("contract",ce);
             Optional<MemberEntity> member = memberJPA.findById(ce.getMemberId());
             Optional<MemberEntity> company = memberJPA.findById(ce.getCompanyId());
@@ -409,38 +426,38 @@ public class RecruitServiceImpl implements RecruitService {
         if(con.get().getCompanyId().equals(userId) || con.get().getMemberId().equals(userId)) {
             Optional<MemberEntity> mem = memberJPA.findById(userId);
             if (mem.get().getAuth().contains("COMPANY")) {
-               if (companySign.exists() && !memberSign.exists()) {
+               if (s3Service.fileExists(companySignPath) && !s3Service.fileExists(memberSignPath)) {
                     type = 11;
-                    comSign = "/upload/contract/" + id + File.separator + con.get().getCompanyId() + "_signature.png";
-                }if (!companySign.exists() && memberSign.exists()) {
+                   comSign = s3Service.getPublicUrl(companySignPath);
+                }if (!s3Service.fileExists(companySignPath) && s3Service.fileExists(memberSignPath)) {
                     type = 12;
-                    memSign = "/upload/contract/" + id + File.separator + con.get().getMemberId() + "_signature.png";
+                    memSign = s3Service.getPublicUrl(memberSignPath);
                 }
-                if (companySign.exists() && memberSign.exists()) {
-                    comSign = "/upload/contract/" + id + File.separator + con.get().getCompanyId() + "_signature.png";
-                    memSign = "/upload/contract/" + id + File.separator + con.get().getMemberId() + "_signature.png";
+                if (s3Service.fileExists(companySignPath) && s3Service.fileExists(memberSignPath)) {
+                    comSign = s3Service.getPublicUrl(companySignPath);
+                    memSign = s3Service.getPublicUrl(memberSignPath);
                     type = 100;
                     PDF=1;
-                    if(!contractPdf.exists()){
+                    if(!s3Service.fileExists(contractPdfPath)){
                         contractPDF(response,id);
                     }
                 }
             }
             if (mem.get().getAuth().contains("USER")) {
-                if (memberSign.exists() && !companySign.exists()) {
+                if (s3Service.fileExists(memberSignPath) && !s3Service.fileExists(companySignPath)) {
                     type = 21;
-                    memSign = "/upload/contract/" + id + File.separator + con.get().getMemberId() + "_signature.png";
+                    memSign = s3Service.getPublicUrl(memberSignPath);
                 }
-                if (!memberSign.exists() && companySign.exists()) {
+                if (!s3Service.fileExists(memberSignPath) && s3Service.fileExists(companySignPath)) {
                     type = 22;
-                    comSign = "/upload/contract/" + id + File.separator + con.get().getCompanyId() + "_signature.png";
+                    comSign = s3Service.getPublicUrl(companySignPath);
                 }
-                if (companySign.exists() && memberSign.exists()) {
-                    comSign = "/upload/contract/" + id + File.separator + con.get().getCompanyId() + "_signature.png";
-                    memSign = "/upload/contract/" + id + File.separator + con.get().getMemberId() + "_signature.png";
+                if (s3Service.fileExists(companySignPath) && s3Service.fileExists(memberSignPath)) {
+                    comSign = s3Service.getPublicUrl(companySignPath);
+                    memSign = s3Service.getPublicUrl(memberSignPath);
                     type = 100;
                     PDF=1;
-                    if(!contractPdf.exists()){
+                    if(!s3Service.fileExists(contractPdfPath)){
                         contractPDF(response,id);
                     }
                 }
@@ -451,27 +468,24 @@ public class RecruitServiceImpl implements RecruitService {
         model.addAttribute("signCheck",type);
         model.addAttribute("comSign",comSign);
         model.addAttribute("memSign",memSign);
+        model.addAttribute("bucketName",bucket);
+        model.addAttribute("regionName",region);
+        model.addAttribute("pdfFileName",contractPdfPath);
     }
     @Override
     public Map<String, String> saveSignature(MultipartFile signature, Long contractId, String sid) {
         Map<String,String> sign = new HashMap<>();
-        String saveName="";
-        //시큐리티 세션으로 처리해야함
-        if(!signature.isEmpty()){
-            String folderPath = String.valueOf(contractId);
-            File uploadPathFolder = new File(contactUploadPath,folderPath);
-            if(!uploadPathFolder.exists()){
-                uploadPathFolder.mkdirs();
-            }
-            String filePath = contactUploadPath+File.separator+contractId+File.separator+sid+"_"+signature.getOriginalFilename();
-            File file = new File(filePath);
-            try{
-                signature.transferTo(file);
-            }catch (IOException e){
+        if (!signature.isEmpty()) {
+            // Construct the file path for S3
+            String s3FilePath = "contract/" + contractId + "/" + sid + "_signature.png";
+            try {
+                // Upload the signature file to S3
+                String filename =s3Service.uplaodSign(signature, s3FilePath);
+                // Return the S3 file path (or a public URL if your bucket is public)
+                sign.put("signName", s3FilePath);
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-            String signName = "/upload/contract/"+contractId+File.separator+sid+"_"+signature.getOriginalFilename();
-            sign.put("signName",signName);
         }
 
         return sign;
@@ -519,31 +533,7 @@ public class RecruitServiceImpl implements RecruitService {
         }
         return folderPath;
     }
-    public void filesUpload(List<MultipartFile> files, int boardType, Long BoardNum, String uploadPath) {
-        if (!CollectionUtils.isEmpty(files)) {
-            for (MultipartFile mf : files) {
-                if (mf.getContentType().startsWith("image")) {
-                    String originalName = mf.getOriginalFilename();
-                    String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
-                    String folderPath = makeFolder(imgUploadPath, boardType, BoardNum);
-                    String uuid = UUID.randomUUID().toString();
-                    String ext = originalName.substring(originalName.lastIndexOf("."));
-                    String saveName = folderPath + File.separator + uuid + ext;
-                    ImageDTO idto = new ImageDTO();
-                    idto.setBoardNum(BoardNum);
-                    idto.setBoardType(boardType);
-                    idto.setName(uuid + ext);
-                    imageJPA.save(idto.toImageEntity());
-                    Path savePath = Paths.get(imgUploadPath, saveName);
-                    try {
-                        mf.transferTo(savePath);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
+
     //0 * * * * ? -매분
     //0 0 0/1 * * * -1시간마다
     @Scheduled(cron = "0 0 0/1 * * *")

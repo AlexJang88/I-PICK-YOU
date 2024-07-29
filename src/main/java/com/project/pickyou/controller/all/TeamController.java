@@ -85,14 +85,15 @@ public class TeamController {
     //수정
     @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping("/posts")
-    public String update(@RequestParam(name = "id")Long id, MultipartFile profileimg,ArrayList<MultipartFile> files, TeamResumeDTO dto){
+    public String update(MultipartFile profileimg,ArrayList<MultipartFile> files, TeamResumeDTO dto){
+        System.out.println("------------------dto"+dto);
         for(MultipartFile mf:files){
             if(mf.getOriginalFilename().isEmpty()){
                 files = new ArrayList<>();
             }
         }
          service.update(profileimg,files,dto,type);
-        String url = "redirect:/teams/posts/"+id;
+        String url = "redirect:/teams/posts/"+dto.getId();
         return url;
     }
     //비공개

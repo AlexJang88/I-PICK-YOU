@@ -25,6 +25,7 @@ import com.project.pickyou.entity.ContractEntity;
 import com.project.pickyou.entity.MemberEntity;
 import com.project.pickyou.repository.ContractJPARepository;
 import com.project.pickyou.repository.MemberJPARepository;
+import com.project.pickyou.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -33,6 +34,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -43,15 +45,21 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class ItextPdfUtil {
-    @Value("${contract.upload.path}")
+    @Value("${contracts.upload.path}")
     private String contactUploadPath;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
 
+    @Value("${cloud.aws.region.static}")
+    private String region;
     private final ContractJPARepository contractJPA;
     private final MemberJPARepository memberJPA;
+    private final S3Service s3Service;
     /*
      * PDF 유무를 체크한 후
      * PDF 파일이 없을 경우 PDF 파일 생성 메소드 실행
      */
+
     Image image1=null;
     Image image2=null;
     public File checkPDF (ItextPdfDto pdfDto) {
@@ -77,15 +85,16 @@ public class ItextPdfUtil {
 
         try {
             // PDF 파일 생성
-            PdfWriter pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(itextPdfDto.getPdfFilePath()+itextPdfDto.getPdfFileName()));
+            File tempPdfFile = File.createTempFile("contract",".pdf");
+            PdfWriter pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(tempPdfFile));
             // PDF 파일에 사용할 폰트 크기 설정
             pdfWriter.setInitialLeading(12.5f);
             // PDF 파일 열기
             document.open();
-            String comimg = contactUploadPath+File.separator+itextPdfDto.getContractId()+"/"+com+"_signature.png";
-            String memimg= contactUploadPath+File.separator+itextPdfDto.getContractId()+"/"+mem+"_signature.png";
-            image1 = Image.getInstance(comimg);
-            image2 = Image.getInstance(memimg);
+            String comImgPath = "https://"+bucket+".s3."+region+".amazonaws.com/contract/"+itextPdfDto.getContractId()+"/" + com + "_signature.png";
+            String memImgPath = "https://"+bucket+".s3."+region+".amazonaws.com/contract/"+itextPdfDto.getContractId()+"/" + mem + "_signature.png";
+            Image image1 = Image.getInstance(comImgPath);
+            Image image2 = Image.getInstance(memImgPath);
             image1.scaleToFit(0f, 0f);
             image2.scaleToFit(0f, 0f);
             document.add(image1);
@@ -178,6 +187,8 @@ public class ItextPdfUtil {
             document.close();
             // PDF Writer 닫기
             pdfWriter.close();
+            String s3Key = itextPdfDto.getPdfFilePath()+ itextPdfDto.getPdfFileName();
+            s3Service.uploadPdfFile(tempPdfFile, s3Key);
 
         } catch (DocumentException e1) {
             throw new IllegalArgumentException("PDF 라이브러리 설정 에러");

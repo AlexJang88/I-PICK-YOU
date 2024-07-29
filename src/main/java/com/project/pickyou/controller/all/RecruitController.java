@@ -32,8 +32,12 @@ import java.util.Map;
 @RequestMapping ("/recruit/*")
 @RequiredArgsConstructor
 public class RecruitController {
-    @Value("${contract.upload.path}")
+    @Value("${contracts.upload.path}")
     private String contactUploadPath;
+
+
+
+
     private int type=6;
 
     private final RecruitService service;
@@ -82,7 +86,7 @@ public class RecruitController {
             service.updateReadCount(boardNum);
             session.setAttribute(sid+"_"+type+"_"+boardNum,"true");
         }
-        service.post(model,boardNum,sid);
+        service.post(model,boardNum,sid,type);
         return "recruit/content";
     }
     //수정페이지 이동
@@ -95,7 +99,7 @@ public class RecruitController {
             sid=principal.getName();
             model.addAttribute("id",principal.getName());
             if(educationService.authCheck(boardNum,sid,type)){
-                service.post(model,boardNum,sid);
+                service.post(model,boardNum,sid,type);
                 url="recruit/update";
             }
         }
@@ -202,8 +206,8 @@ public class RecruitController {
         return url;
     }
     @PreAuthorize("hasAnyRole('ROLE_COMPANY','ROLE_USER')")
-    @GetMapping("/contract/{memberId}/{companyId}/{stateId}")
-    public String contract(Model model,Principal principal,@PathVariable String memberId,@PathVariable String companyId,@RequestParam int type,@PathVariable Long stateId){
+    @GetMapping("/contract/{memberId}/{companyId}/{recruitId}")
+    public String contract(Model model,Principal principal,@PathVariable String memberId,@PathVariable String companyId,@RequestParam int type,@PathVariable Long recruitId){
         String name ="";
         String url="redirect:/";
         //memberId=사용자 / principal=사업자
@@ -213,18 +217,18 @@ public class RecruitController {
             if(name.equals(companyId)||name.equals(memberId)) {
                 if(type==1){
                     url="recruit/contractForm";
-                    service.userInfo(model,memberId,name,stateId,1);
+                    service.userInfo(model,memberId,name,recruitId,1);
                 }
                 else if(type==2){
-                    service.basicContract(memberId,name,1,stateId);
+                    service.basicContract(memberId,name,1,recruitId);
                     url="redirect:/";
                 }
                 if (type == 3) {
                     url = "recruit/contractForm";
-                    service.userInfo(model, memberId, name, stateId, 3);
+                    service.userInfo(model, memberId, name, recruitId, 3);
                 } else if (type == 4) {
                     url = "redirect:/recruit/posts";
-                    service.basicContract(memberId, name, 4, stateId);
+                    service.basicContract(memberId, name, 4, recruitId);
                 }
             }
         }

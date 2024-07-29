@@ -39,7 +39,7 @@ public class TeamResumeDTO {
         this.reg = reg;
     }
 
-    public TeamResumeEntity toTeam_ResumeEntity() {
+    public TeamResumeEntity toTeamResumeEntity() {
         return TeamResumeEntity.builder()
                 .id(this.id)
                 .memberId(this.memberId)

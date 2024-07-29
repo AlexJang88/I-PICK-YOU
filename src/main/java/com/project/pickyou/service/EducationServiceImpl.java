@@ -1,5 +1,7 @@
 package com.project.pickyou.service;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.project.pickyou.dto.*;
 import com.project.pickyou.entity.*;
 import com.project.pickyou.repository.*;
@@ -20,17 +22,28 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class EducationServiceImpl implements EducationService {
+
+
+
     @Value("${img.upload.path}")
     private String imgUploadPath;
 
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    @Value("${cloud.aws.region.static}")
+    private String region;
+
+
+
+    private final S3Service s3Service;
 
     private final EducationJPARepository educationJPA;
     private final ImageJPARepository imageJPA;
@@ -120,6 +133,8 @@ public class EducationServiceImpl implements EducationService {
             model.addAttribute("post", edto);
             model.addAttribute("imgList", imageList);
             model.addAttribute("type",type);
+            model.addAttribute("bucketName",bucket);
+            model.addAttribute("regionName",region);
         }
 
     }
@@ -129,8 +144,24 @@ public class EducationServiceImpl implements EducationService {
     @Transactional
     public void writePost(List<MultipartFile> files, EducationDTO dto, int boardType) {
         Long eduNum = educationJPA.getAutoIncrementValue("pickyou", "education");
+
+        if (!CollectionUtils.isEmpty(files)) {
+            for (MultipartFile file : files) {
+                if (file.getContentType().startsWith("image")) {
+                    try {
+                        String filePath = s3Service.uploadFile(file, "image/" + boardType + "/" + eduNum);
+                        ImageDTO idto = new ImageDTO();
+                        idto.setBoardNum(eduNum);
+                        idto.setBoardType(boardType);
+                        idto.setName(filePath);
+                        imageJPA.save(idto.toImageEntity());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
         educationJPA.save(dto.toEducationEntity());
-        filesUpload(files, boardType, eduNum, imgUploadPath);
     }
 
     @Override
@@ -138,17 +169,10 @@ public class EducationServiceImpl implements EducationService {
     public void deletePost(Long boardNum, int boardType) {
         Optional<EducationEntity> education = educationJPA.findById(boardNum);
         if (education.isPresent()) {
-            File folder = new File(imgUploadPath + File.separator + boardType + File.separator + boardNum);
-            try {
-                if (folder.exists()) {
-                    FileUtils.cleanDirectory(folder);
+                List<ImageEntity> images = imageJPA.findByBoardTypeAndBoardNum(boardType, boardNum);
+                for (ImageEntity image : images) {
+                    s3Service.deleteFile("image/"+boardType+"/"+boardNum+"/"+image.getName());
                 }
-                if (folder.isDirectory()) {
-                    folder.delete();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
             imageJPA.deleteAllByBoardTypeAndBoardNum(boardType, boardNum);
             educationJPA.deleteById(boardNum);
 
@@ -178,20 +202,28 @@ public class EducationServiceImpl implements EducationService {
         Optional<EducationEntity> education = educationJPA.findById(dto.getId());
         if (education.isPresent()) {
             if (!CollectionUtils.isEmpty(files)) {
-                File folder = new File(imgUploadPath + File.separator + boardType + File.separator + dto.getId());
-                try {
-                    if (folder.exists()) {
-                        FileUtils.cleanDirectory(folder);
-                    }
-                    if (folder.isDirectory()) {
-                        folder.delete();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                List<ImageEntity> images = imageJPA.findByBoardTypeAndBoardNum(boardType, dto.getId());
+                for (ImageEntity image : images) {
+                    s3Service.deleteFile("image/" + boardType + "/" + dto.getId() + "/" + image.getName());
                 }
                 imageJPA.deleteAllByBoardTypeAndBoardNum(boardType, dto.getId());
-                filesUpload(files, boardType, dto.getId(), imgUploadPath);
+                for (MultipartFile file : files) {
+                    if (file.getContentType().startsWith("image")) {
+                        try {
+                            String filePath = s3Service.uploadFile(file, "image/" + boardType + "/" + dto.getId());
+                            ImageDTO idto = new ImageDTO();
+                            idto.setBoardNum(dto.getId());
+                            idto.setBoardType(boardType);
+                            idto.setName(filePath);
+                            imageJPA.save(idto.toImageEntity());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
+            Date date = new Date();
+            dto.setReg(date);
             educationJPA.save(dto.toEducationEntity());
         }
     }
@@ -231,7 +263,7 @@ public int favoriteCheck(PickDTO dto) {
         if(type==2) {
             Optional<EducationEntity> oee=educationJPA.findById(boardNum);
             if(oee.isPresent()){
-                if(oee.get().getMember().equals(id)){
+                if(oee.get().getCompanyId().equals(id)){
                     result=true;
                 }
             }
@@ -297,4 +329,8 @@ public void filesUpload(List<MultipartFile> files, int boardType, Long BoardNum,
         }
     }
 }
+
+//aws s3 bucket
+
+
 }
