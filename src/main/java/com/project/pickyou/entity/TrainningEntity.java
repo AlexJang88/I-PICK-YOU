@@ -1,12 +1,18 @@
 package com.project.pickyou.entity;
 
+
+
+
 import com.project.pickyou.dto.TrainningDTO;
-import jakarta.persistence.Entity;
 import jakarta.persistence.*;
-import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -14,6 +20,8 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "trainning")
+@DynamicInsert   //인서트시에 사용
+@DynamicUpdate    // 업데이트시에 사용
 public class TrainningEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,13 +37,21 @@ public class TrainningEntity {
     private String contact;
     @Column(name = "read_count")
     private int readCount;
-    @Column(name = "image_registration_id")
-    private Long imageRegistrationId;
     private String content;
+    //@CreationTimestamp  <- 만약 디폴트값이 없다면 사용하는것
+    @UpdateTimestamp   //업데이트시 필요 <- 디폴트 값으로 들어가있기때문에
     private Date reg;
 
+
+    @OneToOne
+    @JoinColumn(name="company_id",referencedColumnName = "id",insertable = false,updatable = false)
+    private MemberEntity memberen;
+
+
+
+
     @Builder
-    public TrainningEntity(Long id, String companyId, String title, String position, String trainner, String etc, String name, String address, String contact, int readCount, Long imageRegistrationId, String content, Date reg) {
+    public TrainningEntity(Long id, String companyId, String title, String position, String trainner, String etc, String name, String address, String contact, int readCount, String content, Date reg) {
         this.id = id;
         this.companyId = companyId;
         this.title = title;
@@ -46,12 +62,11 @@ public class TrainningEntity {
         this.address = address;
         this.contact = contact;
         this.readCount = readCount;
-        this.imageRegistrationId = imageRegistrationId;
         this.content = content;
         this.reg = reg;
     }
 
-    public TrainningDTO toTrainingDTO() {
+    public TrainningDTO toTrainningDTO() {
         return TrainningDTO.builder()
                 .id(this.id)
                 .companyId(this.companyId)
@@ -63,7 +78,6 @@ public class TrainningEntity {
                 .address(this.address)
                 .contact(this.contact)
                 .readCount(this.readCount)
-                .imageRegistrationId(this.imageRegistrationId)
                 .content(this.content)
                 .reg(this.reg)
                 .build();

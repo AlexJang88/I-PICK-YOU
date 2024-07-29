@@ -8,17 +8,17 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class JobDTO {
-    private String memberId;
+    private Long resumeId;
     private String name;
 
     @Builder
-    public JobDTO(String memberId,String name){
-        this.memberId=memberId;
+    public JobDTO(Long resumeId,String name){
+        this.resumeId=resumeId;
         this.name=name;
     }
     public JobEntity toJobEntity(){
         return JobEntity.builder()
-                .memberId(this.memberId)
+                .resumeId(this.resumeId)
                 .name(this.name)
                 .build();
     }

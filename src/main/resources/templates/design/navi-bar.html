@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+
+<div th:fragment="navi">
+    <nav class="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+         id="layout-navbar">
+        <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+            <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+                <i class="bx bx-menu bx-sm"></i>
+            </a>
+        </div>
+
+        <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+            <ul class="navbar-nav flex-row align-items-center ms-auto">
+                <!-- Place this tag where you want the button to render. -->
+                <table id="weatherTable">
+
+                </table>
+
+                <!--알림버튼-->
+
+                <button type="button" class="btn btn-icon btn-secondary position-relative"
+                        sec:authorize="hasRole('ROLE_USER')">
+                    <a th:href="@{/alarm/list/{id}(id=${#authentication.name})}">
+                        <span class="tf-icons bx bx-bell"></span>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                              <span id="alertCounter">0</span> <!-- 알림 카운터를 표시할 요소 -->
+                            <span class="visually-hidden">unread messages</span>
+                        </span>
+                    </a>
+                </button>
+                <button type="button" class="btn btn-icon btn-secondary position-relative"
+                        sec:authorize="hasRole('ROLE_COMPANY')">
+                    <a th:href="@{/alarm/list/{id}(id=${#authentication.name})}">
+                        <span class="tf-icons bx bx-bell"></span>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                          <span id="alertCounter">0</span> <!-- 알림 카운터를 표시할 요소 -->
+                            <span class="visually-hidden">unread messages</span>
+                        </span>
+                    </a>
+                </button>
+                <button type="button" class="btn btn-icon btn-secondary position-relative"
+                        sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a th:href="@{/alarm/adminlist/{id}(id=${#authentication.name})}">
+                        <span class="tf-icons bx bx-bell"></span>
+                    </a>
+                </button>
+                <span class="mx-2"></span>
+                <span id="openChatRoomBtn" class="position-relative" sec:authorize="isAuthenticated()"
+                      style="cursor: pointer;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-dots-fill"
+                         viewBox="0 0 16 16">
+                        <path d="M16 8c0 3.866-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7M5 8a1 1 0 1 0-2 0 1 1 0 0 0 2 0m4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+                    </svg>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                          sec:authorize="isAuthenticated()">
+                        <span id="chatCount">0</span>
+                    </span>
+                </span>
+                <span class="mx-2"></span>
+
+                <!-- User -->
+                <li class="nav-item navbar-dropdown dropdown-user dropdown">
+
+                    <!--프로필이미지 불러오는곳-->
+                    <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+                        <div class="d-flex align-items-center">
+                            <div class="demo-inline-spacing" sec:authorize="!isAuthenticated()">
+                                <button type="button" class="btn btn-primary">로그인</button>
+                            </div>
+                            <div sec:authorize="isAuthenticated()">
+                                <img th:src="@{/assets/img/avatars/3.png}" alt=""
+                                     class="w-px-40 h-auto rounded-circle"/>
+                            </div>
+                            <div sec:authorize="isAuthenticated()">
+                                <p class="mb-0 ms-2" th:text="${#authentication.name}"></p>
+                            </div>
+                        </div>
+                    </a>
+
+
+                    <!--프로필 눌렀을때-->
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <!--사람 이름과 하위메뉴-->
+                        <li>
+                            <a sec:authorize class="dropdown-item" href="#">
+
+
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div>
+
+                                            <img sec:authorize="isAuthenticated()" th:src="@{/assets/img/avatars/1.png}"
+                                                 alt=""
+                                                 class="w-px-40 h-auto rounded-circle"/>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="flex-grow-1">
+
+                                        <span sec:authorize="isAuthenticated()"
+                                              class="fw-semibold d-block">John Doe</span>
+                                        <small sec:authorize="isAuthenticated()" class="text-muted">회원님</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <div sec:authorize="isAuthenticated()" class="dropdown-divider"></div>
+                        </li>
+                        <li sec:authorize="hasRole('ROLE_USER')">
+                            <a class="dropdown-item" th:href="@{/mypage/information/{id}(id=${#authentication.name})}">
+                                <i class="bx bx-user me-2"></i>
+                                <span class="align-middle">마이페이지</span>
+                            </a>
+                        </li>
+                        <li sec:authorize="hasRole('ROLE_COMPANY')">
+                            <a class="dropdown-item"
+                               th:href="@{/mypage/cominformation/{id}(id=${#authentication.name})}">
+                                <i class="bx bx-user me-2"></i>
+                                <span class="align-middle">마이페이지</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/qa/posts">
+                                <i class="bx bx-cog me-2"></i>
+                                <span class="align-middle">문의하기</span>
+                            </a>
+                        </li>
+                        <li sec:authorize="!isAuthenticated()">
+                            <a class="dropdown-item" href="/login">
+                                <span class="d-flex align-items-center align-middle">
+                                    <i class="flex-shrink-0 bx bx-credit-card me-2"></i>
+                                    <span class="flex-grow-1 align-middle">회원가입하기</span>
+                                </span>
+                            </a>
+                        </li>
+
+
+                        <!--여기서부터 관리자-->
+
+
+                        <li sec:authorize="hasRole('ROLE_ADMIN')">
+                            <a class="dropdown-item" th:href="@{/admin/management}">
+                                <i class="bx bx-user me-2"></i>
+                                <span class="align-middle">일반유저 정보</span>
+                            </a>
+                        </li>
+
+                        <li sec:authorize="hasRole('ROLE_ADMIN')">
+                            <a class="dropdown-item" th:href="@{/admin/companyManagement}">
+                                <i class="bx bx-user me-2"></i>
+                                <span class="align-middle">사업자 정보</span>
+                            </a>
+                        </li>
+
+                        <li sec:authorize="hasRole('ROLE_ADMIN')">
+                            <a class="dropdown-item" th:href="@{/admin/payment/totalRevenue}">
+                                <i class="bx bx-user me-2"></i>
+                                <span class="align-middle">매출 현황</span>
+                            </a>
+                        </li>
+
+                        <li sec:authorize="hasRole('ROLE_ADMIN')">
+                            <a class="dropdown-item" th:href="@{/admin/payment/posts}">
+                                <i class="bx bx-user me-2"></i>
+                                <span class="align-middle">결제 내역</span>
+                            </a>
+                        </li>
+
+                        <li sec:authorize="hasRole('ROLE_ADMIN')">
+                            <a class="dropdown-item" th:href="@{/admin/point/give}">
+                                <i class="bx bx-user me-2"></i>
+                                <span class="align-middle">포인트 지급 내역</span>
+                            </a>
+                        </li>
+
+                        <li sec:authorize="hasRole('ROLE_ADMIN')">
+                            <a class="dropdown-item" th:href="@{/admin/point/deduct}">
+                                <i class="bx bx-user me-2"></i>
+                                <span class="align-middle">포인트 사용 내역</span>
+                            </a>
+                        </li>
+
+                        <li sec:authorize="hasRole('ROLE_ADMIN')">
+                            <a class="dropdown-item" th:href="@{/admin/pointPayment}">
+                                <i class="bx bx-user me-2"></i>
+                                <span class="align-middle">포인트 지급 승인</span>
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <div sec:authorize="isAuthenticated()" class="dropdown-divider"></div>
+                        </li>
+
+                        <li sec:authorize="!isAuthenticated()">
+                            <a class="dropdown-item" th:href="@{/login}">
+                                <i class="bx bx-power-off me-2"></i>
+                                <span class="align-middle">Log in</span>
+                            </a>
+                        </li>
+
+
+                        <li sec:authorize="isAuthenticated()">
+                            <a class="dropdown-item" th:href="@{/logout}">
+                                <i class="bx bx-power-off me-2"></i>
+                                <span class="align-middle">Log Out</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
+                <!--/ User -->
+            </ul>
+        </div>
+        <input type="hidden" id="ajaxId" th:value="${id}"> <!-- 실제 사용자 ID를 여기에 설정 -->
+        <script th:inline="javascript">
+            $(document).ready(function(){
+                function fetchAlarmCount() {
+                    var id = $("#ajaxId").val();  // hidden input 태그에서 id 값을 가져옴
+
+                    if (!id) return;  // 로그인되지 않은 경우 함수 종료
+
+                    console.log("id:", id);
+
+                    // AJAX 요청 보내기
+                    $.ajax({
+                        url: '/ajax/alarmnumber/number',
+                        type: "POST",
+                        contentType: 'application/json',
+                        data: JSON.stringify({ id: id }),
+                        dataType: "json",
+                        success: function(data) {
+                            console.log("AJAX 성공:", data);
+                            $("#alertCounter").text(data.alarmcount); // 서버에서 받은 데이터로 알림 카운터 업데이트
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("AJAX 에러:", error);
+                            console.log("xhr:", xhr);
+                            console.log("status:", status);
+                            console.log("error:", error);
+                        }
+                    });
+                }
+
+                var id = $("#ajaxId").val(); // hidden input 태그에서 id 값을 가져옴
+                if (id) {
+                    fetchAlarmCount(); // 초기 실행
+                    setInterval(fetchAlarmCount, 60000); // 1분(60000밀리초)마다 실행
+                }
+            });
+
+            $(document).ready(function() {
+              window.addEventListener('message', event => {
+                        if (event.origin !== 'http://3.39.50.114:4000') return;  // 보안 검사
+                        if (event.data === 'modalClosed') {
+                            $('#myModal').modal('hide');
+                            $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                        }
+                    });
+                var id = $('#ajaxId').val();
+                if (id) {
+                    fetchUnreadMessages();
+                    $('#openChatRoomBtn').click(function() {
+                        var sender = $('#ajaxId').val();
+                        var chatUrl = 'http://3.39.50.114:4000/rooms/' + sender
+                        $('#roomFrame').attr('src', chatUrl);
+                        $('#myModal').modal('show');
+                    });
+
+
+                    // 5초마다 갱신
+                    setInterval(fetchUnreadMessages, 5000);
+                }
+            });
+
+            function fetchUnreadMessages() {
+                var userId = $('#ajaxId').val();
+                if (!userId) return; // 로그인되지 않은 경우 함수 종료
+
+                $.ajax({
+                    url: 'http://3.39.50.114:4000/api/unread/' + userId,
+                    method: 'GET',
+                    success: function(response) {
+                        $('#chatCount').text(response.unreadCount);
+                    },
+                    error: function(error) {
+                        console.error('Error fetching unread messages:', error);
+                    }
+                });
+            }
+
+            const cities = [
+                { engName: 'Seoul', korName: '서울' },
+                { engName: 'Busan', korName: '부산' },
+                { engName: 'Daegu', korName: '대구' },
+                { engName: 'Incheon', korName: '인천' },
+                { engName: 'Gwangju', korName: '광주' },
+                { engName: 'Daejeon', korName: '대전' },
+                { engName: 'Ulsan', korName: '울산' }
+            ];
+            let currentIndex = 0;
+
+            // API 요청 및 데이터 표시 함수
+            function fetchWeather(cityId, cityName) {
+                fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityId}&appid=99612c2cd2cf86724058d9b5b6cba6d5&units=metric`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const temperature = data.main.temp;
+                        const weatherIcon = data.weather[0].icon;
+
+                        // 특정 도시의 행을 업데이트
+                        const existingRow = document.getElementById('currentRow');
+                        if (existingRow) {
+                            existingRow.innerHTML = `
+                                <td>${cityName}</td>
+                                <td>${temperature} ℃</td>
+                                <td><img src="https://openweathermap.org/img/wn/${weatherIcon}.png" alt="${data.weather[0].description}"></td>
+                            `;
+                        } else {
+                            // 새로운 행 추가
+                            const weatherTable = document.getElementById('weatherTable');
+                            const newRow = weatherTable.insertRow();
+                            newRow.id = 'currentRow';
+                            newRow.innerHTML = `
+                                <td>${cityName}</td>
+                                <td>${temperature} ℃</td>
+                                <td><img src="https://openweathermap.org/img/wn/${weatherIcon}.png" alt="${data.weather[0].description}"></td>
+                            `;
+                        }
+
+                        // 다음 도시로 인덱스 이동
+                        currentIndex++;
+                        if (currentIndex >= cities.length) {
+                            currentIndex = 0; // 모든 도시를 표시한 후 다시 처음부터 시작
+                        }
+
+                        // 다음 도시의 날씨 정보 요청
+                        setTimeout(() => fetchWeather(cities[currentIndex].engName, cities[currentIndex].korName), 5000);
+                    })
+                    .catch(error => console.error(`API 요청 중 에러 발생 (${cityName}):`, error));
+            }
+
+            // 초기화: 서울 날씨 정보 요청
+            setTimeout(() => fetchWeather('Seoul', '서울'), 0); // 0초 후에 실행
+        </script>
+
+
+    </nav>
+</div>
+
+
+</html>

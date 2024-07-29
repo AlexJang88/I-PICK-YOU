@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.util.Date;
 
@@ -14,24 +15,28 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @Table(name = "qa")
+@DynamicInsert
 public class QaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String content;
-    @Column(name = "member_id")
-    private String memberId;
+    private String writer;
     private int ref;
+    private String pw;
+    private int status;
     private Date reg;
 
     @Builder
-    public QaEntity(Long id, String title, String content, String memberId, int ref, Date reg) {
+    public QaEntity(Long id, String title, String content, String writer, int ref, String pw, int status, Date reg) {
         this.id = id;
         this.title = title;
         this.content = content;
-        this.memberId = memberId;
+        this.writer = writer;
         this.ref = ref;
+        this.pw = pw;
+        this.status = status;
         this.reg = reg;
     }
 
@@ -40,8 +45,10 @@ public class QaEntity {
                 .id(this.id)
                 .title(this.title)
                 .content(this.content)
-                .memberId(this.memberId)
+                .writer(this.writer)
                 .ref(this.ref)
+                .pw(this.pw)
+                .status(this.status)
                 .reg(this.reg)
                 .build();
     }

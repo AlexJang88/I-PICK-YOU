@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      class="light-style layout-menu-fixed"
+      dir="ltr"
+      th:data-theme="theme-default"
+      th:data-assets-path="@{/assets/}"
+      th:data-template="vertical-menu-template-free" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <title>주변 밥집 상세정보</title>
+    <meta name="description" content="" />
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon/favicon.ico}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/assets/vendor/fonts/boxicons.css}" />
+    <link rel="stylesheet" th:href="@{/assets/vendor/css/core.css}" class="template-customizer-core-css" />
+    <link rel="stylesheet" th:href="@{/assets/vendor/css/theme-default.css}" class="template-customizer-theme-css" />
+    <link rel="stylesheet" th:href="@{/assets/css/demo.css}" />
+    <link rel="stylesheet" th:href="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css}" />
+    <script th:src="@{/assets/vendor/js/helpers.js}"></script>
+    <script th:src="@{/assets/js/config.js}"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=872f8b78509c5042b8600aaf2eb3050b&libraries=services"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+        <div th:replace="design/side-bar :: side"></div>
+        <div class="layout-page">
+            <div th:insert="~{design/navi-bar :: navi}"></div>
+            <div class="content-wrapper">
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <h2 class="fw-bold py-3 mb-4">
+                        <span class="text-muted fw-light">Food_Map</span>
+                    </h2>
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div class="d-flex" style="margin-left: auto;">
+                                <div sec:authorize="hasRole('ROLE_ADMIN')" class="d-flex" style="gap: 0.3cm;">
+                                    <div th:if="${2 == foodMapInfo.status}" class="d-flex" style="gap: 0.3cm;">
+                                        <form th:action="@{/foodMap/posts/{boardNum}/check(boardNum=${foodMapInfo.id})}" th:method="post" style="margin-right: 10px;" id="checkForm">
+                                            <input type="hidden" name="memberId" th:value="${foodMapInfo.memberId}" />
+                                            <input type="hidden" name="status" th:value="1" />
+                                            <input type="hidden" name="point" th:value="5000" />
+
+                                            <input type="hidden" name="id" th:value="${foodMapInfo.id}" />
+                                            <input type="hidden" name="title" th:value="${foodMapInfo.title}" />
+                                            <input type="hidden" name="content" th:value="${foodMapInfo.content}" />
+                                            <input type="hidden" name="map" th:value="${foodMapInfo.map}" />
+                                            <input type="hidden" name="ref" th:value="${foodMapInfo.ref}" />
+                                            <input type="hidden" name="reply" th:value="${foodMapInfo.reply}" />
+                                            <input type="hidden" name="readCount" th:value="${foodMapInfo.readCount}" />
+                                            <input type="hidden" name="reg" th:value="${foodMapInfo.reg}" />
+                                            <button class="btn btn-primary" type="button" onclick="confirmCheck()">인증하기</button>
+                                        </form>
+                                    </div>
+
+                                    <form th:action="@{/foodMap/posts/{boardNum}(boardNum=${foodMapInfo.id})}" th:method="post" id="deleteForm1">
+                                        <input type="hidden" name="_method" value="delete"/>
+                                        <button type="button" class="btn btn-danger" onclick="confirmDelete1()">글삭제</button>
+                                    </form>
+                                </div>
+
+                                <div th:if="${sessionId == foodMapInfo.memberId}" class="d-flex" style="gap: 0.3cm;">
+                                    <form th:action="@{/foodMap/posts/{boardNum}/edit(boardNum=${foodMapInfo.id})}" th:method="get" style="margin-right: 10px;" onsubmit="return checkStatus();">
+                                        <button class="btn btn-primary" type="submit">글수정</button>
+                                    </form>
+
+
+                                    <form th:action="@{/foodMap/posts/{boardNum}(boardNum=${foodMapInfo.id})}" th:method="post" id="deleteForm2">
+                                        <input type="hidden" name="_method" value="delete"/>
+                                        <button type="button" class="btn btn-danger" onclick="confirmDelete2()">글삭제</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive text-nowrap">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <td th:text="'제목 : ' + ${foodMapInfo.title}"></td>
+                                    <td th:text="${#dates.format(foodMapInfo.reg, 'yyyy-MM-dd')}" class="text-end"></td>
+                                </tr>
+                                </thead>
+                                <tbody class="table-border-bottom-0">
+                                <tr>
+                                    <td colspan="2" class="text-center" th:text="${foodMapInfo.content}"></td>
+                                </tr>
+
+                                <tr th:each="image : ${images}">
+                                    <td colspan="2" class="text-center">
+                                        <img th:src="@{'https://'+ ${bucketName}+'.s3.' + ${regionName} + '.amazonaws.com/image/' +${image.boardType}+'/'+${image.boardNum}+'/'+${image.name}}" style="width: 250px; height: 250px;" >
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">>
+                                        <div id="map" style="width:100%;height:350px;"></div>
+                                    </td>
+                                </tr>
+
+
+                                <div sec:authorize="isAuthenticated()"> <!-- 비로그인시 버튼안보임 -->
+                                    <tr>
+                                        <td colspan="2">
+                                            <div class="card-header d-flex justify-content-between align-items-center">
+                                                <div class="d-flex ml-auto">
+                                                    <form th:action="@{/foodMap/posts/{boardNum}/ref(boardNum=${foodMapInfo.ref})}" th:method="post" class="form-inline" enctype="multipart/form-data">
+                                                        <textarea name="content" class="form-control mr-2" required></textarea>
+                                                        <input type="file" name="files" class="form-control" multiple="multiple" />
+                                                        <input type="hidden" name="title" th:value="${foodMapInfo.title}">
+                                                        <input type="hidden" name="map" th:value="${foodMapInfo.map}">
+                                                        <input type="hidden" name="ref" th:value="${foodMapInfo.ref}">
+                                                        <input type="hidden" name="readCount" th:value="${foodMapInfo.readCount}">
+                                                        <input type="hidden" name="status" th:value="${foodMapInfo.status}">
+
+                                                        <button type="submit" class="btn btn-primary">댓글작성</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </div>
+
+                                <tr>
+                                    <td colspan="5" style="height: 50px;"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+
+
+
+                        <div class="table-responsive text-nowrap">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <td colspan="5">
+                                        <h1 class="text-center">댓글 리스트</h1>
+                                    </td>
+                                </tr>
+                                </thead>
+
+                                <tbody class="table-border-bottom-0">
+                                <!--<tr th:each="ref : ${refList}" th:class="${ref.id} != ${ref.reply} ? 'indent' : ''" th:style="${ref.reply == ref.id} ? 'padding-left: 20px;' : ''">
+                                    <td th:text="${ref.memberId}"></td>
+                                    <td th:text="${ref.content}"></td>
+                                    <td>
+                                        <div th:each="image : ${imagesRef}" th:if="${image.boardNum == ref.id}">
+                                            <img th:src="@{'https://'+ ${bucketName}+'.s3.' + ${regionName} + '.amazonaws.com/image/' +${image.boardType}+'/'+${image.boardNum}+'/'+${image.name}}" class="img-fluid rounded"
+                                                 th:style="${ref.reply == ref.id} ? 'width: 140px; height: 105px;' : 'width: 70px; height: 52.5px;'" />
+                                            &lt;!&ndash;<img th:src="@{'/upload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}"
+                                                 class="img-fluid rounded"
+                                                 th:style="${ref.reply == ref.id} ? 'width: 140px; height: 105px;' : 'width: 70px; height: 52.5px;'" />&ndash;&gt;
+                                        </div>
+                                    </td>-->
+                                <tr th:each="ref : ${refList}" th:class="${ref.id} != ${ref.reply} ? 'indent' : ''" th:style="${ref.reply == ref.id} ? 'padding-left: 20px;' : ''">
+                                    <td th:text="${ref.memberId}"></td>
+                                    <td th:text="${ref.content}"></td>
+                                    <td>
+                                        <div th:each="image : ${imagesRef}" th:if="${image.boardNum == ref.id}">
+                                            <img th:src="@{'https://'+ ${bucketName}+'.s3.' + ${regionName} + '.amazonaws.com/image/' +${image.boardType}+'/'+${image.boardNum}+'/'+${image.name}}"
+                                                 th:style="${ref.reply == ref.id} ? 'width: 140px; height: 105px;' : 'width: 70px; height: 52.5px;'" />
+                                            <!--<img th:src="@{'/upload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}"
+                                                 class="img-fluid rounded"
+                                                 th:style="${ref.reply == ref.id} ? 'width: 140px; height: 105px;' : 'width: 70px; height: 52.5px;'" />-->
+                                        </div>
+                                    </td>
+                                    <td th:text="${#dates.format(ref.reg, 'yyyy-MM-dd')}" class="text-end"></td>
+                                    <td>
+                                        <form th:action="@{/foodMap/posts/{boardNum}/reply(boardNum=${ref.reply})}" th:method="post" class="form-inline" enctype="multipart/form-data">
+                                            <div sec:authorize="isAuthenticated()">
+                                                <button type="button" class="btn btn-primary showFormButton">답글작성</button>
+                                            </div>
+                                            <div class="formElements hidden">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" th:text="'@' + ${ref.memberId} + ' : '"></span>
+                                                    <textarea name="content" class="form-control" placeholder="내용을 입력하세요"></textarea>
+                                                </div>
+                                                <input type="hidden" name="fullContent" th:value="'@' + ${ref.memberId} + ' : ' + ''" />
+
+                                                <input type="file" name="files" class="form-control" multiple="multiple" />
+                                                <input type="hidden" name="ref" th:value="${ref.ref}" />
+                                                <input type="hidden" name="title" th:value="${ref.title}" />
+                                                <input type="hidden" name="map" th:value="${ref.map}" />
+                                                <input type="hidden" name="foodMapNum" th:value="${foodMapInfo.id}" />
+                                                <button type="submit" class="btn btn-primary">답글작성</button>
+                                            </div>
+                                        </form>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+            <div th:replace="design/footer :: footer"></div>
+            <div class="content-backdrop fade"></div>
+        </div>
+    </div>
+    <div class="layout-overlay layout-menu-toggle"></div>
+</div>
+
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+<style>
+    .hidden {
+        display: none;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.showFormButton').forEach(button => {
+            button.addEventListener('click', function() {
+                const formElements = this.closest('form').querySelector('.formElements');
+                formElements.classList.toggle('hidden');
+                this.textContent = formElements.classList.contains('hidden') ? '답글작성' : '취소';
+            });
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    function confirmCheck() {
+        if (confirm("인증하시겠습니까?")) {
+            document.getElementById('checkForm').submit();
+        }
+    }
+</script>
+
+<script type="text/javascript">
+    function confirmDelete1() {
+        if (confirm("글을 삭제하시겠습니까?")) {
+            document.getElementById('deleteForm1').submit();
+        }
+    }
+</script>
+
+<script type="text/javascript">
+    function confirmDelete2() {
+        if (confirm("글을 삭제하시겠습니까?")) {
+            document.getElementById('deleteForm2').submit();
+        }
+    }
+</script>
+
+<script th:inline="javascript">
+    var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+        mapOption = {
+            center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+            level: 3 // 지도의 확대 레벨
+        };
+
+    // 지도를 생성합니다
+    var map = new kakao.maps.Map(mapContainer, mapOption);
+
+    // 주소-좌표 변환 객체를 생성합니다
+    var geocoder = new kakao.maps.services.Geocoder();
+
+    // 카카오 로컬 API의 장소 검색 서비스 객체를 생성합니다
+    var places = new kakao.maps.services.Places();
+
+    // Thymeleaf 표현식으로 서버에서 전달된 주소를 JavaScript 변수에 삽입합니다
+    var address = [[${foodMapInfo.map}]]; // myMap의 값을 JavaScript 변수로 사용합니다
+
+    // 주소로 좌표를 검색합니다
+    geocoder.addressSearch(address, function(result, status) {
+        if (status === kakao.maps.services.Status.OK) {
+            var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+            // 결과값으로 받은 위치를 마커로 표시합니다
+            var marker = new kakao.maps.Marker({
+                map: map,
+                position: coords
+            });
+
+            // 인포윈도우로 장소에 대한 설명을 표시합니다
+            // 장소 정보를 가져옵니다
+            places.keywordSearch(address, function(data, status, pagination) {
+                if (status === kakao.maps.services.Status.OK && data.length > 0) {
+                    var placeName = data[0].place_name; // 첫 번째 검색 결과의 장소 이름
+
+                    var infowindow = new kakao.maps.InfoWindow({
+                        content: '<div style="width:150px;text-align:center;padding:6px 0;">' + placeName + '</div>'
+                    });
+                    infowindow.open(map, marker);
+                } else {
+                    var infowindow = new kakao.maps.InfoWindow({
+                        content: '<div style="width:150px;text-align:center;padding:6px 0;">' + address + '</div>'
+                    });
+                    infowindow.open(map, marker);
+                }
+            });
+
+            // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+            map.setCenter(coords);
+        } else {
+            alert('주소 검색에 실패했습니다.');
+        }
+    });
+</script>
+
+<script th:inline="javascript">
+
+    var foodMapInfoStatus = [[${foodMapInfo.status}]];
+
+    // 글 수정 버튼 클릭 시 호출되는 함수
+    function checkStatus() {
+        if (foodMapInfoStatus === 1) {
+            alert('인증된 글은 수정할 수 없습니다.');
+            return false; // 폼 서브밋을 중지하고 페이지 이동을 막습니다.
+        }
+        return true; // 폼 서브밋을 진행합니다.
+    }
+</script>
+
+<script>
+    window.addEventListener('message', event => {
+                        if (event.origin !== 'http://3.39.50.114:4000') return;  // 보안 검사
+                        if (event.data === 'modalClosed') {
+                            $('#myModal').modal('hide');
+                              $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                        }
+                        });
+</script>
+
+<style>
+    .hidden {
+        display: none;
+    }
+
+    .indent {
+        padding-left: 20px; /* 원하는 들여쓰기 크기 */
+    }
+</style>
+
+</body>
+</html>

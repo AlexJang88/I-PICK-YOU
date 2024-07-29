@@ -5,28 +5,37 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @NoArgsConstructor
 @Data
 @Table(name = "job")
+@DynamicInsert
+@DynamicUpdate
 @IdClass(JobID.class)
 public class JobEntity {
     @Id
-    @Column(name = "member_id")
-    private String memberId;
+    @Column(name = "resume_id")
+    private Long resumeId;
 
     @Id
     private String name;
 
+    @ManyToOne
+    @MapsId
+    @JoinColumn(name = "resume_id")
+    private ResumeEntity resume;
+
     @Builder
-    public JobEntity(String memberId,String name){
-        this.memberId=memberId;
+    public JobEntity(Long resumeId,String name){
+        this.resumeId=resumeId;
         this.name=name;
     }
     public JobDTO toJobDTO(){
         return JobDTO.builder()
-                .memberId(this.memberId)
+                .resumeId(this.resumeId)
                 .name(this.name)
                 .build();
     }

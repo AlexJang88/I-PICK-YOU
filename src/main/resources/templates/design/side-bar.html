@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
 <head>
     <meta charset="UTF-8">
 </head>
 <body>
-        <div th:fragment="side">
-            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-                <div class="app-brand demo">
-                    <a href="index.html" class="app-brand-link">
+<div th:fragment="side">
+    <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+        <div class="app-brand demo">
+<a href="/" class="app-brand-link">
               <span class="app-brand-logo demo">
                 <svg
                         width="25"
@@ -63,340 +65,400 @@
                   </g>
                 </svg>
               </span>
-                        <span class="app-brand-text demo menu-text fw-bolder ms-2">Sneat</span>
-                    </a>
 
-                    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
-                        <i class="bx bx-chevron-left bx-sm align-middle"></i>
-                    </a>
-                </div>
+                <span class="app-brand-text demo menu-text fw-bolder ms-2">I Pick You</span>
+            </a>
 
-                <div class="menu-inner-shadow"></div>
 
-                <ul class="menu-inner py-1">
-                    <!-- Dashboard -->
-                    <li class="menu-item active">
-                        <a href="index.html" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                            <div data-i18n="Analytics">Dashboard</div>
+            <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+                <i class="bx bx-chevron-left bx-sm align-middle"></i>
+            </a>
+        </div>
+
+        <div class="menu-inner-shadow"></div>
+
+        <ul class="menu-inner py-1">
+            <!-- Dashboard -->
+            <li class="menu-item active">
+                <a th:href="@{/}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                    <div data-i18n="Analytics">메인으로</div>
+                </a>
+            </li>
+
+            <!-- Layouts -->
+            <li class="menu-item">
+                <a th:href="@{/notice/IntroductionUs}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-layout"></i>
+                    <div data-i18n="Layouts">사이트소개</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a th:href="@{/notice/posts}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-layout"></i>
+                    <div data-i18n="Layouts">공지사항</div>
+                </a>
+            </li>
+
+            <!--<li class="menu-item">
+                <a th:href="@{/qa/posts}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-crown"></i>
+                    <div data-i18n="Boxicons">문의하기</div>
+                </a>
+            </li>-->
+
+
+
+            <li class="menu-item">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons bx bx-crown"></i>
+                    <div data-i18n="Account Settings">문의하기</div>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a th:href="@{/qa/posts/new}" class="menu-link">
+                            <div data-i18n="Account">문의 글쓰기</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a th:href="@{/qa/complete/posts}" class="menu-link">
+                            <div data-i18n="Account">답글 완료 내역</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a th:href="@{/qa/posts}" class="menu-link">
+                            <div data-i18n="Account">답글 미완료 내역</div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+
+
+
+
+
+            <li class="menu-item" sec:authorize="hasRole('ROLE_ADMIN')">
+                <a th:href="@{/alarm/adminlist/{id}(id=${#authentication.name})}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-crown"></i>
+                    <div data-i18n="Boxicons">쪽지쓰기</div>
+                </a>
+            </li>
+
+
+
+            <li class="menu-item" sec:authorize="hasRole('ROLE_USER')">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class="bx bx-user me-2"></i>
+                    <div data-i18n="Account Settings">마이페이지</div>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a th:href="@{/mypage/information/{id}(id=${#authentication.name})}" class="menu-link">
+                            <div data-i18n="Account">내 정보보기</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a th:href="@{/calendar}" class="menu-link">
+                            <div data-i18n="Account">스케쥴보기</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a th:href="@{/resume/posts}" class="menu-link">
+                            <div data-i18n="Account">내 이력서</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a th:href="@{/teams/posts/my}" class="menu-link">
+                            <div data-i18n="Account">팀이력서</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a th:href="@{/pick/posts/my}" class="menu-link">
+                            <div data-i18n="Account">찜하기</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+
+                        <a th:href="@{/recruitState/posts/my}" class="menu-link">
+                            <div data-i18n="Account">지원내역</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+
+                        <a th:href="@{/mypage/user/receive/posts}" class="menu-link">
+                            <div data-i18n="Account">지원받은내역</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a th:href="@{/mypage/confirm/posts}" class="menu-link">
+                            <div data-i18n="Account">채용현황</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a th:href="@{/satisfaction/score/my}" class="menu-link">
+                            <div data-i18n="Account">내평점보기</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a th:href="@{/satisfaction/score}" class="menu-link">
+                            <div data-i18n="Account">평점주기</div>
                         </a>
                     </li>
 
-                    <!-- Layouts -->
                     <li class="menu-item">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-layout"></i>
-                            <div data-i18n="Layouts">Layouts</div>
+                            <i class="menu-icon tf-icons bx bx-dock-top"></i>
+                            <div data-i18n="Account Settings">포인트</div>
                         </a>
-
                         <ul class="menu-sub">
                             <li class="menu-item">
-                                <a href="layouts-without-menu.html" class="menu-link">
-                                    <div data-i18n="Without menu">Without menu</div>
+                                <a th:href="@{/mypage/point/plus/posts}" class="menu-link">
+                                    <div data-i18n="Account">포인트 적립 내역</div>
                                 </a>
                             </li>
                             <li class="menu-item">
-                                <a href="layouts-without-navbar.html" class="menu-link">
-                                    <div data-i18n="Without navbar">Without navbar</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="layouts-container.html" class="menu-link">
-                                    <div data-i18n="Container">Container</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="layouts-fluid.html" class="menu-link">
-                                    <div data-i18n="Fluid">Fluid</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="layouts-blank.html" class="menu-link">
-                                    <div data-i18n="Blank">Blank</div>
+                                <a th:href="@{/mypage/point/minus/posts}" class="menu-link">
+                                    <div data-i18n="Account">포인트 차감 내역</div>
                                 </a>
                             </li>
                         </ul>
                     </li>
+                </ul>
+            </li>
 
-                    <li class="menu-header small text-uppercase">
-                        <span class="menu-header-text">Pages</span>
+
+
+            <li class="menu-item" sec:authorize="hasRole('ROLE_COMPANY')">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class="bx bx-user me-2"></i></i>
+                    <div data-i18n="Account Settings">마이페이지</div>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a th:href="@{/mypage/cominformation/{id}(id=${#authentication.name})}" class="menu-link">
+                            <div data-i18n="Account">내 정보보기</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a th:href="@{/recruit/posts/my}" class="menu-link">
+                            <div data-i18n="Account">내 공고</div>
+                        </a>
+                    </li>
+                    
+                    <li class="menu-item">
+                        <a th:href="@{/calendar}" class="menu-link">
+                            <div data-i18n="Account">스케쥴보기</div>
+                        </a>
+                    </li>
+                    
+                    <li class="menu-item">
+                        <a th:href="@{/mypage/company/employment/posts}" class="menu-link">
+                            <div data-i18n="Account">고용 요청 내역</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a th:href="@{/mypage/company/confirmation/posts}" class="menu-link">
+                            <div data-i18n="Account">채용 확정 내역</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a th:href="@{/satisfaction/score}" class="menu-link">
+                            <div data-i18n="Account">평점주기</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a th:href="@{/company/payment/posts}" class="menu-link">
+                            <div data-i18n="Account">결제내역</div>
+                        </a>
                     </li>
                     <li class="menu-item">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons bx bx-dock-top"></i>
-                            <div data-i18n="Account Settings">Account Settings</div>
+                            <div data-i18n="Account Settings">포인트</div>
                         </a>
                         <ul class="menu-sub">
                             <li class="menu-item">
-                                <a href="pages-account-settings-account.html" class="menu-link">
-                                    <div data-i18n="Account">Account</div>
+                                <a th:href="@{/mypage/point/plus/posts}" class="menu-link">
+                                    <div data-i18n="Account">포인트 적립 내역</div>
                                 </a>
                             </li>
                             <li class="menu-item">
-                                <a href="pages-account-settings-notifications.html" class="menu-link">
-                                    <div data-i18n="Notifications">Notifications</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="pages-account-settings-connections.html" class="menu-link">
-                                    <div data-i18n="Connections">Connections</div>
+                                <a th:href="@{/mypage/point/minus/posts}" class="menu-link">
+                                    <div data-i18n="Account">포인트 차감 내역</div>
                                 </a>
                             </li>
                         </ul>
                     </li>
-                    <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
-                            <div data-i18n="Authentications">Authentications</div>
-                        </a>
-                        <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="auth-login-basic.html" class="menu-link" target="_blank">
-                                    <div data-i18n="Basic">Login</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="auth-register-basic.html" class="menu-link" target="_blank">
-                                    <div data-i18n="Basic">Register</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="auth-forgot-password-basic.html" class="menu-link" target="_blank">
-                                    <div data-i18n="Basic">Forgot Password</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-cube-alt"></i>
-                            <div data-i18n="Misc">Misc</div>
-                        </a>
-                        <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="pages-misc-error.html" class="menu-link">
-                                    <div data-i18n="Error">Error</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="pages-misc-under-maintenance.html" class="menu-link">
-                                    <div data-i18n="Under Maintenance">Under Maintenance</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <!-- Components -->
-                    <li class="menu-header small text-uppercase"><span class="menu-header-text">Components</span></li>
-                    <!-- Cards -->
-                    <li class="menu-item">
-                        <a href="cards-basic.html" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-collection"></i>
-                            <div data-i18n="Basic">Cards</div>
-                        </a>
-                    </li>
-                    <!-- User interface -->
-                    <li class="menu-item">
-                        <a href="javascript:void(0)" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-box"></i>
-                            <div data-i18n="User interface">User interface</div>
-                        </a>
-                        <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="ui-accordion.html" class="menu-link">
-                                    <div data-i18n="Accordion">Accordion</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="ui-alerts.html" class="menu-link">
-                                    <div data-i18n="Alerts">Alerts</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="ui-badges.html" class="menu-link">
-                                    <div data-i18n="Badges">Badges</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="ui-buttons.html" class="menu-link">
-                                    <div data-i18n="Buttons">Buttons</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="ui-carousel.html" class="menu-link">
-                                    <div data-i18n="Carousel">Carousel</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="ui-collapse.html" class="menu-link">
-                                    <div data-i18n="Collapse">Collapse</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="ui-dropdowns.html" class="menu-link">
-                                    <div data-i18n="Dropdowns">Dropdowns</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="ui-footer.html" class="menu-link">
-                                    <div data-i18n="Footer">Footer</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="ui-list-groups.html" class="menu-link">
-                                    <div data-i18n="List Groups">List groups</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="ui-modals.html" class="menu-link">
-                                    <div data-i18n="Modals">Modals</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="ui-navbar.html" class="menu-link">
-                                    <div data-i18n="Navbar">Navbar</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="ui-offcanvas.html" class="menu-link">
-                                    <div data-i18n="Offcanvas">Offcanvas</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="ui-pagination-breadcrumbs.html" class="menu-link">
-                                    <div data-i18n="Pagination &amp; Breadcrumbs">Pagination &amp; Breadcrumbs</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="ui-progress.html" class="menu-link">
-                                    <div data-i18n="Progress">Progress</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="ui-spinners.html" class="menu-link">
-                                    <div data-i18n="Spinners">Spinners</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="ui-tabs-pills.html" class="menu-link">
-                                    <div data-i18n="Tabs &amp; Pills">Tabs &amp; Pills</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="ui-toasts.html" class="menu-link">
-                                    <div data-i18n="Toasts">Toasts</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="ui-tooltips-popovers.html" class="menu-link">
-                                    <div data-i18n="Tooltips & Popovers">Tooltips &amp; popovers</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="ui-typography.html" class="menu-link">
-                                    <div data-i18n="Typography">Typography</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                </ul>
+            </li>
 
-                    <!-- Extended components -->
-                    <li class="menu-item">
-                        <a href="javascript:void(0)" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-copy"></i>
-                            <div data-i18n="Extended UI">Extended UI</div>
-                        </a>
-                        <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="extended-ui-perfect-scrollbar.html" class="menu-link">
-                                    <div data-i18n="Perfect Scrollbar">Perfect scrollbar</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="extended-ui-text-divider.html" class="menu-link">
-                                    <div data-i18n="Text Divider">Text Divider</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
 
-                    <li class="menu-item">
-                        <a href="icons-boxicons.html" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-crown"></i>
-                            <div data-i18n="Boxicons">Boxicons</div>
-                        </a>
-                    </li>
 
-                    <!-- Forms & Tables -->
-                    <li class="menu-header small text-uppercase"><span class="menu-header-text">Forms &amp; Tables</span></li>
-                    <!-- Forms -->
+
+
+
+
+
+
+
+
+
+
+
+            <li class="menu-header small text-uppercase">
+                <span class="menu-header-text">구인&공고</span>
+            </li>
+            <li class="menu-item">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons bx bx-dock-top"></i>
+                    <div data-i18n="Account Settings">구인목록</div>
+                </a>
+                <ul class="menu-sub">
                     <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-detail"></i>
-                            <div data-i18n="Form Elements">Form Elements</div>
-                        </a>
-                        <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="forms-basic-inputs.html" class="menu-link">
-                                    <div data-i18n="Basic Inputs">Basic Inputs</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="forms-input-groups.html" class="menu-link">
-                                    <div data-i18n="Input groups">Input groups</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-detail"></i>
-                            <div data-i18n="Form Layouts">Form Layouts</div>
-                        </a>
-                        <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="form-layouts-vertical.html" class="menu-link">
-                                    <div data-i18n="Vertical Form">Vertical Form</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="form-layouts-horizontal.html" class="menu-link">
-                                    <div data-i18n="Horizontal Form">Horizontal Form</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <!-- Tables -->
-                    <li class="menu-item">
-                        <a href="tables-basic.html" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-table"></i>
-                            <div data-i18n="Tables">Tables</div>
-                        </a>
-                    </li>
-                    <!-- Misc -->
-                    <li class="menu-header small text-uppercase"><span class="menu-header-text">Misc</span></li>
-                    <li class="menu-item">
-                        <a
-                                href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
-                                target="_blank"
-                                class="menu-link"
-                        >
-                            <i class="menu-icon tf-icons bx bx-support"></i>
-                            <div data-i18n="Support">Support</div>
+                        <a th:href="@{/recruit/posts(type=1)}" class="menu-link">
+                            <div data-i18n="Account">공고</div>
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a
-                                href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
-                                target="_blank"
-                                class="menu-link"
-                        >
-                            <i class="menu-icon tf-icons bx bx-file"></i>
-                            <div data-i18n="Documentation">Documentation</div>
+                        <a th:href="@{/recruit/posts(type=3)}" class="menu-link">
+                            <div data-i18n="Account">긴급 공고</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a th:href="@{/recruit/posts(type=2)}" class="menu-link">
+                            <div data-i18n="Account">일반 공고</div>
                         </a>
                     </li>
                 </ul>
-            </aside>
+            </li>
 
-        </div>
+            <li class="menu-item">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
+                    <div data-i18n="Authentications">인재목록</div>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a th:href="@{/resume/all/posts}" class="menu-link">
+                            <div data-i18n="Basic">인재정보 목록</div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="menu-item">
+                <a th:href="@{/teams/posts}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-cube-alt"></i>
+                    <div data-i18n="Misc">팀목록</div>
+                </a>
+            </li>
+
+            <!-- Components -->
+            <li class="menu-header small text-uppercase"><span class="menu-header-text">교육&훈련&소개소</span></li>
+
+            <li class="menu-item">
+                <a href="javascript:void(0)" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons bx bx-collection"></i>
+                    <div data-i18n="User interface">인력사무소</div>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a th:href="@{/agency/posts}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-box"></i>
+                            <div data-i18n="Accordion">인력사무소 정보보기</div>
+                        </a>
+                    </li>
+                </ul>
+
+                <ul class="menu-sub" sec:authorize="hasRole('ROLE_COMPANY')">
+                    <li class="menu-item" >
+                        <a th:href="@{/agency/posts/new}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-box"></i>
+                            <div data-i18n="Accordion">인력사무소 등록하기</div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+
+
+
+
+
+            <li class="menu-item">
+                <a href="javascript:void(0)" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons bx bx-box"></i>
+                    <div data-i18n="User interface">훈련소</div>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a th:href="@{/trainning/posts}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-box"></i>
+                            <div data-i18n="Accordion">훈련소 정보보기</div>
+                        </a>
+                    </li>
+                </ul>
+
+                <ul class="menu-sub" sec:authorize="hasRole('ROLE_COMPANY')">
+                    <li class="menu-item" >
+                        <a th:href="@{/trainning/posts/new}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-box"></i>
+                            <div data-i18n="Accordion">훈련소 등록하기</div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+<!-- Extended components -->
+            <li class="menu-item">
+                <a href="javascript:void(0)" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons bx bx-copy"></i>
+                    <div data-i18n="Extended UI">안전교육정보</div>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a th:href="@{/educations/posts}" class="menu-link">
+                            <div data-i18n="Perfect Scrollbar">목록</div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- Forms & Tables -->
+            <li class="menu-header small text-uppercase"><span class="menu-header-text">커뮤니티</span></li>
+            <!-- Forms -->
+            <li class="menu-item">
+                <a th:href="@{/foodMap/posts}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-detail"></i>
+                    <div data-i18n="Form Elements">주변 밥집 정보보기</div>
+                </a>
+            </li>
+
+           <!-- Tables -->
+            <li class="menu-item">
+                <a th:href="@{https://www.moel.go.kr/info/defaulter/defaulterList.do}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-table"></i>
+                    <div data-i18n="Tables">체불사업주</div>
+                </a>
+            </li>
+
+
+
+            <!-- 관리자 페이지 -->
+            <li class="menu-header small text-uppercase"><span class="menu-header-text">고객센터</span></li>
+
+            <li class="menu-item">
+                  <ul>
+                     <i class="menu-icon tf-icons bx bx-support"></i>
+                     <div data-i18n="Support">문의번호 02)-***-****</div>
+                  </ul>
+            </li>
+        </ul>
+    </aside>
+</div>
 </body>
 </html>

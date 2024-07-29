@@ -1,0 +1,551 @@
+
+<!DOCTYPE html>
+<html lang="en"
+      class="light-style layout-menu-fixed"
+      dir="ltr"
+      data-theme="theme-default"
+      data-assets-path="../assets/"
+      data-template="vertical-menu-template-free"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+    <title>일반회원 수정페이지</title>
+
+    <meta name="description" content="" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon/favicon.ico}" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+          rel="stylesheet" />
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link th:href="@{/assets/vendor/fonts/boxicons.css}" rel="stylesheet" />
+
+    <!-- Core CSS -->
+    <link th:href="@{/assets/vendor/css/core.css}" rel="stylesheet" class="template-customizer-core-css" />
+    <link th:href="@{/assets/vendor/css/theme-default.css}" rel="stylesheet" class="template-customizer-theme-css" />
+    <link th:href="@{/assets/css/demo.css}" rel="stylesheet" />
+
+    <!-- Vendors CSS -->
+    <link th:href="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css}" rel="stylesheet" />
+
+
+    <!--주소-->
+    <script th:src="@{'//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js'}"></script>
+
+    <!-- Helpers -->
+    <script th:src="@{/assets/vendor/js/helpers.js}"></script>
+
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script th:src="@{/assets/js/config.js}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+<!-- Layout wrapper -->
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+        <!-- Menu -->
+        <div th:include="~{design/side-bar :: side}"></div>
+        <!-- / Menu -->
+
+        <!-- Layout container -->
+        <div class="layout-page">
+            <!-- Navbar -->
+
+
+            <div th:insert="~{design/navi-bar :: navi}"></div>
+
+
+            <!-- / Navbar -->
+
+            <!-- Content wrapper -->
+            <div class="content-wrapper">
+                <!-- Content -->
+                <div class="container-fluid flex-grow-1 container-p-y">
+                    <!-- Layout Demo -->
+
+                    <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Chat</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <iframe id="roomFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--여기서부터-->
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-xxl">
+                                <div class="card mb-4">
+                                    <div class="card-header d-flex align-items-center justify-content-between">
+                                        <h5 class="mb-0">일반회원 수정</h5>
+                                        <small class="text-muted float-end">작성 시 변경된 정보로 등록됩니다</small>
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="inputForm" th:action="@{/mypage/userUpdatePro/{id}(id=${user.id})}" name="loginForm" method="POST" enctype="multipart/form-data">
+                                            <input type="hidden" name="_method" value="PATCH">
+                                            <div class="row mb-3">
+                                                <label class="col-sm-2 col-form-label">아이디</label>
+                                                <div class="col-sm-8">
+                                                    <div class="input-group input-group-merge">
+                                                        <span id="basic-icon-default-fullname2" class="input-group-text">
+                                                            <i class="bx bx-user"></i>
+                                                        </span>
+                                                        <input
+                                                                type="text"
+                                                                class="form-control"
+                                                                id="id"
+                                                                name="id"
+                                                                th:value="${user.id}"
+                                                                maxlength="15"
+                                                                readonly
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br>
+
+                                            <div class="row mb-3">
+                                                <label class="col-sm-2 col-form-label">비밀번호</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group input-group-merge">
+                                                            <span id="basic-icon-default-company2" class="input-group-text">
+                                                                <i class="bx bx-buildings"></i>
+                                                            </span>
+                                                        <input
+                                                                type="password"
+                                                                id="password"
+                                                                class="form-control"
+                                                                placeholder="비밀번호를 입력하세요"
+                                                                name="pw"
+                                                                required
+                                                                maxlength="15"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-text" id="passwordMatchMessage"></div>
+
+                                            <div class="row mb-3">
+                                                <label class="col-sm-2 col-form-label">비밀번호 확인</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group input-group-merge">
+                                                            <span class="input-group-text">
+                                                                <i class="bx bx-buildings"></i>
+                                                            </span>
+                                                        <input
+                                                                type="password"
+                                                                id="password2"
+                                                                class="form-control"
+                                                                placeholder="비밀번호를 다시 입력하세요"
+                                                                required
+                                                                maxlength="15"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <label class="col-sm-2 col-form-label" >Email</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group input-group-merge">
+                                                        <span class="input-group-text"><i class="bx bx-envelope"></i></span>
+                                                        <input
+                                                                type="text"
+                                                                id="email"
+                                                                class="form-control"
+                                                                placeholder="이메일 주소를 입력하세요"
+                                                                th:value="${user.email}"
+                                                                name="email"
+                                                                required
+                                                                readonly
+                                                                maxlength="30"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+
+
+                                            <div class="row mb-3">
+                                                <label class="col-sm-2 col-form-label" >이름</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group input-group-merge">
+                                                          <span id="names" class="input-group-text">
+                                                              <i class="bx bx-user"></i>
+                                                          </span>
+                                                        <input
+                                                                type="text"
+                                                                class="form-control"
+                                                                id="name"
+                                                                name="name"
+                                                                th:value="${user.memberInfo.name}"
+                                                                readonly
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <label class="col-sm-2 col-form-label" >주소</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group input-group-merge">
+                                                          <span id="addresss" class="input-group-text">
+                                                              <i class="bx bx-user"></i>
+                                                          </span>
+                                                        <input
+                                                                type="text"
+                                                                class="form-control"
+                                                                id="address"
+                                                                name="address"
+                                                                th:value="${user.address}"
+                                                                placeholder="주소를 입력하세요"
+                                                                required
+                                                        />
+                                                        <button type="button" id="addressButton">주소 검색</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+
+                                            <div class="row mb-3">
+                                                <label class="col-sm-2 form-label">연락처</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group input-group-merge">
+                                                            <span id="basic-icon-default-phone2" class="input-group-text">
+                                                                <i class="bx bx-phone"></i>
+                                                            </span>
+                                                        <input
+                                                                type="text"
+                                                                id="phone"
+                                                                class="form-control phone-mask"
+                                                                name="phone"
+                                                                th:value="${user.phone}"
+                                                                placeholder="010-****-****"
+                                                                required
+                                                                maxlength="13"
+                                                                oninput="autoFormatPhone(this)"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <label class="col-sm-2 col-form-label">생년월일</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group input-group-merge">
+                                                            <span id="births" class="input-group-text">
+                                                                <i class="bx bx-user"></i>
+                                                            </span>
+                                                        <select class="form-select" id="birth-year" required>
+                                                            <option value="" disabled selected>년</option>
+                                                            <option th:each="year : ${#numbers.sequence(1900, 2024)}" th:value="${year}" th:text="${year}"></option>
+                                                        </select>
+                                                        <select class="form-select" id="birth-month" required>
+                                                            <option value="" disabled selected>월</option>
+                                                            <option th:each="month : ${#numbers.sequence(1, 12)}" th:value="${month}" th:text="${month}"></option>
+                                                        </select>
+                                                        <select class="form-select" id="birth-day" required>
+                                                            <option value="" disabled selected>일</option>
+                                                            <option th:each="day : ${#numbers.sequence(1, 31)}" th:value="${day}" th:text="${day}"></option>
+                                                        </select>
+                                                        <!-- 숨겨진 필드 추가 -->
+                                                        <input type="hidden" id="birth" name="birth" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="row mb-3">
+                                                <label class="col-sm-2 col-form-label" >키</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group input-group-merge">
+                                                          <span id="heights" class="input-group-text">
+                                                              <i class="bx bx-user"></i>
+                                                          </span>
+                                                        <input
+                                                                type="text"
+                                                                class="form-control"
+                                                                id="height"
+                                                                name="height"
+                                                                th:value="${user.memberInfo.height}"
+                                                                placeholder="숫자만 입력 ex) 165, 175, 183, 185... "
+                                                                required
+                                                                maxlength="5"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <label class="col-sm-2 col-form-label" >몸무게</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group input-group-merge">
+                                                          <span id="weights" class="input-group-text">
+                                                              <i class="bx bx-user"></i>
+                                                          </span>
+                                                        <input
+                                                                type="text"
+                                                                class="form-control"
+                                                                id="weight"
+                                                                name="weight"
+                                                                th:value="${user.memberInfo.weight}"
+                                                                placeholder="숫자만 입력 ex) 75, 83, 90... "
+                                                                required
+                                                                maxlength="6"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="row mb-3">
+                                                <label class="col-sm-2 col-form-label" >건강상태</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group input-group-merge">
+                                                          <span id="healths" class="input-group-text">
+                                                              <i class="bx bx-user"></i>
+                                                          </span>
+                                                        <input
+                                                                type="text"
+                                                                class="form-control"
+                                                                id="health"
+                                                                name="health"
+                                                                th:value="${user.memberInfo.health}"
+                                                                placeholder="건강상태를 입력하세요"
+                                                                required
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="row mb-3">
+                                                <label class="col-sm-2 col-form-label" for="file">사진 업로드</label>
+                                                <div class="col-sm-10">
+                                                    <input type="file" id="file" name="file" class="form-control"/>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="row mb-3">
+                                                <label class="col-sm-2 col-form-label">성별</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group input-group-merge">
+                                                            <span id="genders" class="input-group-text">
+                                                                <i class="bx bx-user"></i>
+                                                            </span>
+                                                        <div class="form-check form-check-inline">
+                                                            <input
+                                                                    class="form-check-input"
+                                                                    type="radio"
+                                                                    name="gender"
+                                                                    id="male"
+                                                                    value="1"
+                                                                    required
+                                                            />
+                                                            <label class="form-check-label" for="male">남자</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input
+                                                                    class="form-check-input"
+                                                                    type="radio"
+                                                                    name="gender"
+                                                                    id="female"
+                                                                    value="2"
+                                                                    required
+                                                            />
+                                                            <label class="form-check-label" for="female">여자</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+                                            <div class="row justify-content-end">
+                                                <div class="col-sm-10">
+                                                    <button type="submit" class="btn btn-primary" id="submitBtn" disabled >수정하기</button>
+                                                </div>
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- / Content -->
+
+
+                    <!--/ Layout Demo -->
+                </div>
+                <!-- / Content -->
+
+                <!-- Footer -->
+                <div th:include="~{design/footer :: footer}"></div>
+                <!-- / Footer -->
+
+                <div class="content-backdrop fade"></div>
+            </div>
+            <!-- Content wrapper -->
+        </div>
+        <!-- / Layout page -->
+    </div>
+
+    <!-- Overlay -->
+    <div class="layout-overlay layout-menu-toggle"></div>
+</div>
+<!-- / Layout wrapper -->
+
+
+<!-- Core JS -->
+<!-- build:js assets/vendor/js/core.js -->
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<!-- endbuild -->
+
+<!-- Vendors JS -->
+
+<!-- Main JS -->
+<script th:src="@{/assets/js/main.js}"></script>
+
+<!-- Page JS -->
+
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    window.addEventListener('message', event => {
+                           if (event.origin !== 'http://3.39.50.114:4000') return;  // 보안 검사
+                           if (event.data === 'modalClosed') {
+                               $('#myModal').modal('hide');
+                                 $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                           }
+                           });
+</script>
+
+
+
+<script>
+    let isPasswordMatched = false;
+
+    function checkPasswordMatch() {
+        const password = document.getElementById("password").value;
+        const confirmPassword = document.getElementById("password2").value;
+
+        if (password === confirmPassword) {
+            document.getElementById("passwordMatchMessage").innerHTML = "비밀번호가 동일합니다";
+            document.getElementById("passwordMatchMessage").classList.remove("text-danger");
+            document.getElementById("passwordMatchMessage").classList.add("text-success");
+            isPasswordMatched = true;
+        } else {
+            document.getElementById("passwordMatchMessage").innerHTML = "비밀번호를 확인해주세요";
+            document.getElementById("passwordMatchMessage").classList.remove("text-success");
+            document.getElementById("passwordMatchMessage").classList.add("text-danger");
+            isPasswordMatched = false;
+        }
+        updateSubmitButtonState();
+    }
+
+    document.getElementById("password2").addEventListener("input", checkPasswordMatch);
+    document.getElementById("password").addEventListener("input", checkPasswordMatch);
+
+    function updateSubmitButtonState() {
+        const submitBtn = document.getElementById("submitBtn");
+        if (isPasswordMatched) {
+            submitBtn.disabled = false;
+        } else {
+            submitBtn.disabled = true;
+        }
+    }
+</script>
+
+
+
+<script>
+    function autoFormatPhone(input) {
+        // 입력된 내용에서 숫자만 추출하여 연결
+        let phoneNumber = input.value.replace(/\D/g, '');
+
+        // 길이에 따라서 특정 형식으로 변환
+        if (phoneNumber.length >= 4 && phoneNumber.length <= 7) {
+            phoneNumber = phoneNumber.replace(/(\d{3})(\d+)/, '$1-$2');
+        } else if (phoneNumber.length >= 8) {
+            phoneNumber = phoneNumber.replace(/(\d{3})(\d{4})(\d+)/, '$1-$2-$3');
+        }
+
+        // 입력 필드에 변환된 값 적용
+        input.value = phoneNumber;
+    }
+</script>
+
+<!--생일 설정-->
+<script>
+    document.getElementById('inputForm').addEventListener('submit', function(event) {
+        const year = document.getElementById('birth-year').value;
+        const month = document.getElementById('birth-month').value;
+        const day = document.getElementById('birth-day').value;
+
+        // 선택된 값이 모두 있는지 확인
+        if (year && month && day) {
+            const birth = year + '-' + (month.length === 1 ? '0' + month : month) + '-' + (day.length === 1 ? '0' + day : day);
+            document.getElementById('birth').value = birth;
+            console.log('생년월일:', birth); // 디버깅용 콘솔 로그
+        } else {
+            event.preventDefault();
+            alert('생년월일을 모두 선택해주세요.');
+        }
+    });
+</script>
+
+
+
+<!--주소-->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('addressButton').addEventListener('click', function () {
+            new daum.Postcode({
+                oncomplete: function (data) {
+                    // 사용자가 주소를 선택했을 때 실행되는 함수
+                    var fullAddress = data.address; // 전체 주소
+                    document.getElementById('address').value = fullAddress; // 주소 입력 필드에 값 설정
+                }
+            }).open();
+        });
+    });
+</script>
+
+
+
+
+</body>
+</html>
+

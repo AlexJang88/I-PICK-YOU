@@ -1,12 +1,15 @@
 package com.project.pickyou.entity;
 
+import com.project.pickyou.dto.AgencyDTO;
+import com.project.pickyou.dto.PaymentDTO;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 @Getter
+@Setter
+@Data
 @NoArgsConstructor
 @Entity
 @Table(name = "payment")
@@ -21,6 +24,7 @@ public class PaymentEntity {
     private String title;
     @Column(name = "point_history")
     private int pointHistory;
+    @CreationTimestamp
     private Date reg;
 
     @Builder
@@ -34,4 +38,18 @@ public class PaymentEntity {
         this.pointHistory=pointHistory;
         this.reg=reg;
     }
+
+
+    public PaymentDTO toPaymentDTO(){
+        return PaymentDTO.builder()
+                .id(this.id)
+                .memberId(this.memberId)
+                .money(this.money)
+                .point(this.point)
+                .title(this.title)
+                .pointHistory(this.pointHistory)
+                .reg(this.reg)
+                .build();
+    }
 }
+

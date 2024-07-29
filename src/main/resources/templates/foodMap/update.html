@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="light-style layout-menu-fixed" dir="ltr"
+      data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free"
+      xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+    <title>맛집 수정</title>
+    <meta name="description" content=""/>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon/favicon.ico}"/>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+          rel="stylesheet"/>
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" th:href="@{/assets/vendor/fonts/boxicons.css}"/>
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" th:href="@{/assets/vendor/css/core.css}" class="template-customizer-core-css"/>
+    <link rel="stylesheet" th:href="@{/assets/vendor/css/theme-default.css}" class="template-customizer-theme-css"/>
+    <link rel="stylesheet" th:href="@{/assets/css/demo.css}"/>
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" th:href="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css}"/>
+
+    <!-- Helpers -->
+    <script th:src="@{/assets/vendor/js/helpers.js}"></script>
+
+    <!-- Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!-- Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script th:src="@{/assets/js/config.js}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=872f8b78509c5042b8600aaf2eb3050b&libraries=services"></script>
+</head>
+
+<body>
+<!-- Layout wrapper -->
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+        <!-- Menu -->
+        <div th:include="design/side-bar :: side"></div>
+        <!-- / Menu -->
+
+        <!-- Layout container -->
+        <div class="layout-page">
+            <!-- Navbar -->
+            <div th:insert="~{design/navi-bar :: navi}"></div>
+            <!-- / Navbar -->
+
+            <!-- Content wrapper -->
+            <div class="content-wrapper">
+                <!-- Content -->
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <h2 class="fw-bold py-3 mb-4">
+                        <span class="text-muted fw-light">Food Map</span>
+                    </h2>
+                    <!-- Basic Bootstrap Table -->
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h3 class="mb-0">Write</h3>
+                        </div>
+
+                        <div class="table-responsive text-nowrap">
+                            <form id="foodMapForm" th:action="@{/foodMap/posts/{id}(id=${Fdto.id})}" th:method="put" enctype="multipart/form-data" novalidate onsubmit="return validateForm()">
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                        <th scope="row">Title</th>
+                                        <td>
+                                            <input type="text" name="title" class="form-control" th:value="${Fdto.title}" required/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Content</th>
+                                        <td>
+                                            <textarea name="content" class="form-control" th:utext="${Fdto.content}" required></textarea>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">File</th>
+                                        <td>
+                                            <input type="file" id="files" name="files" class="form-control" multiple="multiple" accept="image/*" onclick="uploadwarn()" required/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">>
+                                            <div id="map" style="width:100%;height:350px;"></div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <br/>
+
+                                <input type="hidden" name="memberId" th:value="${Fdto.memberId}">
+                                <input type="hidden" name="readCount" th:value="${Fdto.readCount}">
+                                <input type="hidden" name="ref" th:value="${Fdto.ref}">
+                                <input type="hidden" name="map" th:value="${Fdto.map}">
+                                <input type="hidden" name="status" th:value="${Fdto.status}">
+                                <button type="submit" class="btn btn-primary float-end">수정하기</button>
+                            </form>
+                        </div>
+                    </div>
+                    <!--/ Basic Bootstrap Table -->
+
+                </div>
+                <!-- / Content -->
+            </div>
+            <!-- /Content wrapper -->
+
+            <!-- Content wrapper -->
+            <div class="content-wrapper">
+                <!-- Content -->
+                <div class="container-fluid flex-grow-1 container-p-y">
+                    <!-- Layout Demo -->
+                    <div class="layout-demo-wrapper">
+
+                    </div>
+                    <!--/ Layout Demo -->
+                </div>
+                <!-- / Content -->
+
+                <!-- Footer -->
+                <div th:include="design/footer :: footer"></div>
+                <!-- / Footer -->
+
+                <div class="content-backdrop fade"></div>
+            </div>
+            <!-- Content wrapper -->
+        </div>
+        <!-- / Layout page -->
+    </div>
+
+    <!-- Overlay -->
+    <div class="layout-overlay layout-menu-toggle"></div>
+</div>
+<!-- / Layout wrapper -->
+
+<!-- Core JS -->
+<!-- build:js assets/vendor/js/core.js -->
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<!-- endbuild -->
+
+<!-- Vendors JS -->
+
+<!-- Main JS -->
+<script th:src="@{/assets/js/main.js}"></script>
+
+<!-- Page JS -->
+
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+<script th:inline="javascript">
+    function uploadwarn(){
+    alert("사진을 선택하면 기존사진은 사라집니다");
+    }
+
+    function validateForm() {
+        const form = document.getElementById('foodMapForm');
+
+        const files = form.files.files;
+        const content = form.content.value.trim();
+        const title = form.title.value.trim();
+
+        if (!content || !title) {
+            alert('모두 입력해주세요');
+            return false;
+        }
+
+
+        for (let i = 0; i < files.length; i++) {
+            if (!files[i].type.startsWith('image/')) {
+                alert('이미지 파일만 등록할 수 있습니다.');
+                return false;
+            }
+        }
+
+        return true;
+    }
+</script>
+
+<script th:inline="javascript">
+    var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+        mapOption = {
+            center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+            level: 3 // 지도의 확대 레벨
+        };
+
+    // 지도를 생성합니다
+    var map = new kakao.maps.Map(mapContainer, mapOption);
+
+    // 주소-좌표 변환 객체를 생성합니다
+    var geocoder = new kakao.maps.services.Geocoder();
+
+    // 카카오 로컬 API의 장소 검색 서비스 객체를 생성합니다
+    var places = new kakao.maps.services.Places();
+
+    // Thymeleaf 표현식으로 서버에서 전달된 주소를 JavaScript 변수에 삽입합니다
+    var address = [[${Fdto.map}]]; // myMap의 값을 JavaScript 변수로 사용합니다
+
+    // 주소로 좌표를 검색합니다
+    geocoder.addressSearch(address, function(result, status) {
+        if (status === kakao.maps.services.Status.OK) {
+            var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+            // 결과값으로 받은 위치를 마커로 표시합니다
+            var marker = new kakao.maps.Marker({
+                map: map,
+                position: coords
+            });
+
+            // 인포윈도우로 장소에 대한 설명을 표시합니다
+            // 장소 정보를 가져옵니다
+            places.keywordSearch(address, function(data, status, pagination) {
+                if (status === kakao.maps.services.Status.OK && data.length > 0) {
+                    var placeName = data[0].place_name; // 첫 번째 검색 결과의 장소 이름
+
+                    var infowindow = new kakao.maps.InfoWindow({
+                        content: '<div style="width:150px;text-align:center;padding:6px 0;">' + placeName + '</div>'
+                    });
+                    infowindow.open(map, marker);
+                } else {
+                    var infowindow = new kakao.maps.InfoWindow({
+                        content: '<div style="width:150px;text-align:center;padding:6px 0;">' + address + '</div>'
+                    });
+                    infowindow.open(map, marker);
+                }
+            });
+
+            // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+            map.setCenter(coords);
+        } else {
+            alert('주소 검색에 실패했습니다.');
+        }
+    });
+</script>
+
+<script>
+    window.addEventListener('message', event => {
+                        if (event.origin !== 'http://3.39.50.114:4000') return;  // 보안 검사
+                        if (event.data === 'modalClosed') {
+                            $('#myModal').modal('hide');
+                              $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                        }
+                        });
+</script>
+
+</body>
+</html>

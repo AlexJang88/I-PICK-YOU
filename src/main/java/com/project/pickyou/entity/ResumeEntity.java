@@ -5,13 +5,16 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 
 
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @Entity
 @Data
+@DynamicInsert
 @Table(name = "resume")
 public class ResumeEntity {
     @Id
@@ -25,6 +28,16 @@ public class ResumeEntity {
     @Column(name = "reg_type")
     private int regType;
     private Date reg;
+
+    @OneToOne
+    @JoinColumn(name = "member_id",referencedColumnName = "id",insertable = false,updatable = false)
+    private MemberEntity member;
+
+    @OneToOne(mappedBy = "resume")
+    private CareerEntity career;
+
+    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, fetch = FetchType.LAZY) // 수정
+    private List<JobEntity> job;
 
     @Builder
     public ResumeEntity(Long id, String memberId, int wage, String local,

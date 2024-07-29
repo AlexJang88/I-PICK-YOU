@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en"
+      class="light-style layout-menu-fixed"
+      dir="ltr"
+      data-theme="theme-default"
+      data-assets-path="../assets/"
+      data-template="vertical-menu-template-free"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+    <title>팀</title>
+    <meta name="description" content=""/>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon/favicon.ico}"/>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link th:href="@{https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap}"
+          rel="stylesheet"/>
+    <!-- Icons. Uncomment required icon fonts -->
+    <link th:href="@{/assets/vendor/fonts/boxicons.css}" rel="stylesheet"/>
+    <!-- Core CSS -->
+    <link th:href="@{/assets/vendor/css/core.css}" rel="stylesheet" class="template-customizer-core-css"/>
+    <link th:href="@{/assets/vendor/css/theme-default.css}" rel="stylesheet" class="template-customizer-theme-css"/>
+    <link th:href="@{/assets/css/demo.css}" rel="stylesheet"/>
+    <!-- Vendors CSS -->
+    <link th:href="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css}" rel="stylesheet"/>
+    <!-- Helpers -->
+    <script th:src="@{/assets/vendor/js/helpers.js}"></script>
+    <!-- Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!-- Config: Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file. -->
+    <script th:src="@{/assets/js/config.js}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+</head>
+<body>
+<!-- Layout wrapper -->
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+        <!-- Menu -->
+        <div th:include="~{design/side-bar :: side}"></div>
+        <!-- / Menu -->
+        <!-- Layout container -->
+        <div class="layout-page">
+            <!-- Navbar -->
+            <div th:insert="~{design/navi-bar :: navi}"></div>
+            <!-- / Navbar -->
+            <!-- Content wrapper -->
+            <div class="content-wrapper">
+                <!-- Content -->
+                <div class="col-md-12 mb-4">
+                    <div class="card" >
+                        <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Chat</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <iframe id="roomFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal" id="chatModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Chat</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <iframe id="chatFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container-xxl flex-grow-1 container-p-y text-center" th:if="${check==1}">
+                            <!-- 제목 -->
+                            <div class="card-header">
+                                <h2 class="fw-bold py-3 mb-4">
+                                    나의 팀 이력서
+                                </h2>
+                            </div>
+                            <!-- 카드 본문 -->
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- 학원이름 -->
+                                    <div class="col-md-12 mb-4">
+                                        <div class="card h-100 shadow-lg">
+                                            <div class="card-body">
+                                                <h5 class="card-title fw-bold">
+                                                    <i class="bx bx-buildings text-muted"></i> 팀 이름
+                                                </h5>
+                                                <p class="card-text" th:text="${post.teamName}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- 등록날짜, 조회수, 주소 -->
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card h-100 shadow-lg">
+                                            <div class="card-body">
+                                                <h5 class="card-title fw-bold">
+                                                    <i class="bx bx-calendar text-muted"></i> 등록날짜
+                                                </h5>
+                                                <p class="card-text" th:text="${#dates.format(post.reg, 'yyyy-MM-dd')}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card h-100 shadow-lg">
+                                            <div class="card-body">
+                                                <h5 class="card-title fw-bold">
+                                                    <i class="bx bx-show text-muted"></i> 연락처
+                                                </h5>
+                                                <p class="card-text" th:text="${post.phone}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card h-100 shadow-lg">
+                                            <div class="card-body">
+                                                <h5 class="card-title fw-bold">
+                                                    <i class="bx bx-map text-muted"></i> 주소
+                                                </h5>
+                                                <p class="card-text" th:text="${post.address}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- 전화번호, 모집분야, 모집인원 -->
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card h-100 shadow-lg">
+                                            <div class="card-body">
+                                                <h5 class="card-title fw-bold">
+                                                    <i class="bx bx-phone text-muted"></i> 직종
+                                                </h5>
+                                                <p class="card-text" th:text="${post.job}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card h-100 shadow-lg">
+                                            <div class="card-body">
+                                                <h5 class="card-title fw-bold">
+                                                    <i class="bx bx-briefcase text-muted"></i> 팀원
+                                                </h5>
+                                                <p class="card-text" th:text="${post.number}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card h-100 shadow-lg">
+                                            <div class="card-body">
+                                                <h5 class="card-title fw-bold">
+                                                    <i class="bx bx-briefcase text-muted"></i> 강점
+                                                </h5>
+                                                <p class="card-text" th:text="${post.advantage}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 기타사항 -->
+                                </div>
+
+                                <br>
+
+                                <div class="card mb-4 shadow-lg"> <!-- shadow-lg 클래스를 추가 -->
+                                    <h5 class="card-header text-center">상세내용</h5>
+                                    <div class="card-body d-flex justify-content-center align-items-center">
+                                        <div class="divider text-center">
+                                            <span th:text="${post.introduction}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 사진 보기 카드 -->
+                                <div class="card mb-4 shadow-lg">
+                                    <div class="card-body d-flex justify-content-center align-items-center">
+                                        <div class="row justify-content-center" style="gap: 20px;"> <!-- gap 값을 조정 -->
+                                            <div th:each="image : ${imgList}" class="col-md-4 mb-3 d-flex justify-content-center">
+                                                <!-- 이미지 삽입 -->
+                                                <img th:src="@{'https://'+ ${bucketName}+'.s3.' + ${regionName} + '.amazonaws.com/image/' +${image.boardType}+'/'+${image.boardNum}+'/'+${image.name}}" style="width: 250px; height: 250px;"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 수정하기/삭제하기 버튼 -->
+                                <div class="row">
+                                    <div class="col-md-6 text-center" th:if="${type==1}">
+                                        <form th:action="@{/teams/posts/edit/{boardNum}(boardNum=${post.id})}" th:method="get">
+                                            <button class="btn btn-primary" type="submit" th:if="${type==1}">수정하기</button>
+                                        </form>
+                                    </div>
+                                    <div class="col-md-6 text-center" th:if="${type==1 or auth==99}">
+                                        <form th:action="@{/teams/posts}" th:method="patch">
+                                            <input type="hidden" name="id" th:value="${post.id}">
+                                            <input type="hidden" name="memberId" th:value="${post.memberId}">
+                                            <input type="hidden" name="job" th:value="${post.job}">
+                                            <input type="hidden" name="teamName" th:value="${post.teamName}">
+                                            <input type="hidden" name="address" th:value="${post.address}">
+                                            <input type="hidden" name="number" th:value="${post.number}">
+                                            <input type="hidden" name="phone" th:value="${post.phone}">
+                                            <input type="hidden" name="introduction" th:value="${post.introduction}">
+                                            <input type="hidden" name="advantage" th:value="${post.advantage}">
+                                            <input type="hidden" name="profile" th:value="${post.profile}">
+                                            <input type="hidden" name="status" th:value="${post.status}">
+                                            <button th:if="${post.status==0 and type==1}" class="btn btn-primary" type="submit" >이력서 공개</button>
+                                            <button th:if="${post.status==1 and type==1}" class="btn btn-primary" type="submit" >이력서 비공개</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container-xxl flex-grow-1 container-p-y text-center" th:if="${check==0}">
+                            <a class="btn btn-primary" th:href="@{/teams/posts/new}">팀 이력서 작성</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- / Content -->
+
+
+            </div>
+            <script>
+
+                window.addEventListener('message', event => {
+                   if (event.origin !== 'http://3.39.50.114:4000') return;  // 보안 검사
+                   if (event.data === 'modalClosed') {
+                       $('#myModal').modal('hide');
+                         $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                   }
+                   });
+            </script>
+            <!-- Footer -->
+            <div th:include="~{design/footer :: footer}"></div>
+            <!-- / Footer -->
+            <div class="content-backdrop fade"></div>
+        </div>
+        <!-- Content wrapper -->
+    </div>
+    <!-- / Layout page -->
+</div>
+
+<!-- Overlay -->
+<div class="layout-overlay layout-menu-toggle"></div>
+</div>
+<!-- / Layout wrapper -->
+
+<!-- Core JS -->
+<!-- build:js assets/vendor/js/core.js -->
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<!-- endbuild -->
+
+<!-- Vendors JS -->
+
+<!-- Main JS -->
+<script th:src="@{/assets/js/main.js}"></script>
+
+<!-- Page JS -->
+
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer th:src="@{https://buttons.github.io/buttons.js}"></script>
+</body>
+</html>

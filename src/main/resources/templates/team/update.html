@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+
+    <title>팀</title>
+
+    <meta name="description" content=""/>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon/favicon.ico}"/>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet"/>
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link th:href="@{/assets/vendor/fonts/boxicons.css}" rel="stylesheet"/>
+
+    <!-- Core CSS -->
+    <link th:href="@{/assets/vendor/css/core.css}" rel="stylesheet" class="template-customizer-core-css"/>
+    <link th:href="@{/assets/vendor/css/theme-default.css}" rel="stylesheet" class="template-customizer-theme-css"/>
+    <link th:href="@{/assets/css/demo.css}" rel="stylesheet"/>
+
+    <!-- Vendors CSS -->
+    <link th:href="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css}" rel="stylesheet"/>
+
+    <!-- Helpers -->
+    <script th:src="@{/assets/vendor/js/helpers.js}"></script>
+
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script th:src="@{/assets/js/config.js}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+<!-- Layout wrapper -->
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+        <!-- Menu -->
+        <div th:include="~{design/side-bar :: side}"></div>
+        <!-- / Menu -->
+
+        <!-- Layout container -->
+        <div class="layout-page">
+            <!-- Navbar -->
+            <div th:insert="~{design/navi-bar :: navi}"></div>
+            <!-- / Navbar -->
+
+            <!-- Content wrapper -->
+            <div class="content-wrapper">
+                <!-- Content -->
+                <div class="container-fluid flex-grow-1 container-p-y">
+
+                    <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" style="display: none;" sec:authorize="isAuthenticated()">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Chat</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <iframe id="roomFrame" width="100%" height="500px" frameborder="0"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Layout Demo -->
+                    <div class="row">
+                        <!-- Basic Layout -->
+                        <div class="col-xxl">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <form id="teamsForm" th:method="put" th:action="@{/teams/posts}" enctype="multipart/form-data" novalidate onsubmit="return validateForm()">
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="teamName">팀 이름</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="teamName" name="teamName" th:value="${post.teamName}" placeholder="팀명을 작성해주세요" required/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="job">직종</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="job" name="job" placeholder="직종을 작성해주세요" th:value="${post.job}" required/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="number">팀원</label>
+                                            <div class="col-sm-10">
+                                                <input type="number" class="form-control" id="number" name="number" placeholder="숫자만 작성해주세요" th:value="${post.number}" required/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="phone">연락처</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="phone" name="phone" placeholder="연락처를 작성해주세요." th:value="${post.phone}" required/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="address">가능 지역</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group input-group-merge">
+                                                    <input type="text" id="address" name="address" class="form-control" placeholder="가능지역을 작성해주세요" th:value="${post.address}"  required/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="introduction">팀 소개</label>
+                                            <div class="col-sm-10">
+                                                <textarea id="introduction" class="form-control" name="introduction" placeholder="팀 소개를 작성해주세요" th:utext="${post.introduction}" required></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="advantage">팀 특징 및 장점</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group input-group-merge">
+                                                    <input type="text" id="advantage" name="advantage" class="form-control" placeholder="팀 특징 및 장점을 작성해주세요"  th:value="${post.advantage}" required/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="files">팀 이력서 사진</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group input-group-merge">
+                                                    <input type="file" id="profileimg" name="profileimg" class="form-control"  accept="image/*" required/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label" for="files">첨부사진</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group input-group-merge">
+                                                    <input type="file" id="files" name="files" class="form-control"  multiple="multiple" accept="image/*" required onclick="uploadwarn()"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row justify-content-end">
+                                            <div class="col-sm-10">
+                                                <input type="hidden" name="profile" th:value="${post.profile}">
+                                                <input type="hidden" name="id" th:value="${post.id}">
+                                                <input type="hidden" name="memberId" th:value="${post.memberId}">
+                                                <button type="submit" class="btn btn-primary">Send</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!--/ Layout Demo -->
+                    </div>
+                    <!-- / Content -->
+                    <script>
+
+                                 window.addEventListener('message', event => {
+                                    if (event.origin !== 'http://3.39.50.114:4000') return;  // 보안 검사
+                                    if (event.data === 'modalClosed') {
+                                        $('#myModal').modal('hide');
+                                          $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                                    }
+                                    });
+
+                    </script>
+                    <!-- Footer -->
+                    <div th:include="~{design/footer :: footer}"></div>
+                    <!-- / Footer -->
+
+                    <div class="content-backdrop fade"></div>
+                </div>
+                <!-- Content wrapper -->
+            </div>
+            <!-- / Layout page -->
+        </div>
+
+        <!-- Overlay -->
+        <div class="layout-overlay layout-menu-toggle"></div>
+    </div>
+    <!-- / Layout wrapper -->
+
+
+</div>
+<!-- Core JS -->
+<!-- build:js assets/vendor/js/core.js -->
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<!-- endbuild -->
+
+<!-- Vendors JS -->
+
+<!-- Main JS -->
+<script th:src="@{/assets/js/main.js}"></script>
+
+<!-- Page JS -->
+
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+<script>
+    function uploadwarn(){
+    alert("사진을 선택하면 기존사진은 사라집니다");
+    }
+    function validateForm() {
+        const form = document.getElementById('teamForm');
+        const money = form.money.value.trim();
+        const contact = form.contact.value.trim();
+        const preparation = form.preparation.value.trim();
+        const address = form.address.value.trim();
+        const files = form.files.files;
+        const content = form.content.value.trim();
+        const title = form.title.value.trim();
+
+        if (!money || !contact || !preparation || !address || !content || !title) {
+            alert('모두 입력해주세요');
+            return false;
+        }
+
+
+        for (let i = 0; i < files.length; i++) {
+            if (!files[i].type.startsWith('image/')) {
+                alert('이미지 파일만 등록할 수 있습니다.');
+                return false;
+            }
+        }
+
+        return true;
+    }
+</script>
+
+</body>
+</html>

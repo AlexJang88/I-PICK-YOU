@@ -2,108 +2,79 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-
 </head>
 <body>
 <div th:fragment="footer">
     <footer id="footer" class="my-5">
         <div class="container py-5 my-5">
             <div class="row">
-
                 <div class="col-md-3">
                     <div class="footer-menu">
-                        <img src="../../../../../../waGGy-1.0.0%203/images/logo.png" alt="logo">
-                        <p class="blog-paragraph fs-6 mt-3">Subscribe to our newsletter to get updates about our grand offers.</p>
-                        <div class="social-links">
-                            <ul class="d-flex list-unstyled gap-2">
-                                <li class="social">
-                                    <a href="#">
-                                        <iconify-icon class="social-icon" icon="ri:facebook-fill"></iconify-icon>
-                                    </a>
-                                </li>
-                                <li class="social">
-                                    <a href="#">
-                                        <iconify-icon class="social-icon" icon="ri:twitter-fill"></iconify-icon>
-                                    </a>
-                                </li>
-                                <li class="social">
-                                    <a href="#">
-                                        <iconify-icon class="social-icon" icon="ri:pinterest-fill"></iconify-icon>
-                                    </a>
-                                </li>
-                                <li class="social">
-                                    <a href="#">
-                                        <iconify-icon class="social-icon" icon="ri:instagram-fill"></iconify-icon>
-                                    </a>
-                                </li>
-                                <li class="social">
-                                    <a href="#">
-                                        <iconify-icon class="social-icon" icon="ri:youtube-fill"></iconify-icon>
-                                    </a>
-                                </li>
-
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="footer-menu">
-                        <h3>Quick Links</h3>
+                        <h3>빠른 이동</h3>
                         <ul class="menu-list list-unstyled">
                             <li class="menu-item">
-                                <a href="#" class="nav-link">Home</a>
+                                <a href="/" class="nav-link">메인페이지</a>
                             </li>
                             <li class="menu-item">
-                                <a href="#" class="nav-link">About us</a>
+                                <a th:href="@{/notice/IntroductionUs}" class="nav-link">사이트소개</a>
                             </li>
                             <li class="menu-item">
-                                <a href="#" class="nav-link">Offer </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="#" class="nav-link">Services</a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="#" class="nav-link">Conatct Us</a>
+                                <a th:href="@{/qa/posts}" class="nav-link">관리자 문의하기</a>
                             </li>
                         </ul>
                     </div>
                 </div>
+
+
                 <div class="col-md-3">
                     <div class="footer-menu">
-                        <h3>Help Center</h5>
-                            <ul class="menu-list list-unstyled">
-                                <li class="menu-item">
-                                    <a href="#" class="nav-link">FAQs</a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="#" class="nav-link">Payment</a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="#" class="nav-link">Returns & Refunds</a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="#" class="nav-link">Checkout</a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="#" class="nav-link">Delivery Information</a>
-                                </li>
-                            </ul>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div>
-                        <h3>Our Newsletter</h3>
-                        <p class="blog-paragraph fs-6">Subscribe to our newsletter to get updates about our grand offers.</p>
-                        <div class="search-bar border rounded-pill border-dark-subtle px-2">
-                            <form class="text-center d-flex align-items-center" action="" method="">
-                                <input type="text" class="form-control border-0 bg-transparent" placeholder="Enter your email here" />
-                                <iconify-icon class="send-icon" icon="tabler:location-filled"></iconify-icon>
-                            </form>
-                        </div>
+                        <h3>구인 & 구직</h3>
+                        <ul class="menu-list list-unstyled">
+                            <li class="menu-item">
+                                <a th:href="@{/educations/posts}" class="nav-link">구인목록 </a>
+                            </li>
+                            <li class="menu-item">
+                                <a th:href="@{/resume/all/posts}" class="nav-link">인재목록</a>
+                            </li>
+                            <li class="menu-item">
+                                <a th:href="@{/teams/posts}" class="nav-link">팀목록</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
 
+                <div class="col-md-3">
+                    <div class="footer-menu">
+                        <h3>교육기관</h3>
+                        <ul class="menu-list list-unstyled">
+                            <li class="menu-item">
+                                <a th:href="@{/agency/posts}" class="nav-link">인력사무소</a>
+                            </li>
+                            <li class="menu-item">
+                                <a th:href="@{/trainning/posts}" class="nav-link">훈련소</a>
+                            </li>
+                            <li class="menu-item">
+                                <a th:href="@{/educations/posts}" class="nav-link">안전교육</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="footer-menu">
+                        <h3>커뮤니티</h3>
+                        <ul class="menu-list list-unstyled">
+                            <li class="menu-item">
+                                <a th:href="@{/foodMap/posts}" class="nav-link">주변밥집</a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="https://www.moel.go.kr/info/defaulter/defaulterList.do" class="nav-link">체불사업주</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
+
         </div>
     </footer>
 </div>

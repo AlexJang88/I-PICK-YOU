@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="light-style layout-menu-fixed" dir="ltr"
+      th:data-theme="theme-default" th:data-assets-path="@{/assets/}" th:data-template="vertical-menu-template-free">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+
+    <title>문의사항 정보</title>
+
+    <meta name="description" content=""/>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon/favicon.ico}"/>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap"
+          rel="stylesheet"/>
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" th:href="@{/assets/vendor/fonts/boxicons.css}"/>
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" th:href="@{/assets/vendor/css/core.css}" class="template-customizer-core-css"/>
+    <link rel="stylesheet" th:href="@{/assets/vendor/css/theme-default.css}" class="template-customizer-theme-css"/>
+    <link rel="stylesheet" th:href="@{/assets/css/demo.css}"/>
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" th:href="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css}"/>
+
+    <!-- Helpers -->
+    <script th:src="@{/assets/vendor/js/helpers.js}"></script>
+
+    <!-- Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!-- Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script th:src="@{/assets/js/config.js}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+<!-- Layout wrapper -->
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+        <!-- Menu -->
+        <div th:include="~{design/side-bar :: side}"></div>
+        <!-- / Menu -->
+
+        <!-- Layout container -->
+        <div class="layout-page">
+            <!-- Navbar -->
+            <div th:insert="~{design/navi-bar :: navi}"></div>
+            <!-- / Navbar -->
+
+            <!-- Content wrapper -->
+            <div class="content-wrapper">
+                <!-- Content -->
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <h2 class="fw-bold py-3 mb-4">
+                        <span class="text-muted fw-light">QnA</span>
+                    </h2>
+
+                    <th:block sec:authorize="hasAuthority('ROLE_ADMIN')">
+                        <div class="text-end">
+                            <form th:action="@{/qa/posts/{boardNum}(boardNum=${qaInformation.get(0).id})}" th:method="post" id="deleteForm">
+                                <input type="hidden" name="_method" value="delete"/>
+                                <button type="button" class="btn btn-primary" onclick="confirmDelete()">글삭제</button>
+                            </form>
+                        </div>
+                    </th:block>
+
+
+
+                        <div class="row">
+                            <!-- Basic -->
+                            <div class="col-md-12 mb-4">
+                                <div class="card">
+                                    <h3 class="card-header" style="text-align: center;">
+                                        제목 : <span th:text="${qaInformation.get(0).title}"></span>
+                                    </h3>
+
+                                    <div class="card-body">
+                                        내용 : <span th:text="${qaInformation.get(0).content}"></span>
+
+                                        <div class="divider text-end">
+                                            <div class="divider-text" th:text="${#dates.format(qaInformation.get(0).reg, 'yyyy-MM-dd')}">End</div>
+                                        </div>
+
+                                        <th:block sec:authorize="hasAuthority('ROLE_ADMIN')">
+                                            <div th:if="${qaInformation.get(0).status == 1}" class="divider text-end">
+                                                <div class="divider text-end">
+                                                    <form th:action="@{/qa/reply/{ref}(ref=${ref})}" method="post" target="popup">
+                                                        <input type="hidden" name="writer" th:value="${qaInformation.get(0).writer}">
+                                                        <input type="hidden" name="title" th:value="${qaInformation.get(0).title}">
+                                                        <input type="hidden" name="ref" th:value="${qaInformation.get(0).ref}">
+                                                        <input type="hidden" name="pw" th:value="${qaInformation.get(0).pw}">
+                                                        <textarea name="content"></textarea>
+                                                        <button type="submit" class="btn btn-primary">답글</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </th:block>
+
+                                        <div th:if="${qaInformation.get(0).status == 2}">
+                                            <div class="col-md-12 mb-4">
+                                                <div class="card">
+                                                    <h3 class="card-header" style="text-align: center;">답글</h3>
+                                                    <div class="card-body">
+                                                        <span th:text="${qaInformation.get(1).content}"></span>
+                                                        <div class="divider text-end">
+                                                            <div class="divider-text" th:text="${#dates.format(qaInformation.get(1).reg, 'yyyy-MM-dd')}"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /Basic -->
+                        </div>
+
+                </div>
+                <!-- /Content -->
+
+                <!-- Footer -->
+                <div th:include="~{design/footer :: footer}"></div>
+                <!-- / Footer -->
+
+                <div class="content-backdrop fade"></div>
+            </div>
+            <!-- Content wrapper -->
+        </div>
+        <!-- / Layout page -->
+    </div>
+    <!-- / Layout container -->
+
+    <!-- Overlay -->
+    <div class="layout-overlay layout-menu-toggle"></div>
+</div>
+<!-- / Layout wrapper -->
+
+<!-- Core JS -->
+<!-- build:js assets/vendor/js/core.js -->
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<!-- endbuild -->
+
+<!-- Vendors JS -->
+
+<!-- Main JS -->
+<script th:src="@{/assets/js/main.js}"></script>
+
+<!-- Page JS -->
+
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+<script type="text/javascript">
+    function confirmDelete() {
+        if (confirm("글을 삭제하시겠습니까?")) {
+            document.getElementById('deleteForm').submit();
+        }
+    }
+</script>
+
+<script>
+    window.addEventListener('message', event => {
+                        if (event.origin !== 'http://3.39.50.114:4000') return;  // 보안 검사
+                        if (event.data === 'modalClosed') {
+                            $('#myModal').modal('hide');
+                              $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                        }
+                        });
+</script>
+
+</body>
+</html>

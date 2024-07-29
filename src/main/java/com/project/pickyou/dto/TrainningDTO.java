@@ -1,9 +1,11 @@
 package com.project.pickyou.dto;
 
+
 import com.project.pickyou.entity.TrainningEntity;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -20,12 +22,12 @@ public class TrainningDTO {
     private String address;
     private String contact;
     private int readCount;
-    private Long imageRegistrationId;
     private String content;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private Date reg;
 
     @Builder
-    public TrainningDTO(Long id, String companyId, String title, String position, String trainner, String etc, String name, String address, String contact, int readCount, Long imageRegistrationId, String content, Date reg) {
+    public TrainningDTO(Long id, String companyId, String title, String position, String trainner, String etc, String name, String address, String contact, int readCount, String content, Date reg) {
         this.id = id;
         this.companyId = companyId;
         this.title = title;
@@ -36,7 +38,6 @@ public class TrainningDTO {
         this.address = address;
         this.contact = contact;
         this.readCount = readCount;
-        this.imageRegistrationId = imageRegistrationId;
         this.content = content;
         this.reg = reg;
     }
@@ -53,7 +54,6 @@ public class TrainningDTO {
                 .address(this.address)
                 .contact(this.contact)
                 .readCount(this.readCount)
-                .imageRegistrationId(this.imageRegistrationId)
                 .content(this.content)
                 .reg(this.reg)
                 .build();

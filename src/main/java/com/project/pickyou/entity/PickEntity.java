@@ -17,6 +17,9 @@ public class PickEntity {
     @Id
     private String target;
 
+    @OneToOne
+    @JoinColumn(name = "target",referencedColumnName = "id",insertable = false,updatable = false)
+    private MemberEntity member;
 
     @Builder
     public PickEntity(String picker, String target) {

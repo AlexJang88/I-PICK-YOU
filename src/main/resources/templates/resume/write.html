@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en"
+      class="light-style layout-menu-fixed"
+      dir="ltr"
+      data-theme="theme-default"
+      data-assets-path="../assets/"
+      data-template="vertical-menu-template-free"
+      xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+    <title>이력서 작성</title>
+
+    <meta name="description" content="" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon/favicon.ico}" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+          rel="stylesheet" />
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link th:href="@{/assets/vendor/fonts/boxicons.css}" rel="stylesheet" />
+
+    <!-- Core CSS -->
+    <link th:href="@{/assets/vendor/css/core.css}" rel="stylesheet" class="template-customizer-core-css" />
+    <link th:href="@{/assets/vendor/css/theme-default.css}" rel="stylesheet" class="template-customizer-theme-css" />
+    <link th:href="@{/assets/css/demo.css}" rel="stylesheet" />
+
+    <!-- Vendors CSS -->
+    <link th:href="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css}" rel="stylesheet" />
+
+    <!-- Helpers -->
+    <script th:src="@{/assets/vendor/js/helpers.js}"></script>
+
+    <!--주소-->
+    <script th:src="@{'//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js'}"></script>
+
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script th:src="@{/assets/js/config.js}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+
+
+<body>
+<!-- Layout wrapper -->
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+        <!-- Menu -->
+        <div th:include="~{design/side-bar :: side}"></div>
+        <!-- / Menu -->
+
+        <!-- Layout container -->
+        <div class="layout-page">
+            <!-- Navbar -->
+
+
+            <div th:insert="~{design/navi-bar :: navi}"></div>
+
+
+            <!-- / Navbar -->
+
+            <!-- Content wrapper -->
+            <div class="content-wrapper">
+                <!-- Content -->
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <h2 class="fw-bold py-3 mb-4">
+                        <span class="text-muted fw-light">RESUME</span>
+                    </h2>
+                    <!-- Basic Bootstrap Table -->
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h3 class="mb-0">Write</h3>
+                        </div>
+
+                        <div class="table-responsive text-nowrap">
+                            <form id="writeForm" th:action="@{/resume/posts}" method="post">
+                                <table class="table">
+                                    <tbody>
+                                        <!-- 직종 선택 -->
+                                        <div class="card-body">
+                                            <div class="row gy-3">
+                                                <div class="col-md">
+                                                    <h4 class="text-light fw-semibold d-block">직종 선택</h4>
+                                                </div>
+                                            </div>
+                                            <div class="row gy-3">
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox1" value="내장목공" />
+                                                        <label class="form-check-label" for="inlineCheckbox1">내장목공</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox2" value="외장목공" />
+                                                        <label class="form-check-label" for="inlineCheckbox2">외장목공</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox3" value="전기" />
+                                                        <label class="form-check-label" for="inlineCheckbox3">전기</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox4" value="통신" />
+                                                        <label class="form-check-label" for="inlineCheckbox4">통신</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox5" value="소방" />
+                                                        <label class="form-check-label" for="inlineCheckbox5">소방</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox6" value="조경" />
+                                                        <label class="form-check-label" for="inlineCheckbox6">조경</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox7" value="창호" />
+                                                        <label class="form-check-label" for="inlineCheckbox7">창호</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox8" value="수장" />
+                                                        <label class="form-check-label" for="inlineCheckbox8">수장</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row gy-3">
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox29" value="플랜트" />
+                                                        <label class="form-check-label" for="inlineCheckbox29">플랜트</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox10" value="조적" />
+                                                        <label class="form-check-label" for="inlineCheckbox10">조적</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox11" value="타일" />
+                                                        <label class="form-check-label" for="inlineCheckbox11">타일</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox12" value="타설" />
+                                                        <label class="form-check-label" for="inlineCheckbox12">타설</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox13" value="석재" />
+                                                        <label class="form-check-label" for="inlineCheckbox13">석재</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox14" value="할석" />
+                                                        <label class="form-check-label" for="inlineCheckbox14">할석</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox15" value="견출" />
+                                                        <label class="form-check-label" for="inlineCheckbox15">견출</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox30" value="시스템/비계" />
+                                                        <label class="form-check-label" for="inlineCheckbox30">시스템/비계</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row gy-3">
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox35" value="품/해체" />
+                                                        <label class="form-check-label" for="inlineCheckbox35">품/해체</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox18" value="방수" />
+                                                        <label class="form-check-label" for="inlineCheckbox18">방수</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox19" value="로프" />
+                                                        <label class="form-check-label" for="inlineCheckbox19">로프</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox20" value="설비" />
+                                                        <label class="form-check-label" for="inlineCheckbox20">설비</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox21" value="배관" />
+                                                        <label class="form-check-label" for="inlineCheckbox21">배관</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox22" value="단열" />
+                                                        <label class="form-check-label" for="inlineCheckbox22">단열</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox23" value="덕트" />
+                                                        <label class="form-check-label" for="inlineCheckbox23">덕트</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox36" value="철거/폐기물" />
+                                                        <label class="form-check-label" for="inlineCheckbox36">철거/폐기물</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row gy-3">
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox25" value="철근" />
+                                                        <label class="form-check-label" for="inlineCheckbox25">철근</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox26" value="철골" />
+                                                        <label class="form-check-label" for="inlineCheckbox26">철골</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox27" value="용접" />
+                                                        <label class="form-check-label" for="inlineCheckbox27">용접</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox28" value="외장" />
+                                                        <label class="form-check-label" for="inlineCheckbox28">외장</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox9" value="미장" />
+                                                        <label class="form-check-label" for="inlineCheckbox9">미장</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox16" value="토목" />
+                                                        <label class="form-check-label" for="inlineCheckbox16">토목</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox31" value="양중/곰방" />
+                                                        <label class="form-check-label" for="inlineCheckbox31">양중/곰방</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox32" value="마루/장판" />
+                                                        <label class="form-check-label" for="inlineCheckbox32">마루/장판</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row gy-3">
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox33" value="도배" />
+                                                        <label class="form-check-label" for="inlineCheckbox33">도배</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox34" value="청소" />
+                                                        <label class="form-check-label" for="inlineCheckbox34">청소</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox17" value="도장" />
+                                                        <label class="form-check-label" for="inlineCheckbox17">도장</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox24" value="금속" />
+                                                        <label class="form-check-label" for="inlineCheckbox24">금속</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox37" value="안전관리" />
+                                                        <label class="form-check-label" for="inlineCheckbox37">안전관리</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox38" value="조공/잡부" />
+                                                        <label class="form-check-label" for="inlineCheckbox38">조공/잡부</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox39" value="공사관리" />
+                                                        <label class="form-check-label" for="inlineCheckbox39">공사관리</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" name="jobName" type="checkbox" id="inlineCheckbox40" value="기타" />
+                                                        <label class="form-check-label" for="inlineCheckbox40">기타</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md">
+                                                <div class="form-group"> <!-- 숙련도/경력 그룹 -->
+                                                    <tr>
+                                                        <td>
+                                                            <h4 class="text-light fw-semibold d-block">숙련도/경력</h4>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="careerName" id="inlineRadio1" value="기공" />
+                                                                <label class="form-check-label" for="inlineRadio1">기공</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="careerName" id="inlineRadio2" value="준기공" />
+                                                                <label class="form-check-label" for="inlineRadio2">준기공</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="careerName" id="inlineRadio3" value="조공" />
+                                                                <label class="form-check-label" for="inlineRadio3">조공</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="careerName" id="inlineRadio4" value="초보" />
+                                                                <label class="form-check-label" for="inlineRadio4">초보</label>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td class="py-3">
+                                                            <h4 class="text-light fw-semibold d-block">희망 지역</h4>
+                                                            <div class="mb-3">
+                                                                <div class="input-group">
+                                                                    <input type="text" class="form-control" id="address" name="address" placeholder="주소를 입력하세요" readonly required>
+                                                                    <button type="button" id="addressButton" class="btn btn-primary">주소 검색</button>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td class="py-3">
+                                                            <h4 class="text-light fw-semibold d-block">자기소개서</h4>
+                                                            <div class="mb-3">
+                                                                <textarea class="form-control" id="introduction" name="introduction" rows="3" required></textarea>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <h4 class="text-light fw-semibold d-block">이수증</h4>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" name="certificationName" type="checkbox" id="inlineCheckbox101" value="안전교육" />
+                                                                <label class="form-check-label" for="inlineCheckbox101">안전교육</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" name="certificationName" type="checkbox" id="inlineCheckbox102" value="하나로카드" />
+                                                                <label class="form-check-label" for="inlineCheckbox102">하나로카드</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" name="certificationName" type="checkbox" id="inlineCheckbox103" value="신호수" />
+                                                                <label class="form-check-label" for="inlineCheckbox103">신호수</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" name="certificationName" type="checkbox" id="inlineCheckbox104" value="비계교육" />
+                                                                <label class="form-check-label" for="inlineCheckbox104">비계교육</label>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <h4 class="text-light fw-semibold d-block">면허증</h4>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" name="licenceName" type="checkbox" id="inlineCheckbox201" value="원동기/오토바이" />
+                                                                <label class="form-check-label" for="inlineCheckbox201">원동기/오토바이</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" name="licenceName" type="checkbox" id="inlineCheckbox202" value="중장비" />
+                                                                <label class="form-check-label" for="inlineCheckbox202">중장비</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" name="licenceName" type="checkbox" id="inlineCheckbox203" value="운전1종보통" />
+                                                                <label class="form-check-label" for="inlineCheckbox203">운전1종보통</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" name="licenceName" type="checkbox" id="inlineCheckbox204" value="운전2종보통" />
+                                                                <label class="form-check-label" for="inlineCheckbox204">운전2종보통</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" name="licenceName" type="checkbox" id="inlineCheckbox205" value="운전1종대형" />
+                                                                <label class="form-check-label" for="inlineCheckbox205">운전1종대형</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" name="licenceName" type="checkbox" id="inlineCheckbox206" value="운전1종특수" />
+                                                                <label class="form-check-label" for="inlineCheckbox206">운전1종특수</label>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <h4 class="text-light fw-semibold d-block">보유장비</h4>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" name="equipmentName" type="checkbox" id="inlineCheckbox301" value="승용차" />
+                                                                <label class="form-check-label" for="inlineCheckbox301">승용차</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" name="equipmentName" type="checkbox" id="inlineCheckbox302" value="승합차" />
+                                                                <label class="form-check-label" for="inlineCheckbox302">승합차</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" name="equipmentName" type="checkbox" id="inlineCheckbox303" value="화물차" />
+                                                                <label class="form-check-label" for="inlineCheckbox303">화물차</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" name="equipmentName" type="checkbox" id="inlineCheckbox304" value="오토바이" />
+                                                                <label class="form-check-label" for="inlineCheckbox304">오토바이</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" name="equipmentName" type="checkbox" id="inlineCheckbox305" value="장비보유" />
+                                                                <label class="form-check-label" for="inlineCheckbox305">장비보유</label>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="py-3">
+                                                            <div class="form-group"> <!-- 일급 입력 필드 그룹 -->
+                                                                <h4 class="text-light fw-semibold d-block">일급</h4>
+                                                                <div class="input-group">
+                                                                    <input type="text" class="form-control" id="wage" name="wage" placeholder="금액을 입력하세요" required maxlength="9"
+                                                                           oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                                                    <span class="input-group-text">원</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <button type="submit" class="btn btn-primary float-end">Send</button>
+                                                        </td>
+                                                    </tr>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+                    </div>
+                    <!--/ Basic Bootstrap Table -->
+
+                </div>
+            </div>
+            <!-- / Content -->
+
+            <!-- Footer -->
+            <div th:include="~{design/footer :: footer}"></div>
+            <!-- / Footer -->
+
+            <div class="content-backdrop fade"></div>
+        </div>
+        <!-- Content wrapper -->
+    </div>
+    <!-- / Layout page -->
+</div>
+
+<!-- Overlay -->
+<div class="layout-overlay layout-menu-toggle"></div>
+</div>
+<!-- / Layout wrapper -->
+
+<!-- Core JS -->
+<!-- build:js assets/vendor/js/core.js -->
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<!-- endbuild -->
+
+<!-- Vendors JS -->
+
+<!-- Main JS -->
+<script th:src="@{/assets/js/main.js}"></script>
+
+<!-- Page JS -->
+
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+<!--주소-->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('addressButton').addEventListener('click', function () {
+            new daum.Postcode({
+                oncomplete: function (data) {
+                    // 사용자가 주소를 선택했을 때 실행되는 함수
+                    var fullAddress = data.address; // 전체 주소
+                    document.getElementById('address').value = fullAddress; // 주소 입력 필드에 값 설정
+                }
+            }).open();
+        });
+    });
+</script>
+
+<script>
+    document.getElementById('writeForm').addEventListener('submit', function(event) {
+        // 각 그룹별로 체크된 항목이 있는지 확인
+        var careerChecked = document.querySelectorAll('input[name="careerName"]:checked').length > 0;
+        var jobChecked = document.querySelectorAll('input[name="jobName"]:checked').length > 0;
+
+        if (!careerChecked || !jobChecked) {
+        event.preventDefault(); // 폼 제출을 막습니다
+        alert('경력과 직종 선택은 하나 이상 필수로 선택해야 합니다.'); // 알람 메시지를 표시합니다
+        }
+    });
+</script>
+
+<script>
+    window.addEventListener('message', event => {
+                        if (event.origin !== 'http://3.39.50.114:4000') return;  // 보안 검사
+                        if (event.data === 'modalClosed') {
+                            $('#myModal').modal('hide');
+                              $('#chatModal').modal('hide');// 모달이 닫힌 후 동작 수행
+                        }
+                        });
+</script>
+
+</body>
+</html>

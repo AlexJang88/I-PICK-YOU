@@ -4,8 +4,10 @@ import com.project.pickyou.entity.EducationEntity;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -18,12 +20,12 @@ public class EducationDTO {
     private String preparation;
     private String address;
     private String content;
-    private Long imageRegistrationId;
     private int readCount;
     private Date reg;
+    //private List<MultipartFile> files;
 
     @Builder
-    public EducationDTO(Long id, String title, String companyId, int money, String contact, String preparation, String address, String content, Long imageRegistrationId, int readCount, Date reg) {
+    public EducationDTO(Long id, String title, String companyId, int money, String contact, String preparation, String address, String content, int readCount, Date reg) {
         this.id = id;
         this.title = title;
         this.companyId = companyId;
@@ -32,7 +34,6 @@ public class EducationDTO {
         this.preparation = preparation;
         this.address = address;
         this.content = content;
-        this.imageRegistrationId = imageRegistrationId;
         this.readCount = readCount;
         this.reg = reg;
     }
@@ -47,7 +48,6 @@ public class EducationDTO {
                 .preparation(this.preparation)
                 .address(this.address)
                 .content(this.content)
-                .imageRegistrationId(this.imageRegistrationId)
                 .readCount(this.readCount)
                 .reg(this.reg)
                 .build();
