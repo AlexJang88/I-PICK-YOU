@@ -34,6 +34,7 @@ public class EducationServiceImpl implements EducationService {
     @Value("${img.upload.path}")
     private String imgUploadPath;
 
+
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
@@ -43,6 +44,7 @@ public class EducationServiceImpl implements EducationService {
 
 
     private final S3Service s3Service;
+
     private final EducationJPARepository educationJPA;
     private final ImageJPARepository imageJPA;
     private final PickJPARepository pickJPA;

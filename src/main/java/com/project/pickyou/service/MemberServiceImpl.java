@@ -31,8 +31,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
-        @Value("${lprofile.upload.path}")
-        private String profileImgUploadPath;
+    @Value("${profile.upload.path}")
+    private String profileUploadPath;
 
         private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         private final MemberJPARepository memberJPARepository;
@@ -93,7 +93,7 @@ public class MemberServiceImpl implements MemberService {
                 //우선 사진부터
 
                 if (!file.isEmpty()) { //수정 파일에 사진이 들어있다면 폴더속 사진삭제하는 작업
-                    File profile = new File(profileImgUploadPath + File.separator + user.getProfile());  //유저 프로필의 경로
+                    File profile = new File(profileUploadPath + File.separator + user.getProfile());  //유저 프로필의 경로
                     if (!user.getProfile().equals("default.png")) {  //사진이름이 디폴트가 아니라면 , 디폴트라면 놔둠
                         try {
                             if (profile.exists()) {
@@ -114,7 +114,7 @@ public class MemberServiceImpl implements MemberService {
 
                     memberDTO.setProfile(profileName);
                     user.setProfile(profileName);//디비 이름 설정하기
-                    Path savePath = Paths.get(profileImgUploadPath, profileName);
+                    Path savePath = Paths.get(profileUploadPath, profileName);
 
                     try {
                         file.transferTo(savePath);
@@ -161,7 +161,7 @@ public class MemberServiceImpl implements MemberService {
             //우선 사진부터
 
             if (!file.isEmpty()) { //수정 파일에 사진이 들어있다면 폴더속 사진삭제하는 작업
-                File profile = new File(profileImgUploadPath + File.separator + user.getProfile());  //유저 프로필의 경로
+                File profile = new File(profileUploadPath + File.separator + user.getProfile());  //유저 프로필의 경로
                 if (!user.getProfile().equals("default.png")) {  //사진이름이 디폴트가 아니라면 , 디폴트라면 놔둠
                     try {
                         if (profile.exists()) {
@@ -182,7 +182,7 @@ public class MemberServiceImpl implements MemberService {
 
                 memberDTO.setProfile(profileName);
                 user.setProfile(profileName);//디비 이름 설정하기
-                Path savePath = Paths.get(profileImgUploadPath, profileName);
+                Path savePath = Paths.get(profileUploadPath, profileName);
 
                 try {
                     file.transferTo(savePath);
