@@ -1,5 +1,3 @@
-
-
 package com.project.pickyou.controller.all;
 
 import com.project.pickyou.dto.ImageDTO;
@@ -137,6 +135,7 @@ public class TrainningController {
 
         return "redirect:/trainning/posts";
         }
+
 
 
 
