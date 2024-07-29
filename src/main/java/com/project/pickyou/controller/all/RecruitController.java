@@ -32,11 +32,6 @@ import java.util.Map;
 @RequestMapping ("/recruit/*")
 @RequiredArgsConstructor
 public class RecruitController {
-    @Value("${contracts.upload.path}")
-    private String contactUploadPath;
-
-
-
 
     private int type=6;
 

@@ -45,8 +45,6 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class ItextPdfUtil {
-    @Value("${contracts.upload.path}")
-    private String contactUploadPath;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
@@ -278,8 +276,8 @@ public class ItextPdfUtil {
             payDate=con.get().getCustomPayDate()+"일(휴일의 경우는 전일 지급)";
         }
 
-       String comimg=contactUploadPath+File.separator+id+"/"+con.get().getCompanyId()+"_signature.png";
-        String memimg=contactUploadPath+File.separator+id+"/"+con.get().getMemberId()+"_signature.png";
+       String comimg="https://"+bucket+".s3."+region+".amazonaws.com/contract/"+id+"/" + company.getId() + "_signature.png";
+        String memimg="https://"+bucket+".s3."+region+".amazonaws.com/contract/"+id+"/" + member.getId() + "_signature.png";
         String startDate = con.get().getStartDate().format(DateTimeFormatter.ofPattern("YYYYMMdd"));
         String endDate = con.get().getEndDate().format(DateTimeFormatter.ofPattern("YYYYMMdd"));
         String contractDate = con.get().getContractDate().format(DateTimeFormatter.ofPattern("YYYYMMdd"));

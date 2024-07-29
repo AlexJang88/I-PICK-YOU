@@ -120,12 +120,9 @@
                             <a th:href="@{/trainning/posts/{trainnignum}(trainnignum=${list.id})}">
                             <div class="col">
                                 <div class="card h-100">
-
-                                    <img class="card-img-top"   th:src="@{'/upload/profile/' + ${list.memberen.profile} }" alt="Card image cap"  style="width: 250px; height: 180px; display: block; margin: auto;"/>
+                                    <img th:src="@{'https://'+ ${bucketName}+'.s3.' + ${regionName} + '.amazonaws.com/profile/' +${list.memberen.profile}}"  style="width: 250px; height: 180px; display: block; margin: auto;" />
                                     <div class="card-body">
-
                                         <h5 class="card-title"><span th:text="${#strings.length(list.title) > 10 ? #strings.substring(list.title, 0, 10).concat('....') : list.title}"></span> </h5>
-
                                         <h5 class="card-title"><span th:text="${#strings.length(list.address) > 10 ? #strings.substring(list.address, 0, 10).concat('....') : list.address}"></span> </h5>
                                         <p class="card-text">
                                             <span th:text="${list.position}"></span>

@@ -80,6 +80,8 @@ public class TrainningServiceImpl implements TrainningService{
         model.addAttribute("startPage", startPage);
         model.addAttribute("pageBlock", pageBlock);
         model.addAttribute("endPage", endPage);
+        model.addAttribute("bucketName",bucket);
+        model.addAttribute("regionName",region);
 
     }
     // 훈련소 리스트 가져오기

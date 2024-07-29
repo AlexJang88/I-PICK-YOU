@@ -87,6 +87,8 @@ public class AgencyServiceImpl implements AgencyService{
         model.addAttribute("startPage", startPage);
         model.addAttribute("pageBlock", pageBlock);
         model.addAttribute("endPage", endPage);
+        model.addAttribute("bucketName",bucket);
+        model.addAttribute("regionName",region);
 
 
     }

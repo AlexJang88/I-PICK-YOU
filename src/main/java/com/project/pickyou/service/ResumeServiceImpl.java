@@ -328,6 +328,9 @@ public class ResumeServiceImpl implements ResumeService {
         model.addAttribute("startPage", startPage);
         model.addAttribute("pageBlock", pageBlock);
         model.addAttribute("endPage", endPage);
+        model.addAttribute("bucketName", bucket);  //아마존 경로
+        model.addAttribute("regionName", region);
+
     }
 
     // 사업자 입장에서 이력서보고 채용 (인서트)

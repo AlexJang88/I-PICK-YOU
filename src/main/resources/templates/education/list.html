@@ -115,7 +115,7 @@
                         <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
                             <div class="col-md-4" th:each="post : ${posts}">
                                 <div class="card h-100">
-                                    <img class="card-img-top" th:src="@{'/upload/profile/'+${post.member.profile}}" width="600px" height="400px"/>
+                                    <img th:src="@{'https://'+ ${bucketName}+'.s3.' + ${regionName} + '.amazonaws.com/profile/' +${post.member.profile}}"  style="width: 250px; height: 180px; display: block; margin: auto;" />
                                     <div class="card-body">
                                         <h5 class="card-title"><span th:text="${post.title}"></span></h5>
                                         <a th:href="@{/educations/posts/{id}(id=${post.id})}">

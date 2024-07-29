@@ -75,6 +75,8 @@ public class EducationServiceImpl implements EducationService {
         model.addAttribute("startPage", startPage);
         model.addAttribute("pageBlock", pageBlock);
         model.addAttribute("endPage", endPage);
+        model.addAttribute("bucketName",bucket);
+        model.addAttribute("regionName",region);
     }
     public int getfavoritStatus(String picker,String target){
         int result=0;
