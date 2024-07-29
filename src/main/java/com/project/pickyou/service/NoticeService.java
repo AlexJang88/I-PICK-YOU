@@ -12,12 +12,14 @@ import java.util.List;
 public interface NoticeService {
     // 공지사항 리스트 가져오기, 페이징 처리
     public void AllPosts(Model model, int pageNum);
+/*
 
     // 공지사항 인서트
     public NoticeEntity noticeInsert(NoticeDTO dto);
+*/
 
     // 공지사항 이미지 인서트
-    public void saveImage(ImageDTO imageDTO, MultipartFile[] files);
+    public void saveImage(NoticeDTO dto, List<MultipartFile> files);
 
     // 공지사항 이미지 가져오기
     public void noticeImage(Long boardNum, int boardType, Model model);

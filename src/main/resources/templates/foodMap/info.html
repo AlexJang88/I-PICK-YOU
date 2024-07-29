@@ -93,10 +93,7 @@
 
                                 <tr th:each="image : ${images}">
                                     <td colspan="2" class="text-center">
-                                        <img th:src="@{'/upload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}"
-                                             class="img-fluid rounded"
-                                             style="max-width: 100%; height: auto;"
-                                             alt="사진" />
+                                        <img th:src="@{'https://'+ ${bucketName}+'.s3.' + ${regionName} + '.amazonaws.com/image/' +${image.boardType}+'/'+${image.boardNum}+'/'+${image.name}}" style="width: 250px; height: 250px;" >
                                     </td>
                                 </tr>
                                 <tr>
@@ -114,6 +111,12 @@
                                                     <form th:action="@{/foodMap/posts/{boardNum}/ref(boardNum=${foodMapInfo.ref})}" th:method="post" class="form-inline" enctype="multipart/form-data">
                                                         <textarea name="content" class="form-control mr-2" required></textarea>
                                                         <input type="file" name="files" class="form-control" multiple="multiple" />
+                                                        <input type="hidden" name="title" th:value="${foodMapInfo.title}">
+                                                        <input type="hidden" name="map" th:value="${foodMapInfo.map}">
+                                                        <input type="hidden" name="ref" th:value="${foodMapInfo.ref}">
+                                                        <input type="hidden" name="readCount" th:value="${foodMapInfo.readCount}">
+                                                        <input type="hidden" name="status" th:value="${foodMapInfo.status}">
+
                                                         <button type="submit" class="btn btn-primary">댓글작성</button>
                                                     </form>
                                                 </div>
@@ -143,14 +146,28 @@
                                 </thead>
 
                                 <tbody class="table-border-bottom-0">
+                                <!--<tr th:each="ref : ${refList}" th:class="${ref.id} != ${ref.reply} ? 'indent' : ''" th:style="${ref.reply == ref.id} ? 'padding-left: 20px;' : ''">
+                                    <td th:text="${ref.memberId}"></td>
+                                    <td th:text="${ref.content}"></td>
+                                    <td>
+                                        <div th:each="image : ${imagesRef}" th:if="${image.boardNum == ref.id}">
+                                            <img th:src="@{'https://'+ ${bucketName}+'.s3.' + ${regionName} + '.amazonaws.com/image/' +${image.boardType}+'/'+${image.boardNum}+'/'+${image.name}}" class="img-fluid rounded"
+                                                 th:style="${ref.reply == ref.id} ? 'width: 140px; height: 105px;' : 'width: 70px; height: 52.5px;'" />
+                                            &lt;!&ndash;<img th:src="@{'/upload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}"
+                                                 class="img-fluid rounded"
+                                                 th:style="${ref.reply == ref.id} ? 'width: 140px; height: 105px;' : 'width: 70px; height: 52.5px;'" />&ndash;&gt;
+                                        </div>
+                                    </td>-->
                                 <tr th:each="ref : ${refList}" th:class="${ref.id} != ${ref.reply} ? 'indent' : ''" th:style="${ref.reply == ref.id} ? 'padding-left: 20px;' : ''">
                                     <td th:text="${ref.memberId}"></td>
                                     <td th:text="${ref.content}"></td>
                                     <td>
                                         <div th:each="image : ${imagesRef}" th:if="${image.boardNum == ref.id}">
-                                            <img th:src="@{'/upload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}"
-                                                 class="img-fluid rounded"
+                                            <img th:src="@{'https://'+ ${bucketName}+'.s3.' + ${regionName} + '.amazonaws.com/image/' +${image.boardType}+'/'+${image.boardNum}+'/'+${image.name}}"
                                                  th:style="${ref.reply == ref.id} ? 'width: 140px; height: 105px;' : 'width: 70px; height: 52.5px;'" />
+                                            <!--<img th:src="@{'/upload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}"
+                                                 class="img-fluid rounded"
+                                                 th:style="${ref.reply == ref.id} ? 'width: 140px; height: 105px;' : 'width: 70px; height: 52.5px;'" />-->
                                         </div>
                                     </td>
                                     <td th:text="${#dates.format(ref.reg, 'yyyy-MM-dd')}" class="text-end"></td>

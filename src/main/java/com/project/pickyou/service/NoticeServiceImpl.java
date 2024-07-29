@@ -1,7 +1,9 @@
 package com.project.pickyou.service;
 
+import com.project.pickyou.dto.EducationDTO;
 import com.project.pickyou.dto.ImageDTO;
 import com.project.pickyou.dto.NoticeDTO;
+import com.project.pickyou.entity.EducationEntity;
 import com.project.pickyou.entity.ImageEntity;
 import com.project.pickyou.entity.NoticeEntity;
 import com.project.pickyou.repository.ImageJPARepository;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -34,11 +37,20 @@ public class NoticeServiceImpl implements NoticeService {
     @Value("${img.upload.path}")
     private String imgUploadPath; // 프로퍼티스에서 정한 결로를, 웹 컨피그에서 해당 경로를 지정해서 클래스안에 설정
 
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    @Value("${cloud.aws.region.static}")
+    private String region;
+
+    private final S3Service s3Service;
+
     private final NoticeJPARepository noticeJPA;
     private final ImageJPARepository imageJPA;
 
     @Autowired
-    public NoticeServiceImpl(NoticeJPARepository noticeJPA, ImageJPARepository imageJPA) {
+    public NoticeServiceImpl(S3Service s3Service, NoticeJPARepository noticeJPA, ImageJPARepository imageJPA) {
+        this.s3Service = s3Service;
         this.noticeJPA = noticeJPA;
         this.imageJPA = imageJPA;
     }
@@ -74,53 +86,39 @@ public class NoticeServiceImpl implements NoticeService {
         model.addAttribute("pageBlock", pageBlock);
         model.addAttribute("endPage", endPage);
     }
+/*
 
     // 공지사항 인서트
     @Override
     public NoticeEntity noticeInsert(NoticeDTO dto) {
         return noticeJPA.save(dto.toNoticeEntity());
     }
+*/
 
     // 공지사항 이미지 인서트
     @Override
-    public void saveImage(ImageDTO imageDTO, MultipartFile[] files) {
-        if (files != null && files.length > 0) {
+    @Transactional
+    public void saveImage(NoticeDTO dto, List<MultipartFile> files) {
+        Long noticeNum = noticeJPA.getAutoIncrementValue("pickyou", "notice");
+
+        if (!CollectionUtils.isEmpty(files)) {
             for (MultipartFile file : files) {
-                String originalFileName = file.getOriginalFilename(); // 원래 사진이름
-                String fileName = generateUniqueFileName(originalFileName); // 아래에서 고유한 파일 이름 생성
+                if (file.getContentType().startsWith("image")) {
+                    try {
+                        String filePath = s3Service.uploadFile(file, "image/" + 1 + "/" + noticeNum);
+                        ImageDTO idto = new ImageDTO();     // new 객체생성
+                        idto.setName(filePath);                   // 이름 설정
+                        idto.setBoardNum(noticeNum); // 이미지 DTO에서 boardNum을 가져와 설정
+                        idto.setBoardType(1);               // DB타입설정
+                        imageJPA.save(idto.toImageEntity());            // 이미지 엔티티 저장
 
-                try {
-                    // 파일 저장할 기본 경로
-                    String baseDir = imgUploadPath;
-                    // 공지사항 ID 설정과 타입 설정예정
-                    int numtype = 1; // 공지사항 1번
-                    String num = "1";
-                    // 공지사항 ID를 기반으로 서브 폴더 생성
-                    String subFolder = num + File.separator + imageDTO.getBoardNum(); // 파일 이름 설정하는것_번호 // num = 타입 1번이고 File.separator는 안에 파일 + 파일번호
-                    Path directory = Paths.get(baseDir, subFolder); // 프로퍼티스 경로와 + 파일생성된 경로 합치기
-
-                    // 서브 폴더가 존재하지 않으면 생성
-                    if (!Files.exists(directory)) { // 해당 폴더를 확인하고 없으면 생성 확인
-                        Files.createDirectories(directory);
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-
-                    // 파일 경로 설정
-                    Path filePath = directory.resolve(fileName); // 경로속 uu아이디 이름 넣기
-                    Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-                    // 아래 5개는 사진 파일 DB에 저장하는것
-                    // 파일 정보를 DB에 저장하거나 필요한 작업 수행
-                    ImageEntity imageEntity = new ImageEntity();     // new 객체생성
-                    imageEntity.setName(fileName);                   // 이름 설정
-                    imageEntity.setBoardNum(imageDTO.getBoardNum()); // 이미지 DTO에서 boardNum을 가져와 설정
-                    imageEntity.setBoardType(numtype);               // DB타입설정
-                    imageJPA.save(imageEntity);            // 이미지 엔티티 저장
-
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }
         }
+        noticeJPA.save(dto.toNoticeEntity());
     }
 
     // 실제 가져온 파일이름말고 내가 지정한 파일이름으로 저장
@@ -139,6 +137,8 @@ public class NoticeServiceImpl implements NoticeService {
         // 공지사항 글번호의 이미지 가져오기
         List<ImageEntity> images = imageJPA.findByBoardTypeAndBoardNum(boardType,boardNum);
         model.addAttribute("images", images);
+        model.addAttribute("bucketName",bucket);
+        model.addAttribute("regionName",region);
     }
 
     // 공지사항 조회수 증가
@@ -191,16 +191,9 @@ public class NoticeServiceImpl implements NoticeService {
     public void noticeDelete(Long boardNum) {
         Optional<NoticeEntity> notice = noticeJPA.findById(boardNum);
         if (notice.isPresent()) {
-            File folder = new File(imgUploadPath + File.separator + 1 + File.separator + boardNum);
-            try {
-                if (folder.exists()) {
-                    FileUtils.cleanDirectory(folder);
-                }
-                if (folder.isDirectory()) {
-                    folder.delete();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            List<ImageEntity> images = imageJPA.findByBoardTypeAndBoardNum(1, boardNum);
+            for (ImageEntity image : images) {
+                s3Service.deleteFile("image/"+1+"/"+boardNum+"/"+image.getName());
             }
             imageJPA.deleteAllByBoardTypeAndBoardNum(1, boardNum);
             noticeJPA.deleteById(boardNum);
@@ -224,72 +217,72 @@ public class NoticeServiceImpl implements NoticeService {
         }
     }
 
+    ///////////////////////////
     // 공지사항 글 수정
     @Override
     public void update(List<MultipartFile> files, NoticeDTO dto) {
         Optional<NoticeEntity> notice = noticeJPA.findById(dto.getId());
-        int check = 0;
-
         if (notice.isPresent()) {
-            for (MultipartFile mf : files) {
-                if (!mf.isEmpty()) {
-                    if(check==0) {
-                        File folder = new File(imgUploadPath + File.separator + 1 + File.separator + dto.getId());
+            if (!CollectionUtils.isEmpty(files)) {
+                List<ImageEntity> images = imageJPA.findByBoardTypeAndBoardNum(1, dto.getId());
+                for (ImageEntity image : images) {
+                    s3Service.deleteFile("image/" + 1 + "/" + dto.getId() + "/" + image.getName());
+                }
+                imageJPA.deleteAllByBoardTypeAndBoardNum(1, dto.getId());
+                for (MultipartFile file : files) {
+                    if (file.getContentType().startsWith("image")) {
                         try {
-                            if (folder.exists()) {
-                                FileUtils.cleanDirectory(folder);
-                            }
-                            if (folder.isDirectory()) {
-                                folder.delete();
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        imageJPA.deleteAllByBoardTypeAndBoardNum(1, dto.getId());
-                        check++;
-                    }
-                    if (mf.getContentType().startsWith("image")) {
-                        String originalName = mf.getOriginalFilename();
-                        String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
-                        String folderPath = makeFolder(imgUploadPath, 1, dto.getId());
-                        String uuid = UUID.randomUUID().toString();
-                        String ext = originalName.substring(originalName.lastIndexOf("."));
-                        String saveName = folderPath + File.separator + uuid + ext;
-
-
-                        ImageDTO idto = new ImageDTO();
-                        idto.setBoardNum(dto.getId());
-                        idto.setBoardType(1);
-                        idto.setName(uuid + ext);
-                        imageJPA.save(idto.toImageEntity());
-                        Path savePath = Paths.get(imgUploadPath, saveName);
-                        try {
-                            mf.transferTo(savePath);
+                            String filePath = s3Service.uploadFile(file, "image/" + 1 + "/" + dto.getId());
+                            ImageDTO idto = new ImageDTO();
+                            idto.setBoardNum(dto.getId());
+                            idto.setBoardType(1);
+                            idto.setName(filePath);
+                            imageJPA.save(idto.toImageEntity());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                 }
             }
+            Date date = new Date();
+            dto.setReg(date);
+            noticeJPA.save(dto.toNoticeEntity());
         }
-        Date currentDate = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-        String formattedDate = dateFormat.format(currentDate);
-
-        // 포맷팅된 문자열을 다시 Date 객체로 변환
-        Date dateOnly = null;
-        try {
-            dateOnly = dateFormat.parse(formattedDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        // 포맷된 현재 날짜를 dto의 reg 속성에 설정
-
-        dto.setReg(dateOnly);
-        dto.setMemberId(notice.get().getMemberId());
-        dto.setReadCount(notice.get().getReadCount());
-        noticeJPA.save(dto.toNoticeEntity());
     }
+    /*@Override
+    public void update(List<MultipartFile> files, NoticeDTO dto) {
+        Optional<NoticeEntity> notice = noticeJPA.findById(dto.getId());
+
+        if (notice.isPresent()) {
+            if (!CollectionUtils.isEmpty(files)) {
+                List<ImageEntity> images = imageJPA.findByBoardTypeAndBoardNum(1, dto.getId());
+
+                for (ImageEntity image : images) {
+                    s3Service.deleteFile("image/" + 1 + "/" + dto.getId() + "/" + image.getName());
+                }
+
+                imageJPA.deleteAllByBoardTypeAndBoardNum(1, dto.getId());
+
+                for (MultipartFile file : files) {
+                    if (file.getContentType().startsWith("image")) {
+                        try {
+                            String filePath = s3Service.uploadFile(file, "image/" + 1 + "/" + dto.getId());
+                            ImageDTO idto = new ImageDTO();
+                            idto.setBoardNum(dto.getId());
+                            idto.setBoardType(1);
+                            idto.setName(filePath);
+                            imageJPA.save(idto.toImageEntity());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+            Date date = new Date();
+            dto.setReg(date);
+            noticeJPA.save(dto.toNoticeEntity());
+        }
+    }*/
 
     public String makeFolder(String uploadPath, int boardType, Long boardNum) {
         String folderPath = boardType + File.separator + boardNum;

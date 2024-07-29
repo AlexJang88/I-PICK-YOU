@@ -19,7 +19,7 @@ public interface FoodMapService {
     public FoodMapEntity foodMapInsert(FoodMapDTO dto);
 
     // 푸드맵 이미지 인서트
-    public void saveImage(ImageDTO imageDTO, MultipartFile[] files);
+    public void saveImage(FoodMapDTO dto, List<MultipartFile> files);
 
     // 푸드맵 글번호의 내용 가져오기
     public void foodMapInfo(int ref, Model model);
@@ -40,10 +40,15 @@ public interface FoodMapService {
     public void foodMapCnt(Long id, int ref, Model model);
 
     // 푸드맵 댓글 인서트
-    public FoodMapEntity refInsert(FoodMapDTO dto, int ref);
+    public void refInsert(FoodMapDTO dto, List<MultipartFile> files);
 
+    // 푸드매 대댓글 인서트
+    public void replyInsert(FoodMapDTO dto, List<MultipartFile> files);
+
+    /*
     // 푸드맵 대댓글 인서트
     public FoodMapEntity replyInsert(FoodMapDTO dto);
+*/
 
     // 푸드맵 인증글 포인트 인서트
     public void foodMapPointInsert(PointDTO dto, FoodMapDTO FMdto);

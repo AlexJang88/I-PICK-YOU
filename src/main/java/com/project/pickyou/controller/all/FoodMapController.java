@@ -62,21 +62,20 @@ public class FoodMapController {
 
     // 글쓰기 pro
     @PostMapping("posts")
-    public String writePro(FoodMapDTO dto, ImageDTO imageDTO, Principal principal,
-                           @RequestParam("files") MultipartFile[] files,
+    public String writePro(FoodMapDTO dto, Principal principal,
+                           ArrayList<MultipartFile> files,
                            @RequestParam("address") String address) {
 
-        // 푸드맵 인서트
-        dto.setMemberId(principal.getName());
+        if (principal != null) {
+            dto.setMemberId(principal.getName());
+        }
+        String content = dto.getContent();
+        content = content.replace("\r\n","<br>");
+        dto.setContent(content);
+        dto.setStatus(2);
         dto.setMap(address);
-        FoodMapEntity saveFoodMap = foodMapService.foodMapInsert(dto);
-
-        // 위에서 이미지 파일에 등록된 푸드맵 번호의 숫자를 가져옴
-        Long foodMapId = saveFoodMap.getId();
-
-        // 푸드맵 이미지 인서트
-        imageDTO.setBoardNum(foodMapId);
-        foodMapService.saveImage(imageDTO, files);
+        // 푸드맵 인서트
+        foodMapService.saveImage(dto, files);
 
         return "redirect:/foodMap/posts";
     }
@@ -139,8 +138,14 @@ public class FoodMapController {
 
     // 푸드맵 글 수정 pro
     @PutMapping("/posts/{id}")
-    public String updatePro(@PathVariable Long id, ArrayList<MultipartFile> files, FoodMapDTO dto) {
+    public String updatePro(@PathVariable Long id, FoodMapDTO dto,
+                            @RequestParam(name = "files",required = false) ArrayList<MultipartFile> files) {
 
+        for(MultipartFile mf:files){
+            if(mf.getOriginalFilename().isEmpty()){
+                files = new ArrayList<>();
+            }
+        }
         foodMapService.update(files, dto);
 
         return "redirect:/foodMap/posts/" + id;
@@ -149,20 +154,13 @@ public class FoodMapController {
     // 푸드맵 댓글 작성하기
     @PostMapping("/posts/{boardNum}/ref")
     public String ref(ImageDTO imageDTO, FoodMapDTO fmDTO, Model model, @PathVariable int boardNum, Principal principal,
-                      @RequestParam("files") MultipartFile[] files) {
+                      ArrayList<MultipartFile> files) {
 
-        // foodMap 댓글 인서트
-        fmDTO.setMemberId(principal.getName());
-        FoodMapEntity saveFoodMap = foodMapService.refInsert(fmDTO, boardNum);
-
-
-        // 파일이 비어있지 않은 경우에만 이미지 저장
-        if (files != null && files.length > 0 && !files[0].isEmpty()) {
-            Long foodMapId = saveFoodMap.getId();
-            imageDTO.setBoardNum(foodMapId);
-            foodMapService.saveImage(imageDTO, files);
+        if (principal != null) {
+            fmDTO.setMemberId(principal.getName());
         }
-
+        // foodMap 댓글 인서트
+        foodMapService.refInsert(fmDTO, files);
 
         return "redirect:/foodMap/posts/{boardNum}";
     }
@@ -170,7 +168,7 @@ public class FoodMapController {
     // 푸드맵 대댓글 작성하기
     @PostMapping("/posts/{boardNum}/reply")
     public String reply(ImageDTO imageDTO, FoodMapDTO fmDTO, Principal principal, @PathVariable int boardNum,
-                        @RequestParam("files") MultipartFile[] files,
+                        ArrayList<MultipartFile> files,
                         @RequestParam("fullContent") String fullContent,
                         @RequestParam("foodMapNum") Long foodMapNum) {
 
@@ -179,13 +177,8 @@ public class FoodMapController {
         fmDTO.setMemberId(principal.getName());
         fmDTO.setReply(boardNum);
         fmDTO.setContent(fullContent + fmDTO.getContent());
-        FoodMapEntity saveFoodMap = foodMapService.replyInsert(fmDTO);
+        foodMapService.replyInsert(fmDTO, files);
 
-        if (files != null && files.length > 0 && !files[0].isEmpty()) {
-            Long foodMapId = saveFoodMap.getId();
-            imageDTO.setBoardNum(foodMapId);
-            foodMapService.saveImage(imageDTO, files);
-        }
 
         return "redirect:/foodMap/posts/" + foodMapNum;
     }

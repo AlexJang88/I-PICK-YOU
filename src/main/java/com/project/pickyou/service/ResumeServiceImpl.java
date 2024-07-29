@@ -5,6 +5,7 @@ import com.project.pickyou.entity.*;
 import com.project.pickyou.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -20,6 +21,14 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class ResumeServiceImpl implements ResumeService {
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    @Value("${cloud.aws.region.static}")
+    private String region;
+
+    private final S3Service s3Service;
 
     private final ResumeJPARepository resumeJPA;
     private final JobJPARepository jobJPA;
@@ -155,6 +164,9 @@ public class ResumeServiceImpl implements ResumeService {
         // 이력서 면허증 가져오기
         List<LicenceEntity> licenceEntity = licenceJPA.findByResumeId(num);
         model.addAttribute("licenceInfo", licenceEntity);
+
+        model.addAttribute("bucketName", bucket);  //아마존 경로
+        model.addAttribute("regionName", region);
     }
 
     // 이력서 삭제
