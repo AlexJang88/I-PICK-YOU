@@ -327,9 +327,7 @@ public class RecruitServiceImpl implements RecruitService {
                 // Generate PDF file and upload to S3
                 ItextPdfDto itextPdfDto = new ItextPdfDto();
                 itextPdfDto.setPdfFilePath("contract/"+id + "/");
-                System.out.println("--------------------------------path"+itextPdfDto.getPdfFileName());
                 itextPdfDto.setPdfFileName(pdfFileName);
-                System.out.println("--------------------------------path"+itextPdfDto.getPdfFileName());
                 itextPdfDto.setContractId(id);
 
                 itextPdfUtil.checkPDF(itextPdfDto);

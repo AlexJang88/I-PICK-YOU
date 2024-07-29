@@ -53,22 +53,17 @@ public class KakaoController {
 
     @GetMapping("/PaySuccess")   //성공시
     public void kakaoPaySuccess(@RequestParam("pg_token")String pg_token, Model model, HttpSession session, Principal pc) {
-
         if(pc != null){
             model.addAttribute("id",pc.getName()) ;
         }
-
         PaymentEntity paymentEntity = (PaymentEntity) session.getAttribute("paymentEntity");  //세션으로 값 가져옴
         kakaoPay.savepay(paymentEntity); //결제 넣기
-
         if(paymentEntity.getPoint() > 0){
             kakaoPay.usePoint(paymentEntity);//포인트 차감
         }
-
         String user = paymentEntity.getMemberId(); // 회원아이디
         int money = paymentEntity.getMoney(); // 결제금액
         String title= paymentEntity.getTitle();  // 결제제목
-
         model.addAttribute("user",user);
         model.addAttribute("money",money);
         model.addAttribute("title",title);

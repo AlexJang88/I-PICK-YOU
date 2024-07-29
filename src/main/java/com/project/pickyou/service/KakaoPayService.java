@@ -39,6 +39,7 @@ public class KakaoPayService {
     @Value("${kakao.admin}")
     private String kakaoAdminKey;
 
+
     private KakaoPayDTO kakaoPayDTO;
 
     public String kakaoPayReady(KakaoPayDTO kakaoPayDTO, HttpSession session) {
