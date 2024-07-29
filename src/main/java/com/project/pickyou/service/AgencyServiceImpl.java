@@ -33,7 +33,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AgencyServiceImpl implements AgencyService{
 
-    @Value("${simg.upload.path}")
+    @Value("${img.upload.path}")
     private String imgUploadPath;
 
     private final AgencyJPARepository agencyJPARepository;

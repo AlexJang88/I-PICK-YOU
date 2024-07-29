@@ -34,7 +34,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class FoodMapServiceImpl implements FoodMapService {
 
-    @Value("${fmimg.upload.path}")
+    @Value("${img.upload.path}")
     private String imgUploadPath;  // 프로퍼티스에서 정한경로를, 웹 컨피그에서 해당 경로 지정 해서 클래스 안에 설정
 
 

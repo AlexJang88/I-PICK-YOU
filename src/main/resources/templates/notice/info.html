@@ -118,7 +118,7 @@
                                 </tr>
                                 <tr th:each="image, index : ${images}">
                                     <td colspan="2" class="text-center">
-                                        <img th:src="@{'/kjwupload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}" class="img-fluid rounded" style="max-width: 100%; height: auto;" alt="사진" />
+                                        <img th:src="@{'/upload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}" class="img-fluid rounded" style="max-width: 100%; height: auto;" alt="사진" />
                                     </td>
                                 </tr>
                                 </tbody>

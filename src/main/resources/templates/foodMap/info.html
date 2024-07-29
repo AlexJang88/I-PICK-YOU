@@ -93,7 +93,7 @@
 
                                 <tr th:each="image : ${images}">
                                     <td colspan="2" class="text-center">
-                                        <img th:src="@{'/kjwupload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}"
+                                        <img th:src="@{'/upload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}"
                                              class="img-fluid rounded"
                                              style="max-width: 100%; height: auto;"
                                              alt="사진" />
@@ -148,7 +148,7 @@
                                     <td th:text="${ref.content}"></td>
                                     <td>
                                         <div th:each="image : ${imagesRef}" th:if="${image.boardNum == ref.id}">
-                                            <img th:src="@{'/kjwupload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}"
+                                            <img th:src="@{'/upload/image/' + ${image.boardType} + '/' + ${image.boardNum} + '/' + ${image.name}}"
                                                  class="img-fluid rounded"
                                                  th:style="${ref.reply == ref.id} ? 'width: 140px; height: 105px;' : 'width: 70px; height: 52.5px;'" />
                                         </div>

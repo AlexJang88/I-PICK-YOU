@@ -32,8 +32,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class LoginServiceImpl implements LoginService, UserDetailsService {
 
-    @Value("${lprofile.upload.path}")
-    private String profileImgUploadPath;
+    @Value("${profile.upload.path}")
+    private String profileUploadPath;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final MemberJPARepository memberJPARepository;
@@ -63,7 +63,7 @@ public class LoginServiceImpl implements LoginService, UserDetailsService {
             String ext = originalName.substring(originalName.lastIndexOf("."));
             String profileName =uuid+ext;
            // profileImgUploadPath;  //경로 (프로파일까지 만들어져있음/ lprofile.upload.path=C:/Users/upload/profile)
-            String saveName = profileImgUploadPath + File.separator + uuid + ext;
+            String saveName = profileUploadPath + File.separator + uuid + ext;
             Path savePath = Paths.get(saveName);
             try {
                 file.transferTo(savePath); //경로에 저장한다
@@ -148,7 +148,7 @@ public class LoginServiceImpl implements LoginService, UserDetailsService {
             String ext = originalName.substring(originalName.lastIndexOf("."));
             String profileName =uuid+ext;
             // profileImgUploadPath;  //경로 (프로파일까지 만들어져있음/ lprofile.upload.path=C:/Users/upload/profile)
-            String saveName = profileImgUploadPath + File.separator + uuid + ext;
+            String saveName = profileUploadPath + File.separator + uuid + ext;
             Path savePath = Paths.get(saveName);
             try {
                 file.transferTo(savePath); //경로에 저장한다

@@ -31,6 +31,7 @@ public class EducationServiceImpl implements EducationService {
     @Value("${img.upload.path}")
     private String imgUploadPath;
 
+
     private final EducationJPARepository educationJPA;
     private final ImageJPARepository imageJPA;
     private final PickJPARepository pickJPA;
