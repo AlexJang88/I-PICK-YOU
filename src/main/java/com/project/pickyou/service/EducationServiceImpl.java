@@ -29,12 +29,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class EducationServiceImpl implements EducationService {
 
-
-
-    @Value("${img.upload.path}")
-    private String imgUploadPath;
-
-
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
@@ -303,34 +297,5 @@ public int favoriteCheck(PickDTO dto) {
     }
     return folderPath;
 }
-
-public void filesUpload(List<MultipartFile> files, int boardType, Long BoardNum, String uploadPath) {
-    if (!CollectionUtils.isEmpty(files)) {
-        for (MultipartFile mf : files) {
-            if (mf.getContentType().startsWith("image")) {
-                String originalName = mf.getOriginalFilename();
-                String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
-                String folderPath = makeFolder(uploadPath, boardType, BoardNum);
-                String uuid = UUID.randomUUID().toString();
-                String ext = originalName.substring(originalName.lastIndexOf("."));
-                String saveName = folderPath + File.separator + uuid + ext;
-                ImageDTO idto = new ImageDTO();
-                idto.setBoardNum(BoardNum);
-                idto.setBoardType(boardType);
-                idto.setName(uuid + ext);
-                imageJPA.save(idto.toImageEntity());
-                Path savePath = Paths.get(imgUploadPath, saveName);
-                try {
-                    mf.transferTo(savePath);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-}
-
-//aws s3 bucket
-
 
 }

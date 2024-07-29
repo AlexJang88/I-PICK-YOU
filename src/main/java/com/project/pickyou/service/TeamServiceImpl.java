@@ -27,8 +27,6 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class TeamServiceImpl implements TeamService{
-    @Value("${img.upload.path}")
-    private String imgUploadPath;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;

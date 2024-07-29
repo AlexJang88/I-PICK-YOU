@@ -38,8 +38,6 @@ public class RecruitServiceImpl implements RecruitService {
     @Value("${cloud.aws.region.static}")
     private String region;
 
-    @Value("${contracts.upload.path}")
-    private String contractsPath;
 
     private final S3Service s3Service;
     private final MemberJPARepository memberJPA;
