@@ -110,17 +110,20 @@ public class ItextPdfUtil {
                  * 기존 방식은 FileInputStream을 사용했으나, jar 파일로 빌드 시 파일을 찾을 수 없는 문제가 발생
                  * 따라서, ClassLoader를 사용하여 파일을 읽어오는 방식으로 변경
                  */
-                InputStream cssStream = getClass().getClassLoader().getResourceAsStream("static/css/ItextPdf.css");
-
+                InputStream cssStream = getClass().getClassLoader().getResourceAsStream("static/css/itextPdf.css");
+                if(cssStream==null){
+                    throw new IllegalArgumentException("CSSFile is not exist");
+                }
+                 cssFile = XMLWorkerHelper.getCSS(cssStream);
                 // CSS 파일 담기
-                cssFile = XMLWorkerHelper.getCSS(cssStream);
+
 //                cssFile = XMLWorkerHelper.getCSS(new FileInputStream("src/main/resources/static/css/test.css"));
             } catch (Exception e) {
-                throw new IllegalArgumentException("PDF CSS 파일을 찾을 수 없습니다.");
+                throw new IllegalArgumentException("PDF CSS file is not exist");
             }
 
             if(cssFile == null) {
-                throw new IllegalArgumentException("PDF CSS 파일을 찾을 수 없습니다.");
+                throw new IllegalArgumentException("CSS file is not exist");
             }
 
             // CSS 파일 적용
@@ -137,11 +140,11 @@ public class ItextPdfUtil {
             try {
                 fontProvider.register("static/font/AppleSDGothicNeoR.ttf", "AppleSDGothicNeo");
             } catch (Exception e) {
-                throw new IllegalArgumentException("PDF 폰트 파일을 찾을 수 없습니다.");
+                throw new IllegalArgumentException("PDF Font file not found");
             }
 
             if(fontProvider.getRegisteredFonts() == null) {
-                throw new IllegalArgumentException("PDF 폰트 파일을 찾을 수 없습니다.");
+                throw new IllegalArgumentException("PDF Font file not found");
             }
 
             // 사용할 폰트를 담아두었던 내용을
@@ -175,7 +178,7 @@ public class ItextPdfUtil {
             */
             String htmlStr = getHtml(itextPdfDto.getContractId());
 
-           // htmlStr =processHtmlImages(htmlStr,document);
+            // htmlStr =processHtmlImages(htmlStr,document);
 
             // HTML 내용을 PDF 파일에 삽입
             StringReader stringReader = new StringReader(htmlStr);
@@ -189,22 +192,22 @@ public class ItextPdfUtil {
             s3Service.uploadPdfFile(tempPdfFile, s3Key);
 
         } catch (DocumentException e1) {
-            throw new IllegalArgumentException("PDF 라이브러리 설정 에러");
+            throw new IllegalArgumentException("PDF Library config Error");
         } catch (FileNotFoundException e2) {
             e2.printStackTrace();
-            throw new IllegalArgumentException("PDF 파일 생성중 에러");
+            throw new IllegalArgumentException("PDF Error Creating PDF File");
         } catch (IOException e3) {
             e3.printStackTrace();
-            throw new IllegalArgumentException("PDF 파일 생성중 에러2");
+            throw new IllegalArgumentException("PDF Error Creating PDF File2");
         } catch (Exception e4) {
             e4.printStackTrace();
-            throw new IllegalArgumentException("PDF 파일 생성중 에러3");
+            throw new IllegalArgumentException("PDF Error Creating PDF File3");
         }
         finally {
             try {
                 document.close();
             } catch (Exception e) {
-                System.out.println("PDF 파일 닫기 에러");
+                System.out.println("PDF Error Closing PDF");
                 e.printStackTrace();
             }
         }
@@ -253,11 +256,11 @@ public class ItextPdfUtil {
         MemberEntity member=null;
         ContractEntity ce=null;
         if(con.isPresent()){
-             ce = con.get();
+            ce = con.get();
             Optional<MemberEntity> mem = memberJPA.findById(ce.getMemberId());
-             member = mem.get();
+            member = mem.get();
             Optional<MemberEntity> com = memberJPA.findById(ce.getCompanyId());
-             company = com.get();
+            company = com.get();
 
         }
         if(!con.get().getInsurance1().equals("없음")){
@@ -276,7 +279,7 @@ public class ItextPdfUtil {
             payDate=con.get().getCustomPayDate()+"일(휴일의 경우는 전일 지급)";
         }
 
-       String comimg="https://"+bucket+".s3."+region+".amazonaws.com/contract/"+id+"/" + company.getId() + "_signature.png";
+        String comimg="https://"+bucket+".s3."+region+".amazonaws.com/contract/"+id+"/" + company.getId() + "_signature.png";
         String memimg="https://"+bucket+".s3."+region+".amazonaws.com/contract/"+id+"/" + member.getId() + "_signature.png";
         String startDate = con.get().getStartDate().format(DateTimeFormatter.ofPattern("YYYYMMdd"));
         String endDate = con.get().getEndDate().format(DateTimeFormatter.ofPattern("YYYYMMdd"));
@@ -357,4 +360,3 @@ public class ItextPdfUtil {
     }
 
 }
-
