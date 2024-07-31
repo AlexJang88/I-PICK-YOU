@@ -100,7 +100,7 @@ public class QaController {
 
         // qa 상세정보 가져오기
         qaService.qaInformation(model, ref);
-        return "/qa/info";
+        return "qa/info";
     }
 
     // qa 댓글쓰기 pro

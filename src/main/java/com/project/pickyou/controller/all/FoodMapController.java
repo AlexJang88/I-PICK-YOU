@@ -43,7 +43,7 @@ public class FoodMapController {
         // @@
 
         foodMapService.AllPosts(model, pageNum);
-        return "/foodMap/list";
+        return "foodMap/list";
     }
 
     // 글쓰기
@@ -57,7 +57,7 @@ public class FoodMapController {
         }
         // @@
 
-        return "/foodMap/write";
+        return "foodMap/write";
     }
 
     // 글쓰기 pro
@@ -110,7 +110,7 @@ public class FoodMapController {
         foodMapService.foodMapInfo(ref, model);
         foodMapService.foodMapImage(longRef, 4, model);
 
-        return "/foodMap/info";
+        return "foodMap/info";
     }
 
     // 푸드맵 글 삭제
