@@ -105,12 +105,10 @@ public class SatisfactionServiceImpl implements SatisfactionService {
                 company = userInfo.get();
                 model.addAttribute("company", company);
                 model.addAttribute("member", member);
-                System.out.println("-----------------------profile"+company.getProfile());
             } else if (userInfo.get().getAuth().contains("USER")) {
                 member = userInfo.get();
                 model.addAttribute("company", company);
                 model.addAttribute("member", member);
-                System.out.println("-----------------------profile"+member.getProfile());
             }
         }
         if (!CollectionUtils.isEmpty(satisfactionJPA.findByTarget(id))) {

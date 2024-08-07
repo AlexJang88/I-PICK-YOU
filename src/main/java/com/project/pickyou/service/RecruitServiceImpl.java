@@ -198,7 +198,6 @@ public class RecruitServiceImpl implements RecruitService {
 
 
 
-            System.out.print("-------------------avg : "+avg);
             model.addAttribute("avg",avg);
             model.addAttribute("applyCheck",applyCheck);
             model.addAttribute("auth",auth);
