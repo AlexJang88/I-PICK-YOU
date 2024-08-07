@@ -9,6 +9,7 @@ import com.project.pickyou.repository.ConfirmJPARepository;
 import com.project.pickyou.repository.MemberJPARepository;
 import com.project.pickyou.repository.SatisfactionJPARepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -24,6 +25,12 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class SatisfactionServiceImpl implements SatisfactionService {
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    @Value("${cloud.aws.region.static}")
+    private String region;
 
     private final ConfirmJPARepository confirmJPA;
     private final MemberJPARepository memberJPA;
@@ -94,14 +101,16 @@ public class SatisfactionServiceImpl implements SatisfactionService {
         if (userInfo.isPresent()) {
             MemberEntity member = null;
             MemberEntity company = null;
-            if (userInfo.get().getId().contains("COMPANY")) {
+            if (userInfo.get().getAuth().contains("COMPANY")) {
                 company = userInfo.get();
                 model.addAttribute("company", company);
                 model.addAttribute("member", member);
-            } else if (userInfo.get().getId().contains("USER")) {
+                System.out.println("-----------------------profile"+company.getProfile());
+            } else if (userInfo.get().getAuth().contains("USER")) {
                 member = userInfo.get();
                 model.addAttribute("company", company);
                 model.addAttribute("member", member);
+                System.out.println("-----------------------profile"+member.getProfile());
             }
         }
         if (!CollectionUtils.isEmpty(satisfactionJPA.findByTarget(id))) {
@@ -117,6 +126,8 @@ public class SatisfactionServiceImpl implements SatisfactionService {
             contentList = satisfactionJPA.findByTargetAndContentNotNull(id);
         }
         model.addAttribute("avg", avg);
+        model.addAttribute("bucketName",bucket);
+        model.addAttribute("regionName",region);
         if(type==1) {
             model.addAttribute("posts", contentList);
         }
