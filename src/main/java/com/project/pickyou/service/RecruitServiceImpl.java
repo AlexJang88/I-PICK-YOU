@@ -51,6 +51,7 @@ public class RecruitServiceImpl implements RecruitService {
     private final ContractJPARepository contractJPA;
     private final ConfirmJPARepository confirmJPA;
     private final SatisfactionServiceImpl satisfactionService;
+    private final SatisfactionJPARepository satisfactionJPA;
 
     @Override
     public void AllPosts(Model model, int pageNum,int checkType) {
@@ -65,8 +66,8 @@ public class RecruitServiceImpl implements RecruitService {
         if(checkType==1) {
             longCount = recruitJPA.count();
             count = longCount.intValue();
-             page = recruitJPA.findAll(PageRequest.of(pageNum - 1, pageSize, sort));
-             posts = page.getContent();
+            page = recruitJPA.findAll(PageRequest.of(pageNum - 1, pageSize, sort));
+            posts = page.getContent();
         } else if (checkType==2) {
             longCount = recruitJPA.countByStatus(1);
             count = longCount.intValue();
@@ -134,6 +135,7 @@ public class RecruitServiceImpl implements RecruitService {
         int check=0;
         int auth=0;
         int applyCheck=0;
+        double davg =0.0;
         Optional<RecruitEntity> post = recruitJPA.findById(num);
         Optional<MemberEntity> member=memberJPA.findById(sid);
         RecruitDTO edto = new RecruitDTO();
@@ -142,6 +144,8 @@ public class RecruitServiceImpl implements RecruitService {
         List<ImageEntity> imageList = Collections.emptyList();
         String gender = "성별 무관";
         String type = "일반";
+        int avg =0;
+        int sum=0;
         int favoritecheck = 0;
 
         if (post.isPresent()) {
@@ -163,6 +167,15 @@ public class RecruitServiceImpl implements RecruitService {
                     applyCheck=2;
                 }
             }
+            List<SatisfactionEntity> scoreList = Collections.emptyList();
+            if (!CollectionUtils.isEmpty(satisfactionJPA.findByTarget(post.get().getMemberId()))) {
+                scoreList = satisfactionJPA.findByTarget(post.get().getMemberId());
+                for (SatisfactionEntity se : scoreList) {
+                    sum += se.getScore();
+                }
+                davg = (double) sum/scoreList.size();
+                avg = (int) Math.round(davg);
+            }
 
             imageList = imageJPA.findByBoardTypeAndBoardNum(boardType, num);
             edto = post.get().toRecruitDTO();
@@ -182,6 +195,10 @@ public class RecruitServiceImpl implements RecruitService {
             if (post.get().getStatus() == 2) {
                 type = "긴급";
             }
+
+
+
+            model.addAttribute("avg",avg);
             model.addAttribute("applyCheck",applyCheck);
             model.addAttribute("auth",auth);
             model.addAttribute("check",check);
@@ -374,6 +391,7 @@ public class RecruitServiceImpl implements RecruitService {
         ConfirmDTO cdto = new ConfirmDTO();
         cdto.setMemberId(dto.getMemberId());
         cdto.setCompanyId(dto.getCompanyId());
+        cdto.setRecruitId(stateId);
         if(applyType==1) {
             cdto.setApply(1);
         } else if (applyType==4) {
@@ -422,9 +440,9 @@ public class RecruitServiceImpl implements RecruitService {
         if(con.get().getCompanyId().equals(userId) || con.get().getMemberId().equals(userId)) {
             Optional<MemberEntity> mem = memberJPA.findById(userId);
             if (mem.get().getAuth().contains("COMPANY")) {
-               if (s3Service.fileExists(companySignPath) && !s3Service.fileExists(memberSignPath)) {
+                if (s3Service.fileExists(companySignPath) && !s3Service.fileExists(memberSignPath)) {
                     type = 11;
-                   comSign = s3Service.getPublicUrl(companySignPath);
+                    comSign = s3Service.getPublicUrl(companySignPath);
                 }if (!s3Service.fileExists(companySignPath) && s3Service.fileExists(memberSignPath)) {
                     type = 12;
                     memSign = s3Service.getPublicUrl(memberSignPath);
@@ -489,11 +507,11 @@ public class RecruitServiceImpl implements RecruitService {
 
     @Override
     public void basicContract(String memberId, String companyId,int type,Long stateId) {
-            ConfirmDTO cdto = new ConfirmDTO();
-            cdto.setMemberId(memberId);
-            cdto.setCompanyId(companyId);
-            cdto.setApply(type);
-            confirmJPA.save(cdto.toConfirmEntity());
+        ConfirmDTO cdto = new ConfirmDTO();
+        cdto.setMemberId(memberId);
+        cdto.setCompanyId(companyId);
+        cdto.setApply(type);
+        confirmJPA.save(cdto.toConfirmEntity());
     }
 
     @Override
@@ -534,7 +552,7 @@ public class RecruitServiceImpl implements RecruitService {
     //0 0 0/1 * * * -1시간마다
     @Scheduled(cron = "0 0 0/1 * * *")
     public void overTimeCheck(){
-       Date date = new Date();
+        Date date = new Date();
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.add(Calendar.DATE,-1);

@@ -215,7 +215,7 @@ public class RecruitController {
                     service.userInfo(model,memberId,name,recruitId,1);
                 }
                 else if(type==2){
-                    service.basicContract(memberId,name,1,recruitId);
+                    service.basicContract(memberId,name,2,recruitId);
                     url="redirect:/";
                 }
                 if (type == 3) {
