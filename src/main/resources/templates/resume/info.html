@@ -356,6 +356,8 @@
                                                     </h5>
                                                     <p class="card-text" th:text="${resumeInfo.introduction}"></p>
                                                 </div>
+                                                <input type="hidden" id="sender" th:value="${id}">
+                                                <input type="hidden" id="receiver" th:value="${resumeInfo.memberId}">
                                             </div>
                                         </div>
                                     </div>
