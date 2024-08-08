@@ -87,9 +87,9 @@
                                 <div class="row g-0">
                                     <div class="col-md-4">
                                         <img class="card-img card-img-left" th:if="${member!=null}"
-                                             th:src="@{'/upload/profile/'+${member.profile}}"/>
+                                             th:src="@{'https://'+ ${bucketName}+'.s3.' + ${regionName} + '.amazonaws.com/profile/' +${member.profile}}" alt="profile" style="width: 150px; height: 150px;"/>
                                         <img class="card-img card-img-left" th:if="${company!=null}"
-                                             th:src="@{'/upload/profile/'+${company.profile}}"/>
+                                             th:src="@{'https://'+ ${bucketName}+'.s3.' + ${regionName} + '.amazonaws.com/profile/' +${company.profile}}" alt="profile" style="width: 150px; height: 150px;"/>
                                     </div>
                                     <div class="col-md-8">
                                         <div class="card-body">

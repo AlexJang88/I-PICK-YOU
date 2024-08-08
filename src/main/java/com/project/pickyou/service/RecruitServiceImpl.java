@@ -391,7 +391,6 @@ public class RecruitServiceImpl implements RecruitService {
         ConfirmDTO cdto = new ConfirmDTO();
         cdto.setMemberId(dto.getMemberId());
         cdto.setCompanyId(dto.getCompanyId());
-        cdto.setRecruitId(stateId);
         if(applyType==1) {
             cdto.setApply(1);
         } else if (applyType==4) {
