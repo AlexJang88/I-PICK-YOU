@@ -38,6 +38,8 @@ public class SatisfactionServiceImpl implements SatisfactionService {
 
     @Override
     public int existCheck(String writer, String target, Model model) {
+        model.addAttribute("bucketName",bucket);
+        model.addAttribute("regionName",region);
         int result = 3;
         Long count = 0L;
         Long scoreCount = 0L;
